@@ -164,6 +164,19 @@ public class MainActivity extends Activity {
             startActivity(launch);
             return true;
         }
+
+        @JavascriptInterface
+        public boolean openAction(String action) {
+            try {
+                Intent i = new Intent(action);
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                if (i.resolveActivity(getPackageManager()) == null) return false;
+                startActivity(i);
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
+        }
     }
 
     /** يوتيوب الحقيقي داخل مربع المشغل في الواجهة */

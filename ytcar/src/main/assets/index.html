@@ -15,7 +15,7 @@ body.T-day{--bg1:#e9f0fb;--bg2:#d7e5fb;--card:#ffffff;--line:rgba(15,23,42,.1);-
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none}
 html,body{height:100%;margin:0;overflow:hidden}
 body{font-family:'Tajawal',system-ui,sans-serif;color:var(--txt);background:radial-gradient(1200px 700px at 15% -10%,color-mix(in srgb,var(--ac) 28%,transparent),transparent 60%),radial-gradient(900px 600px at 100% 110%,color-mix(in srgb,var(--ac2) 22%,transparent),transparent 60%),linear-gradient(135deg,var(--bg1),var(--bg2));transition:background .5s}
-.app{height:100%;display:grid;grid-template-columns:clamp(260px,28vw,360px) minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto;gap:14px;padding:14px}
+.app{height:100%;display:grid;grid-template-columns:clamp(260px,28vw,360px) minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto;gap:clamp(8px,2vh,14px);padding:clamp(8px,2vh,14px)}
 .card{background:var(--card);border:1px solid var(--line);border-radius:26px;backdrop-filter:blur(14px)}
 body.T-day .card{box-shadow:0 6px 24px rgba(15,23,42,.08)}
 /* ===== المشغل ===== */
@@ -34,30 +34,30 @@ body.T-day .card{box-shadow:0 6px 24px rgba(15,23,42,.08)}
 .ph b{font-size:24px}
 .ph span{font-size:15px;opacity:.75}
 .ctrl{direction:ltr;display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:nowrap}
-.cb{width:64px;height:58px;border:0;border-radius:18px;background:var(--btn);border:1px solid var(--line);color:var(--txt);display:grid;place-items:center;cursor:pointer;font-family:inherit;font-weight:800;font-size:13px;position:relative}
+.cb{width:64px;height:clamp(46px,9.5vh,58px);border:0;border-radius:18px;background:var(--btn);border:1px solid var(--line);color:var(--txt);display:grid;place-items:center;cursor:pointer;font-family:inherit;font-weight:800;font-size:13px;position:relative}
 .cb svg{width:28px;height:28px;fill:currentColor}
-.cb.play{width:84px;height:66px;border-radius:22px;background:linear-gradient(135deg,var(--ac),color-mix(in srgb,var(--ac) 60%,var(--ac2)));color:#fff;border:0;box-shadow:0 8px 26px color-mix(in srgb,var(--ac) 45%,transparent)}
+.cb.play{width:84px;height:clamp(52px,11vh,66px);border-radius:22px;background:linear-gradient(135deg,var(--ac),color-mix(in srgb,var(--ac) 60%,var(--ac2)));color:#fff;border:0;box-shadow:0 8px 26px color-mix(in srgb,var(--ac) 45%,transparent)}
 .cb.play svg{width:36px;height:36px}
 .cb small{position:absolute;bottom:3px;font-size:12px;line-height:1}
 .cb small~*,.cb svg:has(+small){margin-top:-10px}
 .cb:active{transform:scale(.93)}
 /* ===== الجهة الثانية ===== */
 .side{grid-row:1;grid-column:1;display:flex;flex-direction:column;gap:14px;min-height:0}
-.clock{padding:16px 18px;text-align:center}
-.time{font-size:clamp(54px,7.4vw,92px);font-weight:900;line-height:1;letter-spacing:1px;direction:ltr;font-variant-numeric:tabular-nums}
+.clock{padding:clamp(8px,2vh,16px) 16px;text-align:center}
+.time{font-size:min(7vw,15vh);font-weight:900;line-height:1;letter-spacing:1px;direction:ltr;font-variant-numeric:tabular-nums}
 .time .ap{font-size:.3em;color:var(--ac);margin-left:6px;vertical-align:top}
 .time .col{color:var(--ac);animation:bl 1s steps(2) infinite}
 @keyframes bl{50%{opacity:.25}}
-.date{font-size:18px;font-weight:800;margin-top:8px}
+.date{font-size:clamp(14px,3vh,18px);font-weight:800;margin-top:6px}
 .hij{font-size:15px;color:var(--soft);margin-top:2px}
-.wx{padding:14px 18px;display:flex;align-items:center;gap:14px}
-.wx .ic{font-size:52px;line-height:1}
-.wx .t{font-size:44px;font-weight:900;line-height:1}
-.wx .d{font-size:15px;color:var(--soft);font-weight:700}
-.wx .c{font-size:16px;font-weight:800}
-.quick{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.qb{border:0;border-radius:22px;font-family:inherit;color:#fff;font-size:17px;font-weight:800;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;min-height:0}
-.qb i{font-style:normal;font-size:30px}
+.wx{margin-top:10px;padding-top:10px;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:center;gap:10px;text-align:right}
+.wx .ic{font-size:clamp(26px,5vh,40px);line-height:1}
+.wx .t{font-size:clamp(26px,5.5vh,40px);font-weight:900;line-height:1}
+.wx .c{display:block;font-size:15px;font-weight:800}
+.wx .d{display:block;font-size:13px;color:var(--soft);font-weight:700}
+.quick{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:10px}
+.qb{border:0;border-radius:20px;font-family:inherit;color:#fff;font-size:clamp(14px,2.8vh,18px);font-weight:800;display:flex;flex-direction:row;align-items:center;justify-content:center;gap:8px;cursor:pointer;min-height:48px;overflow:hidden;padding:4px 8px}
+.qb i{font-style:normal;font-size:clamp(20px,4.5vh,30px);line-height:1}
 .qb:active{transform:scale(.95)}
 .q1{background:linear-gradient(135deg,#22c55e,#15803d)}
 .q2{background:linear-gradient(135deg,#3b82f6,#1d4ed8)}
@@ -66,8 +66,8 @@ body.T-day .card{box-shadow:0 6px 24px rgba(15,23,42,.08)}
 /* ===== الشريط السفلي ===== */
 .dock{grid-row:2;grid-column:1/3;display:flex;gap:10px;padding:10px;overflow-x:auto;scrollbar-width:none}
 .dock::-webkit-scrollbar{display:none}
-.tile{flex:0 0 auto;min-width:96px;height:84px;border:0;border-radius:20px;background:var(--btn);border:1px solid var(--line);color:var(--txt);font-family:inherit;font-size:14px;font-weight:700;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;padding:0 10px}
-.tile .ti{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:26px;overflow:hidden}
+.tile{flex:0 0 auto;min-width:92px;height:clamp(64px,13vh,84px);border:0;border-radius:20px;background:var(--btn);border:1px solid var(--line);color:var(--txt);font-family:inherit;font-size:14px;font-weight:700;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;padding:0 10px}
+.tile .ti{width:clamp(30px,6.5vh,40px);height:clamp(30px,6.5vh,40px);border-radius:12px;display:grid;place-items:center;font-size:26px;overflow:hidden}
 .tile .ti img{width:100%;height:100%}
 .tile.add .ti{background:var(--ac);color:#fff;font-size:30px;font-weight:900}
 .tile.set .ti{background:color-mix(in srgb,var(--ac2) 85%,transparent);color:#111}
@@ -125,10 +125,7 @@ body.full .player{grid-column:1}
       <div class="time" id="time"></div>
       <div class="date" id="date"></div>
       <div class="hij" id="hij"></div>
-    </div>
-    <div class="wx card" id="wx">
-      <div class="ic" id="wxI">⛅</div>
-      <div><div class="t" id="wxT">--°</div><div class="c" id="wxC">الطقس</div><div class="d" id="wxD">جاري التحميل…</div></div>
+      <div class="wx" id="wx"><span class="ic" id="wxI">⛅</span><b class="t" id="wxT">--°</b><span><b class="c" id="wxC">الطقس</b><span class="d" id="wxD">جاري التحميل…</span></span></div>
     </div>
     <div class="quick">
       <button class="qb q1" data-q="maps"><i>🗺️</i>الخرائط</button>
@@ -147,10 +144,8 @@ body.full .player{grid-column:1}
   <div class="themes" id="themes"></div>
   <h4>شكل الساعة</h4>
   <div class="row" id="fmtRow"></div>
-  <h4>زر الراديو (جرّب لين يفتح راديو سيارتك)</h4>
-  <div class="row" id="radioRow"></div>
-  <h4>زر البلوتوث</h4>
-  <div class="row" id="btRow"></div>
+  <h4>الأزرار الملونة</h4>
+  <p style="margin:0;color:var(--soft);font-size:15px">التطبيق يدوّر لحاله على تطبيق الخرائط والبلوتوث والراديو والاتصال في شاشتك. ولو تبي تغيّر التطبيق اللي يفتحه أي زر: اضغط عليه ضغطة طويلة واختر.</p>
   <h4>الشاشة الرئيسية</h4>
   <div class="row"><button class="opt" id="setHome">خلّه الشاشة الرئيسية للسيارة</button></div>
 </div></div>
@@ -211,40 +206,55 @@ function wxUpdate(){
 wxUpdate();setInterval(wxUpdate,20*60000);
 
 /* ===== أزرار سريعة ===== */
-const RADIOS=['com.syu.radio','com.microntek.radio','com.android.fmradio','com.caf.fmradio','com.mediatek.FMRadio'];
-let RADIO=store.get('radio',RADIOS[0]);
-opts('radioRow',RADIOS.map((p,i)=>[p,'جرّب '+(i+1)]),RADIO,v=>{RADIO=v;store.set('radio',v);go(pkgIntent(v))});
-const BT=['intent:#Intent;action=android.settings.BLUETOOTH_SETTINGS;end',pkgIntent('com.syu.bt'),pkgIntent('com.microntek.bt')];
-let BTI=+store.get('bt','0');
-opts('btRow',BT.map((x,i)=>[i,'جرّب '+(i+1)]),BTI,v=>{BTI=v;store.set('bt',v);go(BT[v])});
+let APPS=null;
+function apps(){if(APPS)return APPS;try{APPS=NATIVE?JSON.parse(Native.getApps()):[]}catch(e){APPS=[]}return APPS}
+const QN={maps:'الخرائط',bt:'البلوتوث',radio:'الراديو',phone:'الاتصال'};
+const QFIND={
+  maps:{pk:['com.google.android.apps.maps','com.waze','com.here.app.maps','ru.yandex.yandexnavi'],w:['maps','خرائط','navi','ملاح','gps']},
+  bt:{pk:['com.syu.bt','com.microntek.bt','com.fyt.bt'],w:['bluetooth','بلوتوث','btphone','.bt','bt.','بلو توث']},
+  radio:{pk:['com.syu.radio','com.microntek.radio','com.fyt.radio','com.android.fmradio','com.caf.fmradio','com.mediatek.FMRadio'],w:['radio','راديو','fm','إذاعة','اذاعة']},
+  phone:{pk:['com.syu.bt','com.microntek.bt','com.google.android.dialer','com.android.dialer','com.samsung.android.dialer'],w:['dialer','phone','هاتف','اتصال','btphone']}
+};
+const QACT={maps:null,bt:'android.settings.BLUETOOTH_SETTINGS',radio:null,phone:'android.intent.action.DIAL'};
+function qApp(k){let c=null;try{c=JSON.parse(store.get('q_'+k,'null'))}catch(e){}
+  const L=apps();if(c&&L.some(a=>a.pkg===c.pkg))return c;
+  const f=QFIND[k];return L.find(a=>f.pk.includes(a.pkg))||L.find(a=>f.w.some(w=>(a.n+' '+a.pkg).toLowerCase().includes(w)))||null}
 function quick(k){
-  if(k==='maps'){if(NATIVE&&Native.open('com.google.android.apps.maps'))return;return go('geo:0,0?q=')}
-  if(k==='bt')return go(BT[BTI]);
-  if(k==='radio')return go(pkgIntent(RADIO));
-  if(k==='phone')return go('intent:#Intent;action=android.intent.action.DIAL;end');
-}
-document.querySelectorAll('[data-q]').forEach(b=>b.onclick=()=>quick(b.dataset.q));
-$('setHome').onclick=()=>go('intent:#Intent;action=android.settings.HOME_SETTINGS;end');
+  const a=qApp(k);
+  if(NATIVE){
+    if(a&&Native.open(a.pkg)){toast('يفتح '+a.n+'…');return}
+    if(QACT[k]&&Native.openAction&&Native.openAction(QACT[k])){toast('يفتح '+QN[k]+'…');return}
+    if(k==='maps'){go('geo:0,0?q=');return}
+    toast('ما لقيت تطبيق '+QN[k]+'، اضغط مطوّل على الزر واختره');return}
+  toast('يفتح '+QN[k]+' داخل التطبيق')}
+document.querySelectorAll('[data-q]').forEach(b=>{let t,long=false;
+  b.onpointerdown=()=>{long=false;t=setTimeout(()=>{long=true;openAdd(b.dataset.q)},700)};
+  b.onpointerup=b.onpointerleave=b.onpointercancel=()=>clearTimeout(t);
+  b.onclick=()=>{if(!long)quick(b.dataset.q)};
+  b.oncontextmenu=e=>e.preventDefault()});
+$('setHome').onclick=()=>{if(NATIVE&&Native.openAction&&Native.openAction('android.settings.HOME_SETTINGS'))return;go('intent:#Intent;action=android.settings.HOME_SETTINGS;end')};
 
 /* ===== الشريط السفلي ===== */
 const DEF=[{n:'واتساب',pkg:'com.whatsapp',e:'💬'},{n:'سبوتيفاي',pkg:'com.spotify.music',e:'🎵'},{n:'ويز',pkg:'com.waze',e:'🚙'},{n:'أنغامي',pkg:'com.anghami',e:'🎶'}];
-let DOCK;try{DOCK=JSON.parse(store.get('dock','null'))}catch(e){}if(!Array.isArray(DOCK))DOCK=DEF;
+let DOCK;try{DOCK=JSON.parse(store.get('dock','null'))}catch(e){}
+if(!Array.isArray(DOCK)){DOCK=NATIVE?apps().filter(a=>!/settings|إعدادات/i.test(a.n)).slice(0,5):DEF;if(NATIVE)store.set('dock',JSON.stringify(DOCK))}
 function tileEl(a,cls){const b=document.createElement('button');b.className='tile'+(cls?' '+cls:'');
   b.innerHTML='<span class="ti">'+(a.img?'<img src="'+a.img+'" alt="">':(a.e||'📱'))+'</span><span></span>';b.lastChild.textContent=a.n;return b}
-function openApp(a){if(NATIVE){if(!Native.open(a.pkg))toast('التطبيق مو مثبت في الجهاز');return}toast('يفتح '+a.n+' داخل التطبيق')}
+function openApp(a){if(NATIVE){if(Native.open(a.pkg))toast('يفتح '+a.n+'…');else toast('التطبيق مو موجود في الشاشة، شيله واختر غيره');return}toast('يفتح '+a.n+' داخل التطبيق')}
 function drawDock(){const d=$('dock');d.innerHTML='';
   DOCK.forEach((a,i)=>{const b=tileEl(a);let t;b.onclick=()=>{if(b.classList.contains('shake')){DOCK.splice(i,1);saveDock();toast('انشال '+a.n);return}openApp(a)};
     b.onpointerdown=()=>{t=setTimeout(()=>{d.querySelectorAll('.tile').forEach(x=>x.classList.add('shake'));toast('اضغط على التطبيق اللي تبي تشيله')},700)};
     b.onpointerup=b.onpointerleave=()=>clearTimeout(t);d.appendChild(b)});
-  const add=tileEl({n:'أضف',e:'+'},'add');add.onclick=openAdd;d.appendChild(add);
+  const add=tileEl({n:'أضف',e:'+'},'add');add.onclick=()=>openAdd();d.appendChild(add);
   const s=tileEl({n:'الإعدادات',e:'⚙️'},'set');s.onclick=()=>$('setOv').classList.add('show');d.appendChild(s)}
 function saveDock(){store.set('dock',JSON.stringify(DOCK));drawDock()}
 document.addEventListener('pointerdown',e=>{if(!e.target.closest('#dock'))$('dock').querySelectorAll('.shake').forEach(x=>x.classList.remove('shake'))});
-let ALL=null;
-function openAdd(){if(!ALL){try{ALL=NATIVE?JSON.parse(Native.getApps()):DEF}catch(e){ALL=DEF}ALL.sort((a,b)=>a.n.localeCompare(b.n,'ar'))}
+let ALL=null,PICK=null;
+function openAdd(k){PICK=typeof k==='string'?k:null;if(!ALL){ALL=(NATIVE?apps():DEF).slice();ALL.sort((a,b)=>a.n.localeCompare(b.n,'ar'))}
+  $('addOv').querySelector('h3').firstChild.textContent=PICK?'اختر تطبيق '+QN[PICK]+' ':'أضف تطبيق ';
   $('q').value='';drawList();$('addOv').classList.add('show')}
 function drawList(){const q=$('q').value.trim().toLowerCase(),L=$('appList');L.innerHTML='';
-  ALL.filter(a=>!q||a.n.toLowerCase().includes(q)).forEach(a=>{const b=tileEl(a);b.onclick=()=>{if(!DOCK.some(x=>x.pkg===a.pkg))DOCK.push(a);saveDock();$('addOv').classList.remove('show');toast('انضاف '+a.n)};L.appendChild(b)})}
+  ALL.filter(a=>!q||a.n.toLowerCase().includes(q)).forEach(a=>{const b=tileEl(a);b.onclick=()=>{$('addOv').classList.remove('show');if(PICK){store.set('q_'+PICK,JSON.stringify({n:a.n,pkg:a.pkg}));toast('زر '+QN[PICK]+' صار يفتح '+a.n);return}if(!DOCK.some(x=>x.pkg===a.pkg))DOCK.push(a);saveDock();toast('انضاف '+a.n)};L.appendChild(b)})}
 $('q').oninput=drawList;
 document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>b.closest('.ov').classList.remove('show'));
 document.querySelectorAll('.ov').forEach(o=>o.onclick=e=>{if(e.target===o)o.classList.remove('show')});
