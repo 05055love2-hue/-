@@ -41,6 +41,7 @@ jobs:
           cp seasons/build/outputs/apk/debug/seasons-debug.apk seasons.apk
           cp ytcar/build/outputs/apk/debug/ytcar-debug.apk mushaghli.apk
           cp rawatib/build/outputs/apk/debug/rawatib-debug.apk rawatib.apk
+          cp obd/build/outputs/apk/debug/obd-debug.apk fahes.apk
 
       - name: Publish download link
         uses: softprops/action-gh-release@v2
@@ -55,6 +56,7 @@ jobs:
             seasons.apk
             mushaghli.apk
             rawatib.apk
+            fahes.apk
           make_latest: true
 
       - name: Screenshots
