@@ -30,7 +30,7 @@
   #quick{display:flex;gap:1vw;flex-wrap:wrap;align-self:start}
   .q{display:flex;align-items:center;gap:.6vw;font-size:1.3vw;padding:1.1vh 1.4vw;border-radius:1.3vw;border:2px solid var(--line);background:var(--card)}
   h2{font-size:1.5vw;font-weight:500;color:var(--soft);margin:0 0 1.4vh}
-  #grid{flex:1;min-height:0;overflow:auto;display:grid;grid-template-columns:repeat(6,1fr);gap:2.2vh 1.6vw;align-content:start;padding:1.2vh .8vw 3vh}
+  #grid{flex:1;min-height:0;overflow:auto;display:grid;grid-auto-rows:max-content;grid-template-columns:repeat(6,1fr);gap:2.2vh 1.6vw;align-content:start;padding:1.2vh .8vw 3vh}
 
   /* ===== بلاطة التطبيق ===== */
   .app{position:relative;aspect-ratio:16/9;border-radius:1.2vw;border:2px solid var(--line);background:rgba(255,255,255,.07);
@@ -745,6 +745,6 @@ applyAll(); refreshApps();
 focusEl(S.l==='youtube'||S.l==='dash' ? $('ytBrowse') : ($('grid').querySelector('.f')||$('qCustom')));
 setTimeout(ytSync,200);
 </script>
-<div style="position:fixed;bottom:4px;left:10px;z-index:5;font-family:Tajawal,system-ui,sans-serif;font-size:11px;font-weight:700;color:#fff;opacity:.5;pointer-events:none;text-shadow:0 1px 2px #000">برمجة أبو نواف</div>
+<div style="position:fixed;bottom:6px;right:14px;z-index:5;font-family:Tajawal,system-ui,sans-serif;font-size:11px;font-weight:700;color:#fff;opacity:.5;pointer-events:none;text-shadow:0 1px 2px #000">برمجة أبو نواف</div>
 </body>
 </html>
