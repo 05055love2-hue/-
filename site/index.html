@@ -68,6 +68,19 @@
   .sig .dl{background:#38e0a0;box-shadow:0 10px 30px rgba(56,224,160,.25)}
   .try{font-family:inherit;font-size:16px;font-weight:700;border:1px solid var(--line);background:none;color:var(--text);border-radius:16px;padding:12px 18px;cursor:pointer}
   nav{flex-wrap:wrap;justify-content:flex-end}
+  .about{margin-top:56px;background:var(--card);border:1px solid var(--line);border-radius:26px;padding:24px;scroll-margin-top:20px}
+  .about .top{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  .about .av{width:76px;height:76px;border-radius:24px;background:linear-gradient(135deg,var(--car),var(--tv));display:grid;place-items:center;font-size:30px;font-weight:800;color:#0a0f1a}
+  .about h2{margin:0;font-size:28px}
+  .about .role{color:var(--soft);font-size:15px;font-weight:700}
+  .about p.bio{margin:16px 0 0;font-size:16px;line-height:1.9}
+  .about h3{margin:20px 0 10px;font-size:17px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chips span{border:1px solid var(--line);background:rgba(255,255,255,.04);border-radius:14px;padding:7px 12px;font-size:14px;font-weight:700}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-top:18px}
+  .stats div{text-align:center;border-radius:18px;padding:14px;background:rgba(255,255,255,.04);border:1px solid var(--line)}
+  .stats b{display:block;font-size:26px;background:linear-gradient(90deg,var(--car),var(--tv));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .stats span{color:var(--soft);font-size:13px;font-weight:700}
   .appframe{position:fixed;inset:0;z-index:10;background:#000;display:none;flex-direction:column}
   .appframe.show{display:flex}
   .appframe iframe{flex:1;border:0;width:100%}
@@ -77,7 +90,7 @@
 <body>
 <div class="wrap">
   <header><div class="logo">✦</div><b>تطبيقاتي<small style="display:block;font-size:12px;color:var(--soft);font-weight:700">من المبرمج أبو نواف</small></b>
-    <nav><a href="#car">🚗 السيارة</a><a href="#tv">📺 التلفزيون</a><a href="#ytcar">▶️ مشغّلي</a><a href="#seasons">🌙 المواسم</a><a href="#pay">💰 الصرف</a></nav></header>
+    <nav><a href="#car">🚗 السيارة</a><a href="#tv">📺 التلفزيون</a><a href="#ytcar">▶️ مشغّلي</a><a href="#seasons">🌙 المواسم</a><a href="#pay">💰 الصرف</a><a href="#about">👤 عني</a></nav></header>
 
   <div class="hero">
     <h1>تطبيقات <em>جميلة وسهلة</em><br>لسيارتك وتلفزيونك وجوالك</h1>
@@ -264,6 +277,32 @@
       <div class="qr"><div class="code" data-url="https://github.com/05055love2-hue/tatbeeqati/releases/latest/download/rawatib.apk"></div>
         <div><span class="link">github.com/05055love2-hue/tatbeeqati/releases/latest/download/rawatib.apk</span><br><button class="copy">نسخ الرابط</button></div></div>
     </details>
+  </section>
+
+  <!-- ===== عن المبرمج ===== -->
+  <section class="about" id="about">
+    <div class="top">
+      <div class="av">أ.ن</div>
+      <div><h2>المبرمج أبو نواف</h2><div class="role">مطوّر أنظمة وتطبيقات أندرويد</div></div>
+    </div>
+    <p class="bio">مطوّر أنظمة، أحب أبني تطبيقات عربية بسيطة وواضحة تحل مشاكل يومية. أركز على الأجهزة اللي نستخدمها كل يوم: شاشة السيارة، التلفزيون، والجوال. أبدأ كل تطبيق بأبسط نسخة تشتغل فعلًا، وبعدها أطوره خطوة خطوة حسب ملاحظات اللي يستخدمونه. وكل تطبيقاتي مجانية، وما تجمع بيانات المستخدمين.</p>
+    <h3>التقنيات اللي أشتغل عليها</h3>
+    <div class="chips">
+      <span>📱 تطبيقات أندرويد (Java)</span>
+      <span>🌐 HTML و CSS و JavaScript</span>
+      <span>🧩 ويدجت الشاشة الرئيسية</span>
+      <span>🔔 الإشعارات والمنبهات</span>
+      <span>🚗 لانشرات شاشات السيارة</span>
+      <span>📺 واجهات Android TV</span>
+      <span>⚙️ البناء التلقائي (GitHub Actions)</span>
+      <span>☁️ النشر على Cloudflare</span>
+      <span>🤖 أدوات الذكاء الاصطناعي</span>
+    </div>
+    <div class="stats">
+      <div><b>5</b><span>تطبيقات منشورة</span></div>
+      <div><b>3</b><span>أنواع أجهزة</span></div>
+      <div><b>100%</b><span>عربي ومجاني</span></div>
+    </div>
   </section>
 
   <footer>تطبيقاتي • ثيم هادي وشاشتي ومشغّلي وفصول السنة ومواعيد الصرف • مجانية 💚
