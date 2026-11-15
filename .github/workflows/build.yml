@@ -45,8 +45,9 @@ jobs:
       - name: Publish download link
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: latest
-          name: ثيم هادي - آخر نسخة
+          # كل بناء ينشر نسخة جديدة برقمها، عشان عدد التحميلات ما يتصفّر
+          tag_name: v${{ github.run_number }}
+          name: نسخة ${{ github.run_number }}
           files: |
             car-theme.apk
             tv-launcher.apk

@@ -81,6 +81,12 @@
   .stats div{text-align:center;border-radius:18px;padding:14px;background:rgba(255,255,255,.04);border:1px solid var(--line)}
   .stats b{display:block;font-size:26px;background:linear-gradient(90deg,var(--car),var(--tv));-webkit-background-clip:text;background-clip:text;color:transparent}
   .stats span{color:var(--soft);font-size:13px;font-weight:700}
+  .live{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}
+  .live div{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:14px;text-align:center}
+  .live b{display:block;font-size:30px;font-weight:800;font-variant-numeric:tabular-nums}
+  .live span{color:var(--soft);font-size:14px;font-weight:700}
+  .live small{grid-column:1/-1;color:var(--soft);font-size:12px;text-align:center}
+  .cnt{display:inline-flex;align-items:center;gap:4px;font-size:13px;font-weight:700;color:var(--soft);border:1px solid var(--line);border-radius:12px;padding:6px 10px}
   .appframe{position:fixed;inset:0;z-index:10;background:#000;display:none;flex-direction:column}
   .appframe.show{display:flex}
   .appframe iframe{flex:1;border:0;width:100%}
@@ -95,6 +101,11 @@
   <div class="hero">
     <h1>تطبيقات <em>جميلة وسهلة</em><br>لسيارتك وتلفزيونك وجوالك</h1>
     <p>تطبيقات عربية بالكامل ومجانية: لانشرين للسيارة، لانشر للتلفزيون، وتطبيق للمواسم وفصول السنة، وتطبيق لمواعيد الرواتب والدعم.</p>
+    <div class="live" id="live">
+      <div><b id="vCount">—</b><span>👁️ زيارة للموقع</span></div>
+      <div><b id="dCount">—</b><span>⬇️ تحميل للتطبيقات</span></div>
+      <small>أرقام حقيقية تتحدث تلقائيًا: الزيارات من 15 نوفمبر 2026، والتحميلات من سجل GitHub.</small>
+    </div>
     <div class="pick">
       <a href="#car"><i>🚗</i><div><b>ثيم هادي</b><span>لانشر لشاشة السيارة الأندرويد</span></div></a>
       <a href="#tv"><i>📺</i><div><b>شاشتي</b><span>لانشر للتلفزيون مثل أبل تي في</span></div></a>
@@ -471,6 +482,7 @@ function draw(full){
 try{window.Native&amp;&amp;Native.setPrivDay(T[3].day)}catch(e){}
 draw(true);setInterval(()=&gt;draw(false),1000);setInterval(()=&gt;draw(true),60000);
 &lt;/script&gt;
+&lt;div style=&quot;position:relative;z-index:1;text-align:center;font-family:Tajawal,system-ui,sans-serif;font-size:13px;font-weight:700;opacity:.6;padding:14px 0 18px&quot;&gt;برمجة أبو نواف&lt;/div&gt;
 &lt;/body&gt;
 &lt;/html&gt;
 </template>
@@ -823,7 +835,11 @@ const RC=2*Math.PI*34;
 let timers=[];
 function save(){try{localStorage.setItem(&#x27;timers&#x27;,JSON.stringify(timers.map(t=&gt;({name:t.name,total:t.total}))))}catch(e){}}
 function load(){try{const x=JSON.parse(localStorage.getItem(&#x27;timers&#x27;));if(Array.isArray(x)&amp;&amp;x.length)return x}catch(e){}return[{name:&#x27;مؤقت&#x27;,total:300}]}
-load().forEach(t=&gt;timers.push({name:t.name,total:t.total,remain:t.total,run:false,endAt:0}));
+const uid=()=&gt;&#x27;t&#x27;+Date.now().toString(36)+Math.floor(Math.random()*1e4);
+const N=window.Native;
+function nSched(t){try{N&amp;&amp;N.scheduleTimer(t.id,t.name,Math.round(t.endAt))}catch(e){}}
+function nCancel(t){try{N&amp;&amp;N.cancelTimer(t.id)}catch(e){}}
+load().forEach(t=&gt;timers.push({id:uid(),name:t.name,total:t.total,remain:t.total,run:false,endAt:0}));
 const box=document.getElementById(&#x27;timers&#x27;);
 const minTxt=m=&gt;m===1?&#x27;دقيقة&#x27;:m===2?&#x27;دقيقتين&#x27;:m&lt;=10?m+&#x27; دقائق&#x27;:m+&#x27; دقيقة&#x27;;
 function renderTimers(){
@@ -835,8 +851,8 @@ function renderTimers(){
     &lt;div class=&quot;row&quot;&gt;&lt;button class=&quot;go&quot;&gt;&lt;/button&gt;&lt;button class=&quot;rs&quot;&gt;إعادة&lt;/button&gt;&lt;button class=&quot;pm mi1&quot;&gt;−&lt;/button&gt;&lt;span class=&quot;mt&quot;&gt;&lt;/span&gt;&lt;button class=&quot;pm pl1&quot;&gt;+&lt;/button&gt;&lt;/div&gt;&lt;/div&gt;`;
     d.querySelector(&#x27;.nm span&#x27;).textContent=t.name;
     d.querySelector(&#x27;.go&#x27;).onclick=()=&gt;toggle(i);
-    d.querySelector(&#x27;.rs&#x27;).onclick=()=&gt;{t.run=false;t.remain=t.total;drawTimers()};
-    d.querySelector(&#x27;.x&#x27;).onclick=()=&gt;{timers.splice(i,1);save();renderTimers()};
+    d.querySelector(&#x27;.rs&#x27;).onclick=()=&gt;{nCancel(t);t.run=false;t.remain=t.total;drawTimers()};
+    d.querySelector(&#x27;.x&#x27;).onclick=()=&gt;{nCancel(t);timers.splice(i,1);save();renderTimers()};
     d.querySelector(&#x27;.mi1&#x27;).onclick=()=&gt;adj(i,-1);
     d.querySelector(&#x27;.pl1&#x27;).onclick=()=&gt;adj(i,1);
     box.appendChild(d);
@@ -844,7 +860,7 @@ function renderTimers(){
   drawTimers();
 }
 function adj(i,s){const t=timers[i];if(t.run)return;const m=Math.max(1,Math.min(300,t.total/60+s));t.total=t.remain=m*60;save();drawTimers()}
-function toggle(i){const t=timers[i];if(t.run){t.run=false;return drawTimers()}if(t.remain&lt;=0)t.remain=t.total;t.run=true;t.endAt=Date.now()+t.remain*1000;drawTimers()}
+function toggle(i){const t=timers[i];if(t.run){t.run=false;nCancel(t);return drawTimers()}if(t.remain&lt;=0)t.remain=t.total;t.run=true;t.endAt=Date.now()+t.remain*1000;nSched(t);drawTimers()}
 function drawTimers(){
   [...box.children].forEach((d,i)=&gt;{const t=timers[i];const s=Math.ceil(t.remain);
     d.querySelector(&#x27;.t&#x27;).textContent=s&gt;=3600?`${Math.floor(s/3600)}:${p2(Math.floor(s%3600/60))}:${p2(s%60)}`:`${p2(Math.floor(s/60))}:${p2(s%60)}`;
@@ -858,12 +874,13 @@ setInterval(()=&gt;{let ch=false;timers.forEach(t=&gt;{if(t.run){t.remain=Math.m
 const QS=[1,3,5,10,15,25,30,60];let qSel=5;const qs=document.getElementById(&#x27;qs&#x27;);
 QS.forEach(m=&gt;{const b=document.createElement(&#x27;button&#x27;);b.textContent=m&gt;=60?&#x27;ساعة&#x27;:m+&#x27; د&#x27;;b.onclick=()=&gt;{qSel=m;[...qs.children].forEach((x,k)=&gt;x.classList.toggle(&#x27;on&#x27;,QS[k]===m))};qs.appendChild(b)});
 qs.children[2].classList.add(&#x27;on&#x27;);
-document.getElementById(&#x27;addT&#x27;).onclick=()=&gt;{const n=document.getElementById(&#x27;tName&#x27;);timers.push({name:n.value.trim()||&#x27;مؤقت &#x27;+(timers.length+1),total:qSel*60,remain:qSel*60,run:false,endAt:0});n.value=&#x27;&#x27;;save();renderTimers()};
+document.getElementById(&#x27;addT&#x27;).onclick=()=&gt;{const n=document.getElementById(&#x27;tName&#x27;);timers.push({id:uid(),name:n.value.trim()||&#x27;مؤقت &#x27;+(timers.length+1),total:qSel*60,remain:qSel*60,run:false,endAt:0});n.value=&#x27;&#x27;;save();renderTimers()};
 renderTimers();
 let actx;
 function finish(t){
   document.getElementById(&#x27;doneT&#x27;).textContent=`⏰ خلص وقت «${t.name}»!`;
   document.getElementById(&#x27;done&#x27;).style.display=&#x27;flex&#x27;;
+  if(N)return;
   try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();
     [0,.35,.7,1.2,1.55,1.9].forEach(s=&gt;{const o=actx.createOscillator(),g=actx.createGain();o.frequency.value=880;o.connect(g);g.connect(actx.destination);g.gain.setValueAtTime(.3,actx.currentTime+s);g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+s+.3);o.start(actx.currentTime+s);o.stop(actx.currentTime+s+.3)})}catch(e){}
 }
@@ -892,6 +909,7 @@ function loop(){
 }
 loop();
 &lt;/script&gt;
+&lt;div style=&quot;position:relative;z-index:1;text-align:center;font-family:Tajawal,system-ui,sans-serif;font-size:13px;font-weight:700;opacity:.6;padding:14px 0 18px&quot;&gt;برمجة أبو نواف&lt;/div&gt;
 &lt;/body&gt;
 &lt;/html&gt;
 </template>
@@ -913,6 +931,27 @@ loop();
   document.getElementById('openSeasons').onclick=()=>openFrame('seasonsSrc');
   document.getElementById('openPay').onclick=()=>openFrame('paySrc');
   document.getElementById('closeSeasons').onclick=()=>{af.classList.remove('show');document.body.style.overflow=''};
+
+  /* ===== أرقام حقيقية: الزيارات والتحميلات ===== */
+  (function(){
+    const fmt=n=>Number(n).toLocaleString('en-US');
+    // الزيارات: عدّاد عام، يحسب كل متصفح مرة وحدة في اليوم
+    const C='https://abacus.jasoncameron.dev', NS='tatbeeqati-sa', KEY='visits';
+    let seen='';try{seen=localStorage.getItem('vday')||''}catch(e){}
+    const today=new Date().toISOString().slice(0,10);
+    const url=C+(seen===today?'/get/':'/hit/')+NS+'/'+KEY;
+    fetch(url).then(r=>r.json()).then(d=>{if(typeof d.value==='number'){document.getElementById('vCount').textContent=fmt(d.value);try{localStorage.setItem('vday',today)}catch(e){}}}).catch(()=>{});
+    // التحميلات: مجموع تحميلات كل نسخ التطبيقات من GitHub
+    const apks=[...document.querySelectorAll('a.dl[href$=".apk"]')];
+    fetch('https://api.github.com/repos/05055love2-hue/tatbeeqati/releases?per_page=100').then(r=>r.json()).then(rel=>{
+      if(!Array.isArray(rel))return;
+      const by={};rel.forEach(x=>(x.assets||[]).forEach(a=>{by[a.name]=(by[a.name]||0)+a.download_count}));
+      let total=0;
+      apks.forEach(a=>{const n=a.getAttribute('href').split('/').pop(),c=by[n]||0;total+=c;
+        if(!a.nextElementSibling||!a.nextElementSibling.classList.contains('cnt')){const s=document.createElement('span');s.className='cnt';s.textContent='⬇️ '+fmt(c)+' تحميل';a.after(s)}});
+      document.getElementById('dCount').textContent=fmt(total);
+    }).catch(()=>{});
+  })();
 </script>
 </body>
 </html>
