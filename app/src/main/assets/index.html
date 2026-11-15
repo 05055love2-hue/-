@@ -117,6 +117,33 @@
   body.L-cinema .wx{margin:0;padding:2px 10px;gap:6px}
   body.L-cinema .wx .wi,body.L-cinema .wx .wt{font-size:clamp(16px,2vw,24px)}
   body.L-cinema .wx .wd{display:none}
+
+  /* أشكال الطقس */
+  .wxx,.wxf{display:none}
+  .wxx span{display:flex;flex-direction:column;align-items:center;font-size:clamp(11px,1.2vw,14px);color:var(--soft);gap:2px}
+  .wxx span b{color:var(--text);font-weight:500;font-size:clamp(13px,1.4vw,17px);direction:ltr}
+  .wxf span{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:clamp(11px,1.15vw,14px);color:var(--soft);min-width:3.2em}
+  .wxf span i{font-style:normal;font-size:clamp(18px,2.2vw,28px)}
+  .wxf span b{color:var(--text);font-weight:500;direction:ltr}
+  .wx[data-s="mini"]{padding:4px 14px;gap:8px;border-radius:30px}
+  .wx[data-s="mini"] .wd{display:none}
+  .wx[data-s="mini"] .wi,.wx[data-s="mini"] .wt{font-size:clamp(18px,2.2vw,28px)}
+  .wx[data-s="big"]{flex-wrap:wrap;justify-content:center;padding:12px 22px}
+  .wx[data-s="big"] .wi{font-size:clamp(40px,5.5vw,70px)}
+  .wx[data-s="big"] .wt{font-size:clamp(36px,5vw,64px);font-weight:300}
+  .wx[data-s="detail"]{flex-wrap:wrap;justify-content:center;max-width:94%}
+  .wx[data-s="detail"] .wxx{display:flex;gap:18px;width:100%;justify-content:center;border-top:1px solid var(--line);padding-top:6px}
+  .wx[data-s="week"]{flex-wrap:wrap;justify-content:center;max-width:94%}
+  .wx[data-s="week"] .wxf{display:flex;gap:10px;width:100%;justify-content:center;border-top:1px solid var(--line);padding-top:6px}
+  .wx[data-s="hours"]{flex-wrap:wrap;justify-content:center;max-width:94%}
+  .wx[data-s="hours"] .wxf{display:flex;gap:10px;width:100%;justify-content:center;border-top:1px solid var(--line);padding-top:6px}
+  .wx[data-s="glass"]{background:color-mix(in srgb,var(--accent) 14%,rgba(255,255,255,.04));border:1px solid color-mix(in srgb,var(--accent) 55%,transparent);
+    box-shadow:0 0 22px color-mix(in srgb,var(--accent) 30%,transparent),inset 0 1px 0 rgba(255,255,255,.15);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+  .wx[data-s="glass"] .wt{color:var(--accent)}
+  .wx[data-s="line"]{background:none;border:none;border-radius:0;padding:4px 0;border-bottom:2px solid var(--accent)}
+  .wx[data-s="line"] .wd small{display:none}
+  body.L-sport .wx .wxx,body.L-ring .wx .wxx,body.L-cinema .wx .wxx,body.L-sport .wx .wxf,body.L-ring .wx .wxf,body.L-cinema .wx .wxf{display:none}
+  body.L-sport .wx[data-s="big"] .wi,body.L-ring .wx[data-s="big"] .wi,body.L-sport .wx[data-s="big"] .wt,body.L-ring .wx[data-s="big"] .wt{font-size:clamp(22px,2.8vw,34px)}
   .wxres{display:flex;flex-direction:column;gap:6px;margin-top:8px}
   .wxres button{text-align:right}
 
@@ -149,9 +176,9 @@
   .ytempty svg{width:48px;height:48px;fill:var(--accent);opacity:.7}
   .recent button.cur{background:var(--accent);color:var(--bg1);border-color:var(--accent)}
   .ytbox iframe{width:100%;height:100%;border:0}
-  body.ytNative #ytForm, body.ytNative #recent{display:none}
+  html.ytNative #ytForm, html.ytNative #recent{display:none}
   .ytnav{display:none;gap:8px;width:100%;justify-content:center}
-  body.ytNative .ytnav{display:flex}
+  html.ytNative .ytnav{display:flex}
   .ytnav button{font-family:inherit;font-size:clamp(12px,1.3vw,15px);padding:7px 16px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.06);color:var(--text);cursor:pointer}
   .ytempty{text-align:center;color:var(--soft);font-size:clamp(12px,1.3vw,16px);padding:10px}
   .ytform{display:flex;gap:8px;width:100%}
@@ -309,7 +336,7 @@
     </svg>
     <div class="date" id="d"></div>
     <div class="hello" id="h"></div>
-    <div class="wx" id="wx"><span class="wi" id="wxI">⛅</span><span class="wt" id="wxT">--°</span><span class="wd"><b id="wxC">الطقس</b><small id="wxD">جاري التحميل…</small></span></div>
+    <div class="wx" id="wx"><span class="wi" id="wxI">⛅</span><span class="wt" id="wxT">--°</span><span class="wd"><b id="wxC">الطقس</b><small id="wxD">جاري التحميل…</small></span><div class="wxx" id="wxX"></div><div class="wxf" id="wxF"></div></div>
   </section>
 
   <section class="card cal">
@@ -375,6 +402,8 @@
 
     <h3>الطقس</h3>
     <div class="row" id="wxShowRow"></div>
+    <p class="note" style="margin:10px 0 6px">شكل الطقس</p>
+    <div class="row" id="wxStyleRow"></div>
     <button class="opt" style="margin-top:10px;width:100%" id="wxAuto">📍 حسب مكاني تلقائي</button>
     <form class="cform" id="wxForm" style="margin-top:10px">
       <input id="wxCity" placeholder="أو اكتب اسم المدينة" autocomplete="off">
@@ -739,10 +768,12 @@ const WX_CODES=[[0,'صحو','☀️','🌙'],[1,'صحو غالبًا','🌤️',
   [71,'ثلج','❄️','❄️'],[73,'ثلج','❄️','❄️'],[75,'ثلج كثيف','❄️','❄️'],[77,'ثلج','❄️','❄️'],[80,'زخات مطر','🌦️','🌧️'],[81,'زخات مطر','🌦️','🌧️'],[82,'زخات قوية','⛈️','⛈️'],
   [85,'زخات ثلج','🌨️','🌨️'],[86,'زخات ثلج','🌨️','🌨️'],[95,'عاصفة رعدية','⛈️','⛈️'],[96,'عاصفة وبرد','⛈️','⛈️'],[99,'عاصفة وبرد','⛈️','⛈️']];
 function wxInfo(c,day){const r=WX_CODES.find(x=>x[0]===c)||[0,'—','🌡️','🌡️'];return {t:r[1],i:day?r[2]:r[3]};}
-let WXS={mode:store.get('wxMode','auto'),show:store.get('wxShow','on')};
+let WXS={mode:store.get('wxMode','auto'),show:store.get('wxShow','on'),style:store.get('wxStyle','card')};
 let wxCity; try{wxCity=JSON.parse(store.get('wxCity','null'))}catch(e){wxCity=null}
 if(!wxCity) wxCity={n:'الرياض',lat:24.7136,lon:46.6753};
-function wxShow(){ $('wx').hidden=WXS.show!=='on'; }
+function wxShow(){ $('wx').hidden=WXS.show!=='on'; $('wx').dataset.s=WXS.style; }
+makeOpts('wxStyleRow',[['card','🃏 بطاقة'],['mini','💊 صغير'],['big','🔆 كبير'],['detail','💧 تفاصيل'],['hours','🕐 الساعات الجاية'],['week','📅 الأيام الجاية'],['glass','✨ زجاجي مضيء'],['line','➖ خط بسيط']],WXS.style,
+  v=>{WXS.style=v;store.set('wxStyle',v);wxShow();try{const L=JSON.parse(store.get('wxLast','null')); if(L) wxDraw(L.d,L.name);}catch(e){} if(v==='hours'||v==='week'||v==='detail') wxUpdate();});
 makeOpts('wxShowRow',[['on','إظهار الطقس'],['off','إخفاء']],WXS.show,v=>{WXS.show=v;store.set('wxShow',v);wxShow();});
 function wxNote(){ $('wxNow').textContent=WXS.mode==='auto'?'الحين: حسب مكانك تلقائي 📍':'الحين: '+wxCity.n; $('wxAuto').classList.toggle('on',WXS.mode==='auto'); }
 function wxDraw(d,name){
@@ -750,9 +781,23 @@ function wxDraw(d,name){
   $('wxI').textContent=inf.i; $('wxT').textContent=Math.round(cur.temperature_2m)+'°';
   $('wxC').textContent=name+' • '+inf.t;
   $('wxD').textContent='↑'+Math.round(d.daily.temperature_2m_max[0])+'°  ↓'+Math.round(d.daily.temperature_2m_min[0])+'°';
+  const R=Math.round, X=$('wxX'), F=$('wxF'); X.innerHTML=''; F.innerHTML='';
+  if(cur.relative_humidity_2m!=null) X.innerHTML='<span>💧 الرطوبة<b>'+R(cur.relative_humidity_2m)+'%</b></span><span>💨 الرياح<b>'+R(cur.wind_speed_10m)+' كم</b></span><span>🌡️ الإحساس<b>'+R(cur.apparent_temperature)+'°</b></span>';
+  const style=WXS.style;
+  if(style==='week' && d.daily.weather_code){
+    const days=['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+    d.daily.time.forEach((t,i)=>{ const dt=new Date(t+'T12:00'); const w=wxInfo(d.daily.weather_code[i],true);
+      F.innerHTML+='<span>'+(i===0?'اليوم':days[dt.getDay()])+'<i>'+w.i+'</i><b>'+R(d.daily.temperature_2m_max[i])+'° / '+R(d.daily.temperature_2m_min[i])+'°</b></span>'; });
+  }
+  if(style==='hours' && d.hourly){
+    const now=Date.now(); let n=0;
+    d.hourly.time.forEach((t,i)=>{ if(n>=6) return; const dt=new Date(t); if(dt.getTime()<now-3600000) return; n++;
+      const h=dt.getHours(), w=wxInfo(d.hourly.weather_code[i],h>=6&&h<18);
+      F.innerHTML+='<span>'+(n===1?'الحين':((h%12)||12)+(h<12?' ص':' م'))+'<i>'+w.i+'</i><b>'+R(d.hourly.temperature_2m[i])+'°</b></span>'; });
+  }
 }
 async function wxFetch(lat,lon,name){
-  const u='https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&current=temperature_2m,weather_code,is_day&daily=temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=1';
+  const u='https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&current=temperature_2m,weather_code,is_day,relative_humidity_2m,wind_speed_10m,apparent_temperature&hourly=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min,weather_code&timezone=auto&forecast_days=5';
   const d=await (await fetch(u)).json(); if(!d.current) throw 0;
   wxDraw(d,name); store.set('wxLast',JSON.stringify({d,name}));
 }
@@ -793,7 +838,7 @@ applyAll(); tick(); setInterval(tick,1000); drawDock(); drawMyList(); drawCatalo
 
 /* يوتيوب الحقيقي داخل المشغل (في تطبيق الأندرويد) */
 if(window.YT && YT.show){
-  document.body.classList.add('ytNative');
+  document.documentElement.classList.add('ytNative');
   const box=$('ytBox'); box.innerHTML='<div class="ytempty">جاري فتح يوتيوب…</div>';
   let last='';
   function ytSync(){
