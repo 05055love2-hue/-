@@ -317,7 +317,7 @@ function setVer(v){VER=v;store.set('ver',v.k);$('verTxt').textContent=v.n;
 VERS.forEach(v=>{const b=document.createElement('button');b.className='ver-b';b.innerHTML='<i>'+v.e+'</i><span><b></b><small></small></span>';
   b.querySelector('b').textContent=v.n;b.querySelector('small').textContent=v.d;
   b.onclick=()=>{setVer(v);$('verOv').classList.remove('show');toast('صار المشغل: '+v.n)};$('verList').appendChild(b)});
-function ytApps(){return apps().filter(a=>/youtube|يوتيوب|tube|vanced|newpipe|revanced|libretube|songtube/i.test(a.n+' '+a.pkg))}
+function ytApps(){return apps().filter(a=>/youtube|يوتيوب|tube|vanced|newpipe|revanced|libretube|songtube/i.test(a.n+' '+a.pkg)&&!/manager|microg|mgoogle|مايكرو|gms|settings|إعدادات|installer/i.test(a.n+' '+a.pkg))}
 $('bVer').onclick=()=>{const L=$('verApps');L.innerHTML='';const list=NATIVE?ytApps():[];
   if(!list.length)L.innerHTML='<p class="hint">ما لقيت تطبيقات يوتيوب مثبتة</p>';
   list.forEach(a=>{const b=tileEl(a);b.onclick=()=>{$('verOv').classList.remove('show');
