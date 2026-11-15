@@ -111,7 +111,8 @@
   .wx .wd{display:flex;flex-direction:column;text-align:right;line-height:1.35}
   .wx .wd b{font-size:clamp(12px,1.4vw,17px);font-weight:500}
   .wx .wd small{font-size:clamp(11px,1.2vw,14px);color:var(--soft)}
-  body.L-sport .wx,body.L-ring .wx{position:absolute;bottom:2vh;padding:4px 12px;gap:8px}
+  body.L-sport .wx,body.L-ring .wx{position:absolute;top:1.6vh;inset-inline-start:1.4vw;margin:0;padding:4px 12px;gap:8px}
+  body.L-sport .wx .wd small,body.L-ring .wx .wd small{display:none}
   body.L-sport .wx .wi,body.L-ring .wx .wi,body.L-sport .wx .wt,body.L-ring .wx .wt{font-size:clamp(18px,2.2vw,28px)}
   body.L-cinema .wx{margin:0;padding:2px 10px;gap:6px}
   body.L-cinema .wx .wi,body.L-cinema .wx .wt{font-size:clamp(16px,2vw,24px)}
@@ -612,7 +613,7 @@ function saveDock(){store.set('dock',JSON.stringify(DOCK));drawDock();drawMyList
 function drawDock(){
   const d=$('dock'); d.innerHTML='';
   DOCK.forEach(x=>{const a=info(x); if(a) d.appendChild(tile(a,()=>launch(a)));});
-  d.appendChild(tile({n:'أضف',e:'＋'},()=>$('addOv').classList.add('show'),'add'));
+  d.appendChild(tile({n:'أضف',e:'+'},()=>$('addOv').classList.add('show'),'add'));
   d.appendChild(tile({n:'الإعدادات',i:IC.gear},()=>$('ov').classList.add('show')));
 }
 function drawMyList(){
