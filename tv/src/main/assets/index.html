@@ -5,92 +5,221 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>شاشتي</title>
 <style>
-  :root{--bg1:#0b1424;--bg2:#1b3355;--accent:#7cc4ff;--text:#eef4fb;--soft:#9fb3c8;--line:rgba(255,255,255,.12)}
+  :root{--bg1:#0b1424;--bg2:#1b3355;--accent:#7cc4ff;--text:#eef4fb;--soft:#9fb3c8;--line:rgba(255,255,255,.12);--card:rgba(255,255,255,.06)}
   *{box-sizing:border-box}
   html,body{margin:0;height:100%;overflow:hidden}
   body{font-family:'Tajawal','Cairo',sans-serif;color:var(--text);
-    background:radial-gradient(70vw 60vh at 85% 0%,var(--bg2),transparent 70%),radial-gradient(60vw 60vh at 0% 100%,color-mix(in srgb,var(--accent) 18%,transparent),transparent 70%),var(--bg1);
-    transition:background .6s}
-  .wrap{height:100vh;display:flex;flex-direction:column;padding:4vh 4vw 3vh}
-  .top{display:flex;align-items:flex-start;justify-content:space-between;gap:3vw}
-  .clock{font-size:11vw;font-weight:300;line-height:.95;direction:ltr;letter-spacing:-.02em}
-  .clock small{font-size:2.6vw;color:var(--soft);margin-inline-start:.6vw}
-  .date{font-size:1.9vw;color:var(--soft);margin-top:1vh}
-  .greet{font-size:1.7vw;color:var(--accent);margin-top:.6vh}
-  .wx{display:flex;align-items:center;gap:1.2vw;padding:1.6vh 1.8vw;border-radius:2vw;background:rgba(255,255,255,.06);border:1px solid var(--line)}
-  .wx .i{font-size:4vw}
-  .wx .t{font-size:3.6vw;direction:ltr}
-  .wx .d{display:flex;flex-direction:column;font-size:1.3vw;color:var(--soft)}
-  .wx .d b{color:var(--text);font-weight:500;font-size:1.5vw}
-  .quick{display:flex;gap:1.2vw;margin-top:3.5vh}
-  .q{display:flex;align-items:center;gap:.8vw;font:inherit;font-size:1.4vw;color:var(--text);padding:1.2vh 1.6vw;border-radius:1.4vw;border:2px solid var(--line);background:rgba(255,255,255,.06)}
-  h2{font-size:1.6vw;font-weight:500;color:var(--soft);margin:3.5vh 0 1.6vh}
-  .grid{flex:1;min-height:0;overflow:hidden;display:grid;grid-template-columns:repeat(6,1fr);gap:2.2vh 1.6vw;align-content:start;padding:1vh .6vw 2vh}
+    background:radial-gradient(70vw 60vh at 85% 0%,var(--bg2),transparent 70%),radial-gradient(60vw 60vh at 0% 100%,color-mix(in srgb,var(--accent) 18%,transparent),transparent 70%),var(--bg1)}
+  button{font:inherit;color:inherit;cursor:pointer}
+  ::-webkit-scrollbar{display:none}
+
+  /* ===== الهيكل العام ===== */
+  #home{height:100vh;overflow:hidden;padding:4vh 4vw 4vh;display:grid;gap:2.4vh 2.4vw}
+  #home>*{min-width:0}
+  #grid{min-width:0;max-width:100%}
+  #hdr{grid-area:hdr;min-width:0} #wx{grid-area:wx} #quick{grid-area:quick} #yt{grid-area:yt;min-height:0} #appsWrap{grid-area:apps;min-height:0;display:flex;flex-direction:column} #dock{grid-area:dock;display:none}
+  .clock{font-size:10vw;font-weight:300;line-height:.95;direction:ltr;letter-spacing:-.02em;display:inline-block}
+  .clock small{font-size:2.4vw;color:var(--soft);margin-inline-start:.6vw}
+  .date{font-size:1.8vw;color:var(--soft);margin-top:1vh}
+  .greet{font-size:1.6vw;color:var(--accent);margin-top:.4vh}
+  #wx{display:flex;align-items:center;gap:1.2vw;padding:1.6vh 1.8vw;border-radius:2vw;background:var(--card);border:1px solid var(--line);align-self:start;justify-self:start}
+  #wx .i{font-size:3.6vw} #wx .t{font-size:3.2vw;direction:ltr}
+  #wx .d{display:flex;flex-direction:column;font-size:1.25vw;color:var(--soft)} #wx .d b{color:var(--text);font-weight:500;font-size:1.45vw}
+  #quick{display:flex;gap:1vw;flex-wrap:wrap;align-self:start}
+  .q{display:flex;align-items:center;gap:.6vw;font-size:1.3vw;padding:1.1vh 1.4vw;border-radius:1.3vw;border:2px solid var(--line);background:var(--card)}
+  h2{font-size:1.5vw;font-weight:500;color:var(--soft);margin:0 0 1.4vh}
+  #grid{flex:1;min-height:0;overflow:auto;display:grid;grid-template-columns:repeat(6,1fr);gap:2.2vh 1.6vw;align-content:start;padding:1.2vh .8vw 3vh}
+
+  /* ===== بلاطة التطبيق ===== */
   .app{position:relative;aspect-ratio:16/9;border-radius:1.2vw;border:2px solid var(--line);background:rgba(255,255,255,.07);
-    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.8vh;overflow:hidden;color:var(--text);font:inherit;font-size:1.2vw;padding:0}
-  .app img.ic{width:3.6vw;height:3.6vw;object-fit:contain}
-  .app img.bn{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-  .app.hasbn span{display:none}
-  .app span{max-width:92%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.8vh;font-size:1.15vw;padding:0;overflow:hidden;flex:none}
+  .app .ic{width:3.4vw;height:3.4vw;object-fit:contain;flex:none}
+  .app .bn{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none}
+  .app .lt{display:none;font-style:normal;width:3.4vw;height:3.4vw;border-radius:50%;place-items:center;font-weight:700;font-size:1.6vw;color:#fff;flex:none}
+  .app span.n{max-width:92%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .f{transition:transform .15s,box-shadow .15s,border-color .15s;outline:none}
-  .f.on{transform:scale(1.08);border-color:var(--accent);box-shadow:0 0 0 3px var(--accent),0 1.5vh 4vh rgba(0,0,0,.5);z-index:2;background:rgba(255,255,255,.14)}
-  .empty{grid-column:1/-1;color:var(--soft);font-size:1.4vw}
-  .hint{position:fixed;bottom:1.6vh;left:4vw;font-size:1.1vw;color:var(--soft);opacity:.8}
-  .ov{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:9}
+  .f.on{transform:scale(1.08);border-color:var(--accent)!important;box-shadow:0 0 0 3px var(--accent),0 1.5vh 4vh rgba(0,0,0,.5);z-index:2}
+  .app.f.on{background:rgba(255,255,255,.14)}
+
+  /* ===== أشكال الأيقونات ===== */
+  body[data-i="orig"] .app.hasbn .bn{display:block}
+  body[data-i="orig"] .app.hasbn .ic, body[data-i="orig"] .app.hasbn span.n{visibility:hidden}
+  body[data-i="ios"] .app{background:none;border-color:transparent}
+  body[data-i="ios"] .app .ic{width:5vw;height:5vw;border-radius:1.2vw;background:#fff;padding:.5vw;box-shadow:0 .8vh 2vh rgba(0,0,0,.35)}
+  body[data-i="ios"] .app.f.on{box-shadow:none;background:none}
+  body[data-i="ios"] .app.f.on .ic{box-shadow:0 0 0 3px var(--accent),0 1vh 3vh rgba(0,0,0,.5)}
+  body[data-i="circle"] .app{background:none;border-color:transparent}
+  body[data-i="circle"] .app .ic{width:5vw;height:5vw;border-radius:50%;background:rgba(255,255,255,.12);padding:.8vw;border:2px solid var(--line)}
+  body[data-i="circle"] .app.f.on{box-shadow:none;background:none}
+  body[data-i="circle"] .app.f.on .ic{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent)}
+  body[data-i="glass"] .app{background:linear-gradient(145deg,rgba(255,255,255,.18),rgba(255,255,255,.04));backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-color:rgba(255,255,255,.25)}
+  body[data-i="mono"] .app .ic{filter:grayscale(1) brightness(1.5) drop-shadow(0 0 .4vw var(--accent))}
+  body[data-i="neon"] .app{background:rgba(0,0,0,.35);border-color:color-mix(in srgb,var(--accent) 70%,transparent);box-shadow:0 0 1.2vw color-mix(in srgb,var(--accent) 35%,transparent),inset 0 0 1vw color-mix(in srgb,var(--accent) 20%,transparent)}
+  body[data-i="neon"] .app span.n{color:var(--accent)}
+  body[data-i="flat"] .app{background:none;border-color:transparent}
+  body[data-i="flat"] .app.f.on{background:rgba(255,255,255,.1)}
+  body[data-i="letter"] .app .ic{display:none}
+  body[data-i="letter"] .app .lt{display:grid}
+
+  /* ===== الأشكال: 1 كلاسيكي ===== */
+  body[data-l="classic"] #home{grid-template-columns:1fr auto;grid-template-rows:auto auto 1fr;grid-template-areas:"hdr wx" "quick quick" "apps apps"}
+  body[data-l="classic"] #yt{display:none}
+
+  /* 2 سينمائي: ساعة ضخمة بالنص وصف تطبيقات تحت */
+  body[data-l="cinema"] #home{grid-template-columns:minmax(0,1fr);grid-template-rows:auto 1fr auto auto;grid-template-areas:"quick" "hdr" "wx" "apps";justify-items:center}
+  body[data-l="cinema"] #hdr{text-align:center;align-self:center}
+  body[data-l="cinema"] .clock{font-size:15vw;font-weight:200}
+  body[data-l="cinema"] #wx{justify-self:center;background:none;border:none;padding:0}
+  body[data-l="cinema"] #quick{justify-self:end}
+  body[data-l="cinema"] #yt{display:none}
+  body[data-l="cinema"] #appsWrap{width:100%} body[data-l="cinema"] h2{display:none}
+  body[data-l="cinema"] #grid{display:flex;overflow-x:auto;gap:1.6vw;padding:2.4vh 1vw;align-items:center}
+  body[data-l="cinema"] .app{width:15vw}
+
+  /* 3 يوتيوب: المشغل كبير على اليسار */
+  body[data-l="youtube"] #home{grid-template-columns:minmax(0,1fr) minmax(0,1.45fr);grid-template-rows:auto auto auto 1fr;grid-template-areas:"hdr yt" "wx yt" "quick yt" "apps yt"}
+  body[data-l="youtube"] .clock{font-size:6.5vw}
+  body[data-l="youtube"] #grid{display:flex;overflow-x:auto;gap:1.2vw;padding:2vh .8vw;align-items:center}
+  body[data-l="youtube"] .app{width:11vw}
+
+  /* 4 جانبي: قائمة تطبيقات على اليمين */
+  body[data-l="side"] #home{grid-template-columns:24vw 1fr;grid-template-rows:auto auto 1fr;grid-template-areas:"apps hdr" "apps wx" "apps quick"}
+  body[data-l="side"] #appsWrap{background:var(--card);border:1px solid var(--line);border-radius:2vw;padding:2.4vh 1.2vw}
+  body[data-l="side"] #grid{grid-template-columns:1fr;gap:1vh}
+  body[data-l="side"] .app{aspect-ratio:auto;flex-direction:row;justify-content:flex-start;gap:1vw;padding:1vh 1vw;font-size:1.3vw}
+  body[data-l="side"] .app .bn{display:none!important} body[data-l="side"] .app .ic,body[data-l="side"] .app span.n{visibility:visible!important}
+  body[data-l="side"] .app .ic,body[data-l="side"] .app .lt{width:2.8vw;height:2.8vw;padding:0}
+  body[data-l="side"] .app.f.on{transform:scale(1.03)}
+  body[data-l="side"] #hdr{align-self:end} body[data-l="side"] .clock{font-size:13vw}
+  body[data-l="side"] #yt{display:none}
+
+  /* 5 ايفون: أيقونات بدون بلاطات وصف سفلي */
+  body[data-l="iphone"] #home{grid-template-columns:auto 1fr auto;grid-template-rows:auto 1fr auto;grid-template-areas:"hdr quick wx" "apps apps apps" "dock dock dock";padding-top:3vh}
+  body[data-l="iphone"] .clock{font-size:3.6vw;font-weight:500}
+  body[data-l="iphone"] .date,body[data-l="iphone"] .greet{display:none}
+  body[data-l="iphone"] #hdr{display:flex;align-items:center}
+  body[data-l="iphone"] #quick{justify-self:center}
+  body[data-l="iphone"] #wx{padding:.6vh 1.2vw} body[data-l="iphone"] #wx .i{font-size:2.4vw} body[data-l="iphone"] #wx .t{font-size:2.2vw} body[data-l="iphone"] #wx .d span{display:none}
+  body[data-l="iphone"] h2{display:none} body[data-l="iphone"] #yt{display:none}
+  body[data-l="iphone"] #grid{grid-template-columns:repeat(8,1fr);gap:3vh 1.4vw}
+  body[data-l="iphone"] .app{aspect-ratio:auto;background:none!important;border-color:transparent;padding:.8vh 0}
+  body[data-l="iphone"] .app .bn{display:none!important} body[data-l="iphone"] .app .ic,body[data-l="iphone"] .app span.n{visibility:visible!important}
+  body[data-l="iphone"] .app .ic,body[data-l="iphone"] .app .lt{width:5.2vw;height:5.2vw}
+  body[data-l="iphone"] .app.f.on{box-shadow:none}
+  body[data-l="iphone"] .app.f.on .ic,body[data-l="iphone"] .app.f.on .lt{box-shadow:0 0 0 3px var(--accent)}
+  body[data-l="iphone"] #dock{display:flex;justify-content:center;gap:2.4vw;padding:1.6vh 3vw;border-radius:2.4vw;background:rgba(255,255,255,.12);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);justify-self:center}
+  body[data-l="iphone"] #dock .app span.n{display:none}
+
+  /* 6 بسيط: ساعة بالنص وتطبيقات دائرية */
+  body[data-l="minimal"] #home{grid-template-columns:minmax(0,1fr);grid-template-rows:auto 1fr auto;grid-template-areas:"quick" "hdr" "apps";justify-items:center}
+  body[data-l="minimal"] #hdr{text-align:center;align-self:center;display:flex;flex-direction:column;align-items:center}
+  body[data-l="minimal"] .clock{font-size:12vw;font-weight:100}
+  body[data-l="minimal"] #wx{display:none} body[data-l="minimal"] #yt{display:none} body[data-l="minimal"] h2{display:none}
+  body[data-l="minimal"] #quick{justify-self:center}
+  body[data-l="minimal"] #appsWrap{max-width:100%;width:100%}
+  body[data-l="minimal"] #grid{display:flex;overflow-x:auto;gap:1.6vw;padding:2.4vh 1vw;align-items:center}
+  body[data-l="minimal"] .app{width:8.5vw;aspect-ratio:auto;background:none!important;border-color:transparent;padding:.6vh 0}
+  body[data-l="minimal"] .app .bn{display:none!important} body[data-l="minimal"] .app .ic,body[data-l="minimal"] .app span.n{visibility:visible!important}
+  body[data-l="minimal"] .app .ic,body[data-l="minimal"] .app .lt{width:5vw;height:5vw;border-radius:50%;background:rgba(255,255,255,.1);padding:.8vw}
+  body[data-l="minimal"] .app.f.on{box-shadow:none}
+  body[data-l="minimal"] .app.f.on .ic,body[data-l="minimal"] .app.f.on .lt{box-shadow:0 0 0 3px var(--accent)}
+
+  /* 7 لوحة: بطاقات */
+  body[data-l="dash"] #home{grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1.2fr);grid-template-rows:auto auto 1fr;grid-template-areas:"hdr wx yt" "quick quick yt" "apps apps apps"}
+  body[data-l="dash"] #hdr,body[data-l="dash"] #wx{background:var(--card);border:1px solid var(--line);border-radius:2vw;padding:2.4vh 1.8vw;align-self:stretch;justify-self:stretch}
+  body[data-l="dash"] .clock{font-size:6vw}
+  body[data-l="dash"] #wx{flex-direction:column;justify-content:center}
+  body[data-l="dash"] #grid{display:flex;overflow-x:auto;gap:1.4vw;padding:2vh .8vw;align-items:center}
+  body[data-l="dash"] .app{width:13vw}
+
+  /* ===== مشغل يوتيوب ===== */
+  #yt{display:flex;flex-direction:column;gap:1.6vh;background:var(--card);border:2px solid var(--line);border-radius:2vw;padding:1.6vh 1.2vw}
+  #yt.focus{border-color:#ff3b30;box-shadow:0 0 0 3px #ff3b30}
+  #ytBox{flex:1;min-height:0;border-radius:1.2vw;background:#000;display:grid;place-items:center;color:var(--soft);font-size:1.3vw;text-align:center;overflow:hidden}
+  #ytBox b{color:#ff3b30;font-size:2.4vw;display:block}
+  #ytCtl{display:flex;justify-content:center;gap:.8vw;flex-wrap:wrap}
+  .yb{font-size:1.2vw;padding:.9vh 1.1vw;border-radius:1.1vw;border:2px solid var(--line);background:rgba(255,255,255,.07);display:flex;align-items:center;gap:.4vw}
+  .yb.main{background:#ff3b30;border-color:#ff3b30;color:#fff}
+  .ythint{font-size:1.05vw;color:var(--soft);text-align:center;display:none}
+  #yt.focus .ythint{display:block}
+
+  .hint{position:fixed;bottom:1.2vh;left:4vw;font-size:1vw;color:var(--soft);opacity:.75}
+
+  /* ===== نافذة التخصيص ===== */
+  .ov{position:fixed;inset:0;background:rgba(0,0,0,.65);display:none;align-items:center;justify-content:center;z-index:9}
   .ov.show{display:flex}
-  .panel{background:var(--bg1);border:2px solid var(--line);border-radius:2vw;padding:4vh 3vw;min-width:44vw}
-  .panel h3{font-size:2vw;margin:0 0 2.5vh}
-  .row{display:flex;flex-wrap:wrap;gap:1vw;margin-bottom:2.5vh}
-  .opt{font:inherit;font-size:1.4vw;color:var(--text);padding:1.2vh 1.6vw;border-radius:1.2vw;border:2px solid var(--line);background:rgba(255,255,255,.06)}
-  .opt.sel{background:color-mix(in srgb,var(--accent) 30%,transparent)}
-  .sw{display:inline-block;width:1.4vw;height:1.4vw;border-radius:50%;vertical-align:middle;margin-inline-end:.5vw}
+  .panel{background:var(--bg1);border:2px solid var(--line);border-radius:2vw;padding:3.5vh 3vw;width:70vw;max-height:90vh;overflow:auto}
+  .panel h3{font-size:1.9vw;margin:0 0 2vh}
+  .panel h4{font-size:1.4vw;color:var(--soft);font-weight:500;margin:2.4vh 0 1.2vh}
+  .row{display:flex;flex-wrap:wrap;gap:1vw}
+  .opt{font-size:1.3vw;padding:1.1vh 1.4vw;border-radius:1.2vw;border:2px solid var(--line);background:rgba(255,255,255,.06)}
+  .opt.sel{background:color-mix(in srgb,var(--accent) 32%,transparent);border-color:color-mix(in srgb,var(--accent) 60%,transparent)}
+  .sw{display:inline-block;width:1.3vw;height:1.3vw;border-radius:50%;vertical-align:middle;margin-inline-end:.5vw}
 </style>
 </head>
-<body>
-<div class="wrap">
-  <div class="top">
-    <div>
-      <div class="clock" id="clock">--:--</div>
-      <div class="date" id="date"></div>
-      <div class="greet" id="greet"></div>
-    </div>
-    <div class="wx" id="wx"><span class="i" id="wxI">⛅</span><span class="t" id="wxT">--°</span><span class="d"><b id="wxC">الرياض</b><span id="wxD">جاري التحميل…</span></span></div>
-  </div>
-
-  <div class="quick">
+<body data-l="classic" data-i="orig">
+<div id="home">
+  <section id="hdr">
+    <div class="clock" id="clock">--:--</div>
+    <div class="date" id="date"></div>
+    <div class="greet" id="greet"></div>
+  </section>
+  <div id="wx"><span class="i" id="wxI">⛅</span><span class="t" id="wxT">--°</span><span class="d"><b id="wxC">الرياض</b><span id="wxD">جاري التحميل…</span></span></div>
+  <div id="quick">
+    <button class="q f" id="qCustom">🎨 تخصيص</button>
     <button class="q f" id="qSet">⚙️ إعدادات التلفزيون</button>
-    <button class="q f" id="qTheme">🎨 الألوان</button>
-    <button class="q f" id="qHome">🏠 خلّها الشاشة الرئيسية</button>
+    <button class="q f" id="qHome">🏠 خلّها الرئيسية</button>
   </div>
-
-  <h2>تطبيقاتي</h2>
-  <div class="grid" id="grid"></div>
+  <section id="yt">
+    <div id="ytBox"><div><b>▶ YouTube</b>يوتيوب يشتغل هنا على التلفزيون</div></div>
+    <div id="ytCtl">
+      <button class="yb f main" id="ytBrowse">🔍 تصفح واختر</button>
+      <button class="yb f" id="ytBack">↩ رجوع</button>
+      <button class="yb f" id="ytRew">⏪ 10</button>
+      <button class="yb f" id="ytPlay">⏯ تشغيل/إيقاف</button>
+      <button class="yb f" id="ytFwd">10 ⏩</button>
+      <button class="yb f" id="ytFull">⛶ تكبير</button>
+    </div>
+    <div class="ythint">أنت الحين داخل يوتيوب • اضغط زر الرجوع في الريموت عشان ترجع للأزرار</div>
+  </section>
+  <section id="appsWrap"><h2>تطبيقاتي</h2><div id="grid"></div></section>
+  <div id="dock"></div>
 </div>
-<div class="hint">تنقّل بالأسهم ← → ↑ ↓ واضغط موافق للفتح</div>
+<div class="hint">تنقّل بالأسهم واضغط موافق</div>
 
-<div class="ov" id="themeOv">
+<div class="ov" id="custOv">
   <div class="panel">
-    <h3>🎨 اختر الألوان</h3>
-    <div class="row" id="themeRow"></div>
-    <button class="opt f" id="themeClose">رجوع</button>
+    <h3>🎨 تخصيص الشاشة</h3>
+    <h4>شكل الواجهة</h4><div class="row" id="layRow"></div>
+    <h4>شكل الأيقونات</h4><div class="row" id="icRow"></div>
+    <h4>الألوان</h4><div class="row" id="thRow"></div>
+    <h4></h4><button class="opt f" id="custClose">✔ تم</button>
   </div>
 </div>
 
 <script>
 const $=id=>document.getElementById(id);
 const store={get(k,d){try{const v=localStorage.getItem(k);return v===null?d:v}catch(e){return d}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+try{location.hash.slice(1).split('&').forEach(kv=>{const [k,v]=kv.split('=');if(k&&v)localStorage.setItem(k,decodeURIComponent(v));});}catch(e){}
 
-/* ===== الألوان ===== */
+/* ===== الخيارات ===== */
+const LAYOUTS=[['classic','🪟 كلاسيكي'],['cinema','🎬 سينمائي'],['youtube','▶️ مع يوتيوب'],['side','📋 قائمة جانبية'],['iphone','📱 مثل الايفون'],['minimal','⚪ بسيط'],['dash','🗂️ لوحة بطاقات']];
+const ICONS=[['orig','الأصلية'],['ios','على شكل ايفون'],['circle','دائرية'],['glass','زجاجية'],['neon','نيون مضيء'],['mono','لون واحد'],['flat','بدون خلفية'],['letter','حروف ملونة']];
 const THEMES={
   night:{n:'ليلي أزرق',bg1:'#0b1424',bg2:'#1b3355',accent:'#7cc4ff'},
   calm:{n:'هادي',bg1:'#0c1a1e',bg2:'#2f5e5a',accent:'#8fd3c1'},
   sunset:{n:'غروب',bg1:'#1d0f1a',bg2:'#5a2a3a',accent:'#ffb27c'},
   royal:{n:'ملكي',bg1:'#120d22',bg2:'#3b2a66',accent:'#c9a7ff'},
-  gold:{n:'ذهبي',bg1:'#141210',bg2:'#4a3d22',accent:'#f2c96b'}
+  gold:{n:'ذهبي',bg1:'#141210',bg2:'#4a3d22',accent:'#f2c96b'},
+  red:{n:'أحمر',bg1:'#160b0c',bg2:'#4d1a1d',accent:'#ff7a7a'}
 };
-let theme=store.get('theme','night'); if(!THEMES[theme]) theme='night';
-function applyTheme(){const t=THEMES[theme],r=document.documentElement.style;r.setProperty('--bg1',t.bg1);r.setProperty('--bg2',t.bg2);r.setProperty('--accent',t.accent);}
-applyTheme();
+const S={l:store.get('layout','classic'),i:store.get('icons','orig'),t:store.get('theme','night')};
+if(!LAYOUTS.some(x=>x[0]===S.l)) S.l='classic'; if(!ICONS.some(x=>x[0]===S.i)) S.i='orig'; if(!THEMES[S.t]) S.t='night';
+function applyAll(){
+  const t=THEMES[S.t],r=document.documentElement.style; ['bg1','bg2','accent'].forEach(k=>r.setProperty('--'+k,t[k]));
+  document.body.dataset.l=S.l; document.body.dataset.i=S.i;
+  drawDock(); if(typeof ytSync==='function') setTimeout(ytSync,50);
+}
 
 /* ===== الساعة ===== */
 const DAYS=['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
@@ -120,25 +249,36 @@ wxUpdate(); setInterval(wxUpdate,20*60*1000);
 
 /* ===== التطبيقات ===== */
 const hasNative=!!window.Native;
-const SAMPLE=[['يوتيوب','#ff3b30'],['نتفليكس','#e50914'],['شاهد','#00c389'],['IPTV','#7b61ff'],['المتصفح','#4285f4'],['المعرض','#ffb000'],['الملفات','#8e8e93'],['متجر قوقل','#34a853'],['سبوتيفاي','#1db954'],['الموسيقى','#ff2d55'],['الطقس','#5ac8fa'],['الإعدادات','#636366']];
+const SAMPLE=[['يوتيوب','#ff3b30'],['نتفليكس','#e50914'],['شاهد','#00c389'],['IPTV','#7b61ff'],['المتصفح','#4285f4'],['المعرض','#ffb000'],['الملفات','#8e8e93'],['متجر قوقل','#34a853'],['سبوتيفاي','#1db954'],['الموسيقى','#ff2d55'],['الطقس','#5ac8fa'],['الإعدادات','#636366'],['الألعاب','#af52de'],['الأخبار','#ff9500']];
 function sampleApps(){return SAMPLE.map(([n,c],i)=>({n,pkg:'p'+i,img:"data:image/svg+xml,"+encodeURIComponent("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'><rect rx='2.4' width='10' height='10' fill='"+c+"'/></svg>")}));}
+const LT_COLORS=['#ff3b30','#ff9500','#34c759','#007aff','#5856d6','#af52de','#ff2d55','#00c7be','#a2845e'];
 let apps=[];
+function getOrder(){try{return JSON.parse(store.get('order','{}'))||{}}catch(e){return {}}}
 function loadApps(){
   try{apps=hasNative?JSON.parse(Native.getApps()):sampleApps();}catch(e){apps=[];}
-  const order=JSON.parse(store.get('order','{}')||'{}');
+  const order=getOrder();
   apps.sort((a,b)=>((order[b.pkg]||0)-(order[a.pkg]||0))||a.n.localeCompare(b.n,'ar'));
+}
+function tile(a){
+  const b=document.createElement('button'); b.className='app f'+(a.banner?' hasbn':''); b.dataset.pkg=a.pkg;
+  const col=LT_COLORS[[...a.n].reduce((s,ch)=>s+ch.charCodeAt(0),0)%LT_COLORS.length];
+  b.innerHTML=(a.banner?'<img class="bn" src="'+a.banner+'" alt="">':'')+'<img class="ic" src="'+a.img+'" alt="">'+
+    '<i class="lt" style="background:'+col+'">'+[...(a.n.trim().replace(/^ال/,'')||a.n)][0]+'</i><span class="n">'+a.n+'</span>';
+  b.onclick=()=>openApp(a); return b;
 }
 function drawApps(){
   const g=$('grid'); const keep=cur&&cur.dataset.pkg; g.innerHTML='';
-  apps.forEach(a=>{const b=document.createElement('button');b.className='app f'+(a.banner?' hasbn':'');b.dataset.pkg=a.pkg;
-    b.innerHTML=(a.banner?'<img class="bn" src="'+a.banner+'" alt="">':'<img class="ic" src="'+a.img+'" alt="">')+'<span>'+a.n+'</span>';
-    b.onclick=()=>openApp(a); g.appendChild(b);});
-  if(!apps.length) g.innerHTML='<div class="empty">ما لقيت تطبيقات</div>';
-  if(keep){const k=g.querySelector('[data-pkg="'+keep+'"]'); if(k) focusEl(k,true);}
+  apps.forEach(a=>g.appendChild(tile(a)));
+  if(!apps.length) g.innerHTML='<div style="color:var(--soft)">ما لقيت تطبيقات</div>';
+  drawDock();
+  if(keep){const k=g.querySelector('[data-pkg="'+keep+'"]'); if(k) focusEl(k);}
+}
+function drawDock(){
+  const d=$('dock'); d.innerHTML=''; if(S.l!=='iphone') return;
+  apps.slice(0,5).forEach(a=>d.appendChild(tile(a)));
 }
 function openApp(a){
-  // التطبيقات اللي تفتحها كثير تطلع أول
-  const order=JSON.parse(store.get('order','{}')||'{}'); order[a.pkg]=(order[a.pkg]||0)+1; store.set('order',JSON.stringify(order));
+  const order=getOrder(); order[a.pkg]=(order[a.pkg]||0)+1; store.set('order',JSON.stringify(order));
   if(hasNative) Native.open(a.pkg);
 }
 function refreshApps(){ loadApps(); drawApps(); }
@@ -147,14 +287,18 @@ function refreshApps(){ loadApps(); drawApps(); }
 let cur=null;
 function visibleF(){
   const ov=document.querySelector('.ov.show');
-  return [...(ov||document).querySelectorAll('.f')].filter(e=>e.offsetParent!==null);
+  return [...(ov||document).querySelectorAll('.f')].filter(e=>{const r=e.getBoundingClientRect();return e.offsetParent!==null&&r.width>0;});
 }
-function focusEl(el,quiet){
+function focusEl(el){
   if(!el) return; if(cur) cur.classList.remove('on'); cur=el; el.classList.add('on');
-  const g=$('grid');
-  if(g.contains(el)){const r=el.getBoundingClientRect(),gr=g.getBoundingClientRect();
-    if(r.bottom>gr.bottom-8) g.scrollTop+=r.bottom-gr.bottom+gr.height*0.08;
-    if(r.top<gr.top+8) g.scrollTop-=gr.top-r.top+gr.height*0.08;}
+  // نحرّك قائمة التطبيقات بس، والصفحة تبقى ثابتة
+  const g=el.closest('#grid');
+  if(g){const r=el.getBoundingClientRect(),gr=g.getBoundingClientRect(),m=12;
+    if(r.bottom>gr.bottom-m) g.scrollTop+=r.bottom-gr.bottom+m*3;
+    if(r.top<gr.top+m) g.scrollTop-=gr.top-r.top+m*3;
+    if(r.left<gr.left+m) g.scrollLeft-=gr.left-r.left+m*3;
+    if(r.right>gr.right-m) g.scrollLeft+=r.right-gr.right+m*3;}
+  window.scrollTo(0,0); document.documentElement.scrollTop=0; document.body.scrollTop=0;
 }
 function move(dir){
   const list=visibleF(); if(!cur||!list.includes(cur)){focusEl(list[0]);return;}
@@ -177,29 +321,59 @@ document.addEventListener('keydown',e=>{
   else if(k==='ArrowDown'||c===20){move('D');e.preventDefault();}
   else if(k==='Enter'||c===13||c===23||c===66){ if(cur){cur.click();} e.preventDefault(); }
   else if(k==='Escape'||k==='Backspace'){onBack();e.preventDefault();}
+  else if(k==='MediaPlayPause'||c===85){ytToggle();}
 });
-document.addEventListener('mouseover',e=>{const f=e.target.closest('.f'); if(f&&visibleF().includes(f)) focusEl(f);});
 function onBack(){
   const ov=document.querySelector('.ov.show');
-  if(ov){ov.classList.remove('show'); focusEl($('qTheme')); return;}
-  $('grid').scrollTop=0; focusEl($('grid').querySelector('.f')||$('qSet'));
+  if(ov){ov.classList.remove('show'); setTimeout(ytSync,30); focusEl($('qCustom')); return;}
+  const first=$('grid').querySelector('.f'); $('grid').scrollTop=0; $('grid').scrollLeft=0; focusEl(first||$('qCustom'));
 }
 
 /* ===== الأزرار ===== */
 $('qSet').onclick=()=>{ if(hasNative) Native.settings(); };
 $('qHome').onclick=()=>{ if(hasNative) Native.homeSettings(); };
-$('qTheme').onclick=()=>{ drawThemes(); $('themeOv').classList.add('show'); focusEl($('themeRow').querySelector('.sel')||$('themeRow').firstChild); };
-$('themeClose').onclick=onBack;
-function drawThemes(){
-  const r=$('themeRow'); r.innerHTML='';
-  Object.entries(THEMES).forEach(([k,t])=>{const b=document.createElement('button');b.className='opt f'+(k===theme?' sel':'');
-    b.innerHTML='<span class="sw" style="background:'+t.accent+'"></span>'+t.n;
-    b.onclick=()=>{theme=k;store.set('theme',k);applyTheme();r.querySelectorAll('.opt').forEach(x=>x.classList.toggle('sel',x===b));};
-    r.appendChild(b);});
+$('qCustom').onclick=()=>{ drawCust(); $('custOv').classList.add('show'); ytSync(); focusEl($('layRow').querySelector('.sel')); };
+$('custClose').onclick=onBack;
+function optRow(id,items,curVal,pick){
+  const r=$(id); r.innerHTML='';
+  items.forEach(([v,label,sw])=>{const b=document.createElement('button');b.className='opt f'+(v===curVal?' sel':'');
+    b.innerHTML=(sw?'<span class="sw" style="background:'+sw+'"></span>':'')+label;
+    b.onclick=()=>{r.querySelectorAll('.opt').forEach(x=>x.classList.toggle('sel',x===b));pick(v);};r.appendChild(b);});
+}
+function drawCust(){
+  optRow('layRow',LAYOUTS,S.l,v=>{S.l=v;store.set('layout',v);applyAll();});
+  optRow('icRow',ICONS,S.i,v=>{S.i=v;store.set('icons',v);applyAll();});
+  optRow('thRow',Object.entries(THEMES).map(([k,t])=>[k,t.n,t.accent]),S.t,v=>{S.t=v;store.set('theme',v);applyAll();});
 }
 
-refreshApps();
-focusEl($('grid').querySelector('.f')||$('qSet'));
+/* ===== يوتيوب في الواجهة ===== */
+const hasYT=!!(window.YT && YT.show);
+let ytLast='';
+function ytSync(){
+  if(!hasYT) return;
+  const box=$('ytBox'), r=box.getBoundingClientRect(), d=window.devicePixelRatio||1;
+  const show=!document.querySelector('.ov.show') && r.width>30 && r.height>30 && getComputedStyle($('yt')).display!=='none';
+  const key=show?[r.left,r.top,r.width,r.height].map(v=>Math.round(v*d)).join(','):'off';
+  if(key===ytLast) return; ytLast=key;
+  if(show){const [x,y,w,h]=key.split(',').map(Number); YT.show(x,y,w,h);} else { YT.hide(); ytBlurred(); }
+}
+const V="var v=document.querySelector('video');";
+function ytToggle(){ if(hasYT) YT.run(V+"if(v){v.paused?v.play():v.pause()}"); }
+function ytBlurred(){ const y=$('yt'); if(y.classList.contains('focus')){ y.classList.remove('focus'); focusEl($('ytBrowse')); } }
+$('ytBrowse').onclick=()=>{ if(!hasYT) return; $('yt').classList.add('focus'); YT.focus(); };
+$('ytBack').onclick=()=>{ if(hasYT) YT.back(); };
+$('ytRew').onclick=()=>{ if(hasYT) YT.run(V+"if(v)v.currentTime=Math.max(0,v.currentTime-10)"); };
+$('ytFwd').onclick=()=>{ if(hasYT) YT.run(V+"if(v)v.currentTime=v.currentTime+10"); };
+$('ytPlay').onclick=ytToggle;
+$('ytFull').onclick=()=>{ if(hasYT){ $('yt').classList.add('focus'); YT.full(); } };
+if(hasYT){
+  $('ytBox').innerHTML='<div>جاري فتح يوتيوب…</div>';
+  window.addEventListener('resize',ytSync); setInterval(ytSync,600);
+}
+
+applyAll(); refreshApps();
+focusEl(S.l==='youtube'||S.l==='dash' ? $('ytBrowse') : ($('grid').querySelector('.f')||$('qCustom')));
+setTimeout(ytSync,200);
 </script>
 </body>
 </html>

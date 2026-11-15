@@ -16,6 +16,9 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.JavascriptInterface;
+import android.webkit.CookieManager;
+import android.webkit.WebChromeClient;
+import android.widget.FrameLayout;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
@@ -34,6 +37,16 @@ public class MainActivity extends Activity {
 
     private static final String BASE = "https://tvhome.local/";
     private WebView web;
+    private WebView yt;
+    private FrameLayout root;
+    private boolean ytFull = false;
+    private FrameLayout.LayoutParams ytBoxLp;
+    private View customView;
+    private WebChromeClient.CustomViewCallback customCb;
+
+    // واجهة يوتيوب المصممة للتلفزيون والريموت
+    private static final String YT_URL = "https://www.youtube.com/tv";
+    private static final String TV_UA = "Mozilla/5.0 (Linux; Android 9; Android TV) Cobalt/20.lts.2.0-gold (unlike Gecko) v8/6.5.254.43 gles Starboard/11, Google_ATV_sabrina/RTA1.0 (Google, Chromecast, Wireless) com.google.android.youtube.tv/2.12.08";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +54,10 @@ public class MainActivity extends Activity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         web = new WebView(this);
-        setContentView(web);
+        root = new FrameLayout(this);
+        root.addView(web, new FrameLayout.LayoutParams(-1, -1));
+        setContentView(root);
+        setupYouTube();
         goFullScreen();
 
         WebSettings s = web.getSettings();
@@ -54,6 +70,7 @@ public class MainActivity extends Activity {
         web.setFocusable(true);
         web.setFocusableInTouchMode(true);
         web.addJavascriptInterface(new Bridge(), "Native");
+        web.addJavascriptInterface(new YtBridge(), "YT");
 
         web.setWebViewClient(new WebViewClient() {
             @Override
@@ -144,6 +161,107 @@ public class MainActivity extends Activity {
         }
     }
 
+    private void setupYouTube() {
+        yt = new WebView(this);
+        WebSettings s = yt.getSettings();
+        s.setJavaScriptEnabled(true);
+        s.setDomStorageEnabled(true);
+        s.setMediaPlaybackRequiresUserGesture(false);
+        s.setUserAgentString(TV_UA);
+        s.setLoadWithOverviewMode(true);
+        s.setUseWideViewPort(true);
+        CookieManager.getInstance().setAcceptCookie(true);
+        CookieManager.getInstance().setAcceptThirdPartyCookies(yt, true);
+        yt.setBackgroundColor(0xFF000000);
+        yt.setFocusable(true);
+        yt.setFocusableInTouchMode(true);
+        yt.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                String u = request.getUrl().toString();
+                return !(u.startsWith("http://") || u.startsWith("https://"));
+            }
+        });
+        yt.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public void onShowCustomView(View view, CustomViewCallback cb) {
+                if (customView != null) { cb.onCustomViewHidden(); return; }
+                customView = view; customCb = cb;
+                root.addView(view, new FrameLayout.LayoutParams(-1, -1));
+            }
+            @Override
+            public void onHideCustomView() { hideCustom(); }
+        });
+        yt.setVisibility(View.GONE);
+        root.addView(yt, new FrameLayout.LayoutParams(1, 1));
+    }
+
+    private void hideCustom() {
+        if (customView == null) return;
+        root.removeView(customView);
+        customView = null;
+        if (customCb != null) customCb.onCustomViewHidden();
+        customCb = null;
+    }
+
+    private void ytLeave() {
+        // يرجع التحكم لأزرار الواجهة
+        if (ytFull) {
+            ytFull = false;
+            if (ytBoxLp != null) yt.setLayoutParams(ytBoxLp);
+        }
+        web.requestFocus();
+        web.evaluateJavascript("typeof ytBlurred==='function'&&ytBlurred()", null);
+    }
+
+    private class YtBridge {
+        @JavascriptInterface
+        public void show(final int x, final int y, final int w, final int h) {
+            runOnUiThread(() -> {
+                if (yt.getUrl() == null) yt.loadUrl(YT_URL);
+                FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(w, h);
+                lp.leftMargin = x; lp.topMargin = y;
+                ytBoxLp = lp;
+                if (!ytFull) yt.setLayoutParams(lp);
+                yt.setVisibility(View.VISIBLE);
+            });
+        }
+        @JavascriptInterface
+        public void hide() {
+            runOnUiThread(() -> {
+                if (ytFull) return;
+                if (yt.hasFocus()) web.requestFocus();
+                yt.setVisibility(View.GONE);
+            });
+        }
+        @JavascriptInterface
+        public void run(final String js) {
+            runOnUiThread(() -> yt.evaluateJavascript(js, null));
+        }
+        @JavascriptInterface
+        public void focus() {
+            runOnUiThread(() -> { yt.setVisibility(View.VISIBLE); yt.requestFocus(); });
+        }
+        @JavascriptInterface
+        public void back() {
+            runOnUiThread(() -> {
+                // زر الرجوع داخل واجهة يوتيوب نفسها
+                yt.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ESCAPE));
+                yt.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_ESCAPE));
+            });
+        }
+        @JavascriptInterface
+        public void full() {
+            runOnUiThread(() -> {
+                ytFull = true;
+                yt.setLayoutParams(new FrameLayout.LayoutParams(-1, -1));
+                yt.setVisibility(View.VISIBLE);
+                yt.bringToFront();
+                yt.requestFocus();
+            });
+        }
+    }
+
     private String toData(Drawable d, int w, int h) {
         try {
             Bitmap b = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
@@ -159,11 +277,18 @@ public class MainActivity extends Activity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        // لو فتحت تطبيق ثاني، يوقف فيديو اليوتيوب
+        if (yt != null) yt.evaluateJavascript("var v=document.querySelector('video');if(v)v.pause()", null);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         goFullScreen();
         if (web != null) {
-            web.requestFocus();
+            if (yt == null || !yt.hasFocus()) web.requestFocus();
             web.evaluateJavascript("typeof refreshApps==='function'&&refreshApps()", null);
         }
     }
@@ -173,6 +298,8 @@ public class MainActivity extends Activity {
         // زر الرجوع في الريموت يسكّر النوافذ بس، وما يطلع من الشاشة الرئيسية
         if (e.getKeyCode() == KeyEvent.KEYCODE_BACK) {
             if (e.getAction() == KeyEvent.ACTION_UP) {
+                if (customView != null) { hideCustom(); return true; }
+                if (ytFull || (yt != null && yt.hasFocus())) { ytLeave(); return true; }
                 web.evaluateJavascript("typeof onBack==='function'&&onBack()", null);
             }
             return true;
