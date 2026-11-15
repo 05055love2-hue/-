@@ -19,7 +19,26 @@
   /* ================= الخلفيات ================= */
   .bgl{position:fixed;inset:0;display:none;z-index:0;overflow:hidden;direction:ltr;pointer-events:none}
   body[data-bg=flow] .bgl.flow, body[data-bg=stars] .bgl.stars, body[data-bg=waves] .bgl.waves,
-  body[data-bg=aurora] .bgl.aurora, body[data-bg=hills] .bgl.hills, body[data-bg=photo] .bgl.photo{display:block}
+  body[data-bg=aurora] .bgl.aurora, body[data-bg=hills] .bgl.hills, body[data-bg=photo] .bgl.photo,
+  body[data-bg=earth] .bgl.earth, body[data-bg=earthc] .bgl.earth, body[data-bg=earthn] .bgl.earth{display:block}
+  /* الكرة الأرضية */
+  .earth{background:radial-gradient(ellipse at 70% 40%,#0c1838 0%,#03060f 65%,#000 100%)}
+  .earth i{position:absolute;top:0;left:0;width:2px;height:2px;border-radius:50%}
+  #starC{animation:twinkle 5s ease-in-out infinite}
+  .globe{--gs:95vh;position:absolute;width:var(--gs);height:var(--gs);left:-12vh;bottom:-38vh;border-radius:50%;overflow:hidden;background:#123e78;
+    box-shadow:0 0 50px 8px rgba(90,170,255,.35),0 0 120px 30px rgba(60,130,255,.15)}
+  .globe .tex{position:absolute;top:0;left:0;height:100%;width:calc(var(--gs) * 4);background-image:url(earth.jpg);background-repeat:repeat-x;background-size:auto 100%;
+    animation:spinE 90s linear infinite;will-change:transform}
+  .globe .lights{display:none;background-image:url(lights.jpg);mix-blend-mode:screen;opacity:.95}
+  @keyframes spinE{from{transform:translateX(0)}to{transform:translateX(calc(var(--gs) * -2))}}
+  .globe::after{content:'';position:absolute;inset:0;border-radius:50%;
+    background:radial-gradient(circle at 32% 30%,rgba(255,255,255,.18) 0%,transparent 35%,rgba(0,0,0,.25) 55%,rgba(0,0,0,.88) 78%);
+    box-shadow:inset 0 0 40px 10px rgba(120,190,255,.35)}
+  body[data-bg=earthc] .globe{--gs:70vh;left:50%;top:50%;bottom:auto;margin:calc(var(--gs) / -2) 0 0 calc(var(--gs) / -2)}
+  body[data-bg=earthn] .globe{--gs:85vh;left:auto;right:-14vh;bottom:-30vh;background:#020611;box-shadow:0 0 50px 6px rgba(255,180,90,.15)}
+  body[data-bg=earthn] .globe .tex.day{filter:brightness(.22) saturate(.6)}
+  body[data-bg=earthn] .globe .lights{display:block}
+  body[data-bg=earthn] .globe::after{background:radial-gradient(circle at 65% 30%,rgba(255,255,255,.05) 0%,transparent 40%,rgba(0,0,0,.6) 80%);box-shadow:inset 0 0 30px 6px rgba(255,170,90,.2)}
   .flow{background:linear-gradient(135deg,var(--bg1),var(--bg2),var(--bg1));background-size:300% 300%;animation:drift 30s ease-in-out infinite}
   @keyframes drift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
   .glow{position:absolute;border-radius:50%;filter:blur(60px);opacity:.25}
@@ -85,6 +104,20 @@
   .analog .pin{fill:var(--accent)}
   .date{font-size:clamp(14px,2vw,26px);color:var(--soft)}
   .hello{font-size:clamp(14px,1.8vw,22px);color:var(--accent);margin-top:.5vh}
+  .wx{display:flex;align-items:center;gap:12px;margin-top:1.4vh;padding:8px 16px;border-radius:18px;background:rgba(0,0,0,.18);border:1px solid var(--line);z-index:1}
+  .wx[hidden]{display:none}
+  .wx .wi{font-size:clamp(26px,3.4vw,44px);line-height:1}
+  .wx .wt{font-size:clamp(24px,3vw,40px);font-weight:500;direction:ltr}
+  .wx .wd{display:flex;flex-direction:column;text-align:right;line-height:1.35}
+  .wx .wd b{font-size:clamp(12px,1.4vw,17px);font-weight:500}
+  .wx .wd small{font-size:clamp(11px,1.2vw,14px);color:var(--soft)}
+  body.L-sport .wx,body.L-ring .wx{position:absolute;bottom:2vh;padding:4px 12px;gap:8px}
+  body.L-sport .wx .wi,body.L-ring .wx .wi,body.L-sport .wx .wt,body.L-ring .wx .wt{font-size:clamp(18px,2.2vw,28px)}
+  body.L-cinema .wx{margin:0;padding:2px 10px;gap:6px}
+  body.L-cinema .wx .wi,body.L-cinema .wx .wt{font-size:clamp(16px,2vw,24px)}
+  body.L-cinema .wx .wd{display:none}
+  .wxres{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+  .wxres button{text-align:right}
 
   /* ================= المشغل ================= */
   .tabs{display:flex;gap:8px;background:rgba(0,0,0,.18);padding:5px;border-radius:16px;width:100%}
@@ -251,6 +284,7 @@
   </svg>
 </div>
 <div class="bgl photo" id="photoBg"></div>
+<div class="bgl earth"><i id="starC"></i><div class="globe"><div class="tex day"></div><div class="tex lights"></div></div></div>
 
 <div class="shell">
 <main>
@@ -267,6 +301,7 @@
     </svg>
     <div class="date" id="d"></div>
     <div class="hello" id="h"></div>
+    <div class="wx" id="wx"><span class="wi" id="wxI">⛅</span><span class="wt" id="wxT">--°</span><span class="wd"><b id="wxC">الطقس</b><small id="wxD">جاري التحميل…</small></span></div>
   </section>
 
   <section class="card cal">
@@ -329,6 +364,16 @@
     <div class="grid" id="bgRow"></div>
     <input type="file" id="photoIn" accept="image/*" hidden>
 
+    <h3>الطقس</h3>
+    <div class="row" id="wxShowRow"></div>
+    <button class="opt" style="margin-top:10px;width:100%" id="wxAuto">📍 حسب مكاني تلقائي</button>
+    <form class="cform" id="wxForm" style="margin-top:10px">
+      <input id="wxCity" placeholder="أو اكتب اسم المدينة" autocomplete="off">
+      <button class="pickfill" type="submit">بحث</button>
+    </form>
+    <div class="wxres" id="wxRes"></div>
+    <p class="note" id="wxNow"></p>
+
     <h3>لون الثيم</h3>
     <div class="grid" id="themes"></div>
 
@@ -384,6 +429,7 @@
 <script>
 const $=id=>document.getElementById(id);
 const store={get(k,d){try{const v=localStorage.getItem(k);return v===null?d:v}catch(e){return d}},set(k,v){try{localStorage.setItem(k,v);return true}catch(e){return false}}};
+try{location.hash.slice(1).split('&').forEach(kv=>{const [k,v]=kv.split('=');if(k&&v)localStorage.setItem(k,decodeURIComponent(v));});}catch(e){}
 const isAndroid=/Android/i.test(navigator.userAgent);
 let tt; function toast(m){$('toast').textContent=m;$('toast').classList.add('show');clearTimeout(tt);tt=setTimeout(()=>$('toast').classList.remove('show'),3000);}
 function openUrl(u){location.href=u;}
@@ -457,7 +503,10 @@ makeOpts('cardRow',[['glass','زجاجي'],['solid','غامق'],['clear','بدو
 
 const BGS=[['flow','انسيابية','linear-gradient(135deg,#0f1f24,#2f5e5a)'],['stars','نجوم وقمر','radial-gradient(circle at 30% 30%,#fff 1px,transparent 2px) 0 0/18px 18px,#0a0f1a'],
   ['waves','أمواج','linear-gradient(180deg,#0f1f24 50%,#3d7570 50%)'],['aurora','شفق','linear-gradient(120deg,#070b12,#2f7a6a,#3d4f9a,#070b12)'],
-  ['hills','جبال','linear-gradient(180deg,#1c3a3f 55%,#0f1f24 55%)'],['photo','صورتك 📷','repeating-linear-gradient(45deg,#333 0 10px,#444 10px 20px)']];
+  ['hills','جبال','linear-gradient(180deg,#1c3a3f 55%,#0f1f24 55%)'],
+  ['earth','🌍 الأرض','radial-gradient(circle at 20% 110%,#2d6fb8 0 45%,#7cc0ff 47%,#03060f 52%)'],
+  ['earthc','🌏 الأرض كاملة','radial-gradient(circle at 50% 50%,#2d6fb8 0 30%,#7cc0ff 32%,#03060f 37%)'],
+  ['earthn','🌃 الأرض بالليل','radial-gradient(circle at 85% 110%,#1a1405 0 45%,#ffb85a 46%,#020409 51%)'],['photo','صورتك 📷','repeating-linear-gradient(45deg,#333 0 10px,#444 10px 20px)']];
 BGS.forEach(([k,n,prev])=>{
   const b=document.createElement('button'); b.className='bgopt'; b.dataset.k=k; b.style.background=prev; b.textContent=n;
   b.onclick=()=>{ if(k==='photo'){$('photoIn').click();return;} save('bg',k); applyAll(); };
@@ -480,7 +529,7 @@ loadPhoto();
 
 (function(){
   function sh(n){let s=[];for(let i=0;i<n;i++){s.push(Math.round(Math.random()*innerWidth)+'px '+Math.round(Math.random()*innerHeight)+'px 0 '+(Math.random()<.15?'1px':'0')+' rgba(255,255,255,'+(0.4+Math.random()*0.6).toFixed(2)+')');}return s.join(',');}
-  $('starA').style.boxShadow=sh(140); $('starB').style.boxShadow=sh(90);
+  $('starA').style.boxShadow=sh(140); $('starB').style.boxShadow=sh(90); $('starC').style.boxShadow=sh(160);
 })();
 
 const days=['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
@@ -649,6 +698,61 @@ $('ytFwd').onclick=()=>{ if(needVideo())return; ytCur=ytCur+10; ytCmd('seekTo',[
 $('ytNext').onclick=()=>{ if(recent.length<2){toast(recent.length?'ضيف مقطع ثاني عشان تنتقل له':'شغّل مقطع أول');return;} playAt(ytPos+1); };
 $('ytPrev').onclick=()=>{ if(recent.length<2){toast(recent.length?'ما فيه مقطع قبله':'شغّل مقطع أول');return;} playAt(ytPos-1); };
 $('ytPlay').onclick=()=>{ if(needVideo())return; ytCmd(ytState===1?'pauseVideo':'playVideo'); };
+
+/* ================= الطقس ================= */
+const WX_CODES=[[0,'صحو','☀️','🌙'],[1,'صحو غالبًا','🌤️','🌙'],[2,'غائم جزئيًا','⛅','☁️'],[3,'غائم','☁️','☁️'],[45,'ضباب','🌫️','🌫️'],[48,'ضباب','🌫️','🌫️'],
+  [51,'رذاذ','🌦️','🌧️'],[53,'رذاذ','🌦️','🌧️'],[55,'رذاذ','🌦️','🌧️'],[56,'رذاذ بارد','🌧️','🌧️'],[57,'رذاذ بارد','🌧️','🌧️'],
+  [61,'مطر خفيف','🌧️','🌧️'],[63,'مطر','🌧️','🌧️'],[65,'مطر غزير','🌧️','🌧️'],[66,'مطر بارد','🌧️','🌧️'],[67,'مطر بارد','🌧️','🌧️'],
+  [71,'ثلج','❄️','❄️'],[73,'ثلج','❄️','❄️'],[75,'ثلج كثيف','❄️','❄️'],[77,'ثلج','❄️','❄️'],[80,'زخات مطر','🌦️','🌧️'],[81,'زخات مطر','🌦️','🌧️'],[82,'زخات قوية','⛈️','⛈️'],
+  [85,'زخات ثلج','🌨️','🌨️'],[86,'زخات ثلج','🌨️','🌨️'],[95,'عاصفة رعدية','⛈️','⛈️'],[96,'عاصفة وبرد','⛈️','⛈️'],[99,'عاصفة وبرد','⛈️','⛈️']];
+function wxInfo(c,day){const r=WX_CODES.find(x=>x[0]===c)||[0,'—','🌡️','🌡️'];return {t:r[1],i:day?r[2]:r[3]};}
+let WXS={mode:store.get('wxMode','auto'),show:store.get('wxShow','on')};
+let wxCity; try{wxCity=JSON.parse(store.get('wxCity','null'))}catch(e){wxCity=null}
+if(!wxCity) wxCity={n:'الرياض',lat:24.7136,lon:46.6753};
+function wxShow(){ $('wx').hidden=WXS.show!=='on'; }
+makeOpts('wxShowRow',[['on','إظهار الطقس'],['off','إخفاء']],WXS.show,v=>{WXS.show=v;store.set('wxShow',v);wxShow();});
+function wxNote(){ $('wxNow').textContent=WXS.mode==='auto'?'الحين: حسب مكانك تلقائي 📍':'الحين: '+wxCity.n; $('wxAuto').classList.toggle('on',WXS.mode==='auto'); }
+function wxDraw(d,name){
+  const cur=d.current, inf=wxInfo(cur.weather_code,cur.is_day===1);
+  $('wxI').textContent=inf.i; $('wxT').textContent=Math.round(cur.temperature_2m)+'°';
+  $('wxC').textContent=name+' • '+inf.t;
+  $('wxD').textContent='↑'+Math.round(d.daily.temperature_2m_max[0])+'°  ↓'+Math.round(d.daily.temperature_2m_min[0])+'°';
+}
+async function wxFetch(lat,lon,name){
+  const u='https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&current=temperature_2m,weather_code,is_day&daily=temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=1';
+  const d=await (await fetch(u)).json(); if(!d.current) throw 0;
+  wxDraw(d,name); store.set('wxLast',JSON.stringify({d,name}));
+}
+async function placeName(lat,lon){
+  try{const r=await (await fetch('https://api.bigdatacloud.net/data/reverse-geocode-client?latitude='+lat+'&longitude='+lon+'&localityLanguage=ar')).json();
+    return r.city||r.locality||r.principalSubdivision||'مكانك';}catch(e){return 'مكانك';}
+}
+function wxByCity(){ return wxFetch(wxCity.lat,wxCity.lon,wxCity.n).catch(()=>{$('wxD').textContent='ما فيه نت';}); }
+function wxUpdate(){
+  if(WXS.mode!=='auto'||!navigator.geolocation) return wxByCity();
+  navigator.geolocation.getCurrentPosition(async p=>{
+    const lat=p.coords.latitude.toFixed(3), lon=p.coords.longitude.toFixed(3);
+    let name=store.get('wxPlace|'+lat.slice(0,-1)+lon.slice(0,-1),'');
+    if(!name){name=await placeName(lat,lon); store.set('wxPlace|'+lat.slice(0,-1)+lon.slice(0,-1),name);}
+    wxFetch(lat,lon,name).catch(()=>{$('wxD').textContent='ما فيه نت';});
+  },()=>wxByCity(),{timeout:12000,maximumAge:1800000});
+}
+try{const L=JSON.parse(store.get('wxLast','null')); if(L) wxDraw(L.d,L.name);}catch(e){}
+$('wxAuto').onclick=()=>{WXS.mode='auto';store.set('wxMode','auto');wxNote();wxUpdate();toast('الطقس بيمشي حسب مكانك 📍');};
+$('wxForm').onsubmit=async e=>{
+  e.preventDefault(); const q=$('wxCity').value.trim(); if(!q) return;
+  $('wxRes').innerHTML='<p class="note">جاري البحث…</p>';
+  try{
+    const r=await (await fetch('https://geocoding-api.open-meteo.com/v1/search?count=6&language=ar&name='+encodeURIComponent(q))).json();
+    $('wxRes').innerHTML='';
+    if(!r.results||!r.results.length){$('wxRes').innerHTML='<p class="note">ما لقيت مدينة بهالاسم، جرّب تكتبها بطريقة ثانية</p>';return;}
+    r.results.forEach(c=>{const b=document.createElement('button');b.className='opt';b.textContent=c.name+(c.admin1?' - '+c.admin1:'')+(c.country?' ، '+c.country:'');
+      b.onclick=()=>{wxCity={n:c.name,lat:c.latitude,lon:c.longitude};store.set('wxCity',JSON.stringify(wxCity));WXS.mode='city';store.set('wxMode','city');
+        $('wxRes').innerHTML='';$('wxCity').value='';wxNote();wxByCity();toast('الطقس صار على '+c.name+' ✅');};
+      $('wxRes').appendChild(b);});
+  }catch(err){$('wxRes').innerHTML='<p class="note">ما فيه نت الحين</p>';}
+};
+wxShow(); wxNote(); wxUpdate(); setInterval(wxUpdate,20*60*1000);
 
 if(S.bg==='photo' && !store.get('photo','')) S.bg='flow';
 applyAll(); tick(); setInterval(tick,1000); drawDock(); drawMyList(); drawCatalog(); drawRecent();

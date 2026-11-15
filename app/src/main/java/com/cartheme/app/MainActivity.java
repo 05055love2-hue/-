@@ -8,7 +8,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.webkit.GeolocationPermissions;
 import android.webkit.ValueCallback;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
@@ -55,9 +59,38 @@ public class MainActivity extends Activity {
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 return handleUrl(url);
             }
+
+            @Override
+            public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
+                String url = request.getUrl().toString();
+                if (!url.startsWith(BASE)) return null;
+                String path = request.getUrl().getPath();
+                if (path == null || path.equals("/") || path.isEmpty()) path = "/index.html";
+                path = path.substring(1);
+                String mime = path.endsWith(".html") ? "text/html"
+                        : path.endsWith(".jpg") ? "image/jpeg"
+                        : path.endsWith(".png") ? "image/png" : "application/octet-stream";
+                try {
+                    return new WebResourceResponse(mime, "UTF-8", getAssets().open(path));
+                } catch (Exception e) {
+                    return new WebResourceResponse("text/plain", "UTF-8", 404, "Not Found", null, null);
+                }
+            }
         });
 
+        s.setGeolocationEnabled(true);
+        if (Build.VERSION.SDK_INT >= 23 && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,
+                    Manifest.permission.ACCESS_FINE_LOCATION}, 7);
+        }
+
         web.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public void onGeolocationPermissionsShowPrompt(String origin, GeolocationPermissions.Callback callback) {
+                callback.invoke(origin, true, true);
+            }
+
             @Override
             public boolean onShowFileChooser(WebView view, ValueCallback<Uri[]> callback,
                                              FileChooserParams params) {
@@ -77,7 +110,7 @@ public class MainActivity extends Activity {
             }
         });
 
-        web.loadDataWithBaseURL(BASE, readAsset("index.html"), "text/html", "UTF-8", null);
+        web.loadUrl(BASE + "index.html");
     }
 
     /** يفتح التطبيقات والإعدادات بدال ما يفتحها داخل الصفحة */
@@ -135,6 +168,12 @@ public class MainActivity extends Activity {
         }
         fileCallback.onReceiveValue(result);
         fileCallback = null;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int code, String[] perms, int[] res) {
+        super.onRequestPermissionsResult(code, perms, res);
+        if (code == 7) web.evaluateJavascript("typeof wxUpdate==='function'&&wxUpdate()", null);
     }
 
     private String readAsset(String name) {
