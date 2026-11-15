@@ -11,6 +11,15 @@ import android.view.WindowManager;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.webkit.GeolocationPermissions;
+import android.webkit.JavascriptInterface;
+import android.content.pm.ResolveInfo;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
+import android.util.Base64;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import java.util.List;
 import android.webkit.ValueCallback;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebChromeClient;
@@ -110,7 +119,56 @@ public class MainActivity extends Activity {
             }
         });
 
+        web.addJavascriptInterface(new Bridge(), "Native");
         web.loadUrl(BASE + "index.html");
+    }
+
+    /** جسر بين الصفحة والجهاز: يجيب قائمة التطبيقات المثبتة ويفتحها */
+    private class Bridge {
+        @JavascriptInterface
+        public String getApps() {
+            JSONArray arr = new JSONArray();
+            try {
+                PackageManager pm = getPackageManager();
+                Intent i = new Intent(Intent.ACTION_MAIN);
+                i.addCategory(Intent.CATEGORY_LAUNCHER);
+                List<ResolveInfo> list = pm.queryIntentActivities(i, 0);
+                for (ResolveInfo r : list) {
+                    String pkg = r.activityInfo.packageName;
+                    if (pkg.equals(getPackageName())) continue;
+                    JSONObject o = new JSONObject();
+                    o.put("n", String.valueOf(r.loadLabel(pm)));
+                    o.put("pkg", pkg);
+                    o.put("img", iconData(r.loadIcon(pm)));
+                    arr.put(o);
+                }
+            } catch (Exception e) { /* نرجع اللي قدرنا عليه */ }
+            return arr.toString();
+        }
+
+        @JavascriptInterface
+        public boolean open(String pkg) {
+            Intent launch = getPackageManager().getLaunchIntentForPackage(pkg);
+            if (launch == null) return false;
+            launch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(launch);
+            return true;
+        }
+    }
+
+    private String iconData(Drawable d) {
+        try {
+            int size = 96;
+            Bitmap b = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
+            Canvas c = new Canvas(b);
+            d.setBounds(0, 0, size, size);
+            d.draw(c);
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            b.compress(Bitmap.CompressFormat.PNG, 100, out);
+            return "data:image/png;base64," + Base64.encodeToString(out.toByteArray(), Base64.NO_WRAP);
+        } catch (Exception e) {
+            return "";
+        }
     }
 
     /** يفتح التطبيقات والإعدادات بدال ما يفتحها داخل الصفحة */

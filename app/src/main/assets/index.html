@@ -190,6 +190,9 @@
   .myapp button{background:none;border:none;color:var(--soft);font-size:18px;cursor:pointer;padding:4px 8px}
   .catalog{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:12px}
   .catalog .app{width:100%}
+  .app .ic img{width:72%;height:72%;object-fit:contain}
+  .devsearch{width:100%;box-sizing:border-box;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.06);color:inherit;font:inherit}
+  #devApps{max-height:42vh;overflow-y:auto}
   .cform{display:flex;gap:8px;flex-wrap:wrap}
   .cform input{flex:1;min-width:120px;font-family:inherit;font-size:15px;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:rgba(0,0,0,.2);color:var(--text)}
   .toast{position:fixed;bottom:22vh;left:50%;transform:translateX(-50%);background:var(--bg2);border:1px solid var(--line);color:var(--text);padding:12px 22px;border-radius:16px;font-size:clamp(13px,1.4vw,17px);opacity:0;transition:.3s;pointer-events:none;z-index:30;text-align:center;max-width:80vw}
@@ -414,6 +417,12 @@
 <div class="overlay" id="addOv">
   <div class="panel">
     <h2>أضف تطبيق <button class="close" data-close="addOv" aria-label="إغلاق">✕</button></h2>
+    <div id="devBox">
+      <h3 style="margin-top:0">📱 التطبيقات اللي في الشاشة</h3>
+      <input id="devSearch" class="devsearch" placeholder="🔍 دوّر على تطبيق" autocomplete="off">
+      <div class="catalog" id="devApps" style="margin-top:1.5vh"></div>
+    </div>
+    <h3>تطبيقات جاهزة</h3>
     <p class="note" style="margin-top:0">اضغط على التطبيق اللي تبغاه ويضاف تحت على طول.</p>
     <div class="catalog" id="catalog" style="margin-top:1.5vh"></div>
     <h3>أو موقع برابط</h3>
@@ -596,11 +605,12 @@ const CATALOG={
 let DOCK; try{DOCK=JSON.parse(store.get('dock','null'))}catch(e){DOCK=null}
 if(!Array.isArray(DOCK)) DOCK=['youtube','bt','radio','maps'];
 function info(x){return typeof x==='string'?CATALOG[x]:x;}
-function iconHTML(a){return a.i?a.i:(a.e||'🔗');}
+function iconHTML(a){return a.img?'<img src="'+a.img+'" alt="">':a.i?a.i:(a.e||'🔗');}
 function launch(a){
   if(a.sp==='bt') return go(BT[BT_I]);
   if(a.sp==='radio') return go(pkgIntent(RADIO));
   if(a.sp==='dial') return go('intent:#Intent;action=android.intent.action.DIAL;end');
+  if(a.pkg && window.Native && Native.open(a.pkg)) return;
   if(a.pkg && isAndroid){ location.href=pkgIntent(a.pkg,a.url); return; }
   if(a.url) openUrl(a.url);
 }
@@ -633,6 +643,23 @@ function drawCatalog(){
     c.appendChild(tile(a,()=>{DOCK.push(k);saveDock();$('addOv').classList.remove('show');toast('انضاف '+a.n+' تحت ✅');}));});
   if(!c.children.length) c.innerHTML='<p class="note">كل التطبيقات مضافة 👍</p>';
 }
+let DEV=null;
+function loadDev(){
+  if(!window.Native){$('devBox').hidden=true;return;}
+  if(!DEV){ try{DEV=JSON.parse(Native.getApps())||[]}catch(e){DEV=[]}
+    DEV.sort((a,b)=>a.n.localeCompare(b.n,'ar')); }
+  drawDev();
+}
+function drawDev(){
+  const c=$('devApps'); if(!c) return; c.innerHTML='';
+  const q=($('devSearch').value||'').trim().toLowerCase();
+  const have=new Set(DOCK.map(x=>info(x)&&info(x).pkg).filter(Boolean));
+  (DEV||[]).forEach(a=>{ if(have.has(a.pkg)) return; if(q&&!a.n.toLowerCase().includes(q)) return;
+    c.appendChild(tile(a,()=>{DOCK.push({n:a.n,pkg:a.pkg,img:a.img});saveDock();$('addOv').classList.remove('show');toast('انضاف '+a.n+' تحت ✅');}));});
+  if(!c.children.length) c.innerHTML='<p class="note">'+(q?'ما لقيت تطبيق بهالاسم':'كل التطبيقات مضافة 👍')+'</p>';
+}
+$('devSearch').oninput=drawDev;
+const _addOv=$('addOv'); new MutationObserver(()=>{ if(_addOv.classList.contains('show')){ $('devSearch').value=''; loadDev(); } }).observe(_addOv,{attributes:true,attributeFilter:['class']});
 $('addFromSet').onclick=()=>$('addOv').classList.add('show');
 $('cform').onsubmit=e=>{
   e.preventDefault(); const n=$('cName').value.trim(); let u=$('cUrl').value.trim();
