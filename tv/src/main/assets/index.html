@@ -132,6 +132,37 @@
   body[data-l="dash"] #grid{display:flex;overflow-x:auto;gap:1.4vw;padding:2vh .8vw;align-items:center}
   body[data-l="dash"] .app{width:13vw}
 
+
+  /* 8 مثل أبل تي في: رف علوي كبير وبلاطات عريضة */
+  #shelf{grid-area:shelf;display:none;position:relative;border-radius:2vw;overflow:hidden;min-height:0}
+  #shelfBg{position:absolute;inset:-10%;background-size:cover;background-position:center;filter:blur(40px) saturate(1.4);opacity:.75;transition:background .4s}
+  #shelfArt{position:absolute;inset-inline-end:4vw;top:50%;transform:translateY(-50%);width:26vw;aspect-ratio:16/10;border-radius:1.6vw;display:grid;place-items:center;
+    box-shadow:0 3vh 7vh rgba(0,0,0,.55);overflow:hidden}
+  #shelfArt img{width:42%;height:auto;filter:drop-shadow(0 1vh 2vh rgba(0,0,0,.35))}
+  #shelfArt img.full{width:100%;height:100%;object-fit:cover;filter:none}
+  #shelfTxt{position:absolute;inset-inline-start:4vw;bottom:5vh;max-width:50%}
+  #shelfTxt b{display:block;font-size:4vw;font-weight:700;line-height:1.1;text-shadow:0 .4vh 2vh rgba(0,0,0,.5)}
+  #shelfTxt span{font-size:1.4vw;color:rgba(255,255,255,.8)}
+  #shelfTop{position:absolute;top:2.6vh;inset-inline-start:2.4vw;display:flex;gap:1.4vw;align-items:center;font-size:1.6vw;z-index:1}
+  #shelfTop .tm{font-size:2.2vw;font-weight:600;direction:ltr}
+  body[data-l="appletv"] #home{grid-template-columns:minmax(0,1fr) auto;grid-template-rows:46vh auto minmax(0,1fr);grid-template-areas:"shelf shelf" "apps quick" "apps quick";padding:3vh 4vw 2vh;gap:2vh 2vw}
+  body[data-l="appletv"] #shelf{display:block;background:linear-gradient(135deg,var(--bg2),var(--bg1))}
+  body[data-l="appletv"] #hdr,body[data-l="appletv"] #wx,body[data-l="appletv"] #yt{display:none}
+  body[data-l="appletv"] #quick{flex-direction:column;align-self:start}
+  body[data-l="appletv"] .q{font-size:1.1vw;padding:1vh 1.1vw}
+  body[data-l="appletv"] h2{display:none}
+  body[data-l="appletv"] #grid{grid-template-columns:repeat(5,1fr);gap:4.4vh 2vw;padding:2vh 1.4vw 6vh}
+  body[data-l="appletv"] .app{aspect-ratio:16/10;border:none;border-radius:1.2vw;overflow:visible;background:var(--tile,#2c2c34)!important;box-shadow:0 1vh 2.4vh rgba(0,0,0,.35)}
+  body[data-l="appletv"] .app .ic{width:42%;height:auto;max-height:62%;border-radius:0;background:none!important;padding:0;box-shadow:none!important;filter:none}
+  body[data-l="appletv"] .app .lt{display:none!important}
+  body[data-l="appletv"] .app.hasbn .bn{display:block!important;border-radius:1.2vw}
+  body[data-l="appletv"] .app.hasbn .ic{visibility:hidden}
+  body[data-l="appletv"] .app span.n{position:absolute;top:100%;margin-top:1vh;font-size:1.15vw;opacity:0;transition:opacity .2s;visibility:visible!important}
+  body[data-l="appletv"] .app.f.on{transform:scale(1.14) translateY(-.6vh);box-shadow:0 3vh 5vh rgba(0,0,0,.6)!important;border:none}
+  body[data-l="appletv"] .app.f.on span.n{opacity:1}
+  body[data-l="appletv"] .app::after{content:'';position:absolute;inset:0;border-radius:1.2vw;background:linear-gradient(160deg,rgba(255,255,255,.28),transparent 45%);opacity:0;transition:opacity .2s;pointer-events:none}
+  body[data-l="appletv"] .app.f.on::after{opacity:1}
+
   /* ===== مشغل يوتيوب ===== */
   #yt{display:flex;flex-direction:column;gap:1.6vh;background:var(--card);border:2px solid var(--line);border-radius:2vw;padding:1.6vh 1.2vw}
   #yt.focus{border-color:#ff3b30;box-shadow:0 0 0 3px #ff3b30}
@@ -159,6 +190,11 @@
 </head>
 <body data-l="classic" data-i="orig">
 <div id="home">
+  <section id="shelf"><div id="shelfBg"></div>
+    <div id="shelfTop"><span class="tm" id="shTime"></span><span id="shWx"></span></div>
+    <div id="shelfArt"></div>
+    <div id="shelfTxt"><b id="shName">أهلاً 👋</b><span id="shSub">اختر تطبيق بالأسهم واضغط موافق</span></div>
+  </section>
   <section id="hdr">
     <div class="clock" id="clock">--:--</div>
     <div class="date" id="date"></div>
@@ -203,7 +239,7 @@ const store={get(k,d){try{const v=localStorage.getItem(k);return v===null?d:v}ca
 try{location.hash.slice(1).split('&').forEach(kv=>{const [k,v]=kv.split('=');if(k&&v)localStorage.setItem(k,decodeURIComponent(v));});}catch(e){}
 
 /* ===== الخيارات ===== */
-const LAYOUTS=[['classic','🪟 كلاسيكي'],['cinema','🎬 سينمائي'],['youtube','▶️ مع يوتيوب'],['side','📋 قائمة جانبية'],['iphone','📱 مثل الايفون'],['minimal','⚪ بسيط'],['dash','🗂️ لوحة بطاقات']];
+const LAYOUTS=[['appletv','🍏 مثل أبل تي في'],['classic','🪟 كلاسيكي'],['cinema','🎬 سينمائي'],['youtube','▶️ مع يوتيوب'],['side','📋 قائمة جانبية'],['iphone','📱 مثل الايفون'],['minimal','⚪ بسيط'],['dash','🗂️ لوحة بطاقات']];
 const ICONS=[['orig','الأصلية'],['ios','على شكل ايفون'],['circle','دائرية'],['glass','زجاجية'],['neon','نيون مضيء'],['mono','لون واحد'],['flat','بدون خلفية'],['letter','حروف ملونة']];
 const THEMES={
   night:{n:'ليلي أزرق',bg1:'#0b1424',bg2:'#1b3355',accent:'#7cc4ff'},
@@ -213,7 +249,7 @@ const THEMES={
   gold:{n:'ذهبي',bg1:'#141210',bg2:'#4a3d22',accent:'#f2c96b'},
   red:{n:'أحمر',bg1:'#160b0c',bg2:'#4d1a1d',accent:'#ff7a7a'}
 };
-const S={l:store.get('layout','classic'),i:store.get('icons','orig'),t:store.get('theme','night')};
+const S={l:store.get('layout2','appletv'),i:store.get('icons','orig'),t:store.get('theme','night')};
 if(!LAYOUTS.some(x=>x[0]===S.l)) S.l='classic'; if(!ICONS.some(x=>x[0]===S.i)) S.i='orig'; if(!THEMES[S.t]) S.t='night';
 function applyAll(){
   const t=THEMES[S.t],r=document.documentElement.style; ['bg1','bg2','accent'].forEach(k=>r.setProperty('--'+k,t[k]));
@@ -228,6 +264,7 @@ function tick(){
   const d=new Date(),h=d.getHours(),m=String(d.getMinutes()).padStart(2,'0');
   $('clock').innerHTML=((h%12)||12)+':'+m+'<small>'+(h<12?'ص':'م')+'</small>';
   $('date').textContent=DAYS[d.getDay()]+' • '+d.getDate()+' '+MONTHS[d.getMonth()]+' '+d.getFullYear();
+  $('shTime').textContent=((h%12)||12)+':'+m;
   $('greet').textContent=h<12?'صباح الخير ☀️':h<18?'مساء الخير 🌤️':'مساء النور 🌙';
 }
 tick(); setInterval(tick,1000);
@@ -238,6 +275,7 @@ const WX=[[0,'صحو','☀️','🌙'],[1,'صحو غالبًا','🌤️','🌙'
   [80,'زخات مطر','🌦️','🌧️'],[81,'زخات مطر','🌦️','🌧️'],[82,'زخات قوية','⛈️','⛈️'],[95,'عاصفة رعدية','⛈️','⛈️'],[96,'عاصفة','⛈️','⛈️'],[99,'عاصفة','⛈️','⛈️']];
 function wxDraw(d){const c=d.current,r=WX.find(x=>x[0]===c.weather_code)||[0,'—','🌡️','🌡️'];
   $('wxI').textContent=c.is_day?r[2]:r[3]; $('wxT').textContent=Math.round(c.temperature_2m)+'°';
+  $('shWx').textContent=(c.is_day?r[2]:r[3])+' '+Math.round(c.temperature_2m)+'°';
   $('wxD').textContent=r[1]+' • ↑'+Math.round(d.daily.temperature_2m_max[0])+'° ↓'+Math.round(d.daily.temperature_2m_min[0])+'°';}
 async function wxUpdate(){
   try{const r=await fetch('https://api.open-meteo.com/v1/forecast?latitude=24.7136&longitude=46.6753&current=temperature_2m,weather_code,is_day&daily=temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=1');
@@ -264,7 +302,31 @@ function tile(a){
   const col=LT_COLORS[[...a.n].reduce((s,ch)=>s+ch.charCodeAt(0),0)%LT_COLORS.length];
   b.innerHTML=(a.banner?'<img class="bn" src="'+a.banner+'" alt="">':'')+'<img class="ic" src="'+a.img+'" alt="">'+
     '<i class="lt" style="background:'+col+'">'+[...(a.n.trim().replace(/^ال/,'')||a.n)][0]+'</i><span class="n">'+a.n+'</span>';
-  b.onclick=()=>openApp(a); return b;
+  b.onclick=()=>openApp(a); b._app=a; tileColor(a,b); return b;
+}
+const colorCache={};
+function tileColor(a,b){
+  // لون البلاطة من لون أيقونة التطبيق نفسه
+  if(colorCache[a.pkg]){b.style.setProperty('--tile',colorCache[a.pkg]);return;}
+  const im=new Image(); im.onload=()=>{try{const c=document.createElement('canvas');c.width=c.height=16;const x=c.getContext('2d');x.drawImage(im,0,0,16,16);
+    const d=x.getImageData(0,0,16,16).data;let r=0,g=0,bl=0,n=0;
+    for(let i=0;i<d.length;i+=4){ if(d[i+3]<128) continue; const mx=Math.max(d[i],d[i+1],d[i+2]),mn=Math.min(d[i],d[i+1],d[i+2]); const w=(mx-mn)+20; r+=d[i]*w;g+=d[i+1]*w;bl+=d[i+2]*w;n+=w; }
+    if(!n) return; r=r/n;g=g/n;bl=bl/n;
+    const bright=(r*299+g*587+bl*114)/1000; const k=bright>170?0.55:bright<60?1.6:0.9;
+    const col='rgb('+Math.min(255,r*k|0)+','+Math.min(255,g*k|0)+','+Math.min(255,bl*k|0)+')';
+    colorCache[a.pkg]='linear-gradient(150deg,'+col+',rgba(0,0,0,.35)),'+col; b.style.setProperty('--tile',colorCache[a.pkg]);
+    if(cur===b) shelf(a,b);}catch(e){}};
+  im.src=a.img;
+}
+function shelf(a,b){
+  if(S.l!=='appletv') return;
+  const art=$('shelfArt'), bg=$('shelfBg');
+  if(!a){ $('shName').textContent='أهلاً 👋'; $('shSub').textContent='اختر تطبيق بالأسهم واضغط موافق'; art.style.display='none'; bg.style.background='none'; return; }
+  art.style.display='grid';
+  art.style.background=colorCache[a.pkg]||'#2c2c34';
+  art.innerHTML=a.banner?'<img class="full" src="'+a.banner+'" alt="">':'<img src="'+a.img+'" alt="">';
+  bg.style.background=(a.banner?'url('+a.banner+') center/cover,':'')+(colorCache[a.pkg]||'#2c2c34');
+  $('shName').textContent=a.n; $('shSub').textContent='اضغط موافق للفتح';
 }
 function drawApps(){
   const g=$('grid'); const keep=cur&&cur.dataset.pkg; g.innerHTML='';
@@ -291,6 +353,7 @@ function visibleF(){
 }
 function focusEl(el){
   if(!el) return; if(cur) cur.classList.remove('on'); cur=el; el.classList.add('on');
+  if(el._app) shelf(el._app,el); else if(el.closest('#quick')) shelf(null);
   // نحرّك قائمة التطبيقات بس، والصفحة تبقى ثابتة
   const g=el.closest('#grid');
   if(g){const r=el.getBoundingClientRect(),gr=g.getBoundingClientRect(),m=12;
@@ -341,7 +404,7 @@ function optRow(id,items,curVal,pick){
     b.onclick=()=>{r.querySelectorAll('.opt').forEach(x=>x.classList.toggle('sel',x===b));pick(v);};r.appendChild(b);});
 }
 function drawCust(){
-  optRow('layRow',LAYOUTS,S.l,v=>{S.l=v;store.set('layout',v);applyAll();});
+  optRow('layRow',LAYOUTS,S.l,v=>{S.l=v;store.set('layout2',v);applyAll();});
   optRow('icRow',ICONS,S.i,v=>{S.i=v;store.set('icons',v);applyAll();});
   optRow('thRow',Object.entries(THEMES).map(([k,t])=>[k,t.n,t.accent]),S.t,v=>{S.t=v;store.set('theme',v);applyAll();});
 }
