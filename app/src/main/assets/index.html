@@ -728,14 +728,15 @@ async function placeName(lat,lon){
   try{const r=await (await fetch('https://api.bigdatacloud.net/data/reverse-geocode-client?latitude='+lat+'&longitude='+lon+'&localityLanguage=ar')).json();
     return r.city||r.locality||r.principalSubdivision||'مكانك';}catch(e){return 'مكانك';}
 }
-function wxByCity(){ return wxFetch(wxCity.lat,wxCity.lon,wxCity.n).catch(()=>{$('wxD').textContent='ما فيه نت';}); }
+let wxRetry; function wxFail(){ if(!store.get('wxLast','')) $('wxD').textContent='ما فيه نت'; clearTimeout(wxRetry); wxRetry=setTimeout(wxUpdate,60000); }
+function wxByCity(){ return wxFetch(wxCity.lat,wxCity.lon,wxCity.n).catch(wxFail); }
 function wxUpdate(){
   if(WXS.mode!=='auto'||!navigator.geolocation) return wxByCity();
   navigator.geolocation.getCurrentPosition(async p=>{
     const lat=p.coords.latitude.toFixed(3), lon=p.coords.longitude.toFixed(3);
     let name=store.get('wxPlace|'+lat.slice(0,-1)+lon.slice(0,-1),'');
     if(!name){name=await placeName(lat,lon); store.set('wxPlace|'+lat.slice(0,-1)+lon.slice(0,-1),name);}
-    wxFetch(lat,lon,name).catch(()=>{$('wxD').textContent='ما فيه نت';});
+    wxFetch(lat,lon,name).catch(wxFail);
   },()=>wxByCity(),{timeout:12000,maximumAge:1800000});
 }
 try{const L=JSON.parse(store.get('wxLast','null')); if(L) wxDraw(L.d,L.name);}catch(e){}
