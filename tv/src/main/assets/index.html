@@ -249,6 +249,34 @@
   .opt{font-size:1.3vw;padding:1.1vh 1.4vw;border-radius:1.2vw;border:2px solid var(--line);background:rgba(255,255,255,.06)}
   .opt.sel{background:color-mix(in srgb,var(--accent) 32%,transparent);border-color:color-mix(in srgb,var(--accent) 60%,transparent)}
   .sw{display:inline-block;width:1.3vw;height:1.3vw;border-radius:50%;vertical-align:middle;margin-inline-end:.5vw}
+
+  /* ===== المشاهد ===== */
+  #wall svg{position:absolute;inset:0;width:100%;height:100%}
+  body[data-w^="sc-"] #wall::before,body[data-w^="sc-"] #wall::after{display:none}
+  #wall .tw{animation:tw 3.5s ease-in-out infinite alternate}
+  @keyframes tw{from{opacity:.25}to{opacity:1}}
+  #wall .au{animation:au 12s ease-in-out infinite alternate;transform-origin:center}
+  @keyframes au{from{transform:translateX(-3%) skewX(-4deg);opacity:.8}to{transform:translateX(3%) skewX(4deg);opacity:1}}
+  .opt.thumb{display:inline-flex;flex-direction:column;align-items:center;gap:.6vh;padding:.6vh .6vw}
+  .opt.thumb .tb{display:block;width:12vw;aspect-ratio:16/9;border-radius:.8vw;overflow:hidden;position:relative}
+  .opt.thumb .tb svg{width:100%;height:100%;display:block}
+  .opt.thumb .tb .tw,.opt.thumb .tb .au{animation:none}
+  /* ===== شكل «مشهد» ===== */
+  body[data-l="scene"] #home{grid-template-columns:auto minmax(0,1fr) auto auto;grid-template-rows:auto 1fr auto;grid-template-areas:"hdr . wx quick" ". . . ." "apps apps apps apps";padding:4vh 3vw 5vh}
+  body[data-l="scene"] #hdr{text-shadow:0 .4vh 2vh rgba(0,0,0,.6)}
+  body[data-l="scene"] .clock{font-size:5vw;font-weight:800}
+  body[data-l="scene"] .greet,body[data-l="scene"] .pray{display:none}
+  body[data-l="scene"] #wx{background:rgba(0,0,0,.28);backdrop-filter:blur(10px);border-color:rgba(255,255,255,.18)}
+  body[data-l="scene"] #quick{flex-direction:column;align-self:start}
+  body[data-l="scene"] #quick .q{background:rgba(0,0,0,.3);backdrop-filter:blur(8px)}
+  body[data-l="scene"] #yt,body[data-l="scene"] h2{display:none}
+  body[data-l="scene"] #appsWrap{width:100%}
+  body[data-l="scene"] #grid{display:flex;overflow-x:auto;gap:1.4vw;padding:2.4vh 1vw;align-items:center}
+  body[data-l="scene"] .app{width:8.6vw;aspect-ratio:1;border-radius:1.6vw;background:rgba(0,0,0,.38)!important;backdrop-filter:blur(10px);border:2px solid rgba(255,255,255,.2);flex:0 0 auto}
+  body[data-l="scene"] .app .bn{display:none!important} body[data-l="scene"] .app .ic,body[data-l="scene"] .app span.n{visibility:visible!important}
+  body[data-l="scene"] .app .ic,body[data-l="scene"] .app .lt{width:4.4vw;height:4.4vw}
+  body[data-l="scene"] .app span.n{font-size:1vw}
+  body[data-l="scene"] .app.f.on{transform:scale(1.14);border-color:var(--accent);box-shadow:0 0 0 2px var(--accent),0 0 3vh var(--accent);background:rgba(0,0,0,.5)!important}
 </style>
 </head>
 <body data-l="classic" data-i="orig">
@@ -320,7 +348,7 @@ const store={get(k,d){try{const v=localStorage.getItem(k);return v===null?d:v}ca
 try{location.hash.slice(1).split('&').forEach(kv=>{const [k,v]=kv.split('=');if(k&&v)localStorage.setItem(k,decodeURIComponent(v));});}catch(e){}
 
 /* ===== الخيارات ===== */
-const LAYOUTS=[['appletv','🍏 مثل أبل تي في'],['classic','🪟 كلاسيكي'],['cinema','🎬 سينمائي'],['youtube','▶️ مع يوتيوب'],['side','📋 قائمة جانبية'],['iphone','📱 مثل الايفون'],['minimal','⚪ بسيط'],['dash','🗂️ لوحة بطاقات']];
+const LAYOUTS=[['scene','🏞️ مشهد'],['appletv','🍏 مثل أبل تي في'],['classic','🪟 كلاسيكي'],['cinema','🎬 سينمائي'],['youtube','▶️ مع يوتيوب'],['side','📋 قائمة جانبية'],['iphone','📱 مثل الايفون'],['minimal','⚪ بسيط'],['dash','🗂️ لوحة بطاقات']];
 const ICONS=[['orig','الأصلية'],['ios','على شكل ايفون'],['circle','دائرية'],['glass','زجاجية'],['neon','نيون مضيء'],['mono','لون واحد'],['flat','بدون خلفية'],['letter','حروف ملونة']];
 const THEMES={
   night:{n:'ليلي أزرق',bg1:'#0b1424',bg2:'#1b3355',accent:'#7cc4ff'},
@@ -331,11 +359,63 @@ const THEMES={
   red:{n:'أحمر',bg1:'#160b0c',bg2:'#4d1a1d',accent:'#ff7a7a'}
 };
 const WALLS=[['theme','لون الثيم'],['aurora','شفق متحرك'],['glow','توهّج دوّار'],['stars','نجوم'],['waves','أمواج'],['dunes','غروب الصحراء'],['night','أسود']];
+/* ===== المشاهد: خلفيات مرسومة (من تصميمنا) ===== */
+function rnd(seed){let s=seed;return()=>((s=(s*9301+49297)%233280)/233280)}
+function stars(r,n,h,cls){let o='';for(let i=0;i<n;i++){const x=r()*1920,y=r()*h,z=r()*1.6+.4;o+=`<circle class="${cls||'tw'}" style="animation-delay:${(r()*4).toFixed(2)}s" cx="${x|0}" cy="${y|0}" r="${z.toFixed(1)}" fill="#fff" opacity="${(.4+r()*.6).toFixed(2)}"/>`}return o}
+function ridge(r,base,amp,step,col,op){let d=`M0 1080 L0 ${base}`;for(let x=0;x<=1920;x+=step){d+=` L${x} ${(base-r()*amp)|0}`}return `<path d="${d} L1920 1080 Z" fill="${col}" opacity="${op||1}"/>`}
+const SVG=(defs,body)=>`<svg viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><defs>${defs}</defs>${body}</svg>`;
+const SCENES={
+ 'sc-moon':{n:'🌙 ليلة الجبال',ac:'#7cc4ff',svg(){const r=rnd(7);
+  const range=(pts,col)=>{let d=`M0 1080 L${pts[0][0]} ${pts[0][1]}`;for(let i=1;i<pts.length;i++){const [x0,y0]=pts[i-1],[x1,y1]=pts[i];d+=` L${x1} ${y1}`}return `<path d="${d} L1920 1080Z" fill="${col}"/>`};
+  const far=[[0,610],[160,470],[300,560],[500,300],[690,520],[840,410],[1020,560],[1230,360],[1400,500],[1590,280],[1770,460],[1920,520]];
+  const near=[[0,700],[200,600],[420,690],[640,560],[860,680],[1100,590],[1340,700],[1560,610],[1760,690],[1920,640]];
+  let trees='';for(let x=-20;x<1960;x+=26+r()*26){const h=60+r()*110,y=1000+r()*30;trees+=`<path d="M${x|0} ${y|0} l${-h*.25|0} 0 l${h*.25|0} ${-h|0} l${h*.25|0} ${h|0}z" fill="#030a18"/>`}
+  let streaks='';for(let i=0;i<14;i++){const y=760+i*18,w=200-i*9;streaks+=`<rect x="${1420-w/2}" y="${y}" width="${w}" height="3" rx="2" fill="#fff6d5" opacity="${(.35-i*.02).toFixed(2)}"/>`}
+  return SVG(`<linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#040a1c"/><stop offset=".55" stop-color="#132f5c"/><stop offset="1" stop-color="#2a5a94"/></linearGradient>
+   <radialGradient id="mg"><stop offset="0" stop-color="#fffbe8"/><stop offset=".22" stop-color="#fff3c4" stop-opacity=".5"/><stop offset="1" stop-color="#9cc8ff" stop-opacity="0"/></radialGradient>
+   <linearGradient id="snow" gradientUnits="userSpaceOnUse" x1="0" y1="260" x2="0" y2="600"><stop offset="0" stop-color="#f4f8ff"/><stop offset=".38" stop-color="#cfe0f7"/><stop offset=".42" stop-color="#3d6699"/><stop offset="1" stop-color="#22426e"/></linearGradient>
+   <linearGradient id="nr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1a3560"/><stop offset="1" stop-color="#0c1d3a"/></linearGradient>
+   <linearGradient id="lk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1c4272"/><stop offset="1" stop-color="#050f24"/></linearGradient>`,
+   `<rect width="1920" height="1080" fill="url(#sk)"/>${stars(r,180,520)}<circle cx="1420" cy="210" r="280" fill="url(#mg)"/><circle cx="1420" cy="210" r="74" fill="#fff8dd"/>
+   ${range(far,'url(#snow)')}${range(near,'url(#nr)')}<rect y="740" width="1920" height="340" fill="url(#lk)"/>
+   <clipPath id="lkc"><rect y="740" width="1920" height="340"/></clipPath><g clip-path="url(#lkc)"><g opacity=".18" transform="translate(0 1480) scale(1 -1)">${range(near,'#9cc8ff')}</g></g>${streaks}
+   <path d="M0 1000 Q480 960 960 990 T1920 980 L1920 1080 L0 1080Z" fill="#030a18"/>${trees}`)}},
+ 'sc-sunset':{n:'🌅 غروب الجبال',ac:'#ffb27c',svg(){const r=rnd(11);
+  return SVG(`<linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a1240"/><stop offset=".45" stop-color="#9b3a6b"/><stop offset=".75" stop-color="#ff8a4c"/><stop offset="1" stop-color="#ffd27a"/></linearGradient>
+   <radialGradient id="sg"><stop offset="0" stop-color="#fff2c2"/><stop offset=".3" stop-color="#ffc06b" stop-opacity=".7"/><stop offset="1" stop-color="#ff7a4c" stop-opacity="0"/></radialGradient>`,
+   `<rect width="1920" height="1080" fill="url(#sk)"/><circle cx="960" cy="640" r="420" fill="url(#sg)"/><circle cx="960" cy="640" r="120" fill="#fff0c4"/>
+   ${ridge(r,700,240,90,'#7a2e6e',.9)}${ridge(r,780,200,70,'#55225a')}${ridge(r,860,140,60,'#3a1846')}${ridge(r,950,90,50,'#22102e')}
+   <g fill="none" stroke="#2a1240" stroke-width="5" stroke-linecap="round"><path d="M600 300 q20 -18 40 0 q20 -18 40 0"/><path d="M700 260 q15 -14 30 0 q15 -14 30 0"/><path d="M520 350 q12 -11 24 0 q12 -11 24 0"/></g>`)}},
+ 'sc-desert':{n:'🐪 صحراء الليل',ac:'#f2c96b',svg(){const r=rnd(5);
+  const palm=(x,y,s)=>`<g transform="translate(${x} ${y}) scale(${s})" fill="#120a14"><path d="M0 0 q14 -160 -10 -320 l14 0 q22 160 8 320z"/><path d="M2 -318 q-120 -20 -190 60 q110 -60 190 -50z"/><path d="M2 -318 q120 -30 200 40 q-110 -50 -200 -30z"/><path d="M2 -318 q-60 -90 -170 -100 q100 30 170 110z"/><path d="M2 -318 q70 -100 180 -90 q-110 20 -180 100z"/><path d="M2 -318 q-10 -60 -40 -140 q30 70 40 140z"/></g>`;
+  return SVG(`<linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#070a22"/><stop offset=".65" stop-color="#2b2350"/><stop offset="1" stop-color="#6b4a5e"/></linearGradient>
+   <linearGradient id="d1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8a5a3c"/><stop offset="1" stop-color="#4a2c1c"/></linearGradient>`,
+   `<rect width="1920" height="1080" fill="url(#sk)"/>${stars(r,220,620)}<path d="M1500 170 a90 90 0 1 0 60 160 a72 72 0 1 1 -60 -160z" fill="#fff4cf"/>
+   <path d="M0 760 Q400 600 800 740 T1920 700 L1920 1080 L0 1080Z" fill="#5a3826"/><path d="M0 860 Q500 720 1000 860 T1920 820 L1920 1080 L0 1080Z" fill="url(#d1)"/>
+   <path d="M0 960 Q600 860 1200 960 T1920 940 L1920 1080 L0 1080Z" fill="#2e1a10"/>${palm(260,900,1)}${palm(380,930,.8)}${palm(1700,920,.9)}`)}},
+ 'sc-city':{n:'🌃 مدينة الليل',ac:'#c084fc',svg(){const r=rnd(19);let b='';
+  for(let x=0;x<1920;){const w=60+r()*120,h=180+r()*520,y=900-h;b+=`<rect x="${x|0}" y="${y|0}" width="${w|0}" height="${h|0}" fill="${r()>.5?'#140c2c':'#1c1238'}"/>`;
+   for(let wy=y+20;wy<880;wy+=34)for(let wx=x+12;wx<x+w-18;wx+=26)if(r()>.55)b+=`<rect x="${wx|0}" y="${wy|0}" width="12" height="16" fill="${r()>.8?'#7dd3fc':'#ffd27a'}" opacity="${(.5+r()*.5).toFixed(2)}"/>`;x+=w+6}
+  return SVG(`<linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b0620"/><stop offset=".7" stop-color="#3b1b6b"/><stop offset="1" stop-color="#c0397d"/></linearGradient>
+   <linearGradient id="wt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a1550"/><stop offset="1" stop-color="#05030f"/></linearGradient>`,
+   `<rect width="1920" height="1080" fill="url(#sk)"/>${stars(r,90,400)}${b}<rect y="900" width="1920" height="180" fill="url(#wt)"/><g opacity=".22" transform="translate(0 1800) scale(1 -1)">${b}</g><rect y="900" width="1920" height="4" fill="#c084fc" opacity=".6"/>`)}},
+ 'sc-aurora':{n:'🌌 الشفق القطبي',ac:'#34d399',svg(){const r=rnd(23);let trees='';
+  for(let x=-20;x<1960;x+=38+r()*30){const h=120+r()*170,y=900+r()*40;trees+=`<path d="M${x|0} ${y|0} l${-h*.22|0} 0 l${h*.22|0} ${-h|0} l${h*.22|0} ${h|0}z" fill="#06141a"/>`}
+  return SVG(`<linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#020617"/><stop offset="1" stop-color="#0b2a3a"/></linearGradient>
+   <linearGradient id="au" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#34d399" stop-opacity="0"/><stop offset=".5" stop-color="#34d399" stop-opacity=".75"/><stop offset="1" stop-color="#22d3ee" stop-opacity="0"/></linearGradient>
+   <filter id="bl"><feGaussianBlur stdDeviation="28"/></filter>`,
+   `<rect width="1920" height="1080" fill="url(#sk)"/>${stars(r,200,700)}<g filter="url(#bl)" class="au"><path d="M-100 380 C300 180 600 520 1000 300 S1700 200 2050 360 L2050 520 C1700 380 1300 600 1000 480 S300 380 -100 560Z" fill="url(#au)"/>
+   <path d="M-100 250 C400 120 800 330 1200 200 S1800 150 2050 230 L2050 300 C1700 260 1300 360 1000 330 S300 240 -100 330Z" fill="#a78bfa" opacity=".35"/></g>
+   <path d="M0 930 Q960 880 1920 930 L1920 1080 L0 1080Z" fill="#dbeafe" opacity=".85"/>${trees}`)}}
+};
+WALLS.unshift(...Object.entries(SCENES).map(([k,s])=>[k,s.n]));
 const SAVERS=[['0','بدون'],['3','بعد 3 دقايق'],['5','بعد 5 دقايق'],['10','بعد 10 دقايق'],['20','بعد 20 دقيقة']];
+if(!store.get('sceneLook','')){store.set('layout2','scene');store.set('wall','sc-moon');store.set('icons','glass');store.set('sceneLook','1');}
 const S={w:store.get('wall','aurora'),sv:store.get('saver','5'),l:store.get('layout2','appletv'),i:store.get('icons','orig'),t:store.get('theme','night')};
 if(!LAYOUTS.some(x=>x[0]===S.l)) S.l='classic'; if(!ICONS.some(x=>x[0]===S.i)) S.i='orig'; if(!THEMES[S.t]) S.t='night';
 function applyAll(){
   const t=THEMES[S.t],r=document.documentElement.style; ['bg1','bg2','accent'].forEach(k=>r.setProperty('--'+k,t[k]));
+  const sc=SCENES[S.w]; if(sc){ if($('wall').dataset.k!==S.w){$('wall').innerHTML=sc.svg();$('wall').dataset.k=S.w;} r.setProperty('--accent',sc.ac);} else {$('wall').innerHTML='';$('wall').dataset.k='';}
   document.body.dataset.l=S.l; document.body.dataset.i=S.i; document.body.dataset.w=S.w;
   drawDock(); if(typeof ytSync==='function') setTimeout(ytSync,50);
 }
@@ -532,7 +612,7 @@ $('qCustom').onclick=()=>{ drawCust(); $('custOv').classList.add('show'); ytSync
 $('custClose').onclick=onBack;
 function optRow(id,items,curVal,pick){
   const r=$(id); r.innerHTML='';
-  items.forEach(([v,label,sw])=>{const b=document.createElement('button');b.className='opt f'+(v===curVal?' sel':'');
+  items.forEach(([v,label,sw])=>{const b=document.createElement('button');b.className='opt f'+(v===curVal?' sel':'');b.dataset.v=v;
     b.innerHTML=(sw?'<span class="sw" style="background:'+sw+'"></span>':'')+label;
     b.onclick=()=>{r.querySelectorAll('.opt').forEach(x=>x.classList.toggle('sel',x===b));pick(v);};r.appendChild(b);});
 }
@@ -547,6 +627,7 @@ function drawCust(){
   optRow('icRow',ICONS,S.i,v=>{S.i=v;store.set('icons',v);applyAll();});
   optRow('thRow',Object.entries(THEMES).map(([k,t])=>[k,t.n,t.accent]),S.t,v=>{S.t=v;store.set('theme',v);applyAll();});
   optRow('wRow',WALLS,S.w,v=>{S.w=v;store.set('wall',v);applyAll();});
+  $('wRow').querySelectorAll('.opt').forEach(b=>{const sc=SCENES[b.dataset.v];if(sc){b.classList.add('thumb');b.insertAdjacentHTML('afterbegin','<span class="tb">'+sc.svg()+'</span>');}});
   optRow('svRow',SAVERS,S.sv,v=>{S.sv=v;store.set('saver',v);});
   drawHidden();
 }
