@@ -18,8 +18,7 @@ jobs:
         run: |
           T=https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets
           curl -fsSL -o app/src/main/assets/earth.jpg $T/earth_atmos_2048.jpg
-          curl -fsSL -o /tmp/lights.png $T/earth_lights_2048.png
-          convert /tmp/lights.png -quality 82 app/src/main/assets/lights.jpg
+          curl -fsSL -o app/src/main/assets/lights.png $T/earth_lights_2048.png
           ls -la app/src/main/assets
 
       - uses: actions/setup-java@v4
