@@ -1,0 +1,6 @@
+{
+  "voice": "ar-SA-HamedNeural",
+  "rate": "+0%",
+  "pitch": "-4Hz",
+  "samples": ["ar-SA-HamedNeural", "ar-KW-FahedNeural", "ar-AE-HamdanNeural", "ar-QA-MoazNeural", "ar-BH-AliNeural", "ar-EG-ShakirNeural"]
+}
