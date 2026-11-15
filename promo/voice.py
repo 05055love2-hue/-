@@ -42,9 +42,9 @@ def music(path, seconds=15.0, bpm=100):
     with wave.open(path,"wb") as w:
         w.setnchannels(2); w.setsampwidth(2); w.setframerate(SR); w.writeframes(data.tobytes())
 
-async def make(k, voice, outname):
+async def make(k, voice, outname, pitch=None, rate=None):
     mp3 = f"out/{outname}.mp3"
-    await edge_tts.Communicate(texts[k], voice, rate=CFG["rate"], pitch=CFG["pitch"]).save(mp3)
+    await edge_tts.Communicate(texts[k], voice, rate=rate or CFG["rate"], pitch=pitch or CFG["pitch"]).save(mp3)
     d = dur(mp3); tempo = max(1.0, min(1.25, d/14.2))
     print(outname, voice, round(d,2), "tempo", round(tempo,3))
     fc = (f"[1:a]atempo={tempo},adelay=350|350,highpass=f=80,"
@@ -63,8 +63,8 @@ async def main():
     allv = [v["ShortName"] for v in await edge_tts.list_voices() if v["Locale"].startswith("ar-") and v["Gender"]=="Male"]
     print("الأصوات المتوفرة:", allv)
     if len(sys.argv) > 1 and sys.argv[1] == "samples":
-        for v in CFG["samples"]:
-            if v in allv: await make("rawatib", v, "sample_"+v.split("-")[1]+"_"+v.split("-")[2].replace("Neural",""))
+        for v, pitch, rate, label in CFG["samples"]:
+            if v in allv: await make("rawatib", v, "sample_"+label, pitch, rate)
     else:
         for k in texts: await make(k, CFG["voice"], k)
     os.remove("out/music.wav")

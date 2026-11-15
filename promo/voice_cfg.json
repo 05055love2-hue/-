@@ -2,5 +2,36 @@
   "voice": "ar-SA-HamedNeural",
   "rate": "+0%",
   "pitch": "-4Hz",
-  "samples": ["ar-SA-HamedNeural", "ar-KW-FahedNeural", "ar-AE-HamdanNeural", "ar-QA-MoazNeural", "ar-BH-AliNeural", "ar-EG-ShakirNeural"]
+  "samples": [
+    [
+      "ar-SA-HamedNeural",
+      "-10Hz",
+      "-3%",
+      "SA_Hamed_deep"
+    ],
+    [
+      "ar-SA-HamedNeural",
+      "+0Hz",
+      "+6%",
+      "SA_Hamed_energetic"
+    ],
+    [
+      "ar-OM-AbdullahNeural",
+      "-4Hz",
+      "+0%",
+      "OM_Abdullah"
+    ],
+    [
+      "ar-YE-SalehNeural",
+      "-4Hz",
+      "+0%",
+      "YE_Saleh"
+    ],
+    [
+      "ar-IQ-BasselNeural",
+      "-4Hz",
+      "+0%",
+      "IQ_Bassel"
+    ]
+  ]
 }
