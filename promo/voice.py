@@ -16,7 +16,7 @@ async def main():
         tempo = max(1.0, min(1.35, d / limit))
         print(k, round(d, 2), "tempo", round(tempo, 3))
         subprocess.run(["ffmpeg","-y","-loglevel","error","-i",f"src/{k}.mp4","-i",mp3,
-            "-filter_complex",f"[1:a]atempo={tempo},adelay=300|300,apad,volume=1.6[a]",
+            "-filter_complex",f"[1:a]atempo={tempo},adelay=300|300,apad,volume=1.3,alimiter=limit=0.9[a]",
             "-map","0:v","-map","[a]","-c:v","copy","-c:a","aac","-b:a","160k","-t","15",
             "-movflags","+faststart",f"out/{k}.mp4"], check=True)
 
