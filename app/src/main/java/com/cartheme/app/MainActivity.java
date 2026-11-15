@@ -12,6 +12,8 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.webkit.GeolocationPermissions;
 import android.webkit.JavascriptInterface;
+import android.webkit.CookieManager;
+import android.widget.FrameLayout;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -38,6 +40,10 @@ public class MainActivity extends Activity {
     private static final int PICK_FILE = 1001;
 
     private WebView web;
+    private WebView yt;
+    private FrameLayout root;
+    private View fullView;
+    private WebChromeClient.CustomViewCallback fullCb;
     private ValueCallback<Uri[]> fileCallback;
 
     @Override
@@ -46,7 +52,10 @@ public class MainActivity extends Activity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         web = new WebView(this);
-        setContentView(web);
+        root = new FrameLayout(this);
+        root.addView(web, new FrameLayout.LayoutParams(-1, -1));
+        setContentView(root);
+        setupYouTube();
         goFullScreen();
 
         WebSettings s = web.getSettings();
@@ -120,6 +129,7 @@ public class MainActivity extends Activity {
         });
 
         web.addJavascriptInterface(new Bridge(), "Native");
+        web.addJavascriptInterface(new YtBridge(), "YT");
         web.loadUrl(BASE + "index.html");
     }
 
@@ -153,6 +163,77 @@ public class MainActivity extends Activity {
             launch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(launch);
             return true;
+        }
+    }
+
+    /** يوتيوب الحقيقي داخل مربع المشغل في الواجهة */
+    private void setupYouTube() {
+        yt = new WebView(this);
+        WebSettings s = yt.getSettings();
+        s.setJavaScriptEnabled(true);
+        s.setDomStorageEnabled(true);
+        s.setMediaPlaybackRequiresUserGesture(false);
+        CookieManager.getInstance().setAcceptCookie(true);
+        CookieManager.getInstance().setAcceptThirdPartyCookies(yt, true);
+        yt.setBackgroundColor(0xFF000000);
+        yt.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                String u = request.getUrl().toString();
+                // نخلي كل شي داخل المربع، وما نفتح تطبيق يوتيوب برا
+                return !(u.startsWith("http://") || u.startsWith("https://"));
+            }
+        });
+        yt.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public void onShowCustomView(View view, CustomViewCallback cb) {
+                if (fullView != null) { cb.onCustomViewHidden(); return; }
+                fullView = view; fullCb = cb;
+                root.addView(view, new FrameLayout.LayoutParams(-1, -1));
+                goFullScreen();
+            }
+            @Override
+            public void onHideCustomView() { exitVideoFull(); }
+        });
+        yt.setVisibility(View.GONE);
+        root.addView(yt, new FrameLayout.LayoutParams(1, 1));
+    }
+
+    private void exitVideoFull() {
+        if (fullView == null) return;
+        root.removeView(fullView);
+        fullView = null;
+        if (fullCb != null) fullCb.onCustomViewHidden();
+        fullCb = null;
+        goFullScreen();
+    }
+
+    private class YtBridge {
+        @JavascriptInterface
+        public void show(final int x, final int y, final int w, final int h) {
+            runOnUiThread(() -> {
+                if (yt.getUrl() == null) yt.loadUrl("https://m.youtube.com/");
+                FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(w, h);
+                lp.leftMargin = x; lp.topMargin = y;
+                yt.setLayoutParams(lp);
+                yt.setVisibility(View.VISIBLE);
+            });
+        }
+        @JavascriptInterface
+        public void hide() {
+            runOnUiThread(() -> yt.setVisibility(View.GONE));
+        }
+        @JavascriptInterface
+        public void run(final String js) {
+            runOnUiThread(() -> yt.evaluateJavascript(js, null));
+        }
+        @JavascriptInterface
+        public void back() {
+            runOnUiThread(() -> { if (yt.canGoBack()) yt.goBack(); });
+        }
+        @JavascriptInterface
+        public void home() {
+            runOnUiThread(() -> yt.loadUrl("https://m.youtube.com/"));
         }
     }
 
@@ -264,6 +345,8 @@ public class MainActivity extends Activity {
 
     @Override
     public void onBackPressed() {
+        if (fullView != null) { exitVideoFull(); return; }
+        if (yt != null && yt.getVisibility() == View.VISIBLE && yt.canGoBack()) { yt.goBack(); return; }
         // التطبيق شاشة رئيسية، فزر الرجوع يسكّر النوافذ بس وما يطلع من التطبيق
         web.evaluateJavascript(
                 "document.querySelectorAll('.overlay.show').forEach(o=>o.classList.remove('show'))", null);

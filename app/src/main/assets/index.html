@@ -149,6 +149,10 @@
   .ytempty svg{width:48px;height:48px;fill:var(--accent);opacity:.7}
   .recent button.cur{background:var(--accent);color:var(--bg1);border-color:var(--accent)}
   .ytbox iframe{width:100%;height:100%;border:0}
+  body.ytNative #ytForm, body.ytNative #recent{display:none}
+  .ytnav{display:none;gap:8px;width:100%;justify-content:center}
+  body.ytNative .ytnav{display:flex}
+  .ytnav button{font-family:inherit;font-size:clamp(12px,1.3vw,15px);padding:7px 16px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.06);color:var(--text);cursor:pointer}
   .ytempty{text-align:center;color:var(--soft);font-size:clamp(12px,1.3vw,16px);padding:10px}
   .ytform{display:flex;gap:8px;width:100%}
   .ytform input{flex:1;min-width:0;font-family:inherit;font-size:clamp(13px,1.4vw,16px);padding:9px 14px;border-radius:14px;border:1px solid var(--line);background:rgba(0,0,0,.2);color:var(--text);direction:ltr;text-align:right}
@@ -345,6 +349,7 @@
         <button class="btn txt" id="ytFwd" aria-label="تقديم 10 ثواني">10<svg viewBox="0 0 24 24"><path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"/></svg></button>
         <button class="btn" id="ytNext" aria-label="المقطع التالي"><svg viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg></button>
       </div>
+      <div class="ytnav"><button id="ytHome">🏠 الرئيسية</button><button id="ytGoBack">↩ رجوع</button></div>
       <form class="ytform" id="ytForm">
         <input id="ytUrl" type="text" placeholder="الصق رابط اليوتيوب هنا" autocomplete="off">
         <button class="pickfill" type="submit">تشغيل</button>
@@ -785,6 +790,36 @@ wxShow(); wxNote(); wxUpdate(); setInterval(wxUpdate,20*60*1000);
 
 if(S.bg==='photo' && !store.get('photo','')) S.bg='flow';
 applyAll(); tick(); setInterval(tick,1000); drawDock(); drawMyList(); drawCatalog(); drawRecent();
+
+/* يوتيوب الحقيقي داخل المشغل (في تطبيق الأندرويد) */
+if(window.YT && YT.show){
+  document.body.classList.add('ytNative');
+  const box=$('ytBox'); box.innerHTML='<div class="ytempty">جاري فتح يوتيوب…</div>';
+  let last='';
+  function ytSync(){
+    const r=box.getBoundingClientRect(), d=window.devicePixelRatio||1;
+    const overlay=document.querySelector('.overlay.show');
+    const show=!$('ytView').hidden && !overlay && r.width>20 && r.height>20 && !document.hidden;
+    const key=show?[r.left,r.top,r.width,r.height].map(v=>Math.round(v*d)).join(','):'off';
+    if(key===last) return; last=key;
+    if(show){ const [x,y,w,h]=key.split(',').map(Number); YT.show(x,y,w,h); } else YT.hide();
+  }
+  new ResizeObserver(ytSync).observe(box);
+  new MutationObserver(ytSync).observe(document.body,{attributes:true,subtree:true,attributeFilter:['class','hidden','style']});
+  window.addEventListener('resize',ytSync); document.addEventListener('visibilitychange',ytSync);
+  setInterval(ytSync,700);
+  const V="var v=document.querySelector('video');";
+  ytCmd=function(f){ if(f==='pauseVideo') YT.run(V+"if(v)v.pause()"); if(f==='playVideo') YT.run(V+"if(v)v.play()"); };
+  needVideo=()=>false;
+  $('ytPlay').onclick=()=>{ YT.run(V+"if(v){v.paused?v.play():v.pause()}"); };
+  $('ytBack').onclick=()=>YT.run(V+"if(v)v.currentTime=Math.max(0,v.currentTime-10)");
+  $('ytFwd').onclick=()=>YT.run(V+"if(v)v.currentTime=v.currentTime+10");
+  $('ytPrev').onclick=()=>YT.back();
+  $('ytNext').onclick=()=>YT.run(V+"if(v&&v.duration)v.currentTime=v.duration-0.5");
+  $('ytHome').onclick=()=>YT.home();
+  $('ytGoBack').onclick=()=>YT.back();
+  ytSync();
+}
 </script>
 </body>
 </html>
