@@ -52,9 +52,9 @@ async def make(k, voice, outname):
           "acompressor=threshold=-20dB:ratio=3.5:attack=5:release=90:makeup=5,"
           "aecho=0.8:0.4:35:0.06,apad,asplit=2[v1][v2];"
           "[2:a]volume=0.45[m];[m][v1]sidechaincompress=threshold=0.02:ratio=8:attack=15:release=350[md];"
-          "[md][v2]amix=inputs=2:normalize=0,alimiter=limit=0.89,atrim=0:15[a]")
+          "[md][v2]amix=inputs=2:normalize=0,loudnorm=I=-14:TP=-1.5:LRA=11,atrim=0:15[a]")
     subprocess.run(["ffmpeg","-y","-loglevel","error","-i",f"src/{k}.mp4","-i",mp3,"-i","out/music.wav",
-        "-filter_complex",fc,"-map","0:v","-map","[a]","-c:v","copy","-c:a","aac","-b:a","192k",
+        "-filter_complex",fc,"-map","0:v","-map","[a]","-c:v","copy","-c:a","aac","-b:a","192k","-ar","44100",
         "-t","15","-movflags","+faststart",f"out/{outname}.mp4"], check=True)
     os.remove(mp3)
 
