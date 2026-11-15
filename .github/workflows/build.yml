@@ -40,6 +40,7 @@ jobs:
           cp router/build/outputs/apk/debug/router-debug.apk signal-app.apk
           cp seasons/build/outputs/apk/debug/seasons-debug.apk seasons.apk
           cp ytcar/build/outputs/apk/debug/ytcar-debug.apk mushaghli.apk
+          cp rawatib/build/outputs/apk/debug/rawatib-debug.apk rawatib.apk
 
       - name: Publish download link
         uses: softprops/action-gh-release@v2
@@ -52,6 +53,7 @@ jobs:
             signal-app.apk
             seasons.apk
             mushaghli.apk
+            rawatib.apk
           make_latest: true
 
       - name: Screenshots

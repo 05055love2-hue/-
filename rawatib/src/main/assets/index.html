@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مواعيد الصرف</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@500;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#07130f;--card:rgba(255,255,255,.06);--line:rgba(255,255,255,.1);--txt:#f2fbf6;--soft:#9fb8ad}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'Tajawal',system-ui,sans-serif;color:var(--txt);min-height:100vh;
+  background:radial-gradient(700px 420px at 100% -5%,rgba(16,185,129,.28),transparent 60%),radial-gradient(600px 400px at -10% 40%,rgba(59,130,246,.18),transparent 60%),var(--bg)}
+.wrap{max-width:480px;margin:auto;padding:18px 16px 40px}
+header{display:flex;align-items:center;gap:10px}
+header .lg{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#10b981,#047857);display:grid;place-items:center;font-size:24px}
+header h1{font-size:22px;font-weight:900}
+header small{display:block;font-size:13px;color:var(--soft);font-weight:700}
+/* البطل */
+.hero{margin-top:16px;border-radius:28px;padding:20px;position:relative;overflow:hidden;background:linear-gradient(135deg,var(--a),var(--b));box-shadow:0 18px 40px -12px var(--a)}
+.hero:after{content:'';position:absolute;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,.08);top:-80px;left:-60px}
+.hero .lbl{font-size:14px;font-weight:800;opacity:.9}
+.hero h2{font-size:26px;font-weight:900;margin-top:2px;display:flex;align-items:center;gap:8px}
+.hero .when{font-size:15px;font-weight:700;opacity:.92;margin-top:2px}
+.cd{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:16px;position:relative;z-index:1}
+.cd div{background:rgba(0,0,0,.18);border-radius:16px;padding:10px 2px;text-align:center}
+.cd b{display:block;font-size:30px;font-weight:900;font-variant-numeric:tabular-nums;line-height:1.1}
+.cd small{font-size:12px;opacity:.85;font-weight:700}
+.today{margin-top:16px;text-align:center;font-size:24px;font-weight:900;background:rgba(0,0,0,.18);border-radius:16px;padding:14px;position:relative;z-index:1}
+/* البطاقات */
+.sec{font-size:15px;color:var(--soft);font-weight:800;margin:22px 4px 10px}
+.list{display:grid;gap:12px}
+.item{display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--line);border-radius:24px;padding:14px;cursor:pointer;transition:.2s;text-align:right;color:inherit;font-family:inherit;width:100%}
+.item:active{transform:scale(.98)}
+.item.on{border-color:var(--a);box-shadow:0 0 0 2px var(--a) inset}
+.ring{width:66px;height:66px;flex:0 0 66px;position:relative}
+.ring svg{transform:rotate(-90deg)}
+.ring .n{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1}
+.ring .n b{font-size:22px;font-weight:900}
+.ring .n small{font-size:10px;color:var(--soft);font-weight:700}
+.item .tx{flex:1;min-width:0}
+.item .nm{font-size:17px;font-weight:900;display:flex;align-items:center;gap:6px}
+.item .dt{font-size:14px;font-weight:700;margin-top:2px}
+.item .hj{font-size:12px;color:var(--soft);font-weight:700}
+.item .ic{font-size:26px;width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:var(--a2)}
+.tag{font-size:11px;font-weight:800;background:var(--a);color:#fff;border-radius:8px;padding:1px 7px}
+/* الجدول */
+.sched{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:6px 14px}
+.row{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--line);font-size:15px}
+.row:last-child{border:0}
+.row b{font-weight:800}
+.row span{color:var(--soft);font-size:13px;font-weight:700}
+.row .mv{font-size:11px;color:#fbbf24;font-weight:800;display:block}
+.row.past{opacity:.45}
+.note{font-size:12.5px;color:var(--soft);line-height:1.8;margin-top:12px;padding:0 4px}
+/* إعداد الراتب الخاص */
+.priv{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:14px;margin-top:12px}
+.priv label{font-size:14px;font-weight:800;display:block;margin-bottom:8px}
+.days{display:flex;gap:6px;flex-wrap:wrap}
+.days button{border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--txt);font-family:inherit;font-weight:800;font-size:14px;border-radius:12px;width:42px;height:38px;cursor:pointer}
+.days button.on{background:#8b5cf6;border-color:#8b5cf6}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header><div class="lg">💰</div><div><h1>مواعيد الصرف</h1><small id="now"></small></div></header>
+
+  <div class="hero" id="hero">
+    <div class="lbl" id="hLbl">أقرب صرف</div>
+    <h2 id="hName"></h2>
+    <div class="when" id="hWhen"></div>
+    <div id="hBody"></div>
+  </div>
+
+  <div class="sec">كل المواعيد</div>
+  <div class="list" id="list"></div>
+
+  <div class="priv" id="privBox" hidden>
+    <label>راتبك في القطاع الخاص ينزل يوم كم؟</label>
+    <div class="days" id="days"></div>
+  </div>
+
+  <div class="sec" id="schTitle">المواعيد الجاية</div>
+  <div class="sched" id="sched"></div>
+  <p class="note" id="rule"></p>
+  <p class="note">التواريخ محسوبة حسب القاعدة المعلنة، وممكن الجهة تعلن تقديم أو تأخير في مناسبات مثل الأعياد. تأكد دايمًا من القنوات الرسمية.</p>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const store={get:(k,d)=>{try{const v=localStorage.getItem('r_'+k);return v===null?d:v}catch(e){return d}},set:(k,v)=>{try{localStorage.setItem('r_'+k,v)}catch(e){}}};
+const days=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+const months=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+let hijri=null;try{hijri=new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura-nu-latn',{day:'numeric',month:'long',year:'numeric'})}catch(e){}
+const H=d=>hijri?hijri.format(d):'';
+const DAY=86400000;
+
+// الجمعة تتقدم للخميس، والسبت تتأخر للأحد
+function shift(d){const w=d.getDay();if(w===5)return[new Date(d.getFullYear(),d.getMonth(),d.getDate()-1),'قُدّم من الجمعة'];if(w===6)return[new Date(d.getFullYear(),d.getMonth(),d.getDate()+1),'تأخر من السبت'];return[d,'']}
+const T=[
+ {k:'gov',n:'راتب الدولة',e:'🏛️',a:'#10b981',b:'#047857',day:27,rule:'رواتب موظفي الدولة المدنيين والعسكريين تنزل يوم 27 من كل شهر ميلادي. إذا صادف الجمعة ينزل الخميس اللي قبله، وإذا صادف السبت ينزل الأحد اللي بعده.'},
+ {k:'citizen',n:'حساب المواطن',e:'🏠',a:'#3b82f6',b:'#1d4ed8',day:10,rule:'دعم حساب المواطن ينزل يوم 10 من كل شهر ميلادي. إذا صادف الجمعة ينزل الخميس اللي قبله، وإذا صادف السبت ينزل الأحد اللي بعده.'},
+ {k:'daman',n:'الضمان المطوّر',e:'🤝',a:'#f59e0b',b:'#c2410c',day:1,rule:'معاش الضمان الاجتماعي المطوّر ينزل أول يوم من كل شهر ميلادي، ونتيجة الأهلية تطلع قبله يوم 27. وإذا صادف إجازة نهاية الأسبوع يتغير الموعد يوم.'},
+ {k:'priv',n:'راتبي (خاص)',e:'💼',a:'#8b5cf6',b:'#6d28d9',day:+store.get('privDay','27'),rule:'راتب القطاع الخاص يحدده عقدك. اختر يوم نزول راتبك من فوق، والتطبيق يحسب لك.'}
+];
+function payDate(t,y,m){const last=new Date(y,m+1,0).getDate();const base=new Date(y,m,Math.min(t.day,last));return shift(base)}
+function upcoming(t,now,count){const out=[];const st=new Date(now.getFullYear(),now.getMonth()-1,1);
+  for(let i=0;i<15&&out.length<count;i++){const[d,why]=payDate(t,st.getFullYear(),st.getMonth()+i);if(d.getTime()+DAY>now.getTime())out.push({d,why})}return out}
+function prev(t,now){const st=new Date(now.getFullYear(),now.getMonth()-2,1);let p=null;
+  for(let i=0;i<4;i++){const[d]=payDate(t,st.getFullYear(),st.getMonth()+i);if(d.getTime()+DAY<=now.getTime())p=d}return p}
+const fmt=d=>days[d.getDay()]+' '+d.getDate()+' '+months[d.getMonth()];
+const same=(a,b)=>a.toDateString()===b.toDateString();
+
+let sel=store.get('sel','');
+const list=$('list');
+T.forEach(t=>{const b=document.createElement('button');b.className='item';b.style.setProperty('--a',t.a);b.style.setProperty('--a2',t.a+'33');
+  b.innerHTML=`<div class="ring"><svg width="66" height="66"><circle cx="33" cy="33" r="28" stroke="rgba(255,255,255,.1)" stroke-width="6" fill="none"/><circle class="p" cx="33" cy="33" r="28" stroke="${t.a}" stroke-width="6" fill="none" stroke-linecap="round" stroke-dasharray="176"/></svg><div class="n"><b></b><small>يوم</small></div></div>
+  <div class="tx"><div class="nm"></div><div class="dt"></div><div class="hj"></div></div><div class="ic">${t.e}</div>`;
+  b.querySelector('.nm').textContent=t.n;
+  b.onclick=()=>{sel=t.k;store.set('sel',t.k);draw(true)};t.el=b;list.appendChild(b)});
+
+const dz=$('days');for(let i=1;i<=31;i++){const b=document.createElement('button');b.textContent=i;b.onclick=()=>{T[3].day=i;store.set('privDay',i);try{window.Native&&Native.setPrivDay(i)}catch(e){}draw(true)};dz.appendChild(b)}
+
+function draw(full){
+  const now=new Date();
+  $('now').textContent=fmt(now)+' • '+H(now);
+  T.forEach(t=>{const u=upcoming(t,now,1)[0];t.next=u.d;t.why=u.why;const p=prev(t,now)||new Date(u.d.getTime()-30*DAY);
+    t.left=t.next.getTime()-now.getTime();t.isToday=same(t.next,now);t.pct=Math.min(1,Math.max(0,(now-p)/(t.next-p)))});
+  const order=[...T].sort((a,b)=>a.next-b.next);
+  if(!sel||!T.some(t=>t.k===sel))sel=order[0].k;
+  const s=T.find(t=>t.k===sel);
+  // البطاقات
+  T.forEach(t=>{const e=t.el,dl=Math.max(0,Math.floor(t.left/DAY)),hr=Math.max(1,Math.ceil(t.left/3600000));
+    e.classList.toggle('on',t.k===sel);
+    e.querySelector('.n b').textContent=t.isToday?'🎉':(dl>0?dl:hr);
+    e.querySelector('.n small').textContent=t.isToday?'اليوم':(dl>0?'يوم':'ساعة');
+    e.querySelector('.p').style.strokeDashoffset=176*(1-t.pct);
+    e.querySelector('.dt').textContent=fmt(t.next);
+    e.querySelector('.hj').textContent=H(t.next)+(t.why?' • '+t.why:'');
+    const nm=e.querySelector('.nm');nm.textContent=t.n;if(t===order[0]){const g=document.createElement('span');g.className='tag';g.textContent='الأقرب';nm.appendChild(g)}});
+  // البطل
+  const hero=$('hero');hero.style.setProperty('--a',s.a);hero.style.setProperty('--b',s.b);
+  $('hLbl').textContent=s===order[0]?'أقرب صرف':'العد التنازلي';
+  $('hName').textContent=s.e+' '+s.n;
+  $('hWhen').textContent=fmt(s.next)+' '+s.next.getFullYear()+' • '+H(s.next);
+  if(s.isToday){$('hBody').innerHTML='<div class="today">ينزل اليوم 🎉</div>'}
+  else{const x=Math.max(0,s.left)/1000;
+    if(!$('hBody').querySelector('.cd'))$('hBody').innerHTML='<div class="cd"><div><b id="cd0"></b><small>يوم</small></div><div><b id="cd1"></b><small>ساعة</small></div><div><b id="cd2"></b><small>دقيقة</small></div><div><b id="cd3"></b><small>ثانية</small></div></div>';
+    [Math.floor(x/86400),Math.floor(x%86400/3600),Math.floor(x%3600/60),Math.floor(x%60)].forEach((v,i)=>$('cd'+i).textContent=v)}
+  if(!full)return;
+  // الجدول
+  $('privBox').hidden=sel!=='priv';
+  [...dz.children].forEach((b,i)=>b.classList.toggle('on',i+1===T[3].day));
+  $('schTitle').textContent='مواعيد '+s.n+' الجاية';
+  $('sched').innerHTML=upcoming(s,now,6).map(u=>`<div class="row"><div><b>${fmt(u.d)} ${u.d.getFullYear()}</b>${u.why?'<span class="mv">'+u.why+'</span>':''}</div><span>${H(u.d)}</span></div>`).join('');
+  $('rule').textContent=s.rule;
+}
+try{window.Native&&Native.setPrivDay(T[3].day)}catch(e){}
+draw(true);setInterval(()=>draw(false),1000);setInterval(()=>draw(true),60000);
+</script>
+</body>
+</html>
