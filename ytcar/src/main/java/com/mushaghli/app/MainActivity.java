@@ -177,6 +177,30 @@ public class MainActivity extends Activity {
             try { startActivity(launch); return true; } catch (Exception e) { return false; }
         }
 
+        /** يحاول يفتح التطبيق كنافذة بمكان المربع بالضبط (يحتاج وضع النوافذ في الشاشة) */
+        @JavascriptInterface
+        public boolean openInBox(String pkg, int x, int y, int w, int h) {
+            Intent launch = getPackageManager().getLaunchIntentForPackage(pkg);
+            if (launch == null) return false;
+            launch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+            try {
+                if (Build.VERSION.SDK_INT >= 24) {
+                    android.app.ActivityOptions o = android.app.ActivityOptions.makeBasic();
+                    o.setLaunchBounds(new android.graphics.Rect(x, y, x + w, y + h));
+                    try {
+                        java.lang.reflect.Method m = android.app.ActivityOptions.class.getMethod("setLaunchWindowingMode", int.class);
+                        m.invoke(o, 5); // نافذة حرة
+                    } catch (Throwable ignored) { }
+                    startActivity(launch, o.toBundle());
+                } else {
+                    startActivity(launch);
+                }
+                return true;
+            } catch (Exception e) {
+                try { startActivity(launch); return true; } catch (Exception e2) { return false; }
+            }
+        }
+
         @JavascriptInterface
         public boolean openAction(String action) {
             try {
