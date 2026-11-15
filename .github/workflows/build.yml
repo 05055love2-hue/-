@@ -42,6 +42,7 @@ jobs:
           cp ytcar/build/outputs/apk/debug/ytcar-debug.apk mushaghli.apk
           cp rawatib/build/outputs/apk/debug/rawatib-debug.apk rawatib.apk
           cp obd/build/outputs/apk/debug/obd-debug.apk fahes.apk
+          cp hammil/build/outputs/apk/debug/hammil-debug.apk hammil.apk
 
       - name: Publish download link
         uses: softprops/action-gh-release@v2
@@ -57,6 +58,7 @@ jobs:
             mushaghli.apk
             rawatib.apk
             fahes.apk
+            hammil.apk
           make_latest: true
 
       - name: Screenshots
