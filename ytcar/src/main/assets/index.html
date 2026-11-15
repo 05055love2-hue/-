@@ -94,6 +94,12 @@ body.full .player{grid-column:1}
 .search{width:100%;border:1px solid var(--line);background:var(--btn);color:var(--txt);font-family:inherit;font-size:17px;border-radius:14px;padding:12px 14px;margin-bottom:12px}
 .applist{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px}
 .applist .tile{min-width:0;width:100%}
+.panel.wide{width:min(1100px,100%);height:100%}
+.hint{margin:-4px 0 12px;color:var(--soft);font-size:14px}
+.applist.big{grid-template-columns:repeat(auto-fill,minmax(120px,1fr))}
+.applist.big .tile{height:104px}
+.applist.big .tile .ti{width:52px;height:52px;font-size:32px}
+.tile.all .ti{background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;font-size:24px}
 .x{border:0;background:var(--btn);color:var(--txt);width:40px;height:40px;border-radius:12px;font-size:20px;cursor:pointer}
 .toast{position:fixed;bottom:110px;left:50%;transform:translateX(-50%);background:#000c;color:#fff;padding:10px 18px;border-radius:14px;font-size:15px;font-weight:700;opacity:0;transition:.3s;z-index:10;pointer-events:none}
 .toast.show{opacity:1}
@@ -154,6 +160,13 @@ body.full .player{grid-column:1}
   <h3>أضف تطبيق <button class="x" data-close>✕</button></h3>
   <input class="search" id="q" placeholder="ابحث باسم التطبيق…">
   <div class="applist" id="appList"></div>
+</div></div>
+
+<div class="ov" id="allOv"><div class="panel wide">
+  <h3>كل التطبيقات <button class="x" data-close>✕</button></h3>
+  <input class="search" id="aq" placeholder="ابحث باسم التطبيق…">
+  <p class="hint">اضغط على التطبيق يفتح • ضغطة طويلة تضيفه للشريط اللي تحت</p>
+  <div class="applist big" id="allList"></div>
 </div></div>
 
 <div class="toast" id="toast"></div>
@@ -245,6 +258,7 @@ function drawDock(){const d=$('dock');d.innerHTML='';
   DOCK.forEach((a,i)=>{const b=tileEl(a);let t;b.onclick=()=>{if(b.classList.contains('shake')){DOCK.splice(i,1);saveDock();toast('انشال '+a.n);return}openApp(a)};
     b.onpointerdown=()=>{t=setTimeout(()=>{d.querySelectorAll('.tile').forEach(x=>x.classList.add('shake'));toast('اضغط على التطبيق اللي تبي تشيله')},700)};
     b.onpointerup=b.onpointerleave=()=>clearTimeout(t);d.appendChild(b)});
+  const all=tileEl({n:'كل التطبيقات',e:'▦'},'all');all.onclick=openAll;d.insertBefore(all,d.firstChild);
   const add=tileEl({n:'أضف',e:'+'},'add');add.onclick=()=>openAdd();d.appendChild(add);
   const s=tileEl({n:'الإعدادات',e:'⚙️'},'set');s.onclick=()=>$('setOv').classList.add('show');d.appendChild(s)}
 function saveDock(){store.set('dock',JSON.stringify(DOCK));drawDock()}
@@ -256,6 +270,16 @@ function openAdd(k){PICK=typeof k==='string'?k:null;if(!ALL){ALL=(NATIVE?apps():
 function drawList(){const q=$('q').value.trim().toLowerCase(),L=$('appList');L.innerHTML='';
   ALL.filter(a=>!q||a.n.toLowerCase().includes(q)).forEach(a=>{const b=tileEl(a);b.onclick=()=>{$('addOv').classList.remove('show');if(PICK){store.set('q_'+PICK,JSON.stringify({n:a.n,pkg:a.pkg}));toast('زر '+QN[PICK]+' صار يفتح '+a.n);return}if(!DOCK.some(x=>x.pkg===a.pkg))DOCK.push(a);saveDock();toast('انضاف '+a.n)};L.appendChild(b)})}
 $('q').oninput=drawList;
+function openAll(){if(!ALL){ALL=(NATIVE?apps():DEF).slice();ALL.sort((a,b)=>a.n.localeCompare(b.n,'ar'))}$('aq').value='';drawAll();$('allOv').classList.add('show')}
+function drawAll(){const q=$('aq').value.trim().toLowerCase(),L=$('allList');L.innerHTML='';
+  const list=ALL.filter(a=>!q||a.n.toLowerCase().includes(q));
+  if(!list.length){L.innerHTML='<p class="hint">ما فيه تطبيقات بهذا الاسم</p>';return}
+  list.forEach(a=>{const b=tileEl(a);let t,long=false;
+    b.onpointerdown=()=>{long=false;t=setTimeout(()=>{long=true;if(!DOCK.some(x=>x.pkg===a.pkg)){DOCK.push(a);saveDock();toast('انضاف '+a.n+' للشريط')}else toast(a.n+' موجود في الشريط')},700)};
+    b.onpointerup=b.onpointerleave=b.onpointercancel=()=>clearTimeout(t);
+    b.oncontextmenu=e=>e.preventDefault();
+    b.onclick=()=>{if(long)return;$('allOv').classList.remove('show');openApp(a)};L.appendChild(b)})}
+$('aq').oninput=drawAll;
 document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>b.closest('.ov').classList.remove('show'));
 document.querySelectorAll('.ov').forEach(o=>o.onclick=e=>{if(e.target===o)o.classList.remove('show')});
 drawDock();applyTheme();
