@@ -25,7 +25,6 @@ jobs:
         working-directory: promo
         run: |
           python voice.py
-          python voice.py samples
       - name: Publish videos
         uses: softprops/action-gh-release@v2
         with:
