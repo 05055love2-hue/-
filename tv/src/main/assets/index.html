@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>شاشتي</title>
+<style>
+  :root{--bg1:#0b1424;--bg2:#1b3355;--accent:#7cc4ff;--text:#eef4fb;--soft:#9fb3c8;--line:rgba(255,255,255,.12)}
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;overflow:hidden}
+  body{font-family:'Tajawal','Cairo',sans-serif;color:var(--text);
+    background:radial-gradient(70vw 60vh at 85% 0%,var(--bg2),transparent 70%),radial-gradient(60vw 60vh at 0% 100%,color-mix(in srgb,var(--accent) 18%,transparent),transparent 70%),var(--bg1);
+    transition:background .6s}
+  .wrap{height:100vh;display:flex;flex-direction:column;padding:4vh 4vw 3vh}
+  .top{display:flex;align-items:flex-start;justify-content:space-between;gap:3vw}
+  .clock{font-size:11vw;font-weight:300;line-height:.95;direction:ltr;letter-spacing:-.02em}
+  .clock small{font-size:2.6vw;color:var(--soft);margin-inline-start:.6vw}
+  .date{font-size:1.9vw;color:var(--soft);margin-top:1vh}
+  .greet{font-size:1.7vw;color:var(--accent);margin-top:.6vh}
+  .wx{display:flex;align-items:center;gap:1.2vw;padding:1.6vh 1.8vw;border-radius:2vw;background:rgba(255,255,255,.06);border:1px solid var(--line)}
+  .wx .i{font-size:4vw}
+  .wx .t{font-size:3.6vw;direction:ltr}
+  .wx .d{display:flex;flex-direction:column;font-size:1.3vw;color:var(--soft)}
+  .wx .d b{color:var(--text);font-weight:500;font-size:1.5vw}
+  .quick{display:flex;gap:1.2vw;margin-top:3.5vh}
+  .q{display:flex;align-items:center;gap:.8vw;font:inherit;font-size:1.4vw;color:var(--text);padding:1.2vh 1.6vw;border-radius:1.4vw;border:2px solid var(--line);background:rgba(255,255,255,.06)}
+  h2{font-size:1.6vw;font-weight:500;color:var(--soft);margin:3.5vh 0 1.6vh}
+  .grid{flex:1;min-height:0;overflow:hidden;display:grid;grid-template-columns:repeat(6,1fr);gap:2.2vh 1.6vw;align-content:start;padding:1vh .6vw 2vh}
+  .app{position:relative;aspect-ratio:16/9;border-radius:1.2vw;border:2px solid var(--line);background:rgba(255,255,255,.07);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.8vh;overflow:hidden;color:var(--text);font:inherit;font-size:1.2vw;padding:0}
+  .app img.ic{width:3.6vw;height:3.6vw;object-fit:contain}
+  .app img.bn{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .app.hasbn span{display:none}
+  .app span{max-width:92%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .f{transition:transform .15s,box-shadow .15s,border-color .15s;outline:none}
+  .f.on{transform:scale(1.08);border-color:var(--accent);box-shadow:0 0 0 3px var(--accent),0 1.5vh 4vh rgba(0,0,0,.5);z-index:2;background:rgba(255,255,255,.14)}
+  .empty{grid-column:1/-1;color:var(--soft);font-size:1.4vw}
+  .hint{position:fixed;bottom:1.6vh;left:4vw;font-size:1.1vw;color:var(--soft);opacity:.8}
+  .ov{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:9}
+  .ov.show{display:flex}
+  .panel{background:var(--bg1);border:2px solid var(--line);border-radius:2vw;padding:4vh 3vw;min-width:44vw}
+  .panel h3{font-size:2vw;margin:0 0 2.5vh}
+  .row{display:flex;flex-wrap:wrap;gap:1vw;margin-bottom:2.5vh}
+  .opt{font:inherit;font-size:1.4vw;color:var(--text);padding:1.2vh 1.6vw;border-radius:1.2vw;border:2px solid var(--line);background:rgba(255,255,255,.06)}
+  .opt.sel{background:color-mix(in srgb,var(--accent) 30%,transparent)}
+  .sw{display:inline-block;width:1.4vw;height:1.4vw;border-radius:50%;vertical-align:middle;margin-inline-end:.5vw}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div>
+      <div class="clock" id="clock">--:--</div>
+      <div class="date" id="date"></div>
+      <div class="greet" id="greet"></div>
+    </div>
+    <div class="wx" id="wx"><span class="i" id="wxI">⛅</span><span class="t" id="wxT">--°</span><span class="d"><b id="wxC">الرياض</b><span id="wxD">جاري التحميل…</span></span></div>
+  </div>
+
+  <div class="quick">
+    <button class="q f" id="qSet">⚙️ إعدادات التلفزيون</button>
+    <button class="q f" id="qTheme">🎨 الألوان</button>
+    <button class="q f" id="qHome">🏠 خلّها الشاشة الرئيسية</button>
+  </div>
+
+  <h2>تطبيقاتي</h2>
+  <div class="grid" id="grid"></div>
+</div>
+<div class="hint">تنقّل بالأسهم ← → ↑ ↓ واضغط موافق للفتح</div>
+
+<div class="ov" id="themeOv">
+  <div class="panel">
+    <h3>🎨 اختر الألوان</h3>
+    <div class="row" id="themeRow"></div>
+    <button class="opt f" id="themeClose">رجوع</button>
+  </div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const store={get(k,d){try{const v=localStorage.getItem(k);return v===null?d:v}catch(e){return d}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+
+/* ===== الألوان ===== */
+const THEMES={
+  night:{n:'ليلي أزرق',bg1:'#0b1424',bg2:'#1b3355',accent:'#7cc4ff'},
+  calm:{n:'هادي',bg1:'#0c1a1e',bg2:'#2f5e5a',accent:'#8fd3c1'},
+  sunset:{n:'غروب',bg1:'#1d0f1a',bg2:'#5a2a3a',accent:'#ffb27c'},
+  royal:{n:'ملكي',bg1:'#120d22',bg2:'#3b2a66',accent:'#c9a7ff'},
+  gold:{n:'ذهبي',bg1:'#141210',bg2:'#4a3d22',accent:'#f2c96b'}
+};
+let theme=store.get('theme','night'); if(!THEMES[theme]) theme='night';
+function applyTheme(){const t=THEMES[theme],r=document.documentElement.style;r.setProperty('--bg1',t.bg1);r.setProperty('--bg2',t.bg2);r.setProperty('--accent',t.accent);}
+applyTheme();
+
+/* ===== الساعة ===== */
+const DAYS=['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+const MONTHS=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+function tick(){
+  const d=new Date(),h=d.getHours(),m=String(d.getMinutes()).padStart(2,'0');
+  $('clock').innerHTML=((h%12)||12)+':'+m+'<small>'+(h<12?'ص':'م')+'</small>';
+  $('date').textContent=DAYS[d.getDay()]+' • '+d.getDate()+' '+MONTHS[d.getMonth()]+' '+d.getFullYear();
+  $('greet').textContent=h<12?'صباح الخير ☀️':h<18?'مساء الخير 🌤️':'مساء النور 🌙';
+}
+tick(); setInterval(tick,1000);
+
+/* ===== الطقس ===== */
+const WX=[[0,'صحو','☀️','🌙'],[1,'صحو غالبًا','🌤️','🌙'],[2,'غائم جزئيًا','⛅','☁️'],[3,'غائم','☁️','☁️'],[45,'ضباب','🌫️','🌫️'],[48,'ضباب','🌫️','🌫️'],
+  [51,'رذاذ','🌦️','🌧️'],[53,'رذاذ','🌦️','🌧️'],[55,'رذاذ','🌦️','🌧️'],[61,'مطر خفيف','🌧️','🌧️'],[63,'مطر','🌧️','🌧️'],[65,'مطر غزير','🌧️','🌧️'],
+  [80,'زخات مطر','🌦️','🌧️'],[81,'زخات مطر','🌦️','🌧️'],[82,'زخات قوية','⛈️','⛈️'],[95,'عاصفة رعدية','⛈️','⛈️'],[96,'عاصفة','⛈️','⛈️'],[99,'عاصفة','⛈️','⛈️']];
+function wxDraw(d){const c=d.current,r=WX.find(x=>x[0]===c.weather_code)||[0,'—','🌡️','🌡️'];
+  $('wxI').textContent=c.is_day?r[2]:r[3]; $('wxT').textContent=Math.round(c.temperature_2m)+'°';
+  $('wxD').textContent=r[1]+' • ↑'+Math.round(d.daily.temperature_2m_max[0])+'° ↓'+Math.round(d.daily.temperature_2m_min[0])+'°';}
+async function wxUpdate(){
+  try{const r=await fetch('https://api.open-meteo.com/v1/forecast?latitude=24.7136&longitude=46.6753&current=temperature_2m,weather_code,is_day&daily=temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=1');
+    const d=await r.json(); wxDraw(d); store.set('wx',JSON.stringify(d));}
+  catch(e){ if(!store.get('wx','')) $('wxD').textContent='ما فيه نت'; setTimeout(wxUpdate,60000); }
+}
+try{const L=JSON.parse(store.get('wx','null')); if(L) wxDraw(L);}catch(e){}
+wxUpdate(); setInterval(wxUpdate,20*60*1000);
+
+/* ===== التطبيقات ===== */
+const hasNative=!!window.Native;
+const SAMPLE=[['يوتيوب','#ff3b30'],['نتفليكس','#e50914'],['شاهد','#00c389'],['IPTV','#7b61ff'],['المتصفح','#4285f4'],['المعرض','#ffb000'],['الملفات','#8e8e93'],['متجر قوقل','#34a853'],['سبوتيفاي','#1db954'],['الموسيقى','#ff2d55'],['الطقس','#5ac8fa'],['الإعدادات','#636366']];
+function sampleApps(){return SAMPLE.map(([n,c],i)=>({n,pkg:'p'+i,img:"data:image/svg+xml,"+encodeURIComponent("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'><rect rx='2.4' width='10' height='10' fill='"+c+"'/></svg>")}));}
+let apps=[];
+function loadApps(){
+  try{apps=hasNative?JSON.parse(Native.getApps()):sampleApps();}catch(e){apps=[];}
+  const order=JSON.parse(store.get('order','{}')||'{}');
+  apps.sort((a,b)=>((order[b.pkg]||0)-(order[a.pkg]||0))||a.n.localeCompare(b.n,'ar'));
+}
+function drawApps(){
+  const g=$('grid'); const keep=cur&&cur.dataset.pkg; g.innerHTML='';
+  apps.forEach(a=>{const b=document.createElement('button');b.className='app f'+(a.banner?' hasbn':'');b.dataset.pkg=a.pkg;
+    b.innerHTML=(a.banner?'<img class="bn" src="'+a.banner+'" alt="">':'<img class="ic" src="'+a.img+'" alt="">')+'<span>'+a.n+'</span>';
+    b.onclick=()=>openApp(a); g.appendChild(b);});
+  if(!apps.length) g.innerHTML='<div class="empty">ما لقيت تطبيقات</div>';
+  if(keep){const k=g.querySelector('[data-pkg="'+keep+'"]'); if(k) focusEl(k,true);}
+}
+function openApp(a){
+  // التطبيقات اللي تفتحها كثير تطلع أول
+  const order=JSON.parse(store.get('order','{}')||'{}'); order[a.pkg]=(order[a.pkg]||0)+1; store.set('order',JSON.stringify(order));
+  if(hasNative) Native.open(a.pkg);
+}
+function refreshApps(){ loadApps(); drawApps(); }
+
+/* ===== التنقل بالريموت ===== */
+let cur=null;
+function visibleF(){
+  const ov=document.querySelector('.ov.show');
+  return [...(ov||document).querySelectorAll('.f')].filter(e=>e.offsetParent!==null);
+}
+function focusEl(el,quiet){
+  if(!el) return; if(cur) cur.classList.remove('on'); cur=el; el.classList.add('on');
+  const g=$('grid');
+  if(g.contains(el)){const r=el.getBoundingClientRect(),gr=g.getBoundingClientRect();
+    if(r.bottom>gr.bottom-8) g.scrollTop+=r.bottom-gr.bottom+gr.height*0.08;
+    if(r.top<gr.top+8) g.scrollTop-=gr.top-r.top+gr.height*0.08;}
+}
+function move(dir){
+  const list=visibleF(); if(!cur||!list.includes(cur)){focusEl(list[0]);return;}
+  const a=cur.getBoundingClientRect(),ax=a.left+a.width/2,ay=a.top+a.height/2;
+  let best=null,bs=1e9;
+  list.forEach(e=>{ if(e===cur) return; const b=e.getBoundingClientRect(),bx=b.left+b.width/2,by=b.top+b.height/2;
+    const dx=bx-ax,dy=by-ay; let main,side;
+    if(dir==='L'){ if(dx>=-2) return; main=-dx; side=Math.abs(dy); }
+    if(dir==='R'){ if(dx<=2) return; main=dx; side=Math.abs(dy); }
+    if(dir==='U'){ if(dy>=-2) return; main=-dy; side=Math.abs(dx); }
+    if(dir==='D'){ if(dy<=2) return; main=dy; side=Math.abs(dx); }
+    const s=main+side*2.5; if(s<bs){bs=s;best=e;} });
+  if(best) focusEl(best);
+}
+document.addEventListener('keydown',e=>{
+  const k=e.key, c=e.keyCode;
+  if(k==='ArrowLeft'||c===21){move('L');e.preventDefault();}
+  else if(k==='ArrowRight'||c===22){move('R');e.preventDefault();}
+  else if(k==='ArrowUp'||c===19){move('U');e.preventDefault();}
+  else if(k==='ArrowDown'||c===20){move('D');e.preventDefault();}
+  else if(k==='Enter'||c===13||c===23||c===66){ if(cur){cur.click();} e.preventDefault(); }
+  else if(k==='Escape'||k==='Backspace'){onBack();e.preventDefault();}
+});
+document.addEventListener('mouseover',e=>{const f=e.target.closest('.f'); if(f&&visibleF().includes(f)) focusEl(f);});
+function onBack(){
+  const ov=document.querySelector('.ov.show');
+  if(ov){ov.classList.remove('show'); focusEl($('qTheme')); return;}
+  $('grid').scrollTop=0; focusEl($('grid').querySelector('.f')||$('qSet'));
+}
+
+/* ===== الأزرار ===== */
+$('qSet').onclick=()=>{ if(hasNative) Native.settings(); };
+$('qHome').onclick=()=>{ if(hasNative) Native.homeSettings(); };
+$('qTheme').onclick=()=>{ drawThemes(); $('themeOv').classList.add('show'); focusEl($('themeRow').querySelector('.sel')||$('themeRow').firstChild); };
+$('themeClose').onclick=onBack;
+function drawThemes(){
+  const r=$('themeRow'); r.innerHTML='';
+  Object.entries(THEMES).forEach(([k,t])=>{const b=document.createElement('button');b.className='opt f'+(k===theme?' sel':'');
+    b.innerHTML='<span class="sw" style="background:'+t.accent+'"></span>'+t.n;
+    b.onclick=()=>{theme=k;store.set('theme',k);applyTheme();r.querySelectorAll('.opt').forEach(x=>x.classList.toggle('sel',x===b));};
+    r.appendChild(b);});
+}
+
+refreshApps();
+focusEl($('grid').querySelector('.f')||$('qSet'));
+</script>
+</body>
+</html>
