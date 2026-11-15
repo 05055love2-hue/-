@@ -91,6 +91,27 @@
   .appframe.show{display:flex}
   .appframe iframe{flex:1;border:0;width:100%}
   .appframe button{font-family:inherit;font-size:16px;font-weight:700;border:0;background:#1a1f2b;color:#fff;padding:12px}
+
+/* ===== التقييمات والتعليقات ===== */
+.rv{margin-top:18px;border:1px solid var(--line);border-radius:18px;padding:16px;background:rgba(255,255,255,.03)}
+.rv h3{margin:0 0 10px;font-size:17px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.rv .avg{font-size:14px;color:#ffd166;font-weight:800}.rv .avg small{color:var(--soft);font-weight:600}
+.stars{display:inline-flex;gap:2px}.stars b{font-size:15px;color:#ffd166}.stars b.o{color:rgba(255,255,255,.18)}
+.rvpick{display:flex;gap:4px;margin:6px 0 10px}
+.rvpick button{background:none;border:0;font-size:30px;line-height:1;cursor:pointer;color:rgba(255,255,255,.2);padding:2px;transition:transform .15s}
+.rvpick button.on{color:#ffd166}.rvpick button:active{transform:scale(1.25)}
+.rv input,.rv textarea{width:100%;box-sizing:border-box;background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:12px;color:var(--text);font:inherit;font-size:15px;padding:10px 12px;margin-bottom:8px}
+.rv textarea{min-height:76px;resize:vertical}
+.rv .send{background:#ffd166;color:#1a1300;border:0;border-radius:12px;font:inherit;font-weight:800;font-size:15px;padding:10px 18px;cursor:pointer}
+.rv .send:disabled{opacity:.5}
+.rv .msg{font-size:13px;margin-inline-start:10px;color:var(--soft)}
+.rv .list{margin-top:14px;display:flex;flex-direction:column;gap:10px}
+.rv .it{border-top:1px solid var(--line);padding-top:10px}
+.rv .it .h{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700}.rv .it .h .tm{color:var(--soft);font-weight:500;font-size:12px;margin-inline-start:auto}
+.rv .it p{margin:6px 0 0;font-size:14px;line-height:1.7;white-space:pre-wrap;word-break:break-word;color:var(--text)}
+.rv .more{background:none;border:1px solid var(--line);color:var(--soft);border-radius:10px;font:inherit;font-size:13px;padding:6px 12px;cursor:pointer;align-self:center}
+.rv .empty{color:var(--soft);font-size:13px}
+.cnt.st{color:#ffd166}
 </style>
 </head>
 <body>
@@ -951,6 +972,52 @@ loop();
         if(!a.nextElementSibling||!a.nextElementSibling.classList.contains('cnt')){const s=document.createElement('span');s.className='cnt';s.textContent='⬇️ '+fmt(c)+' تحميل';a.after(s)}});
       document.getElementById('dCount').textContent=fmt(total);
     }).catch(()=>{});
+  })();
+
+  /* ===== التقييمات والتعليقات (حقيقية، محفوظة في سيرفر الموقع) ===== */
+  (function(){
+    const API='https://tatbeeqati-sa.pages.dev/api/reviews';
+    const st=n=>'<span class="stars">'+[1,2,3,4,5].map(i=>'<b class="'+(i<=Math.round(n)?'':'o')+'">★</b>').join('')+'</span>';
+    const ago=t=>{const m=Math.floor((Date.now()-t)/6e4);if(m<1)return 'الحين';if(m<60)return 'قبل '+m+' دقيقة';const h=Math.floor(m/60);if(h<24)return 'قبل '+h+' ساعة';const d=Math.floor(h/24);if(d<30)return 'قبل '+d+' يوم';return new Date(t).toLocaleDateString('ar-SA')};
+    const esc=x=>String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    const ERR={once:'قيّمت هذا التطبيق اليوم، شكراً لك 🌹',slow:'تمهّل شوي وجرّب بعدين',links:'ممنوع الروابط وأرقام التواصل',bad:'اختر عدد النجوم أول','no-db':'خانة التعليقات تتجهز، جرّب بعد شوي'};
+    let DATA=null;
+    const boxes={};
+    document.querySelectorAll('section.app[id]').forEach(sec=>{
+      const id=sec.id,box=document.createElement('div');box.className='rv';
+      box.innerHTML='<h3>⭐ التقييمات والتعليقات <span class="avg"></span></h3>'+
+        '<div class="rvpick">'+[1,2,3,4,5].map(i=>'<button type="button" data-v="'+i+'" aria-label="'+i+' نجوم">★</button>').join('')+'</div>'+
+        '<input maxlength="30" placeholder="اسمك (اختياري)"><textarea maxlength="400" placeholder="اكتب رأيك في التطبيق…"></textarea>'+
+        '<button class="send" type="button">أرسل التقييم</button><span class="msg"></span><div class="list"></div>';
+      const det=sec.querySelector('details');(det||sec.lastElementChild).after(box);
+      let v=0;const btns=[...box.querySelectorAll('.rvpick button')];
+      const paint=n=>btns.forEach(b=>b.classList.toggle('on',+b.dataset.v<=n));
+      btns.forEach(b=>{b.onclick=()=>{v=+b.dataset.v;paint(v)};b.onmouseenter=()=>paint(+b.dataset.v);b.onmouseleave=()=>paint(v)});
+      const msg=box.querySelector('.msg'),send=box.querySelector('.send');
+      send.onclick=()=>{
+        if(!v){msg.textContent='اختر عدد النجوم ⭐';return}
+        send.disabled=true;msg.textContent='جاري الإرسال…';
+        fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({app:id,stars:v,name:box.querySelector('input').value,text:box.querySelector('textarea').value})})
+          .then(r=>r.json()).then(d=>{if(d.ok){msg.textContent='وصل تقييمك، شكراً لك 🌹';box.querySelector('textarea').value='';v=0;paint(0);load()}else msg.textContent=ERR[d.error]||'صار خطأ، جرّب مرة ثانية'})
+          .catch(()=>{msg.textContent='تأكد من الإنترنت وجرّب مرة ثانية'}).finally(()=>{send.disabled=false});
+      };
+      boxes[id]=box;
+    });
+    function draw(){
+      Object.keys(boxes).forEach(id=>{
+        const box=boxes[id],a=(DATA&&DATA[id])||{avg:0,count:0,items:[]};
+        box.querySelector('.avg').innerHTML=a.count?st(a.avg)+' '+a.avg+' <small>('+a.count+' تقييم)</small>':'<small>كن أول من يقيّم</small>';
+        const L=box.querySelector('.list');let shown=3;
+        const render=()=>{L.innerHTML=a.items.length?a.items.slice(0,shown).map(x=>'<div class="it"><div class="h">'+esc(x.name||'زائر')+' '+st(x.stars)+'<span class="tm">'+ago(x.t)+'</span></div>'+(x.text?'<p>'+esc(x.text)+'</p>':'')+'</div>').join(''):'<div class="empty">ما فيه تعليقات للحين.</div>';
+          if(a.items.length>shown){const m=document.createElement('button');m.className='more';m.textContent='عرض المزيد ('+(a.items.length-shown)+')';m.onclick=()=>{shown+=5;render()};L.appendChild(m)}};
+        render();
+        // نجوم جنب زر التحميل
+        const head=document.querySelector('#'+id+' .apphead');let c=head&&head.querySelector('.cnt.st');
+        if(head&&a.count){if(!c){c=document.createElement('span');c.className='cnt st';head.appendChild(c)}c.textContent='★ '+a.avg+' ('+a.count+')'}
+      });
+    }
+    function load(){fetch(API).then(r=>r.json()).then(d=>{if(d.apps){DATA=d.apps;draw()}}).catch(()=>{})}
+    draw();load();
   })();
 </script>
 </body>
