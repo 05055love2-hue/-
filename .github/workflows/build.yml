@@ -39,6 +39,7 @@ jobs:
           cp tv/build/outputs/apk/debug/tv-debug.apk tv-launcher.apk
           cp router/build/outputs/apk/debug/router-debug.apk signal-app.apk
           cp seasons/build/outputs/apk/debug/seasons-debug.apk seasons.apk
+          cp ytcar/build/outputs/apk/debug/ytcar-debug.apk mushaghli.apk
 
       - name: Publish download link
         uses: softprops/action-gh-release@v2
@@ -50,6 +51,7 @@ jobs:
             tv-launcher.apk
             signal-app.apk
             seasons.apk
+            mushaghli.apk
           make_latest: true
 
       - name: Screenshots

@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>مشغّلي</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@500;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg1:#0b1630;--bg2:#13254f;--card:rgba(255,255,255,.07);--line:rgba(255,255,255,.13);--txt:#f4f8ff;--soft:#a9bbd8;--ac:#38bdf8;--ac2:#f472b6;--btn:rgba(255,255,255,.1)}
+body.T-sunset{--bg1:#2a0f3a;--bg2:#5a1a52;--ac:#ff8a5b;--ac2:#ffd166;--soft:#e8b9d8}
+body.T-emerald{--bg1:#04211e;--bg2:#0c4038;--ac:#34d399;--ac2:#fde047;--soft:#a7d8c9}
+body.T-red{--bg1:#0e0e0e;--bg2:#222;--ac:#ff3b3b;--ac2:#ffffff;--soft:#bdbdbd}
+body.T-violet{--bg1:#140c36;--bg2:#2c1a6b;--ac:#a78bfa;--ac2:#22d3ee;--soft:#c4b8f0}
+body.T-day{--bg1:#e9f0fb;--bg2:#d7e5fb;--card:#ffffff;--line:rgba(15,23,42,.1);--txt:#0f172a;--soft:#52627c;--ac:#2563eb;--ac2:#f97316;--btn:#eef3fb}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none}
+html,body{height:100%;margin:0;overflow:hidden}
+body{font-family:'Tajawal',system-ui,sans-serif;color:var(--txt);background:radial-gradient(1200px 700px at 15% -10%,color-mix(in srgb,var(--ac) 28%,transparent),transparent 60%),radial-gradient(900px 600px at 100% 110%,color-mix(in srgb,var(--ac2) 22%,transparent),transparent 60%),linear-gradient(135deg,var(--bg1),var(--bg2));transition:background .5s}
+.app{height:100%;display:grid;grid-template-columns:clamp(260px,28vw,360px) minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto;gap:14px;padding:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:26px;backdrop-filter:blur(14px)}
+body.T-day .card{box-shadow:0 6px 24px rgba(15,23,42,.08)}
+/* ===== المشغل ===== */
+.player{grid-row:1;grid-column:2;display:flex;flex-direction:column;padding:12px;gap:10px;min-height:0}
+.phead{display:flex;align-items:center;gap:10px;padding:0 6px}
+.ytlogo{display:flex;align-items:center;gap:8px;font-weight:900;font-size:20px}
+.ytlogo i{width:38px;height:27px;border-radius:8px;background:#ff0033;display:grid;place-items:center}
+.ytlogo i:after{content:'';border-left:11px solid #fff;border-top:7px solid transparent;border-bottom:7px solid transparent;}
+.phead .sp{flex:1}
+.chip{border:0;font-family:inherit;font-size:15px;font-weight:700;color:var(--txt);background:var(--btn);border:1px solid var(--line);border-radius:14px;padding:8px 14px;cursor:pointer;display:flex;align-items:center;gap:6px}
+.chip:active{transform:scale(.95)}
+.box{flex:1;min-height:0;border-radius:20px;overflow:hidden;position:relative;background:#000;box-shadow:0 0 0 3px color-mix(in srgb,var(--ac) 70%,transparent),0 0 40px color-mix(in srgb,var(--ac) 35%,transparent)}
+.ph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;color:#fff;background:linear-gradient(135deg,#1a1a2e,#3a0d1f 60%,#160b2e)}
+.ph .big{width:110px;height:78px;border-radius:22px;background:#ff0033;display:grid;place-items:center;box-shadow:0 10px 40px #ff003366}
+.ph .big:after{content:'';border-left:30px solid #fff;border-top:19px solid transparent;border-bottom:19px solid transparent;margin-left:8px}
+.ph b{font-size:24px}
+.ph span{font-size:15px;opacity:.75}
+.ctrl{direction:ltr;display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:nowrap}
+.cb{width:64px;height:58px;border:0;border-radius:18px;background:var(--btn);border:1px solid var(--line);color:var(--txt);display:grid;place-items:center;cursor:pointer;font-family:inherit;font-weight:800;font-size:13px;position:relative}
+.cb svg{width:28px;height:28px;fill:currentColor}
+.cb.play{width:84px;height:66px;border-radius:22px;background:linear-gradient(135deg,var(--ac),color-mix(in srgb,var(--ac) 60%,var(--ac2)));color:#fff;border:0;box-shadow:0 8px 26px color-mix(in srgb,var(--ac) 45%,transparent)}
+.cb.play svg{width:36px;height:36px}
+.cb small{position:absolute;bottom:3px;font-size:12px;line-height:1}
+.cb small~*,.cb svg:has(+small){margin-top:-10px}
+.cb:active{transform:scale(.93)}
+/* ===== الجهة الثانية ===== */
+.side{grid-row:1;grid-column:1;display:flex;flex-direction:column;gap:14px;min-height:0}
+.clock{padding:16px 18px;text-align:center}
+.time{font-size:clamp(54px,7.4vw,92px);font-weight:900;line-height:1;letter-spacing:1px;direction:ltr;font-variant-numeric:tabular-nums}
+.time .ap{font-size:.3em;color:var(--ac);margin-left:6px;vertical-align:top}
+.time .col{color:var(--ac);animation:bl 1s steps(2) infinite}
+@keyframes bl{50%{opacity:.25}}
+.date{font-size:18px;font-weight:800;margin-top:8px}
+.hij{font-size:15px;color:var(--soft);margin-top:2px}
+.wx{padding:14px 18px;display:flex;align-items:center;gap:14px}
+.wx .ic{font-size:52px;line-height:1}
+.wx .t{font-size:44px;font-weight:900;line-height:1}
+.wx .d{font-size:15px;color:var(--soft);font-weight:700}
+.wx .c{font-size:16px;font-weight:800}
+.quick{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.qb{border:0;border-radius:22px;font-family:inherit;color:#fff;font-size:17px;font-weight:800;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;min-height:0}
+.qb i{font-style:normal;font-size:30px}
+.qb:active{transform:scale(.95)}
+.q1{background:linear-gradient(135deg,#22c55e,#15803d)}
+.q2{background:linear-gradient(135deg,#3b82f6,#1d4ed8)}
+.q3{background:linear-gradient(135deg,#f59e0b,#d97706)}
+.q4{background:linear-gradient(135deg,#ec4899,#be185d)}
+/* ===== الشريط السفلي ===== */
+.dock{grid-row:2;grid-column:1/3;display:flex;gap:10px;padding:10px;overflow-x:auto;scrollbar-width:none}
+.dock::-webkit-scrollbar{display:none}
+.tile{flex:0 0 auto;min-width:96px;height:84px;border:0;border-radius:20px;background:var(--btn);border:1px solid var(--line);color:var(--txt);font-family:inherit;font-size:14px;font-weight:700;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;padding:0 10px}
+.tile .ti{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:26px;overflow:hidden}
+.tile .ti img{width:100%;height:100%}
+.tile.add .ti{background:var(--ac);color:#fff;font-size:30px;font-weight:900}
+.tile.set .ti{background:color-mix(in srgb,var(--ac2) 85%,transparent);color:#111}
+.tile:active{transform:scale(.94)}
+.tile.shake{animation:sh .25s infinite}
+@keyframes sh{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(2deg)}}
+/* ===== شاشة كاملة ===== */
+body.full .side,body.full .dock{display:none}
+body.full .app{grid-template-columns:1fr;grid-template-rows:1fr;padding:8px}
+body.full .player{grid-column:1}
+/* ===== نوافذ ===== */
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:9;padding:20px}
+.ov.show{display:flex}
+.panel{width:min(760px,100%);max-height:100%;overflow:auto;background:linear-gradient(135deg,var(--bg1),var(--bg2));border:1px solid var(--line);border-radius:26px;padding:20px}
+.panel h3{margin:0 0 12px;font-size:22px;display:flex;justify-content:space-between;align-items:center}
+.panel h4{margin:16px 0 8px;font-size:16px;color:var(--soft)}
+.themes{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.th{border:2px solid transparent;border-radius:18px;padding:12px;font-family:inherit;font-size:16px;font-weight:800;color:#fff;cursor:pointer;display:flex;align-items:center;gap:8px}
+.th.on{border-color:#fff;box-shadow:0 0 0 3px var(--ac)}
+.th i{width:22px;height:22px;border-radius:50%}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.opt{border:1px solid var(--line);background:var(--btn);color:var(--txt);font-family:inherit;font-size:15px;font-weight:700;border-radius:14px;padding:9px 16px;cursor:pointer}
+.opt.on{background:var(--ac);color:#fff;border-color:transparent}
+.search{width:100%;border:1px solid var(--line);background:var(--btn);color:var(--txt);font-family:inherit;font-size:17px;border-radius:14px;padding:12px 14px;margin-bottom:12px}
+.applist{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px}
+.applist .tile{min-width:0;width:100%}
+.x{border:0;background:var(--btn);color:var(--txt);width:40px;height:40px;border-radius:12px;font-size:20px;cursor:pointer}
+.toast{position:fixed;bottom:110px;left:50%;transform:translateX(-50%);background:#000c;color:#fff;padding:10px 18px;border-radius:14px;font-size:15px;font-weight:700;opacity:0;transition:.3s;z-index:10;pointer-events:none}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="app">
+  <section class="player card">
+    <div class="phead">
+      <div class="ytlogo"><i></i>يوتيوب</div>
+      <div class="sp"></div>
+      <button class="chip" id="bHome">🏠 الرئيسية</button>
+      <button class="chip" id="bFull">⛶ <span id="fullTxt">تكبير</span></button>
+    </div>
+    <div class="box" id="box">
+      <div class="ph" id="ph"><div class="big"></div><b>يوتيوب يظهر هنا</b><span>ابحث وشغّل أي مقطع وأنت في الشاشة الرئيسية</span></div>
+    </div>
+    <div class="ctrl">
+      <button class="cb" id="cPrev" aria-label="رجوع للصفحة السابقة"><svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg></button>
+      <button class="cb" id="cBack" aria-label="رجوع 10 ثواني"><svg viewBox="0 0 24 24"><path d="M11 18V6l-8.5 6 8.5 6zm.5-6 8.5 6V6l-8.5 6z"/></svg><small>10</small></button>
+      <button class="cb play" id="cPlay" aria-label="تشغيل أو إيقاف"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
+      <button class="cb" id="cFwd" aria-label="تقديم 10 ثواني"><svg viewBox="0 0 24 24"><path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"/></svg><small>10</small></button>
+      <button class="cb" id="cNext" aria-label="المقطع التالي"><svg viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg></button>
+    </div>
+  </section>
+
+  <aside class="side">
+    <div class="clock card">
+      <div class="time" id="time"></div>
+      <div class="date" id="date"></div>
+      <div class="hij" id="hij"></div>
+    </div>
+    <div class="wx card" id="wx">
+      <div class="ic" id="wxI">⛅</div>
+      <div><div class="t" id="wxT">--°</div><div class="c" id="wxC">الطقس</div><div class="d" id="wxD">جاري التحميل…</div></div>
+    </div>
+    <div class="quick">
+      <button class="qb q1" data-q="maps"><i>🗺️</i>الخرائط</button>
+      <button class="qb q2" data-q="bt"><i>🎧</i>بلوتوث</button>
+      <button class="qb q3" data-q="radio"><i>📻</i>الراديو</button>
+      <button class="qb q4" data-q="phone"><i>📞</i>اتصال</button>
+    </div>
+  </aside>
+
+  <nav class="dock card" id="dock"></nav>
+</div>
+
+<div class="ov" id="setOv"><div class="panel">
+  <h3>الإعدادات <button class="x" data-close>✕</button></h3>
+  <h4>الألوان</h4>
+  <div class="themes" id="themes"></div>
+  <h4>شكل الساعة</h4>
+  <div class="row" id="fmtRow"></div>
+  <h4>زر الراديو (جرّب لين يفتح راديو سيارتك)</h4>
+  <div class="row" id="radioRow"></div>
+  <h4>زر البلوتوث</h4>
+  <div class="row" id="btRow"></div>
+  <h4>الشاشة الرئيسية</h4>
+  <div class="row"><button class="opt" id="setHome">خلّه الشاشة الرئيسية للسيارة</button></div>
+</div></div>
+
+<div class="ov" id="addOv"><div class="panel">
+  <h3>أضف تطبيق <button class="x" data-close>✕</button></h3>
+  <input class="search" id="q" placeholder="ابحث باسم التطبيق…">
+  <div class="applist" id="appList"></div>
+</div></div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const store={get:(k,d)=>{try{const v=localStorage.getItem('m_'+k);return v===null?d:v}catch(e){return d}},set:(k,v)=>{try{localStorage.setItem('m_'+k,v)}catch(e){}}};
+const NATIVE=!!(window.Native&&Native.getApps), HASYT=!!(window.YT&&YT.show);
+function toast(t){const e=$('toast');e.textContent=t;e.classList.add('show');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('show'),2200)}
+function go(u){location.href=u}
+const pkgIntent=p=>'intent:#Intent;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;package='+p+';end';
+
+/* ===== الألوان ===== */
+const THEMES=[['','ليل أزرق','#38bdf8','#0b1630'],['T-sunset','غروب','#ff8a5b','#4a1650'],['T-emerald','زمرّد','#34d399','#0c4038'],['T-red','أحمر وأسود','#ff3b3b','#1a1a1a'],['T-violet','بنفسجي','#a78bfa','#2c1a6b'],['T-day','نهاري','#2563eb','#c9d9f5']];
+let TH=store.get('theme','');
+function applyTheme(){document.body.classList.remove(...THEMES.map(t=>t[0]).filter(Boolean));if(TH)document.body.classList.add(TH);
+  [...$('themes').children].forEach((b,i)=>b.classList.toggle('on',THEMES[i][0]===TH))}
+THEMES.forEach(([k,n,a,b])=>{const e=document.createElement('button');e.className='th';e.style.background=`linear-gradient(135deg,${b},${a})`;e.innerHTML=`<i style="background:${a}"></i>${n}`;
+  e.onclick=()=>{TH=k;store.set('theme',k);applyTheme()};$('themes').appendChild(e)});
+function opts(row,list,cur,fn){const r=$(row);list.forEach(([v,n])=>{const b=document.createElement('button');b.className='opt'+(String(v)===String(cur)?' on':'');b.textContent=n;
+  b.onclick=()=>{[...r.children].forEach(x=>x.classList.toggle('on',x===b));fn(v)};r.appendChild(b)})}
+
+/* ===== الساعة ===== */
+let FMT=store.get('fmt','12');
+opts('fmtRow',[['12','12 ساعة'],['24','24 ساعة']],FMT,v=>{FMT=v;store.set('fmt',v);tick()});
+const days=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+const months=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+let hijri=null;try{hijri=new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura-nu-latn',{day:'numeric',month:'long',year:'numeric'})}catch(e){}
+function tick(){const n=new Date(),h=n.getHours(),m=String(n.getMinutes()).padStart(2,'0');
+  const hh=FMT==='24'?String(h).padStart(2,'0'):(h%12||12);
+  $('time').innerHTML=hh+'<span class="col">:</span>'+m+(FMT==='24'?'':'<span class="ap">'+(h<12?'ص':'م')+'</span>');
+  $('date').textContent=days[n.getDay()]+' '+n.getDate()+' '+months[n.getMonth()];
+  $('hij').textContent=hijri?hijri.format(n):''}
+tick();setInterval(tick,1000);
+
+/* ===== الطقس ===== */
+function wxInfo(c,day){if(c===0)return[day?'☀️':'🌙','صحو'];if(c<=2)return[day?'🌤️':'☁️','غائم جزئيًا'];if(c===3)return['☁️','غائم'];if(c<=48)return['🌫️','ضباب'];
+  if(c<=67||(c>=80&&c<=82))return['🌧️','مطر'];if(c<=77)return['❄️','ثلج'];return['⛈️','عواصف']}
+async function wxGet(lat,lon,name){
+  const d=await(await fetch('https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&current=temperature_2m,weather_code,is_day&daily=temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=1')).json();
+  const w=wxInfo(d.current.weather_code,d.current.is_day);
+  $('wxI').textContent=w[0];$('wxT').textContent=Math.round(d.current.temperature_2m)+'°';$('wxC').textContent=name;
+  $('wxD').textContent=w[1]+' • '+Math.round(d.daily.temperature_2m_max[0])+'° / '+Math.round(d.daily.temperature_2m_min[0])+'°';
+  store.set('wx',JSON.stringify([lat,lon,name]))}
+async function place(lat,lon){try{const r=await(await fetch('https://api.bigdatacloud.net/data/reverse-geocode-client?latitude='+lat+'&longitude='+lon+'&localityLanguage=ar')).json();return r.city||r.locality||'مكانك'}catch(e){return 'مكانك'}}
+function wxUpdate(){
+  const fall=()=>{let s=null;try{s=JSON.parse(store.get('wx','null'))}catch(e){}s=s||[24.71,46.68,'الرياض'];wxGet(...s).catch(()=>{$('wxD').textContent='ما فيه نت'})};
+  if(!navigator.geolocation)return fall();
+  navigator.geolocation.getCurrentPosition(async p=>{const{latitude:a,longitude:b}=p.coords;wxGet(a,b,await place(a,b)).catch(fall)},fall,{timeout:8000,maximumAge:600000})}
+wxUpdate();setInterval(wxUpdate,20*60000);
+
+/* ===== أزرار سريعة ===== */
+const RADIOS=['com.syu.radio','com.microntek.radio','com.android.fmradio','com.caf.fmradio','com.mediatek.FMRadio'];
+let RADIO=store.get('radio',RADIOS[0]);
+opts('radioRow',RADIOS.map((p,i)=>[p,'جرّب '+(i+1)]),RADIO,v=>{RADIO=v;store.set('radio',v);go(pkgIntent(v))});
+const BT=['intent:#Intent;action=android.settings.BLUETOOTH_SETTINGS;end',pkgIntent('com.syu.bt'),pkgIntent('com.microntek.bt')];
+let BTI=+store.get('bt','0');
+opts('btRow',BT.map((x,i)=>[i,'جرّب '+(i+1)]),BTI,v=>{BTI=v;store.set('bt',v);go(BT[v])});
+function quick(k){
+  if(k==='maps'){if(NATIVE&&Native.open('com.google.android.apps.maps'))return;return go('geo:0,0?q=')}
+  if(k==='bt')return go(BT[BTI]);
+  if(k==='radio')return go(pkgIntent(RADIO));
+  if(k==='phone')return go('intent:#Intent;action=android.intent.action.DIAL;end');
+}
+document.querySelectorAll('[data-q]').forEach(b=>b.onclick=()=>quick(b.dataset.q));
+$('setHome').onclick=()=>go('intent:#Intent;action=android.settings.HOME_SETTINGS;end');
+
+/* ===== الشريط السفلي ===== */
+const DEF=[{n:'واتساب',pkg:'com.whatsapp',e:'💬'},{n:'سبوتيفاي',pkg:'com.spotify.music',e:'🎵'},{n:'ويز',pkg:'com.waze',e:'🚙'},{n:'أنغامي',pkg:'com.anghami',e:'🎶'}];
+let DOCK;try{DOCK=JSON.parse(store.get('dock','null'))}catch(e){}if(!Array.isArray(DOCK))DOCK=DEF;
+function tileEl(a,cls){const b=document.createElement('button');b.className='tile'+(cls?' '+cls:'');
+  b.innerHTML='<span class="ti">'+(a.img?'<img src="'+a.img+'" alt="">':(a.e||'📱'))+'</span><span></span>';b.lastChild.textContent=a.n;return b}
+function openApp(a){if(NATIVE){if(!Native.open(a.pkg))toast('التطبيق مو مثبت في الجهاز');return}toast('يفتح '+a.n+' داخل التطبيق')}
+function drawDock(){const d=$('dock');d.innerHTML='';
+  DOCK.forEach((a,i)=>{const b=tileEl(a);let t;b.onclick=()=>{if(b.classList.contains('shake')){DOCK.splice(i,1);saveDock();toast('انشال '+a.n);return}openApp(a)};
+    b.onpointerdown=()=>{t=setTimeout(()=>{d.querySelectorAll('.tile').forEach(x=>x.classList.add('shake'));toast('اضغط على التطبيق اللي تبي تشيله')},700)};
+    b.onpointerup=b.onpointerleave=()=>clearTimeout(t);d.appendChild(b)});
+  const add=tileEl({n:'أضف',e:'+'},'add');add.onclick=openAdd;d.appendChild(add);
+  const s=tileEl({n:'الإعدادات',e:'⚙️'},'set');s.onclick=()=>$('setOv').classList.add('show');d.appendChild(s)}
+function saveDock(){store.set('dock',JSON.stringify(DOCK));drawDock()}
+document.addEventListener('pointerdown',e=>{if(!e.target.closest('#dock'))$('dock').querySelectorAll('.shake').forEach(x=>x.classList.remove('shake'))});
+let ALL=null;
+function openAdd(){if(!ALL){try{ALL=NATIVE?JSON.parse(Native.getApps()):DEF}catch(e){ALL=DEF}ALL.sort((a,b)=>a.n.localeCompare(b.n,'ar'))}
+  $('q').value='';drawList();$('addOv').classList.add('show')}
+function drawList(){const q=$('q').value.trim().toLowerCase(),L=$('appList');L.innerHTML='';
+  ALL.filter(a=>!q||a.n.toLowerCase().includes(q)).forEach(a=>{const b=tileEl(a);b.onclick=()=>{if(!DOCK.some(x=>x.pkg===a.pkg))DOCK.push(a);saveDock();$('addOv').classList.remove('show');toast('انضاف '+a.n)};L.appendChild(b)})}
+$('q').oninput=drawList;
+document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>b.closest('.ov').classList.remove('show'));
+document.querySelectorAll('.ov').forEach(o=>o.onclick=e=>{if(e.target===o)o.classList.remove('show')});
+drawDock();applyTheme();
+
+/* ===== يوتيوب ===== */
+let FULL=false;
+$('bFull').onclick=()=>{FULL=!FULL;document.body.classList.toggle('full',FULL);$('fullTxt').textContent=FULL?'تصغير':'تكبير'};
+if(HASYT){
+  $('ph').innerHTML='<div class="big"></div><b>جاري فتح يوتيوب…</b>';
+  const box=$('box');let last='';
+  function sync(){const r=box.getBoundingClientRect(),d=window.devicePixelRatio||1;
+    const show=!document.querySelector('.ov.show')&&r.width>20&&!document.hidden;
+    const key=show?[r.left,r.top,r.width,r.height].map(v=>Math.round(v*d)).join(','):'off';
+    if(key===last)return;last=key;if(show){const[x,y,w,h]=key.split(',').map(Number);YT.show(x,y,w,h)}else YT.hide()}
+  new ResizeObserver(sync).observe(box);
+  new MutationObserver(sync).observe(document.body,{attributes:true,subtree:true,attributeFilter:['class']});
+  addEventListener('resize',sync);document.addEventListener('visibilitychange',sync);setInterval(sync,700);sync();
+  const V="var v=document.querySelector('video');";
+  $('cPlay').onclick=()=>YT.run(V+"if(v){v.paused?v.play():v.pause()}");
+  $('cBack').onclick=()=>YT.run(V+"if(v)v.currentTime=Math.max(0,v.currentTime-10)");
+  $('cFwd').onclick=()=>YT.run(V+"if(v)v.currentTime=v.currentTime+10");
+  $('cNext').onclick=()=>YT.run(V+"if(v&&v.duration)v.currentTime=v.duration-0.5");
+  $('cPrev').onclick=()=>YT.back();
+  $('bHome').onclick=()=>YT.home();
+}else{
+  ['cPlay','cBack','cFwd','cNext','cPrev','bHome'].forEach(id=>$(id).onclick=()=>toast('يوتيوب يشتغل داخل تطبيق الأندرويد'));
+}
+</script>
+</body>
+</html>

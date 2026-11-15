@@ -1,0 +1,354 @@
+package com.mushaghli.app;
+
+import android.app.Activity;
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Bundle;
+import android.view.View;
+import android.view.WindowManager;
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.webkit.GeolocationPermissions;
+import android.webkit.JavascriptInterface;
+import android.webkit.CookieManager;
+import android.widget.FrameLayout;
+import android.content.pm.ResolveInfo;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
+import android.util.Base64;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import java.util.List;
+import android.webkit.ValueCallback;
+import android.webkit.WebResourceResponse;
+import android.webkit.WebChromeClient;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.widget.Toast;
+
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+
+public class MainActivity extends Activity {
+
+    private static final String BASE = "https://mushaghli.local/";
+    private static final int PICK_FILE = 1001;
+
+    private WebView web;
+    private WebView yt;
+    private FrameLayout root;
+    private View fullView;
+    private WebChromeClient.CustomViewCallback fullCb;
+    private ValueCallback<Uri[]> fileCallback;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+        web = new WebView(this);
+        root = new FrameLayout(this);
+        root.addView(web, new FrameLayout.LayoutParams(-1, -1));
+        setContentView(root);
+        setupYouTube();
+        goFullScreen();
+
+        WebSettings s = web.getSettings();
+        s.setJavaScriptEnabled(true);
+        s.setDomStorageEnabled(true);
+        s.setDatabaseEnabled(true);
+        s.setMediaPlaybackRequiresUserGesture(false);
+        s.setAllowFileAccess(true);
+        s.setLoadWithOverviewMode(true);
+        s.setUseWideViewPort(true);
+
+        web.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                return handleUrl(request.getUrl().toString());
+            }
+
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                return handleUrl(url);
+            }
+
+            @Override
+            public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
+                String url = request.getUrl().toString();
+                if (!url.startsWith(BASE)) return null;
+                String path = request.getUrl().getPath();
+                if (path == null || path.equals("/") || path.isEmpty()) path = "/index.html";
+                path = path.substring(1);
+                String mime = path.endsWith(".html") ? "text/html"
+                        : path.endsWith(".jpg") ? "image/jpeg"
+                        : path.endsWith(".png") ? "image/png" : "application/octet-stream";
+                try {
+                    return new WebResourceResponse(mime, "UTF-8", getAssets().open(path));
+                } catch (Exception e) {
+                    return new WebResourceResponse("text/plain", "UTF-8", 404, "Not Found", null, null);
+                }
+            }
+        });
+
+        s.setGeolocationEnabled(true);
+        if (Build.VERSION.SDK_INT >= 23 && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,
+                    Manifest.permission.ACCESS_FINE_LOCATION}, 7);
+        }
+
+        web.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public void onGeolocationPermissionsShowPrompt(String origin, GeolocationPermissions.Callback callback) {
+                callback.invoke(origin, true, true);
+            }
+
+            @Override
+            public boolean onShowFileChooser(WebView view, ValueCallback<Uri[]> callback,
+                                             FileChooserParams params) {
+                if (fileCallback != null) fileCallback.onReceiveValue(null);
+                fileCallback = callback;
+                Intent i = params.createIntent();
+                if (params.getMode() == FileChooserParams.MODE_OPEN_MULTIPLE) {
+                    i.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                }
+                try {
+                    startActivityForResult(i, PICK_FILE);
+                } catch (Exception e) {
+                    fileCallback = null;
+                    return false;
+                }
+                return true;
+            }
+        });
+
+        web.addJavascriptInterface(new Bridge(), "Native");
+        web.addJavascriptInterface(new YtBridge(), "YT");
+        web.loadUrl(BASE + "index.html");
+    }
+
+    /** جسر بين الصفحة والجهاز: يجيب قائمة التطبيقات المثبتة ويفتحها */
+    private class Bridge {
+        @JavascriptInterface
+        public String getApps() {
+            JSONArray arr = new JSONArray();
+            try {
+                PackageManager pm = getPackageManager();
+                Intent i = new Intent(Intent.ACTION_MAIN);
+                i.addCategory(Intent.CATEGORY_LAUNCHER);
+                List<ResolveInfo> list = pm.queryIntentActivities(i, 0);
+                for (ResolveInfo r : list) {
+                    String pkg = r.activityInfo.packageName;
+                    if (pkg.equals(getPackageName())) continue;
+                    JSONObject o = new JSONObject();
+                    o.put("n", String.valueOf(r.loadLabel(pm)));
+                    o.put("pkg", pkg);
+                    o.put("img", iconData(r.loadIcon(pm)));
+                    arr.put(o);
+                }
+            } catch (Exception e) { /* نرجع اللي قدرنا عليه */ }
+            return arr.toString();
+        }
+
+        @JavascriptInterface
+        public boolean open(String pkg) {
+            Intent launch = getPackageManager().getLaunchIntentForPackage(pkg);
+            if (launch == null) return false;
+            launch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(launch);
+            return true;
+        }
+    }
+
+    /** يوتيوب الحقيقي داخل مربع المشغل في الواجهة */
+    private void setupYouTube() {
+        yt = new WebView(this);
+        WebSettings s = yt.getSettings();
+        s.setJavaScriptEnabled(true);
+        s.setDomStorageEnabled(true);
+        s.setMediaPlaybackRequiresUserGesture(false);
+        CookieManager.getInstance().setAcceptCookie(true);
+        CookieManager.getInstance().setAcceptThirdPartyCookies(yt, true);
+        yt.setBackgroundColor(0xFF000000);
+        yt.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                String u = request.getUrl().toString();
+                // نخلي كل شي داخل المربع، وما نفتح تطبيق يوتيوب برا
+                return !(u.startsWith("http://") || u.startsWith("https://"));
+            }
+        });
+        yt.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public void onShowCustomView(View view, CustomViewCallback cb) {
+                if (fullView != null) { cb.onCustomViewHidden(); return; }
+                fullView = view; fullCb = cb;
+                root.addView(view, new FrameLayout.LayoutParams(-1, -1));
+                goFullScreen();
+            }
+            @Override
+            public void onHideCustomView() { exitVideoFull(); }
+        });
+        yt.setVisibility(View.GONE);
+        root.addView(yt, new FrameLayout.LayoutParams(1, 1));
+    }
+
+    private void exitVideoFull() {
+        if (fullView == null) return;
+        root.removeView(fullView);
+        fullView = null;
+        if (fullCb != null) fullCb.onCustomViewHidden();
+        fullCb = null;
+        goFullScreen();
+    }
+
+    private class YtBridge {
+        @JavascriptInterface
+        public void show(final int x, final int y, final int w, final int h) {
+            runOnUiThread(() -> {
+                if (yt.getUrl() == null) yt.loadUrl("https://m.youtube.com/");
+                FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(w, h);
+                lp.leftMargin = x; lp.topMargin = y;
+                yt.setLayoutParams(lp);
+                yt.setVisibility(View.VISIBLE);
+            });
+        }
+        @JavascriptInterface
+        public void hide() {
+            runOnUiThread(() -> yt.setVisibility(View.GONE));
+        }
+        @JavascriptInterface
+        public void run(final String js) {
+            runOnUiThread(() -> yt.evaluateJavascript(js, null));
+        }
+        @JavascriptInterface
+        public void back() {
+            runOnUiThread(() -> { if (yt.canGoBack()) yt.goBack(); });
+        }
+        @JavascriptInterface
+        public void home() {
+            runOnUiThread(() -> yt.loadUrl("https://m.youtube.com/"));
+        }
+    }
+
+    private String iconData(Drawable d) {
+        try {
+            int size = 96;
+            Bitmap b = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
+            Canvas c = new Canvas(b);
+            d.setBounds(0, 0, size, size);
+            d.draw(c);
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            b.compress(Bitmap.CompressFormat.PNG, 100, out);
+            return "data:image/png;base64," + Base64.encodeToString(out.toByteArray(), Base64.NO_WRAP);
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    /** يفتح التطبيقات والإعدادات بدال ما يفتحها داخل الصفحة */
+    private boolean handleUrl(String url) {
+        if (url.startsWith(BASE)) return false;
+        if (url.startsWith("about:") || url.startsWith("data:") || url.startsWith("blob:")) return false;
+        if (url.contains("youtube.com/embed") || url.contains("youtube-nocookie.com/embed")) return false;
+
+        try {
+            if (url.startsWith("intent:")) {
+                Intent intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME);
+                String pkg = intent.getPackage();
+                // فتح تطبيق مثبت
+                if (pkg != null && Intent.ACTION_MAIN.equals(intent.getAction())) {
+                    Intent launch = getPackageManager().getLaunchIntentForPackage(pkg);
+                    if (launch != null) {
+                        startActivity(launch);
+                        return true;
+                    }
+                    String fb = intent.getStringExtra("browser_fallback_url");
+                    if (fb != null) {
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(fb)));
+                    } else {
+                        Toast.makeText(this, "التطبيق هذا مو موجود في الجهاز", Toast.LENGTH_SHORT).show();
+                    }
+                    return true;
+                }
+                intent.addCategory(Intent.CATEGORY_DEFAULT);
+                intent.setPackage(pkg);
+                startActivity(intent);
+                return true;
+            }
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(this, "ما قدرت أفتحه، جرّب خيار ثاني", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Toast.makeText(this, "ما قدرت أفتحه", Toast.LENGTH_SHORT).show();
+        }
+        return true;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode != PICK_FILE || fileCallback == null) return;
+        Uri[] result = null;
+        if (resultCode == RESULT_OK && data != null) {
+            if (data.getClipData() != null) {
+                int n = data.getClipData().getItemCount();
+                result = new Uri[n];
+                for (int i = 0; i < n; i++) result[i] = data.getClipData().getItemAt(i).getUri();
+            } else if (data.getData() != null) {
+                result = new Uri[]{data.getData()};
+            }
+        }
+        fileCallback.onReceiveValue(result);
+        fileCallback = null;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int code, String[] perms, int[] res) {
+        super.onRequestPermissionsResult(code, perms, res);
+        if (code == 7) web.evaluateJavascript("typeof wxUpdate==='function'&&wxUpdate()", null);
+    }
+
+    private String readAsset(String name) {
+        try (InputStream in = getAssets().open(name)) {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            byte[] buf = new byte[8192];
+            int r;
+            while ((r = in.read(buf)) != -1) out.write(buf, 0, r);
+            return out.toString("UTF-8");
+        } catch (Exception e) {
+            return "<h1>خطأ في تحميل الصفحة</h1>";
+        }
+    }
+
+    private void goFullScreen() {
+        getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) goFullScreen();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (fullView != null) { exitVideoFull(); return; }
+        if (yt != null && yt.getVisibility() == View.VISIBLE && yt.canGoBack()) { yt.goBack(); return; }
+        // التطبيق شاشة رئيسية، فزر الرجوع يسكّر النوافذ بس وما يطلع من التطبيق
+        web.evaluateJavascript(
+                "document.querySelectorAll('.overlay.show').forEach(o=>o.classList.remove('show'))", null);
+    }
+}
