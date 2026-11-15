@@ -84,7 +84,7 @@ function draw(js){
     var s=siteOf(j.url),st='',cls='',bar='',acts='';
     if(j.state=='queued'){st='بالانتظار…';bar='<div class="bar ind"><i></i></div>';acts='<button data-a="cancel" title="إلغاء">✕</button>'}
     else if(j.state=='running'){st=j.progress>0?Math.floor(j.progress)+'% '+(j.eta>0?'• باقي '+eta(j.eta):''):'جاري التجهيز…';bar='<div class="bar'+(j.progress>0?'':' ind')+'"><i style="width:'+j.progress+'%"></i></div>';acts='<button data-a="cancel" title="إلغاء">✕</button>'}
-    else if(j.state=='done'){st='✅ '+(j.err||'انحفظ في المعرض')+(j.size?' • '+size(j.size):'');cls='ok';acts='<button data-a="open" title="افتح">▶</button>'+(j.uri?'<button data-a="share" title="شارك">↗</button>':'')}
+    else if(j.state=='done'){st='✅ '+(j.err||'انحفظ في الصور')+(j.size?' • '+size(j.size):'');cls='ok';acts='<button data-a="open" title="افتح">▶</button>'+(j.uri?'<button data-a="share" title="شارك">↗</button>':'')}
     else if(j.state=='canceled'){st='ألغيته';acts='<button data-a="retry" title="أعد">↻</button><button data-a="remove" title="احذف">🗑</button>'}
     else {st='⚠️ '+(j.err||'صار خطأ');cls='er';st+=' <u>(التفاصيل)</u>';acts='<button data-a="retry" title="أعد">↻</button><button data-a="remove" title="احذف">🗑</button>'}
     return '<div class="job" data-id="'+j.id+'"><div class="ic">'+(j.mode=='audio'?'🎵':s[0])+'</div><div class="bd"><div class="tt">'+esc(j.title||s[1])+'</div><div class="st '+cls+'">'+st+'</div>'+bar+'</div><div class="acts">'+acts+'</div>'+(j.raw&&j.state=='error'?'<div class="raw">'+esc(j.raw)+'</div>':'')+'</div>'}).join('');

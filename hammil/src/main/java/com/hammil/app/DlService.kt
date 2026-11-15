@@ -213,7 +213,7 @@ class DlService : Service() {
         true
     } catch (_: Exception) { false }
 
-    /** ينقل الملف لمعرض الجوال: الفيديو في Movies/حمّل والصوت في Music/حمّل */
+    /** ينقل الملف لمعرض الجوال: الفيديو في الصور (DCIM/حمّل) والصوت في Music/حمّل */
     private fun save(job: Job, f: File) {
         val ext = f.extension.lowercase()
         val audio = job.mode == "audio" || ext in listOf("mp3", "m4a", "opus", "ogg", "wav")
@@ -225,8 +225,9 @@ class DlService : Service() {
             val cv = ContentValues().apply {
                 put(MediaStore.MediaColumns.DISPLAY_NAME, f.name)
                 put(MediaStore.MediaColumns.MIME_TYPE, mime)
-                put(MediaStore.MediaColumns.RELATIVE_PATH, (if (audio) Environment.DIRECTORY_MUSIC else Environment.DIRECTORY_MOVIES) + "/حمّل")
+                put(MediaStore.MediaColumns.RELATIVE_PATH, (if (audio) Environment.DIRECTORY_MUSIC else Environment.DIRECTORY_DCIM) + "/حمّل")
                 put(MediaStore.MediaColumns.IS_PENDING, 1)
+                put(MediaStore.MediaColumns.DATE_TAKEN, System.currentTimeMillis())
             }
             val uri = contentResolver.insert(col, cv) ?: throw Exception("ما قدرت أحفظ الملف")
             contentResolver.openOutputStream(uri)!!.use { o -> f.inputStream().use { it.copyTo(o) } }
@@ -235,7 +236,7 @@ class DlService : Service() {
             job.uri = uri.toString()
         } else {
             @Suppress("DEPRECATION")
-            val d = File(Environment.getExternalStoragePublicDirectory(if (audio) Environment.DIRECTORY_MUSIC else Environment.DIRECTORY_MOVIES), "حمّل").apply { mkdirs() }
+            val d = File(Environment.getExternalStoragePublicDirectory(if (audio) Environment.DIRECTORY_MUSIC else Environment.DIRECTORY_DCIM), "حمّل").apply { mkdirs() }
             val out = File(d, f.name)
             f.copyTo(out, true)
             MediaScannerConnection.scanFile(this, arrayOf(out.absolutePath), arrayOf(mime), null)
