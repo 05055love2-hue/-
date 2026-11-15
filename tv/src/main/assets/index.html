@@ -17,6 +17,8 @@
   #home{height:100vh;overflow:hidden;padding:4vh 4vw 4vh;display:grid;gap:2.4vh 2.4vw}
   #home>*{min-width:0}
   #grid{min-width:0;max-width:100%}
+  .app .sy{display:none}
+  body[data-l="appletv"] .app.sys .sy{display:block}
   #hdr{grid-area:hdr;min-width:0} #wx{grid-area:wx} #quick{grid-area:quick} #yt{grid-area:yt;min-height:0} #appsWrap{grid-area:apps;min-height:0;display:flex;flex-direction:column} #dock{grid-area:dock;display:none}
   .clock{font-size:10vw;font-weight:300;line-height:.95;direction:ltr;letter-spacing:-.02em;display:inline-block}
   .clock small{font-size:2.4vw;color:var(--soft);margin-inline-start:.6vw}
@@ -145,8 +147,20 @@
   #shelfTxt span{font-size:1.4vw;color:rgba(255,255,255,.8)}
   #shelfTop{position:absolute;top:2.6vh;inset-inline-start:2.4vw;display:flex;gap:1.4vw;align-items:center;font-size:1.6vw;z-index:1}
   #shelfTop .tm{font-size:2.2vw;font-weight:600;direction:ltr}
-  body[data-l="appletv"] #home{grid-template-columns:minmax(0,1fr) auto;grid-template-rows:46vh auto minmax(0,1fr);grid-template-areas:"shelf shelf" "apps quick" "apps quick";padding:3vh 4vw 2vh;gap:2vh 2vw}
-  body[data-l="appletv"] #shelf{display:block;background:linear-gradient(135deg,var(--bg2),var(--bg1))}
+  body[data-l="appletv"] #home{grid-template-columns:minmax(0,1fr);grid-template-rows:54vh minmax(0,1fr);grid-template-areas:"shelf" "apps";padding:0;gap:0}
+  body[data-l="appletv"] #shelf{display:block;border-radius:0;background:linear-gradient(135deg,var(--bg2),var(--bg1));
+    -webkit-mask-image:linear-gradient(180deg,#000 70%,transparent);mask-image:linear-gradient(180deg,#000 70%,transparent)}
+  body[data-l="appletv"] #quick{display:none}
+  body[data-l="appletv"] #appsWrap{margin-top:-7vh;padding:0 5vw;position:relative;z-index:1}
+  body[data-l="appletv"] #shelfTxt{bottom:11vh;inset-inline-start:5vw}
+  body[data-l="appletv"] #shelfArt{inset-inline-end:5vw;top:44%}
+  body[data-l="appletv"] #shelfTop{inset-inline-start:5vw;top:3.4vh}
+  body[data-l="appletv"] #shelfPray{inset-inline-end:5vw;top:3.4vh}
+  body[data-l="appletv"] .hint{display:none}
+  .app.sys{display:none}
+  body[data-l="appletv"] .app.sys{display:flex}
+  .app.sys .ic{display:none!important}
+  .app.sys .sy{font-size:3vw;line-height:1}
   body[data-l="appletv"] #hdr,body[data-l="appletv"] #wx,body[data-l="appletv"] #yt{display:none}
   body[data-l="appletv"] #quick{flex-direction:column;align-self:start}
   body[data-l="appletv"] .q{font-size:1.1vw;padding:1vh 1.1vw}
@@ -174,6 +188,44 @@
   #shelfPray span{background:rgba(0,0,0,.28);border-color:rgba(255,255,255,.18);color:rgba(255,255,255,.85)}
   #shelfPray span.nx{background:#fff;color:#111;border-color:#fff} #shelfPray span.nx b{color:#111}
   body[data-l="iphone"] #hdrPray,body[data-l="cinema"] #hdrPray{display:none}
+
+  /* ===== الخلفيات المتحركة ===== */
+  #wall{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+  #wall::before,#wall::after{content:'';position:absolute;inset:-30%}
+  body[data-w="aurora"] #wall::before{background:radial-gradient(40% 35% at 30% 40%,color-mix(in srgb,var(--accent) 55%,transparent),transparent 70%),radial-gradient(35% 30% at 70% 60%,rgba(170,80,255,.45),transparent 70%),radial-gradient(30% 30% at 50% 20%,rgba(0,220,180,.35),transparent 70%);filter:blur(30px);animation:drift 26s ease-in-out infinite alternate}
+  body[data-w="aurora"]{background:#05080f}
+  body[data-w="stars"]{background:radial-gradient(ellipse at 50% 120%,#1b2a4a,#03050b 60%)}
+  body[data-w="stars"] #wall::before{background-image:radial-gradient(1.5px 1.5px at 20px 30px,#fff,transparent),radial-gradient(1px 1px at 120px 80px,#cfe,transparent),radial-gradient(1.5px 1.5px at 200px 160px,#fff,transparent),radial-gradient(1px 1px at 60px 190px,#fff,transparent),radial-gradient(1px 1px at 260px 40px,#dde,transparent);background-size:300px 220px;opacity:.8;animation:twinkle 6s ease-in-out infinite alternate}
+  body[data-w="stars"] #wall::after{background-image:radial-gradient(1px 1px at 50px 60px,#fff,transparent),radial-gradient(1.5px 1.5px at 170px 120px,#fff,transparent);background-size:240px 180px;animation:slide 120s linear infinite}
+  body[data-w="waves"]{background:linear-gradient(180deg,#041526,#062f4a)}
+  body[data-w="waves"] #wall::before{background:repeating-radial-gradient(circle at 50% 140%,transparent 0 3vw,color-mix(in srgb,var(--accent) 18%,transparent) 3vw 3.3vw);animation:pulse 14s ease-in-out infinite alternate}
+  body[data-w="dunes"]{background:linear-gradient(180deg,#f4a259 0%,#bc4b51 45%,#2d1e2f 100%)}
+  body[data-w="dunes"] #wall::before{background:radial-gradient(60% 40% at 30% 110%,#5b2a2f,transparent 70%),radial-gradient(70% 45% at 80% 115%,#3a1c25,transparent 70%);animation:drift 40s ease-in-out infinite alternate}
+  body[data-w="dunes"] #wall::after{background:radial-gradient(8vw 8vw at 70% 28%,#ffe7b0,transparent 60%);inset:0}
+  body[data-w="night"]{background:#000}
+  body[data-w="glow"]{background:#0a0a12}
+  body[data-w="glow"] #wall::before{background:conic-gradient(from 0deg at 50% 50%,var(--accent),#ff5fa2,#7a5cff,#00d1ff,var(--accent));filter:blur(120px);opacity:.45;inset:10%;border-radius:50%;animation:spin 30s linear infinite}
+  @keyframes drift{from{transform:translate(-4%,-3%) scale(1)}to{transform:translate(4%,3%) scale(1.1)}}
+  @keyframes twinkle{from{opacity:.4}to{opacity:.95}}
+  @keyframes slide{from{transform:translateX(0)}to{transform:translateX(-240px)}}
+  @keyframes pulse{from{transform:scale(1)}to{transform:scale(1.15)}}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* ===== قائمة التطبيق ===== */
+  .app .pin{position:absolute;top:.6vh;inset-inline-start:.6vw;font-size:1vw;display:none;z-index:2}
+  .app.pinned .pin{display:block}
+  #appMenu .panel{width:40vw;text-align:center}
+  #appMenu .row{justify-content:center;flex-direction:column;align-items:stretch}
+  #amIc{width:6vw;height:6vw;border-radius:1.4vw;margin-bottom:1vh}
+
+  /* ===== شاشة التوقف ===== */
+  #saver{position:fixed;inset:0;z-index:20;display:none;background:#000;overflow:hidden;cursor:none}
+  #saver.show{display:block}
+  #saverBg{position:absolute;inset:-15%;background:radial-gradient(40% 35% at 30% 40%,color-mix(in srgb,var(--accent) 60%,transparent),transparent 70%),radial-gradient(35% 30% at 70% 60%,rgba(170,80,255,.5),transparent 70%),radial-gradient(45% 40% at 60% 20%,rgba(0,200,170,.35),transparent 70%),#03050a;filter:blur(40px);animation:drift 30s ease-in-out infinite alternate}
+  #saverTxt{position:absolute;inset-inline-start:6vw;bottom:9vh;animation:float 18s ease-in-out infinite alternate}
+  #svClock{font-size:12vw;font-weight:200;line-height:1;direction:ltr;display:inline-block}
+  #svSub{font-size:2vw;color:rgba(255,255,255,.75);margin-top:1vh}
+  @keyframes float{from{transform:translateY(0)}to{transform:translateY(-6vh)}}
   /* ===== مشغل يوتيوب ===== */
   #yt{display:flex;flex-direction:column;gap:1.6vh;background:var(--card);border:2px solid var(--line);border-radius:2vw;padding:1.6vh 1.2vw}
   #yt.focus{border-color:#ff3b30;box-shadow:0 0 0 3px #ff3b30}
@@ -200,6 +252,7 @@
 </style>
 </head>
 <body data-l="classic" data-i="orig">
+<div id="wall"></div>
 <div id="home">
   <section id="shelf"><div id="shelfBg"></div>
     <div class="pray" id="shelfPray"></div>
@@ -234,14 +287,29 @@
   <section id="appsWrap"><h2>تطبيقاتي</h2><div id="grid"></div></section>
   <div id="dock"></div>
 </div>
-<div class="hint">تنقّل بالأسهم واضغط موافق</div>
+<div class="hint">تنقّل بالأسهم • موافق للفتح • اضغط مطوّل على تطبيق لخيارات أكثر</div>
 
+<div class="ov" id="appMenu">
+  <div class="panel">
+    <img id="amIc" alt=""><h3 id="amName"></h3>
+    <div class="row">
+      <button class="opt f" id="amOpen">▶ افتح</button>
+      <button class="opt f" id="amPin">⭐ ثبّته أول</button>
+      <button class="opt f" id="amHide">🙈 إخفاء</button>
+      <button class="opt f" id="amClose">↩ رجوع</button>
+    </div>
+  </div>
+</div>
+<div id="saver"><div id="saverBg"></div><div id="saverTxt"><div id="svClock"></div><div id="svSub"></div></div></div>
 <div class="ov" id="custOv">
   <div class="panel">
     <h3>🎨 تخصيص الشاشة</h3>
     <h4>شكل الواجهة</h4><div class="row" id="layRow"></div>
     <h4>شكل الأيقونات</h4><div class="row" id="icRow"></div>
     <h4>الألوان</h4><div class="row" id="thRow"></div>
+    <h4>الخلفية</h4><div class="row" id="wRow"></div>
+    <h4>شاشة التوقف (لما تترك التلفزيون)</h4><div class="row" id="svRow"></div>
+    <h4>التطبيقات المخفية</h4><div class="row" id="hidRow"></div>
     <h4></h4><button class="opt f" id="custClose">✔ تم</button>
   </div>
 </div>
@@ -262,11 +330,13 @@ const THEMES={
   gold:{n:'ذهبي',bg1:'#141210',bg2:'#4a3d22',accent:'#f2c96b'},
   red:{n:'أحمر',bg1:'#160b0c',bg2:'#4d1a1d',accent:'#ff7a7a'}
 };
-const S={l:store.get('layout2','appletv'),i:store.get('icons','orig'),t:store.get('theme','night')};
+const WALLS=[['theme','لون الثيم'],['aurora','شفق متحرك'],['glow','توهّج دوّار'],['stars','نجوم'],['waves','أمواج'],['dunes','غروب الصحراء'],['night','أسود']];
+const SAVERS=[['0','بدون'],['3','بعد 3 دقايق'],['5','بعد 5 دقايق'],['10','بعد 10 دقايق'],['20','بعد 20 دقيقة']];
+const S={w:store.get('wall','aurora'),sv:store.get('saver','5'),l:store.get('layout2','appletv'),i:store.get('icons','orig'),t:store.get('theme','night')};
 if(!LAYOUTS.some(x=>x[0]===S.l)) S.l='classic'; if(!ICONS.some(x=>x[0]===S.i)) S.i='orig'; if(!THEMES[S.t]) S.t='night';
 function applyAll(){
   const t=THEMES[S.t],r=document.documentElement.style; ['bg1','bg2','accent'].forEach(k=>r.setProperty('--'+k,t[k]));
-  document.body.dataset.l=S.l; document.body.dataset.i=S.i;
+  document.body.dataset.l=S.l; document.body.dataset.i=S.i; document.body.dataset.w=S.w;
   drawDock(); if(typeof ytSync==='function') setTimeout(ytSync,50);
 }
 
@@ -329,15 +399,22 @@ let apps=[];
 function getOrder(){try{return JSON.parse(store.get('order','{}'))||{}}catch(e){return {}}}
 function loadApps(){
   try{apps=hasNative?JSON.parse(Native.getApps()):sampleApps();}catch(e){apps=[];}
-  const order=getOrder();
-  apps.sort((a,b)=>((order[b.pkg]||0)-(order[a.pkg]||0))||a.n.localeCompare(b.n,'ar'));
+  allApps=apps.slice();
+  const order=getOrder(), pins=getList('pins'), hid=getList('hidden');
+  apps=apps.filter(a=>!hid.includes(a.pkg));
+  apps.sort((a,b)=>{const pa=pins.indexOf(a.pkg),pb=pins.indexOf(b.pkg);
+    if(pa>=0||pb>=0) return (pa<0?999:pa)-(pb<0?999:pb);
+    return ((order[b.pkg]||0)-(order[a.pkg]||0))||a.n.localeCompare(b.n,'ar');});
 }
+let allApps=[];
+function getList(k){try{return JSON.parse(store.get(k,'[]'))||[]}catch(e){return []}}
+function setList(k,v){store.set(k,JSON.stringify(v));}
 function tile(a){
   const b=document.createElement('button'); b.className='app f'+(a.banner?' hasbn':''); b.dataset.pkg=a.pkg;
   const col=LT_COLORS[[...a.n].reduce((s,ch)=>s+ch.charCodeAt(0),0)%LT_COLORS.length];
   b.innerHTML=(a.banner?'<img class="bn" src="'+a.banner+'" alt="">':'')+'<img class="ic" src="'+a.img+'" alt="">'+
-    '<i class="lt" style="background:'+col+'">'+[...(a.n.trim().replace(/^ال/,'')||a.n)][0]+'</i><span class="n">'+a.n+'</span>';
-  b.onclick=()=>openApp(a); b._app=a; tileColor(a,b); return b;
+    '<b class="pin">⭐</b><i class="lt" style="background:'+col+'">'+[...(a.n.trim().replace(/^ال/,'')||a.n)][0]+'</i><span class="n">'+a.n+'</span>';
+  b.onclick=()=>openApp(a); b._app=a; if(getList('pins').includes(a.pkg)) b.classList.add('pinned'); tileColor(a,b); return b;
 }
 const colorCache={};
 function tileColor(a,b){
@@ -353,6 +430,11 @@ function tileColor(a,b){
     if(cur===b) shelf(a,b);}catch(e){}};
   im.src=a.img;
 }
+function shelfSys(n){
+  if(S.l!=='appletv') return;
+  $('shelfArt').style.display='none'; $('shelfBg').style.background='none';
+  $('shName').textContent=n; $('shSub').textContent='اضغط موافق';
+}
 function shelf(a,b){
   if(S.l!=='appletv') return;
   const art=$('shelfArt'), bg=$('shelfBg');
@@ -366,6 +448,9 @@ function shelf(a,b){
 function drawApps(){
   const g=$('grid'); const keep=cur&&cur.dataset.pkg; g.innerHTML='';
   apps.forEach(a=>g.appendChild(tile(a)));
+  [['⚙️','الإعدادات','#3a3a40',()=>$('qSet').click()],['🎨','تخصيص','#2f3a5a',()=>$('qCustom').click()],['🏠','الشاشة الرئيسية','#2c4a3e',()=>$('qHome').click()]].forEach(([e,n,c,fn])=>{
+    const b=document.createElement('button'); b.className='app f sys'; b.style.setProperty('--tile','linear-gradient(150deg,'+c+',rgba(0,0,0,.35)),'+c);
+    b.innerHTML='<span class="sy">'+e+'</span><span class="n">'+n+'</span>'; b.onclick=fn; b._sys=n; g.appendChild(b);});
   if(!apps.length) g.innerHTML='<div style="color:var(--soft)">ما لقيت تطبيقات</div>';
   drawDock();
   if(keep){const k=g.querySelector('[data-pkg="'+keep+'"]'); if(k) focusEl(k);}
@@ -388,7 +473,7 @@ function visibleF(){
 }
 function focusEl(el){
   if(!el) return; if(cur) cur.classList.remove('on'); cur=el; el.classList.add('on');
-  if(el._app) shelf(el._app,el); else if(el.closest('#quick')) shelf(null);
+  if(el._app) shelf(el._app,el); else if(el._sys) shelfSys(el._sys); else if(el.closest('#quick')) shelf(null);
   // نحرّك قائمة التطبيقات بس، والصفحة تبقى ثابتة
   const g=el.closest('#grid');
   if(g){const r=el.getBoundingClientRect(),gr=g.getBoundingClientRect(),m=12;
@@ -411,17 +496,30 @@ function move(dir){
     const s=main+side*2.5; if(s<bs){bs=s;best=e;} });
   if(best) focusEl(best);
 }
+let okDown=0, okLong=false;
+function isOK(e){const c=e.keyCode;return e.key==='Enter'||c===13||c===23||c===66;}
+document.addEventListener('keyup',e=>{
+  if(!isOK(e)) return; e.preventDefault();
+  if(okDown && !okLong && cur) cur.click();
+  okDown=0; okLong=false;
+});
 document.addEventListener('keydown',e=>{
   const k=e.key, c=e.keyCode;
+  if(saverWake()){e.preventDefault();return;}
+  if(isOK(e)){ e.preventDefault();
+    if(!okDown){okDown=Date.now();return;}
+    if(!okLong && Date.now()-okDown>650){ okLong=true; if(cur&&cur._app) appMenu(cur._app); }
+    return; }
+  if(k==='ContextMenu'||c===82){ if(cur&&cur._app) appMenu(cur._app); e.preventDefault(); return; }
   if(k==='ArrowLeft'||c===21){move('L');e.preventDefault();}
   else if(k==='ArrowRight'||c===22){move('R');e.preventDefault();}
   else if(k==='ArrowUp'||c===19){move('U');e.preventDefault();}
   else if(k==='ArrowDown'||c===20){move('D');e.preventDefault();}
-  else if(k==='Enter'||c===13||c===23||c===66){ if(cur){cur.click();} e.preventDefault(); }
   else if(k==='Escape'||k==='Backspace'){onBack();e.preventDefault();}
   else if(k==='MediaPlayPause'||c===85){ytToggle();}
 });
 function onBack(){
+  if(saverWake()) return;
   const ov=document.querySelector('.ov.show');
   if(ov){ov.classList.remove('show'); setTimeout(ytSync,30); focusEl($('qCustom')); return;}
   const first=$('grid').querySelector('.f'); $('grid').scrollTop=0; $('grid').scrollLeft=0; focusEl(first||$('qCustom'));
@@ -438,11 +536,58 @@ function optRow(id,items,curVal,pick){
     b.innerHTML=(sw?'<span class="sw" style="background:'+sw+'"></span>':'')+label;
     b.onclick=()=>{r.querySelectorAll('.opt').forEach(x=>x.classList.toggle('sel',x===b));pick(v);};r.appendChild(b);});
 }
+function drawHidden(){
+  const r=$('hidRow'); r.innerHTML=''; const h=getList('hidden');
+  if(!h.length){r.innerHTML='<span style="color:var(--soft);font-size:1.2vw">ما فيه تطبيقات مخفية</span>';return;}
+  h.forEach(pkg=>{const a=allApps.find(x=>x.pkg===pkg); const b=document.createElement('button'); b.className='opt f';
+    b.textContent='👁 أظهر '+(a?a.n:pkg); b.onclick=()=>{setList('hidden',getList('hidden').filter(x=>x!==pkg)); loadApps(); drawApps(); drawHidden(); focusEl($('custClose'));}; r.appendChild(b);});
+}
 function drawCust(){
   optRow('layRow',LAYOUTS,S.l,v=>{S.l=v;store.set('layout2',v);applyAll();});
   optRow('icRow',ICONS,S.i,v=>{S.i=v;store.set('icons',v);applyAll();});
   optRow('thRow',Object.entries(THEMES).map(([k,t])=>[k,t.n,t.accent]),S.t,v=>{S.t=v;store.set('theme',v);applyAll();});
+  optRow('wRow',WALLS,S.w,v=>{S.w=v;store.set('wall',v);applyAll();});
+  optRow('svRow',SAVERS,S.sv,v=>{S.sv=v;store.set('saver',v);});
+  drawHidden();
 }
+
+
+/* ===== قائمة التطبيق (ضغط مطوّل) ===== */
+let menuApp=null;
+function appMenu(a){
+  menuApp=a; $('amIc').src=a.img; $('amName').textContent=a.n;
+  $('amPin').textContent=getList('pins').includes(a.pkg)?'☆ شيل التثبيت':'⭐ ثبّته أول';
+  $('appMenu').classList.add('show'); ytSync(); focusEl($('amOpen'));
+}
+function closeMenu(focusPkg){
+  $('appMenu').classList.remove('show'); setTimeout(ytSync,30);
+  const t=focusPkg&&$('grid').querySelector('[data-pkg="'+focusPkg+'"]'); focusEl(t||$('grid').querySelector('.f')||$('qCustom'));
+}
+$('amOpen').onclick=()=>{const a=menuApp; closeMenu(a.pkg); openApp(a);};
+$('amPin').onclick=()=>{const p=getList('pins'),i=p.indexOf(menuApp.pkg); if(i>=0)p.splice(i,1); else p.push(menuApp.pkg); setList('pins',p); const pk=menuApp.pkg; loadApps(); drawApps(); closeMenu(pk);};
+$('amHide').onclick=()=>{const h=getList('hidden'); if(!h.includes(menuApp.pkg))h.push(menuApp.pkg); setList('hidden',h); loadApps(); drawApps(); closeMenu();};
+$('amClose').onclick=()=>closeMenu(menuApp&&menuApp.pkg);
+
+/* ===== شاشة التوقف ===== */
+let idleAt=Date.now();
+['keydown','mousemove','click'].forEach(ev=>document.addEventListener(ev,()=>{idleAt=Date.now();},true));
+function saverWake(){ if($('saver').classList.contains('show')){ $('saver').classList.remove('show'); idleAt=Date.now(); setTimeout(ytSync,30); return true;} return false; }
+function saverTick(){
+  const sv=$('saver');
+  if(sv.classList.contains('show')){
+    const d=new Date(),h=d.getHours();
+    $('svClock').textContent=((h%12)||12)+':'+String(d.getMinutes()).padStart(2,'0');
+    let sub=DAYS[d.getDay()]+' • '+d.getDate()+' '+MONTHS[d.getMonth()];
+    const nx=document.querySelector('#hdrPray .nx'); if(nx) sub+='  •  🕌 '+nx.textContent.replace(/(\D+)(\d)/,'$1 $2');
+    const t=$('wxT').textContent; if(t&&t!=='--°') sub+='  •  '+$('wxI').textContent+' '+t;
+    $('svSub').textContent=sub; return;
+  }
+  const mins=+S.sv; if(!mins) return;
+  if($('yt').classList.contains('focus')) return;
+  if((S.l==='youtube'||S.l==='dash')) return; // لا تغطي فيديو شغّال
+  if(Date.now()-idleAt>mins*60000){ sv.classList.add('show'); if(hasYT) YT.hide(); ytLast=''; saverTick(); }
+}
+setInterval(saverTick,5000);
 
 /* ===== يوتيوب في الواجهة ===== */
 const hasYT=!!(window.YT && YT.show);
@@ -450,7 +595,7 @@ let ytLast='';
 function ytSync(){
   if(!hasYT) return;
   const box=$('ytBox'), r=box.getBoundingClientRect(), d=window.devicePixelRatio||1;
-  const show=!document.querySelector('.ov.show') && r.width>30 && r.height>30 && getComputedStyle($('yt')).display!=='none';
+  const show=!document.querySelector('.ov.show') && !$('saver').classList.contains('show') && r.width>30 && r.height>30 && getComputedStyle($('yt')).display!=='none';
   const key=show?[r.left,r.top,r.width,r.height].map(v=>Math.round(v*d)).join(','):'off';
   if(key===ytLast) return; ytLast=key;
   if(show){const [x,y,w,h]=key.split(',').map(Number); YT.show(x,y,w,h);} else { YT.hide(); ytBlurred(); }
