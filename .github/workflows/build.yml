@@ -38,6 +38,7 @@ jobs:
           cp app/build/outputs/apk/debug/app-debug.apk car-theme.apk
           cp tv/build/outputs/apk/debug/tv-debug.apk tv-launcher.apk
           cp router/build/outputs/apk/debug/router-debug.apk signal-app.apk
+          cp seasons/build/outputs/apk/debug/seasons-debug.apk seasons.apk
 
       - name: Publish download link
         uses: softprops/action-gh-release@v2
@@ -48,6 +49,7 @@ jobs:
             car-theme.apk
             tv-launcher.apk
             signal-app.apk
+            seasons.apk
           make_latest: true
 
       - name: Screenshots
