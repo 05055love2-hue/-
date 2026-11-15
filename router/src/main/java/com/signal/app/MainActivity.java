@@ -43,6 +43,17 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.List;
+import java.util.ArrayList;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.InputStreamReader;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import android.net.wifi.ScanResult;
 import java.util.concurrent.Executors;
 
 public class MainActivity extends Activity implements SensorEventListener, LocationListener {
@@ -56,6 +67,12 @@ public class MainActivity extends Activity implements SensorEventListener, Locat
     private volatile Location lastLoc;
     private volatile List<CellInfo> cells;
     private final java.util.concurrent.Executor exec = Executors.newSingleThreadExecutor();
+    private final ExecutorService pool = Executors.newCachedThreadPool();
+
+    private void sendLan(JSONArray found, boolean noWifi) {
+        final String js = "typeof onLan==='function'&&onLan(" + (noWifi ? "null" : found.toString()) + ")";
+        runOnUiThread(() -> web.evaluateJavascript(js, null));
+    }
 
     @Override
     protected void onCreate(Bundle b) {
@@ -254,6 +271,7 @@ public class MainActivity extends Activity implements SensorEventListener, Locat
                     o.put("speed", wi.getLinkSpeed());
                     if (Build.VERSION.SDK_INT >= 21) o.put("freq", wi.getFrequency());
                     o.put("ip", ip(wi.getIpAddress()));
+                    o.put("bssid", String.valueOf(wi.getBSSID()));
                 }
                 int gw = wm.getDhcpInfo() != null ? wm.getDhcpInfo().gateway : 0;
                 if (gw != 0) o.put("gw", ip(gw));
@@ -271,6 +289,113 @@ public class MainActivity extends Activity implements SensorEventListener, Locat
                 o.put("gps", lm.isProviderEnabled(LocationManager.GPS_PROVIDER));
             } catch (Exception ignored) { }
             return o.toString();
+        }
+
+        /** شبكات الواي فاي اللي حولك */
+        @JavascriptInterface
+        public String scanWifi() {
+            JSONArray arr = new JSONArray();
+            try {
+                WifiManager wm = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+                try { wm.startScan(); } catch (Exception ignored) { }
+                List<ScanResult> rs = wm.getScanResults();
+                if (rs != null) for (ScanResult r : rs) {
+                    JSONObject o = new JSONObject();
+                    o.put("ssid", r.SSID == null ? "" : r.SSID);
+                    o.put("bssid", r.BSSID);
+                    o.put("lvl", r.level);
+                    o.put("freq", r.frequency);
+                    if (Build.VERSION.SDK_INT >= 23) o.put("w", r.channelWidth);
+                    o.put("sec", r.capabilities);
+                    arr.put(o);
+                }
+            } catch (Exception ignored) { }
+            return arr.toString();
+        }
+
+        /** بنق لعنوان، والنتيجة ترجع للصفحة بدون ما تعلّق */
+        @JavascriptInterface
+        public void ping(final String id, final String host) {
+            pool.execute(() -> {
+                double ms = -1;
+                try {
+                    Process p = Runtime.getRuntime().exec(new String[]{"ping", "-c", "1", "-W", "2", host});
+                    BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+                    String line;
+                    while ((line = br.readLine()) != null) {
+                        int i = line.indexOf("time=");
+                        if (i >= 0) { ms = Double.parseDouble(line.substring(i + 5).split(" ")[0]); break; }
+                    }
+                    p.waitFor(3, TimeUnit.SECONDS); p.destroy();
+                } catch (Exception ignored) { }
+                if (ms < 0) {
+                    // لو البنق ممنوع، نقيس بالاتصال على منفذ
+                    for (int port : new int[]{443, 80, 53}) {
+                        try (Socket sk = new Socket()) {
+                            long t = System.nanoTime();
+                            sk.connect(new InetSocketAddress(host, port), 1500);
+                            ms = (System.nanoTime() - t) / 1e6; break;
+                        } catch (Exception ignored) { }
+                    }
+                }
+                final double r = ms;
+                runOnUiThread(() -> web.evaluateJavascript("typeof onPing==='function'&&onPing('" + id + "'," + r + ")", null));
+            });
+        }
+
+        /** فحص الأجهزة المتصلة بشبكة البيت */
+        @JavascriptInterface
+        public void scanLan() {
+            pool.execute(() -> {
+                JSONArray found = new JSONArray();
+                try {
+                    WifiManager wm = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+                    int me = wm.getConnectionInfo().getIpAddress();
+                    int gw = wm.getDhcpInfo() != null ? wm.getDhcpInfo().gateway : 0;
+                    if (me == 0) { sendLan(found, true); return; }
+                    String myIp = ip(me), gwIp = gw != 0 ? ip(gw) : "";
+                    String prefix = myIp.substring(0, myIp.lastIndexOf('.') + 1);
+                    ExecutorService ex = Executors.newFixedThreadPool(48);
+                    final List<String> hits = java.util.Collections.synchronizedList(new ArrayList<>());
+                    final AtomicInteger done = new AtomicInteger();
+                    final int[] ports = {80, 443, 53, 22, 445, 139, 8080, 62078, 5000, 7000, 8008, 9100, 554, 1900};
+                    for (int i = 1; i < 255; i++) {
+                        final String host = prefix + i;
+                        ex.execute(() -> {
+                            boolean up = host.equals(myIp) || host.equals(gwIp);
+                            try { if (!up) up = InetAddress.getByName(host).isReachable(350); } catch (Exception ignored) { }
+                            if (!up) for (int port : ports) {
+                                try (Socket sk = new Socket()) { sk.connect(new InetSocketAddress(host, port), 180); up = true; break; }
+                                catch (java.net.ConnectException ce) { up = true; break; } // رفض الاتصال يعني الجهاز موجود
+                                catch (Exception ignored) { }
+                            }
+                            if (up) hits.add(host);
+                            int d = done.incrementAndGet();
+                            if (d % 25 == 0) runOnUiThread(() -> web.evaluateJavascript("typeof onLanProgress==='function'&&onLanProgress(" + d + ")", null));
+                        });
+                    }
+                    ex.shutdown(); ex.awaitTermination(60, TimeUnit.SECONDS);
+                    // جدول ARP لو متاح
+                    try (BufferedReader br = new BufferedReader(new FileReader("/proc/net/arp"))) {
+                        String line; br.readLine();
+                        while ((line = br.readLine()) != null) {
+                            String[] f = line.trim().split("\\s+");
+                            if (f.length >= 4 && f[0].startsWith(prefix) && !f[3].equals("00:00:00:00:00:00") && !hits.contains(f[0])) hits.add(f[0]);
+                        }
+                    } catch (Exception ignored) { }
+                    for (String h : hits) {
+                        JSONObject o = new JSONObject();
+                        o.put("ip", h);
+                        o.put("me", h.equals(myIp));
+                        o.put("gw", h.equals(gwIp));
+                        String name = "";
+                        try { String cn = InetAddress.getByName(h).getCanonicalHostName(); if (!cn.equals(h)) name = cn; } catch (Exception ignored) { }
+                        o.put("name", name);
+                        found.put(o);
+                    }
+                } catch (Exception ignored) { }
+                sendLan(found, false);
+            });
         }
 
         @JavascriptInterface
