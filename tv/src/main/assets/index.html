@@ -296,6 +296,27 @@
   body[data-l="scene"] .pray span{background:rgba(0,0,0,.25);font-size:.95vw}
   body[data-l="scene"] .pray span:not(.nx){display:none}
   body[data-l="scene"] #wx{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.22)}
+
+  /* ===== مواقيت الصلاة + المنبه ===== */
+  #prayBox{display:none;grid-area:pb}
+  body[data-l="scene"] #prayBox{display:block;align-self:start;justify-self:start;background:rgba(255,255,255,.1);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.22);border-radius:1.6vw;padding:1.4vh 1.4vw;min-width:17vw;margin-top:1.5vh}
+  body[data-l="scene"] #home{grid-template-areas:"hdr . wx quick" "pb . . ." "apps apps apps apps"}
+  body[data-l="scene"] #hdr .pray{display:none}
+  #prayBox .pbh{display:flex;justify-content:space-between;gap:1vw;font-size:1.2vw;margin-bottom:.8vh}
+  #prayBox .pbh span{color:var(--soft)}
+  #prayBox .pr{display:flex;justify-content:space-between;gap:2vw;font-size:1.3vw;padding:.5vh .7vw;border-radius:.8vw}
+  #prayBox .pr b{font-weight:600;direction:ltr}
+  #prayBox .pr.nx{background:var(--accent);color:#08101c;font-weight:800}
+  #pbNext{margin-top:.8vh;font-size:1.1vw;color:var(--soft);text-align:center}
+  #adhan{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 40%,color-mix(in srgb,var(--accent) 35%,rgba(0,0,0,.85)),rgba(0,0,0,.92))}
+  #adhan.show{display:flex}
+  #adhan .ad{text-align:center;display:flex;flex-direction:column;align-items:center;gap:2vh}
+  #adhan .m{font-size:9vw;animation:glowp 2s ease-in-out infinite alternate}
+  @keyframes glowp{from{filter:drop-shadow(0 0 1vh var(--accent))}to{filter:drop-shadow(0 0 5vh var(--accent))}}
+  #adhan b{font-size:4vw}
+  #adhan span{font-size:1.8vw;color:var(--soft)}
+  #preBar{position:fixed;top:2vh;left:50%;transform:translate(-50%,-20vh);z-index:40;background:rgba(0,0,0,.75);backdrop-filter:blur(10px);border:2px solid var(--accent);border-radius:2vw;padding:1.4vh 2.4vw;font-size:1.6vw;font-weight:800;transition:transform .5s}
+  #preBar.show{transform:translate(-50%,0)}
 </style>
 </head>
 <body data-l="classic" data-i="orig">
@@ -313,6 +334,7 @@
     <div class="greet" id="greet"></div>
     <div class="pray" id="hdrPray"></div>
   </section>
+  <section id="prayBox"><div class="pbh"><b>🕌 مواقيت الصلاة</b><span id="pbCity"></span></div><div id="pbList"></div><div id="pbNext"></div></section>
   <div id="wx"><span class="i" id="wxI">⛅</span><span class="t" id="wxT">--°</span><span class="d"><b id="wxC">الرياض</b><span id="wxD">جاري التحميل…</span></span></div>
   <div id="quick">
     <button class="q f" id="qCustom">🎨 تخصيص</button>
@@ -336,6 +358,8 @@
 </div>
 <div class="hint">تنقّل بالأسهم • موافق للفتح • اضغط مطوّل على تطبيق لخيارات أكثر</div>
 
+<div id="adhan"><div class="ad"><div class="m">🕌</div><b id="adT">حان الآن موعد الصلاة</b><span id="adS"></span><button class="opt f" id="adOk">تم ✔</button></div></div>
+<div id="preBar"></div>
 <div class="ov" id="appMenu">
   <div class="panel">
     <img id="amIc" alt=""><h3 id="amName"></h3>
@@ -355,6 +379,10 @@
     <h4>شكل الأيقونات</h4><div class="row" id="icRow"></div>
     <h4>الألوان</h4><div class="row" id="thRow"></div>
     <h4>الخلفية</h4><div class="row" id="wRow"></div>
+    <h4>🏙️ المدينة (للطقس ومواقيت الصلاة)</h4><div class="row" id="cityRow"></div>
+    <h4>🕌 منبه الصلاة</h4><div class="row" id="adhRow"></div>
+    <h4>⏰ تنبيه قبل الصلاة</h4><div class="row" id="preRow"></div>
+    <h4>🔊 صوت المنبه</h4><div class="row" id="sndRow"></div>
     <h4>شاشة التوقف (لما تترك التلفزيون)</h4><div class="row" id="svRow"></div>
     <h4>التطبيقات المخفية</h4><div class="row" id="hidRow"></div>
     <h4></h4><button class="opt f" id="custClose">✔ تم</button>
@@ -469,16 +497,19 @@ function tick(){
 }
 tick(); setInterval(tick,1000);
 
+/* ===== المدينة ===== */
+const CITIES=[['الرياض',24.7136,46.6753],['جدة',21.4858,39.1925],['مكة المكرمة',21.3891,39.8579],['المدينة المنورة',24.5247,39.5692],['الدمام',26.4207,50.0888],['الخبر',26.2172,50.1971],['الأحساء',25.3833,49.5833],['الطائف',21.2703,40.4158],['أبها',18.2164,42.5053],['خميس مشيط',18.3,42.7333],['تبوك',28.3838,36.555],['بريدة',26.326,43.975],['حائل',27.5114,41.7208],['جازان',16.8892,42.5511],['نجران',17.4917,44.1322],['الجبيل',27.0046,49.646],['ينبع',24.0889,38.0618],['الجوف',29.9697,40.2064],['الباحة',20.0129,41.4677],['عرعر',30.9753,41.0381],['الكويت',29.3759,47.9774],['الدوحة',25.2854,51.531],['دبي',25.2048,55.2708],['أبوظبي',24.4539,54.3773],['المنامة',26.2285,50.586],['مسقط',23.588,58.3829]];
+let CITY=CITIES.find(c=>c[0]===store.get('city','الرياض'))||CITIES[0];
 /* ===== الطقس ===== */
 const WX=[[0,'صحو','☀️','🌙'],[1,'صحو غالبًا','🌤️','🌙'],[2,'غائم جزئيًا','⛅','☁️'],[3,'غائم','☁️','☁️'],[45,'ضباب','🌫️','🌫️'],[48,'ضباب','🌫️','🌫️'],
   [51,'رذاذ','🌦️','🌧️'],[53,'رذاذ','🌦️','🌧️'],[55,'رذاذ','🌦️','🌧️'],[61,'مطر خفيف','🌧️','🌧️'],[63,'مطر','🌧️','🌧️'],[65,'مطر غزير','🌧️','🌧️'],
   [80,'زخات مطر','🌦️','🌧️'],[81,'زخات مطر','🌦️','🌧️'],[82,'زخات قوية','⛈️','⛈️'],[95,'عاصفة رعدية','⛈️','⛈️'],[96,'عاصفة','⛈️','⛈️'],[99,'عاصفة','⛈️','⛈️']];
 function wxDraw(d){const c=d.current,r=WX.find(x=>x[0]===c.weather_code)||[0,'—','🌡️','🌡️'];
-  $('wxI').textContent=c.is_day?r[2]:r[3]; $('wxT').textContent=Math.round(c.temperature_2m)+'°';
+  $('wxC').textContent=CITY[0]; $('wxI').textContent=c.is_day?r[2]:r[3]; $('wxT').textContent=Math.round(c.temperature_2m)+'°';
   $('shWx').textContent=(c.is_day?r[2]:r[3])+' '+Math.round(c.temperature_2m)+'°';
   $('wxD').textContent=r[1]+' • ↑'+Math.round(d.daily.temperature_2m_max[0])+'° ↓'+Math.round(d.daily.temperature_2m_min[0])+'°';}
 async function wxUpdate(){
-  try{const r=await fetch('https://api.open-meteo.com/v1/forecast?latitude=24.7136&longitude=46.6753&current=temperature_2m,weather_code,is_day&daily=temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=1');
+  try{const r=await fetch('https://api.open-meteo.com/v1/forecast?latitude='+CITY[1]+'&longitude='+CITY[2]+'&current=temperature_2m,weather_code,is_day&daily=temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=1');
     const d=await r.json(); wxDraw(d); store.set('wx',JSON.stringify(d));}
   catch(e){ if(!store.get('wx','')) $('wxD').textContent='ما فيه نت'; setTimeout(wxUpdate,60000); }
 }
@@ -496,16 +527,62 @@ function prayDraw(){
   let nx=PR.findIndex(([k])=>{const [h,m]=prayT[k].split(':').map(Number);return h*60+m>mins;}); if(nx<0) nx=0;
   const html=PR.map(([k,n],i)=>'<span'+(i===nx?' class="nx"':'')+'>'+n+'<b>'+to12(prayT[k])+'</b></span>').join('');
   $('hdrPray').innerHTML=html; $('shelfPray').innerHTML=html;
+  $('pbCity').textContent=CITY[0];
+  $('pbList').innerHTML=PR.map(([k,n],i)=>'<div class="pr'+(i===nx?' nx':'')+'"><span>'+n+'</span><b>'+to12(prayT[k])+'</b></div>').join('');
+  const [h,m]=prayT[PR[nx][0]].split(':').map(Number);let left=h*60+m-mins;if(left<0)left+=1440;
+  $('pbNext').textContent='باقي '+(left>=60?Math.floor(left/60)+' ساعة و ':'')+(left%60)+' دقيقة على '+PR[nx][1];
+  scheduleNative();
 }
 async function prayUpdate(){
-  const d=new Date(), key='pray|'+d.toDateString();
+  const d=new Date(), key='pray|'+CITY[0]+'|'+d.toDateString();
   try{const c=JSON.parse(store.get(key,'null')); if(c){prayT=c;prayDraw();return;}}catch(e){}
-  try{const r=await fetch('https://api.aladhan.com/v1/timings/'+d.getDate()+'-'+(d.getMonth()+1)+'-'+d.getFullYear()+'?latitude=24.7136&longitude=46.6753&method=4');
+  try{const r=await fetch('https://api.aladhan.com/v1/timings/'+d.getDate()+'-'+(d.getMonth()+1)+'-'+d.getFullYear()+'?latitude='+CITY[1]+'&longitude='+CITY[2]+'&method=4');
     const j=await r.json(); const t=j.data.timings; prayT={}; PR.forEach(([k])=>prayT[k]=t[k].slice(0,5));
     store.set(key,JSON.stringify(prayT)); prayDraw();}
   catch(e){ setTimeout(prayUpdate,60000); }
 }
 prayUpdate(); setInterval(()=>{prayDraw(); if(new Date().getHours()===0) prayUpdate();},60000);
+
+/* ===== منبه الصلاة ===== */
+var AD={on:store.get('adhOn','1')==='1',pre:+store.get('adhPre','10'),snd:store.get('adhSnd','chime')};
+let adFired={};
+function prayEpoch(k){const [h,m]=prayT[k].split(':').map(Number);const d=new Date();d.setHours(h,m,0,0);return d.getTime()}
+function scheduleNative(){if(!AD||!prayT||!window.Native||!Native.schedulePrayers)return;
+  const now=Date.now(),list=[];
+  if(AD.on)PR.forEach(([k,n])=>{let t=prayEpoch(k);if(t<=now)t+=86400000;list.push({t,title:'🕌 حان الآن موعد صلاة '+n,text:CITY[0]+' • '+to12(prayT[k])});
+    if(AD.pre){const pt=t-AD.pre*60000;if(pt>now)list.push({t:pt,title:'⏰ باقي '+AD.pre+' دقائق على صلاة '+n,text:CITY[0]+' • '+to12(prayT[k])})}});
+  const key=JSON.stringify(list.map(x=>x.t));if(key===scheduleNative.k)return;scheduleNative.k=key;try{Native.schedulePrayers(JSON.stringify(list))}catch(e){}}
+let actx=null,adAudio=null;
+function chime(){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();const notes=[659,784,988,784,659,523];
+  notes.forEach((f,i)=>{const o=actx.createOscillator(),g=actx.createGain();o.type='sine';o.frequency.value=f;o.connect(g);g.connect(actx.destination);const t=actx.currentTime+i*.45;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.35,t+.05);g.gain.exponentialRampToValueAtTime(.001,t+.9);o.start(t);o.stop(t+1)})}catch(e){}}
+async function playAdhanSound(){if(AD.snd==='mine'){const u=await idbGet('adhan');if(u){try{adAudio=new Audio(URL.createObjectURL(u));await adAudio.play();return}catch(e){}}}if(AD.snd!=='none')chime()}
+function showAdhan(n,time){$('adT').textContent='حان الآن موعد صلاة '+n;$('adS').textContent=CITY[0]+' • '+time;$('adhan').classList.add('show');playAdhanSound();
+  setTimeout(hideAdhan,3*60000);const b=$('adOk');if(b&&b.focus)b.focus()}
+function hideAdhan(){$('adhan').classList.remove('show');try{adAudio&&adAudio.pause()}catch(e){}}
+$('adOk').onclick=hideAdhan;
+function preBar(t){const b=$('preBar');b.textContent=t;b.classList.add('show');setTimeout(()=>b.classList.remove('show'),20000)}
+setInterval(()=>{if(!prayT||!AD.on)return;const now=new Date(),day=now.toDateString();
+  PR.forEach(([k,n])=>{const t=prayEpoch(k),d=now.getTime()-t,id=day+k;
+    if(d>=0&&d<90000&&!adFired[id]){adFired[id]=1;showAdhan(n,to12(prayT[k]))}
+    const pd=now.getTime()-(t-AD.pre*60000);if(AD.pre&&pd>=0&&pd<90000&&!adFired[id+'p']){adFired[id+'p']=1;preBar('⏰ باقي '+AD.pre+' دقائق على صلاة '+n)}})},15000);
+window.onPrayerAlarm=(title)=>{const m=/صلاة (\S+)/.exec(title||'');if(/حان/.test(title||''))showAdhan(m?m[1]:'',new Date().toLocaleTimeString('ar-SA',{hour:'numeric',minute:'2-digit'}));else if(title)preBar(title)};
+/* حفظ صوت الأذان في الجهاز */
+function idb(){return new Promise((res,rej)=>{const r=indexedDB.open('tvhome',1);r.onupgradeneeded=()=>r.result.createObjectStore('f');r.onsuccess=()=>res(r.result);r.onerror=rej})}
+async function idbSet(k,v){const db=await idb();return new Promise(r=>{const t=db.transaction('f','readwrite');t.objectStore('f').put(v,k);t.oncomplete=r})}
+async function idbGet(k){try{const db=await idb();return await new Promise(r=>{const q=db.transaction('f').objectStore('f').get(k);q.onsuccess=()=>r(q.result);q.onerror=()=>r(null)})}catch(e){return null}}
+const sndIn=document.createElement('input');sndIn.type='file';sndIn.accept='audio/*';sndIn.style.display='none';document.body.appendChild(sndIn);
+sndIn.onchange=async()=>{const f=sndIn.files[0];if(!f)return;await idbSet('adhan',f);AD.snd='mine';store.set('adhSnd','mine');drawAdhRows();sndIn.value=''};
+function drawAdhRows(){
+  optRow('cityRow',CITIES.map(c=>[c[0],c[0]]),CITY[0],v=>{CITY=CITIES.find(c=>c[0]===v);store.set('city',v);prayT=null;prayUpdate();wxUpdate();});
+  optRow('adhRow',[['1','🔔 شغّال'],['0','🔕 مطفي']],AD.on?'1':'0',v=>{AD.on=v==='1';store.set('adhOn',v);scheduleNative.k='';scheduleNative();if(!AD.on&&window.Native&&Native.schedulePrayers)Native.schedulePrayers('[]')});
+  optRow('preRow',[['0','بدون'],['5','قبل 5 دقائق'],['10','قبل 10 دقائق'],['15','قبل 15 دقيقة'],['30','قبل نص ساعة']],String(AD.pre),v=>{AD.pre=+v;store.set('adhPre',v);scheduleNative.k='';scheduleNative()});
+  optRow('sndRow',[['chime','🎵 نغمة هادئة'],['mine','📂 صوت أذان من جهازك'],['none','🔇 بدون صوت'],['test','▶ جرّب المنبه']],AD.snd,v=>{
+    if(v==='test'){showAdhan(PR[0][1],'تجربة');return}
+    if(v==='mine'){idbGet('adhan').then(u=>{if(u){AD.snd='mine';store.set('adhSnd','mine')}else sndIn.click()});return}
+    AD.snd=v;store.set('adhSnd',v)});
+}
+drawAdhRows();
+if(prayT)scheduleNative();
 
 /* ===== التطبيقات ===== */
 const hasNative=!!window.Native;

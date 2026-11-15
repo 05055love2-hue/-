@@ -62,6 +62,9 @@ public class MainActivity extends Activity {
         root = new FrameLayout(this);
         root.addView(web, new FrameLayout.LayoutParams(-1, -1));
         setContentView(root);
+        if (Build.VERSION.SDK_INT >= 33 && checkSelfPermission("android.permission.POST_NOTIFICATIONS") != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{"android.permission.POST_NOTIFICATIONS"}, 9);
+        }
         setupYouTube();
         goFullScreen();
 
@@ -119,12 +122,19 @@ public class MainActivity extends Activity {
             }
         });
 
+        handlePrayerIntent(getIntent());
         web.loadUrl(BASE + "index.html");
         web.requestFocus();
     }
 
     /** جسر بين الواجهة والتلفزيون: قائمة التطبيقات وفتحها والإعدادات */
     private class Bridge {
+        /** يجدول منبهات الصلاة عشان تشتغل حتى لو كنت داخل تطبيق ثاني */
+        @JavascriptInterface
+        public void schedulePrayers(String json) {
+            PrayerReceiver.scheduleAll(MainActivity.this, json);
+        }
+
         @JavascriptInterface
         public String getApps() {
             JSONArray arr = new JSONArray();
@@ -362,5 +372,26 @@ public class MainActivity extends Activity {
         }
         fileCb.onReceiveValue(out);
         fileCb = null;
+    }
+
+    private String pendingPrayer;
+
+    private void handlePrayerIntent(Intent i) {
+        if (i == null) return;
+        String t = i.getStringExtra("prayer");
+        if (t == null) return;
+        pendingPrayer = t;
+        web.postDelayed(() -> {
+            if (pendingPrayer != null) {
+                web.evaluateJavascript("typeof onPrayerAlarm==='function'&&onPrayerAlarm(" + org.json.JSONObject.quote(pendingPrayer) + ")", null);
+                pendingPrayer = null;
+            }
+        }, 1500);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        handlePrayerIntent(intent);
     }
 }
