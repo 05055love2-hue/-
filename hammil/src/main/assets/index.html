@@ -44,6 +44,7 @@ h2 button{background:none;border:0;color:var(--soft);font:inherit;font-size:13px
 .upd{background:rgba(255,255,255,.1);border:0;color:#fff;border-radius:12px;padding:8px 12px;font:inherit;font-size:13px}
 #toast{position:fixed;left:16px;right:16px;bottom:22px;background:#1d2440;border:1px solid var(--line);border-radius:14px;padding:12px 14px;font-size:14px;opacity:0;transform:translateY(20px);transition:.3s;pointer-events:none}
 #toast.show{opacity:1;transform:none}
+.raw{display:none;margin-top:8px;font-size:11px;direction:ltr;text-align:left;white-space:pre-wrap;word-break:break-all;background:rgba(0,0,0,.4);border-radius:10px;padding:8px;color:#ffb4b4;max-height:220px;overflow:auto}.job.open .raw{display:block}.job{flex-wrap:wrap}.job .raw{flex-basis:100%}
 .credit{text-align:center;color:#59637f;font-size:12px;margin-top:26px}
 </style></head><body>
 <h1><i>⬇️</i>حمّل</h1>
@@ -85,11 +86,11 @@ function draw(js){
     else if(j.state=='running'){st=j.progress>0?Math.floor(j.progress)+'% '+(j.eta>0?'• باقي '+eta(j.eta):''):'جاري التجهيز…';bar='<div class="bar'+(j.progress>0?'':' ind')+'"><i style="width:'+j.progress+'%"></i></div>';acts='<button data-a="cancel" title="إلغاء">✕</button>'}
     else if(j.state=='done'){st='✅ '+(j.err||'انحفظ في المعرض')+(j.size?' • '+size(j.size):'');cls='ok';acts='<button data-a="open" title="افتح">▶</button>'+(j.uri?'<button data-a="share" title="شارك">↗</button>':'')}
     else if(j.state=='canceled'){st='ألغيته';acts='<button data-a="retry" title="أعد">↻</button><button data-a="remove" title="احذف">🗑</button>'}
-    else {st='⚠️ '+(j.err||'صار خطأ');cls='er';acts='<button data-a="retry" title="أعد">↻</button><button data-a="remove" title="احذف">🗑</button>'}
-    return '<div class="job" data-id="'+j.id+'"><div class="ic">'+(j.mode=='audio'?'🎵':s[0])+'</div><div class="bd"><div class="tt">'+esc(j.title||s[1])+'</div><div class="st '+cls+'">'+st+'</div>'+bar+'</div><div class="acts">'+acts+'</div></div>'}).join('');
+    else {st='⚠️ '+(j.err||'صار خطأ');cls='er';st+=' <u>(التفاصيل)</u>';acts='<button data-a="retry" title="أعد">↻</button><button data-a="remove" title="احذف">🗑</button>'}
+    return '<div class="job" data-id="'+j.id+'"><div class="ic">'+(j.mode=='audio'?'🎵':s[0])+'</div><div class="bd"><div class="tt">'+esc(j.title||s[1])+'</div><div class="st '+cls+'">'+st+'</div>'+bar+'</div><div class="acts">'+acts+'</div>'+(j.raw&&j.state=='error'?'<div class="raw">'+esc(j.raw)+'</div>':'')+'</div>'}).join('');
 }
 window.onJobs=draw;
-$('list').onclick=e=>{var b=e.target.closest('button[data-a]');if(!b)return;var id=b.closest('.job').dataset.id;D[b.dataset.a](id);if(b.dataset.a=='retry')toast('أعدت التحميل')};
+$('list').onclick=e=>{var r=e.target.closest('.raw');if(r){D.copy&&D.copy(r.textContent);return}var b=e.target.closest('button[data-a]');if(!b){var jb=e.target.closest('.job');if(jb&&jb.querySelector('.raw'))jb.classList.toggle('open');return}var id=b.closest('.job').dataset.id;D[b.dataset.a](id);if(b.dataset.a=='retry')toast('أعدت التحميل')};
 function go(mode){var v=$('u').value.trim();if(!v){v=D.paste();$('u').value=v}
   var r=D.start(v,mode);if(r=='no'){toast('ما لقيت رابط، انسخ رابط المقطع وجرّب');return}
   $('u').value='';toast(mode=='audio'?'🎵 بدأ تحميل الصوت':'⬇️ بدأ التحميل')}

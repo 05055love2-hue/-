@@ -17,19 +17,20 @@ class Job(
     var mime: String = "",
     var size: Long = 0,
     var err: String = "",
+    var raw: String = "",
     val t: Long = System.currentTimeMillis(),
 ) {
     fun json(): JSONObject = JSONObject()
         .put("id", id).put("url", url).put("mode", mode).put("title", title)
         .put("state", state).put("progress", progress.toDouble()).put("eta", eta)
-        .put("uri", uri).put("mime", mime).put("size", size).put("err", err).put("t", t)
+        .put("uri", uri).put("mime", mime).put("size", size).put("err", err).put("raw", raw).put("t", t)
 
     companion object {
         fun from(o: JSONObject) = Job(
             o.optString("id"), o.optString("url"), o.optString("mode", "video"), o.optString("title"),
             o.optString("state"), o.optDouble("progress", 0.0).toFloat(), o.optLong("eta"),
-            o.optString("uri"), o.optString("mime"), o.optLong("size"), o.optString("err"), o.optLong("t"),
-        )
+            o.optString("uri"), o.optString("mime"), o.optLong("size"), o.optString("err"), "", o.optLong("t"),
+        ).also { it.raw = o.optString("raw") }
     }
 }
 

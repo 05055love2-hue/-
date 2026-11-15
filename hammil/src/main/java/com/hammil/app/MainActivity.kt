@@ -123,6 +123,12 @@ class MainActivity : Activity() {
             DlService.start(this@MainActivity, j.url, j.mode)
         }
 
+        @JavascriptInterface fun copy(s: String) {
+            main.post {
+                (getSystemService(CLIPBOARD_SERVICE) as ClipboardManager).setPrimaryClip(android.content.ClipData.newPlainText("err", s))
+                Toast.makeText(this@MainActivity, "تم النسخ", Toast.LENGTH_SHORT).show()
+            }
+        }
         @JavascriptInterface fun remove(id: String) = Jobs.remove(id)
         @JavascriptInterface fun clearDone() = Jobs.clearDone()
         @JavascriptInterface fun update() = DlService.update(this@MainActivity)

@@ -44,6 +44,16 @@ jobs:
           cp obd/build/outputs/apk/debug/obd-debug.apk fahes.apk
           cp hammil/build/outputs/apk/debug/hammil-debug.apk hammil.apk
 
+      - name: Hammil engine info
+        continue-on-error: true
+        run: |
+          unzip -l hammil.apk | grep -iE "python|yt|dlp|ffmpeg" | head -40
+          mkdir -p /tmp/h && cd /tmp/h && unzip -q -o $GITHUB_WORKSPACE/hammil.apk 'lib/arm64-v8a/*' 'assets/*' || true
+          ls -la lib/arm64-v8a assets | head -40
+          for f in lib/arm64-v8a/libpython*.so; do echo $f; unzip -l "$f" 2>/dev/null | grep -E "python3\.[0-9]+/os\.py|lib-dynload" | head -3; done
+          for f in lib/arm64-v8a/*.so assets/*; do unzip -l "$f" 2>/dev/null | grep -iE "yt_dlp/version.py" && unzip -p "$f" '*yt_dlp/version.py' | head -5; done
+          find . -name "yt-dlp*" -o -name "*youtube*" | head
+
       - name: Publish download link
         uses: softprops/action-gh-release@v2
         with:

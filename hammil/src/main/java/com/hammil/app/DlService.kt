@@ -185,6 +185,7 @@ class DlService : Service() {
                 if (plainDownload(job)) return
             }
             job.state = "error"; job.err = friendly(msg)
+            job.raw = "المحرك: " + engine + "\n" + e.javaClass.simpleName + ": " + msg.takeLast(1500)
             Jobs.changed(true)
         }
     }
