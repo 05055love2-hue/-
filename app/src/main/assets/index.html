@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ثيم هادي</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg1:#0f1f24; --bg2:#1c3a3f; --accent:#8fd3c1; --soft:#9fb8b3; --g1:#5fb3a1; --g2:#4a7fa6;
+    --card:rgba(255,255,255,0.06); --line:rgba(255,255,255,0.10); --text:#e8f0ee;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:'Tajawal',sans-serif;color:var(--text);overflow:hidden;background:var(--bg1)}
+  button{font-family:inherit}
+
+  /* ================= الخلفيات ================= */
+  .bgl{position:fixed;inset:0;display:none;z-index:0;overflow:hidden;direction:ltr;pointer-events:none}
+  body[data-bg=flow] .bgl.flow, body[data-bg=stars] .bgl.stars, body[data-bg=waves] .bgl.waves,
+  body[data-bg=aurora] .bgl.aurora, body[data-bg=hills] .bgl.hills, body[data-bg=photo] .bgl.photo{display:block}
+  .flow{background:linear-gradient(135deg,var(--bg1),var(--bg2),var(--bg1));background-size:300% 300%;animation:drift 30s ease-in-out infinite}
+  @keyframes drift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+  .glow{position:absolute;border-radius:50%;filter:blur(60px);opacity:.25}
+  .gA{width:40vw;height:40vw;background:var(--g1);top:-10vw;left:-10vw;animation:float 25s ease-in-out infinite}
+  .gB{width:30vw;height:30vw;background:var(--g2);bottom:-8vw;right:-5vw;animation:float 32s ease-in-out infinite reverse}
+  @keyframes float{0%,100%{transform:translate(0,0)}50%{transform:translate(4vw,3vh)}}
+  .stars{background:radial-gradient(ellipse at 70% 110%,var(--bg2),var(--bg1) 60%,#05080c)}
+  .stars i{position:absolute;top:0;left:0;width:2px;height:2px;border-radius:50%;background:transparent}
+  #starA{animation:twinkle 4s ease-in-out infinite}
+  #starB{animation:twinkle 6s ease-in-out infinite reverse}
+  @keyframes twinkle{0%,100%{opacity:1}50%{opacity:.35}}
+  .moon{position:absolute;top:8vh;left:12vw;width:7vw;height:7vw;min-width:50px;min-height:50px;border-radius:50%;
+    box-shadow:-1.2vw .6vw 0 0 #f3ecd2;filter:drop-shadow(0 0 18px rgba(243,236,210,.35))}
+  .waves{background:linear-gradient(180deg,var(--bg1),var(--bg2))}
+  .wave{position:absolute;bottom:0;left:0;width:200%;height:40vh;display:flex}
+  .wave svg{width:50%;height:100%}
+  .w1{opacity:.25;animation:slide 26s linear infinite}
+  .w2{opacity:.18;height:32vh;animation:slide 18s linear infinite reverse}
+  .w3{opacity:.12;height:50vh;animation:slide 40s linear infinite}
+  .w1 path{fill:var(--g1)} .w2 path{fill:var(--g2)} .w3 path{fill:var(--accent)}
+  @keyframes slide{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  .aurora{background:#070b12}
+  .band{position:absolute;width:70vw;height:45vh;border-radius:50%;filter:blur(80px);opacity:.45;mix-blend-mode:screen}
+  .b1{background:var(--g1);top:-5vh;left:-10vw;animation:sway 22s ease-in-out infinite}
+  .b2{background:var(--g2);top:15vh;right:-15vw;animation:sway 28s ease-in-out infinite reverse}
+  .b3{background:var(--accent);bottom:-20vh;left:20vw;opacity:.25;animation:sway 35s ease-in-out infinite}
+  @keyframes sway{0%,100%{transform:translate(0,0) rotate(0)}33%{transform:translate(8vw,4vh) rotate(8deg)}66%{transform:translate(-5vw,-3vh) rotate(-6deg)}}
+  .hills{background:linear-gradient(180deg,var(--bg1) 0%,var(--bg2) 70%)}
+  .hills svg{position:absolute;bottom:0;left:0;width:100%;height:60vh}
+  .sun{position:absolute;bottom:30vh;left:50%;transform:translateX(-50%);width:16vw;height:16vw;border-radius:50%;background:var(--accent);opacity:.35;filter:blur(2px);box-shadow:0 0 80px var(--accent)}
+  .photo{background-size:cover;background-position:center}
+  .photo::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.35),rgba(0,0,0,.55))}
+
+  /* ================= الهيكل والأشكال ================= */
+  .shell{position:relative;z-index:1;height:100%;display:flex;flex-direction:column;gap:3vh;padding:3vh 3vw}
+  main{flex:1;display:flex;gap:3vw;min-height:0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:28px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+  body.K-clear .card{background:none;border-color:transparent;backdrop-filter:none;-webkit-backdrop-filter:none}
+  body.K-solid .card{background:rgba(0,0,0,.35);border-color:rgba(255,255,255,.05)}
+  .clock{flex:1.1;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:1vh;min-width:0}
+  .player{flex:1;display:flex;flex-direction:column;align-items:center;gap:1.5vh;padding:2.5vh 2vw;text-align:center;min-width:0;min-height:0;overflow:hidden}
+  body.L-player .clock{flex:.7} body.L-player .player{flex:1.5}
+  body.L-player .time{font-size:clamp(40px,7vw,100px)}
+  body.L-clock .player{display:none}
+  body.L-clock .time{font-size:clamp(60px,16vw,220px)}
+  body.L-clock .analog{width:clamp(160px,30vw,380px)}
+  body.L-side .shell{flex-direction:row}
+  body.L-side .dock{flex-direction:column;justify-content:center;padding:2vh 1.2vw;overflow-y:auto}
+  body.L-side .app .lbl{display:none}
+
+  /* ================= الساعة ================= */
+  .time{font-size:clamp(48px,11vw,150px);font-weight:300;letter-spacing:2px;line-height:1;direction:ltr;white-space:nowrap}
+  body.C-bold .time{font-weight:800;color:var(--accent);letter-spacing:0}
+  .ampm{font-size:.3em;color:var(--soft);margin-inline-start:8px;font-weight:400}
+  .analog{display:none;width:clamp(120px,22vw,280px);aspect-ratio:1}
+  body.C-analog .analog{display:block} body.C-analog .time{display:none}
+  .analog .face{fill:rgba(255,255,255,.04);stroke:var(--line);stroke-width:1.5}
+  .analog .tk{stroke:var(--soft);stroke-width:1.5;stroke-linecap:round}
+  .analog .tk.big{stroke:var(--text);stroke-width:3}
+  .analog .hh{stroke:var(--text);stroke-width:6;stroke-linecap:round}
+  .analog .mh{stroke:var(--text);stroke-width:4;stroke-linecap:round}
+  .analog .sh{stroke:var(--accent);stroke-width:2;stroke-linecap:round}
+  .analog .pin{fill:var(--accent)}
+  .date{font-size:clamp(14px,2vw,26px);color:var(--soft)}
+  .hello{font-size:clamp(14px,1.8vw,22px);color:var(--accent);margin-top:.5vh}
+
+  /* ================= المشغل ================= */
+  .tabs{display:flex;gap:8px;background:rgba(0,0,0,.18);padding:5px;border-radius:16px;width:100%}
+  .tab{flex:1;font-size:clamp(13px,1.4vw,17px);padding:8px;border:none;border-radius:12px;background:none;color:var(--soft);cursor:pointer}
+  .tab.on{background:var(--accent);color:var(--bg1);font-weight:500}
+  .view{flex:1;width:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:1.6vh;min-height:0}
+  .view[hidden]{display:none}
+  .disc{width:clamp(70px,13vw,160px);aspect-ratio:1;border-radius:50%;
+    background:radial-gradient(circle,var(--bg1) 18%,var(--g1) 19%,var(--g1) 45%,var(--bg2) 46%,var(--g2) 70%,var(--bg2) 71%);
+    box-shadow:0 0 40px var(--g1);opacity:.9}
+  .disc.spin{animation:spin 6s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .song{font-size:clamp(14px,1.8vw,22px);font-weight:500;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .sub{font-size:clamp(12px,1.3vw,16px);color:var(--soft)}
+  .bar{width:90%;height:5px;background:var(--line);border-radius:5px;overflow:hidden;cursor:pointer}
+  .bar i{display:block;height:100%;width:0;background:var(--accent);border-radius:5px}
+  .controls{display:flex;gap:2vw;align-items:center;direction:ltr}
+  .btn{background:none;border:none;color:var(--text);cursor:pointer;display:grid;place-items:center;border-radius:50%}
+  .btn svg{width:clamp(22px,2.6vw,34px);height:clamp(22px,2.6vw,34px);fill:currentColor}
+  .btn.big{background:var(--accent);color:var(--bg1);width:clamp(48px,5.6vw,72px);height:clamp(48px,5.6vw,72px)}
+  .btn.txt{display:flex;align-items:center;font-size:clamp(12px,1.3vw,15px);color:var(--soft);gap:4px;width:auto;padding:4px 8px;border-radius:12px;border:1px solid var(--line)}
+  .btn.txt svg{width:clamp(18px,2vw,26px);height:clamp(18px,2vw,26px)}
+  .pick{font-size:clamp(12px,1.3vw,16px);color:var(--accent);background:none;border:1px solid var(--accent);border-radius:20px;padding:6px 16px;cursor:pointer}
+  .ytwrap{flex:1;min-height:0;width:100%;display:flex;align-items:center;justify-content:center;container-type:size}
+  .ytbox{width:100%;width:min(100cqw,calc(100cqh * 16 / 9));aspect-ratio:16/9;border-radius:18px;overflow:hidden;background:#000;display:grid;place-items:center;
+    border:2px solid color-mix(in srgb,var(--accent) 45%,transparent);box-shadow:0 10px 30px rgba(0,0,0,.45),0 0 0 6px rgba(255,255,255,.03)}
+  .ytempty{display:flex;flex-direction:column;align-items:center;gap:8px}
+  .ytempty svg{width:48px;height:48px;fill:var(--accent);opacity:.7}
+  .recent button.cur{background:var(--accent);color:var(--bg1);border-color:var(--accent)}
+  .ytbox iframe{width:100%;height:100%;border:0}
+  .ytempty{text-align:center;color:var(--soft);font-size:clamp(12px,1.3vw,16px);padding:10px}
+  .ytform{display:flex;gap:8px;width:100%}
+  .ytform input{flex:1;min-width:0;font-family:inherit;font-size:clamp(13px,1.4vw,16px);padding:9px 14px;border-radius:14px;border:1px solid var(--line);background:rgba(0,0,0,.2);color:var(--text);direction:ltr;text-align:right}
+  .pickfill{font-size:clamp(13px,1.4vw,16px);padding:9px 18px;border:none;border-radius:14px;background:var(--accent);color:var(--bg1);cursor:pointer}
+  .recent{display:flex;gap:8px;width:100%;overflow-x:auto}
+  .recent:empty{display:none}
+  .recent button{flex:none;font-size:12px;padding:5px 12px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--soft);cursor:pointer}
+
+  /* ================= التطبيقات تحت ================= */
+  .dock{display:flex;justify-content:center;gap:2.2vw;padding:1.6vh 2vw;overflow-x:auto}
+  .app{display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--soft);font-size:clamp(11px,1.2vw,15px);background:none;border:none;cursor:pointer;flex:none}
+  .app .ic{width:clamp(48px,6vw,72px);height:clamp(48px,6vw,72px);border-radius:20px;display:grid;place-items:center;background:rgba(255,255,255,.08);border:1px solid var(--line);transition:.2s;font-size:clamp(22px,2.8vw,34px)}
+  .app:active .ic{transform:scale(.92);background:rgba(143,211,193,.2)}
+  .app svg{width:50%;height:50%;fill:var(--text)}
+  .app.add .ic{border-style:dashed;color:var(--accent);background:none}
+
+  /* ================= النوافذ ================= */
+  .overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:10}
+  .overlay.show{display:flex}
+  .panel{width:min(680px,94vw);max-height:92vh;overflow:auto;padding:3vh 3vw;background:var(--bg1);border:1px solid var(--line);border-radius:28px}
+  .panel h2{font-size:clamp(18px,2.2vw,28px);font-weight:500;margin-bottom:1vh;display:flex;justify-content:space-between;align-items:center;position:sticky;top:-3vh;background:var(--bg1);padding:1vh 0;z-index:2}
+  .panel h3{font-size:clamp(14px,1.6vw,19px);color:var(--soft);font-weight:400;margin:2.2vh 0 1.2vh}
+  .close{font-size:28px;background:none;border:none;color:var(--soft);cursor:pointer}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+  .th{white-space:nowrap;border:2px solid transparent;border-radius:18px;padding:14px;cursor:pointer;color:#fff;font-size:clamp(13px,1.4vw,17px);text-align:right;display:flex;align-items:center;gap:10px}
+  .th.on{border-color:#fff}
+  .th .dot{width:22px;height:22px;border-radius:50%;flex:none}
+  .row{display:flex;gap:10px;flex-wrap:wrap}
+  .opt{flex:1;min-width:90px;padding:12px;border-radius:14px;border:1px solid var(--line);background:var(--card);color:var(--text);font-size:clamp(13px,1.4vw,17px);cursor:pointer;text-align:center;text-decoration:none}
+  .opt.on{background:var(--accent);color:var(--bg1);border-color:var(--accent)}
+  .bgopt{height:70px;border-radius:14px;border:2px solid transparent;cursor:pointer;color:#fff;font-size:14px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:6px;text-shadow:0 1px 4px #000}
+  .bgopt.on{border-color:#fff}
+  .note{font-size:clamp(12px,1.25vw,15px);color:var(--soft);margin-top:1vh;line-height:1.7}
+  .mylist{display:flex;flex-direction:column;gap:8px}
+  .myapp{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:14px;background:var(--card);border:1px solid var(--line)}
+  .myapp .e{width:36px;height:36px;display:grid;place-items:center;font-size:20px}
+  .myapp .e svg{width:22px;height:22px;fill:var(--text)}
+  .myapp span{flex:1;text-align:right}
+  .myapp button{background:none;border:none;color:var(--soft);font-size:18px;cursor:pointer;padding:4px 8px}
+  .catalog{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:12px}
+  .catalog .app{width:100%}
+  .cform{display:flex;gap:8px;flex-wrap:wrap}
+  .cform input{flex:1;min-width:120px;font-family:inherit;font-size:15px;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:rgba(0,0,0,.2);color:var(--text)}
+  .toast{position:fixed;bottom:22vh;left:50%;transform:translateX(-50%);background:var(--bg2);border:1px solid var(--line);color:var(--text);padding:12px 22px;border-radius:16px;font-size:clamp(13px,1.4vw,17px);opacity:0;transition:.3s;pointer-events:none;z-index:30;text-align:center;max-width:80vw}
+  .toast.show{opacity:1}
+  @media (orientation:portrait){main{flex-direction:column}}
+</style>
+</head>
+<body data-bg="flow" class="L-classic C-thin K-glass">
+
+<div class="bgl flow"><div class="glow gA"></div><div class="glow gB"></div></div>
+<div class="bgl stars"><i id="starA"></i><i id="starB"></i><div class="moon"></div></div>
+<div class="bgl waves">
+  <div class="wave w3"><svg viewBox="0 0 1440 200" preserveAspectRatio="none"><path d="M0,110 C240,60 480,160 720,110 C960,60 1200,160 1440,110 L1440,200 L0,200Z"/></svg><svg viewBox="0 0 1440 200" preserveAspectRatio="none"><path d="M0,110 C240,60 480,160 720,110 C960,60 1200,160 1440,110 L1440,200 L0,200Z"/></svg></div>
+  <div class="wave w1"><svg viewBox="0 0 1440 200" preserveAspectRatio="none"><path d="M0,100 C240,160 480,40 720,100 C960,160 1200,40 1440,100 L1440,200 L0,200Z"/></svg><svg viewBox="0 0 1440 200" preserveAspectRatio="none"><path d="M0,100 C240,160 480,40 720,100 C960,160 1200,40 1440,100 L1440,200 L0,200Z"/></svg></div>
+  <div class="wave w2"><svg viewBox="0 0 1440 200" preserveAspectRatio="none"><path d="M0,120 C360,70 720,170 1080,120 C1260,95 1350,110 1440,120 L1440,200 L0,200Z"/></svg><svg viewBox="0 0 1440 200" preserveAspectRatio="none"><path d="M0,120 C360,70 720,170 1080,120 C1260,95 1350,110 1440,120 L1440,200 L0,200Z"/></svg></div>
+</div>
+<div class="bgl aurora"><div class="band b1"></div><div class="band b2"></div><div class="band b3"></div></div>
+<div class="bgl hills">
+  <div class="sun"></div>
+  <svg viewBox="0 0 1440 400" preserveAspectRatio="none">
+    <path d="M0,260 L180,140 L320,220 L520,90 L700,210 L880,120 L1060,230 L1240,110 L1440,200 L1440,400 L0,400Z" fill="var(--g2)" opacity=".35"/>
+    <path d="M0,310 L220,220 L400,290 L600,190 L820,300 L1000,210 L1220,290 L1440,230 L1440,400 L0,400Z" fill="var(--g1)" opacity=".35"/>
+    <path d="M0,350 L300,300 L560,345 L860,290 L1140,340 L1440,300 L1440,400 L0,400Z" fill="var(--bg1)" opacity=".9"/>
+  </svg>
+</div>
+<div class="bgl photo" id="photoBg"></div>
+
+<div class="shell">
+<main>
+  <section class="card clock">
+    <div class="time"><span id="t">--:--</span><span class="ampm" id="ap"></span></div>
+    <svg class="analog" viewBox="0 0 200 200" id="analog">
+      <circle class="face" cx="100" cy="100" r="96"/>
+      <g id="ticks"></g>
+      <line class="hh" id="hh" x1="100" y1="100" x2="100" y2="55"/>
+      <line class="mh" id="mh" x1="100" y1="100" x2="100" y2="30"/>
+      <line class="sh" id="sh" x1="100" y1="115" x2="100" y2="22"/>
+      <circle class="pin" cx="100" cy="100" r="5"/>
+    </svg>
+    <div class="date" id="d"></div>
+    <div class="hello" id="h"></div>
+  </section>
+
+  <section class="card player">
+    <div class="tabs">
+      <button class="tab on" data-v="music">🎵 الموسيقى</button>
+      <button class="tab" data-v="yt">▶ يوتيوب</button>
+    </div>
+    <div class="view" id="musicView">
+      <div class="disc" id="disc"></div>
+      <div style="max-width:100%">
+        <div class="song" id="song">ما فيه أغاني بعد</div>
+        <div class="sub" id="count">اضغط الزر تحت واختر أغانيك</div>
+      </div>
+      <div class="bar" id="bar"><i id="prog"></i></div>
+      <div class="controls">
+        <button class="btn" id="prev" aria-label="السابق"><svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg></button>
+        <button class="btn big" id="play" aria-label="تشغيل"><svg viewBox="0 0 24 24" id="playIc"><path d="M8 5v14l11-7z"/></svg></button>
+        <button class="btn" id="next" aria-label="التالي"><svg viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg></button>
+      </div>
+      <button class="pick" id="pickBtn">🎵 اختر أغاني من جهازك</button>
+      <input type="file" id="files" accept="audio/*" multiple hidden>
+      <audio id="audio"></audio>
+    </div>
+    <div class="view" id="ytView" hidden>
+      <div class="ytwrap"><div class="ytbox" id="ytBox"><div class="ytempty"><svg viewBox="0 0 24 24"><path d="M21.6 7.2a2.5 2.5 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4A2.5 2.5 0 0 0 2.4 7.2 26 26 0 0 0 2 12a26 26 0 0 0 .4 4.8 2.5 2.5 0 0 0 1.8 1.8C5.8 19 12 19 12 19s6.2 0 7.8-.4a2.5 2.5 0 0 0 1.8-1.8A26 26 0 0 0 22 12a26 26 0 0 0-.4-4.8zM10 15V9l5.2 3z"/></svg>حط رابط مقطع من يوتيوب تحت واضغط تشغيل</div></div></div>
+      <div class="controls">
+        <button class="btn" id="ytPrev" aria-label="المقطع السابق"><svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg></button>
+        <button class="btn txt" id="ytBack" aria-label="رجوع 10 ثواني"><svg viewBox="0 0 24 24"><path d="M11 18V6l-8.5 6 8.5 6zm.5-6 8.5 6V6l-8.5 6z"/></svg>10</button>
+        <button class="btn big" id="ytPlay" aria-label="تشغيل أو إيقاف"><svg viewBox="0 0 24 24" id="ytIc"><path d="M8 5v14l11-7z"/></svg></button>
+        <button class="btn txt" id="ytFwd" aria-label="تقديم 10 ثواني">10<svg viewBox="0 0 24 24"><path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"/></svg></button>
+        <button class="btn" id="ytNext" aria-label="المقطع التالي"><svg viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg></button>
+      </div>
+      <form class="ytform" id="ytForm">
+        <input id="ytUrl" type="text" placeholder="الصق رابط اليوتيوب هنا" autocomplete="off">
+        <button class="pickfill" type="submit">تشغيل</button>
+      </form>
+      <div class="recent" id="recent"></div>
+    </div>
+  </section>
+</main>
+
+<nav class="card dock" id="dock"></nav>
+</div>
+
+<div class="overlay" id="ov">
+  <div class="panel">
+    <h2>الإعدادات <button class="close" data-close="ov" aria-label="إغلاق">✕</button></h2>
+
+    <h3>شكل الواجهة</h3>
+    <div class="row" id="layoutRow"></div>
+
+    <h3>الخلفية</h3>
+    <div class="grid" id="bgRow"></div>
+    <input type="file" id="photoIn" accept="image/*" hidden>
+
+    <h3>لون الثيم</h3>
+    <div class="grid" id="themes"></div>
+
+    <h3>شكل الساعة</h3>
+    <div class="row" id="clockRow"></div>
+    <div class="row" style="margin-top:10px" id="fmtRow"></div>
+
+    <h3>شكل البطاقات</h3>
+    <div class="row" id="cardRow"></div>
+
+    <h3>التطبيقات اللي تحت</h3>
+    <div class="mylist" id="mylist"></div>
+    <button class="opt" style="margin-top:10px;width:100%" id="addFromSet">＋ أضف تطبيق</button>
+
+    <h3>البلوتوث</h3>
+    <div class="row" id="btRow"></div>
+    <p class="note">جرّب الأزرار واحد واحد، واللي يفتح البلوتوث خلّه، والتطبيق بيحفظه لزر البلوتوث.</p>
+
+    <h3>راديو السيارة</h3>
+    <div class="row" id="radioRow"></div>
+    <p class="note">نفس الشي: جرّب لين يفتح راديو السيارة.</p>
+
+    <h3>الشاشة الرئيسية</h3>
+    <div class="row">
+      <button class="opt" id="homeBtn">🏠 خلّه الشاشة الأساسية</button>
+    </div>
+    <p class="note">زر "خلّه الشاشة الأساسية" يفتح إعدادات الشاشة وتختار منها "ثيم هادي".</p>
+  </div>
+</div>
+
+<div class="overlay" id="addOv">
+  <div class="panel">
+    <h2>أضف تطبيق <button class="close" data-close="addOv" aria-label="إغلاق">✕</button></h2>
+    <p class="note" style="margin-top:0">اضغط على التطبيق اللي تبغاه ويضاف تحت على طول.</p>
+    <div class="catalog" id="catalog" style="margin-top:1.5vh"></div>
+    <h3>أو موقع برابط</h3>
+    <form class="cform" id="cform">
+      <input id="cName" placeholder="الاسم" autocomplete="off">
+      <input id="cUrl" placeholder="الرابط" autocomplete="off" style="direction:ltr;text-align:right">
+      <button class="pickfill" type="submit">أضف</button>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const store={get(k,d){try{const v=localStorage.getItem(k);return v===null?d:v}catch(e){return d}},set(k,v){try{localStorage.setItem(k,v);return true}catch(e){return false}}};
+const isAndroid=/Android/i.test(navigator.userAgent);
+let tt; function toast(m){$('toast').textContent=m;$('toast').classList.add('show');clearTimeout(tt);tt=setTimeout(()=>$('toast').classList.remove('show'),3000);}
+function openUrl(u){location.href=u;}
+function pkgIntent(p,fallback){return 'intent:#Intent;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;package='+p+(fallback?';S.browser_fallback_url='+encodeURIComponent(fallback):'')+';end';}
+function go(intent){ if(!isAndroid){toast('هذا الزر يشتغل على شاشة السيارة (أندرويد) بس');return;} location.href=intent; }
+function makeOpts(rowId,items,current,onPick){
+  const r=$(rowId); r.innerHTML='';
+  items.forEach(([val,label])=>{const b=document.createElement('button');b.className='opt'+(val===current?' on':'');b.textContent=label;
+    b.onclick=()=>{r.querySelectorAll('.opt').forEach(x=>x.classList.toggle('on',x===b));onPick(val);};r.appendChild(b);});
+}
+
+const IC={
+  yt:'<svg viewBox="0 0 24 24"><path d="M21.6 7.2a2.5 2.5 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4A2.5 2.5 0 0 0 2.4 7.2 26 26 0 0 0 2 12a26 26 0 0 0 .4 4.8 2.5 2.5 0 0 0 1.8 1.8C5.8 19 12 19 12 19s6.2 0 7.8-.4a2.5 2.5 0 0 0 1.8-1.8A26 26 0 0 0 22 12a26 26 0 0 0-.4-4.8zM10 15V9l5.2 3z"/></svg>',
+  bt:'<svg viewBox="0 0 24 24"><path d="M17.7 7.7 12 2h-1v7.6L6.4 5 5 6.4 10.6 12 5 17.6 6.4 19l4.6-4.6V22h1l5.7-5.7-4.3-4.3 4.3-4.3zM13 5.8l1.9 1.9L13 9.6V5.8zm1.9 10.5L13 18.2v-3.8l1.9 1.9z"/></svg>',
+  radio:'<svg viewBox="0 0 24 24"><path d="M3.2 6.2A2 2 0 0 0 2 8v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2H8.3l8.3-3.4L15.9 1 3.2 6.2zM7 20a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm13-8h-2v-2h-2v2H4V8h16v4z"/></svg>',
+  map:'<svg viewBox="0 0 24 24"><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg>',
+  sp:'<svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm4.6 14.4a.6.6 0 0 1-.9.2c-2.4-1.5-5.4-1.8-9-1a.6.6 0 1 1-.3-1.2c3.9-.9 7.2-.5 9.9 1.1.3.2.4.6.3.9zm1.2-2.7a.8.8 0 0 1-1.1.3c-2.7-1.7-6.9-2.2-10.1-1.2a.8.8 0 1 1-.5-1.5c3.7-1.100 8.3-.6 11.4 1.3.4.2.5.7.3 1.1zm.1-2.8C14.7 9 9.4 8.8 6.3 9.7a1 1 0 1 1-.6-1.8c3.5-1.1 9.4-.9 13.1 1.3a1 1 0 0 1-.9 1.7z"/></svg>',
+  wa:'<svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.2 13.9c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.5-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.3 0 .5l-.3.5-.4.4c-.1.2-.3.3-.1.6.2.3.8 1.300 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.9-1c.2-.3.4-.2.6-.1l2 1c.3.1.5.2.5.3.1.1.1.6-.1 1.2z"/></svg>',
+  gear:'<svg viewBox="0 0 24 24"><path d="M19.4 13a7.5 7.5 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.3 7.3 0 0 0-1.7-1L14.9 3h-4l-.4 2.9a7.3 7.3 0 0 0-1.7 1l-2.5-1-2 3.5L6.4 11a7.5 7.5 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1a7.3 7.3 0 0 0 1.7 1l.4 2.9h4l.4-2.9a7.3 7.3 0 0 0 1.7-1l2.5 1 2-3.5zM12 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z"/></svg>'
+};
+
+const THEMES={
+  sea:  {name:'أخضر هادي', bg1:'#0f1f24',bg2:'#1c3a3f',accent:'#8fd3c1',soft:'#9fb8b3',g1:'#5fb3a1',g2:'#4a7fa6'},
+  night:{name:'أزرق الليل', bg1:'#0c1426',bg2:'#1b2d4f',accent:'#9ec5ff',soft:'#9aaccc',g1:'#3d6fb8',g2:'#6a5fb3'},
+  sand: {name:'رملي دافي',  bg1:'#1f1812',bg2:'#3d2f22',accent:'#e8c39e',soft:'#bfae9a',g1:'#b58a5f',g2:'#8a6a4a'},
+  lav:  {name:'بنفسجي ناعم',bg1:'#18142a',bg2:'#2f2648',accent:'#c9b6f2',soft:'#ada4c4',g1:'#7b65b8',g2:'#4f7fa8'},
+  rose: {name:'وردي هادي', bg1:'#221419',bg2:'#40252f',accent:'#f2b8c6',soft:'#c4a3ad',g1:'#b8657b',g2:'#7b5fa8'},
+  mono: {name:'رمادي أنيق', bg1:'#111316',bg2:'#262a30',accent:'#e6e6e6',soft:'#a3a8ae',g1:'#5c6570',g2:'#3e4650'}
+};
+let S={
+  theme:store.get('theme','sea'), fmt:store.get('fmt','12'), layout:store.get('layout','classic'),
+  bg:store.get('bg','flow'), clock:store.get('clock','thin'), cards:store.get('cards','glass')
+};
+if(!THEMES[S.theme]) S.theme='sea';
+function save(k,v){S[k]=v;store.set(k,v);}
+
+function applyAll(){
+  const t=THEMES[S.theme], r=document.documentElement.style;
+  ['bg1','bg2','accent','soft','g1','g2'].forEach(k=>r.setProperty('--'+k,t[k]));
+  document.body.className='L-'+S.layout+' C-'+S.clock+' K-'+S.cards;
+  document.body.dataset.bg=S.bg;
+  document.querySelectorAll('.th').forEach(b=>b.classList.toggle('on',b.dataset.k===S.theme));
+  document.querySelectorAll('.bgopt').forEach(b=>b.classList.toggle('on',b.dataset.k===S.bg));
+}
+
+Object.entries(THEMES).forEach(([k,t])=>{
+  const b=document.createElement('button'); b.className='th'; b.dataset.k=k;
+  b.style.background='linear-gradient(135deg,'+t.bg1+','+t.bg2+')';
+  b.innerHTML='<span class="dot" style="background:'+t.accent+'"></span>'+t.name;
+  b.onclick=()=>{save('theme',k);applyAll();};
+  $('themes').appendChild(b);
+});
+makeOpts('layoutRow',[['classic','كلاسيكي'],['player','المشغل أكبر'],['clock','ساعة بس'],['side','جانبي']],S.layout,v=>{save('layout',v);applyAll();});
+makeOpts('clockRow',[['thin','أرقام رفيعة'],['bold','أرقام عريضة'],['analog','عقارب']],S.clock,v=>{save('clock',v);applyAll();});
+makeOpts('fmtRow',[['12','12 ساعة (ص / م)'],['24','24 ساعة']],S.fmt,v=>{save('fmt',v);tick();});
+makeOpts('cardRow',[['glass','زجاجي'],['solid','غامق'],['clear','بدون إطار']],S.cards,v=>{save('cards',v);applyAll();});
+
+const BGS=[['flow','انسيابية','linear-gradient(135deg,#0f1f24,#2f5e5a)'],['stars','نجوم وقمر','radial-gradient(circle at 30% 30%,#fff 1px,transparent 2px) 0 0/18px 18px,#0a0f1a'],
+  ['waves','أمواج','linear-gradient(180deg,#0f1f24 50%,#3d7570 50%)'],['aurora','شفق','linear-gradient(120deg,#070b12,#2f7a6a,#3d4f9a,#070b12)'],
+  ['hills','جبال','linear-gradient(180deg,#1c3a3f 55%,#0f1f24 55%)'],['photo','صورتك 📷','repeating-linear-gradient(45deg,#333 0 10px,#444 10px 20px)']];
+BGS.forEach(([k,n,prev])=>{
+  const b=document.createElement('button'); b.className='bgopt'; b.dataset.k=k; b.style.background=prev; b.textContent=n;
+  b.onclick=()=>{ if(k==='photo'){$('photoIn').click();return;} save('bg',k); applyAll(); };
+  $('bgRow').appendChild(b);
+});
+function loadPhoto(){const p=store.get('photo','');if(p)$('photoBg').style.backgroundImage='url('+p+')';return !!p;}
+$('photoIn').onchange=()=>{
+  const f=$('photoIn').files[0]; if(!f) return;
+  const img=new Image(); img.onload=()=>{
+    const w=Math.min(1600,img.width), h=Math.round(img.height*w/img.width);
+    const c=document.createElement('canvas'); c.width=w; c.height=h; c.getContext('2d').drawImage(img,0,0,w,h);
+    const data=c.toDataURL('image/jpeg',0.8);
+    $('photoBg').style.backgroundImage='url('+data+')';
+    if(!store.set('photo',data)) toast('الصورة كبيرة شوي، بتظهر الحين بس ما بتنحفظ');
+    save('bg','photo'); applyAll(); URL.revokeObjectURL(img.src);
+  };
+  img.src=URL.createObjectURL(f);
+};
+loadPhoto();
+
+(function(){
+  function sh(n){let s=[];for(let i=0;i<n;i++){s.push(Math.round(Math.random()*innerWidth)+'px '+Math.round(Math.random()*innerHeight)+'px 0 '+(Math.random()<.15?'1px':'0')+' rgba(255,255,255,'+(0.4+Math.random()*0.6).toFixed(2)+')');}return s.join(',');}
+  $('starA').style.boxShadow=sh(140); $('starB').style.boxShadow=sh(90);
+})();
+
+const days=['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+const months=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+(function(){let g='';for(let i=0;i<60;i++){const big=i%5===0,a=i*6*Math.PI/180,r1=big?80:86,r2=92;
+  g+='<line class="tk'+(big?' big':'')+'" x1="'+(100+r1*Math.sin(a)).toFixed(1)+'" y1="'+(100-r1*Math.cos(a)).toFixed(1)+'" x2="'+(100+r2*Math.sin(a)).toFixed(1)+'" y2="'+(100-r2*Math.cos(a)).toFixed(1)+'"/>';}
+  $('ticks').innerHTML=g;})();
+function tick(){
+  const n=new Date(); const h=n.getHours(), mi=n.getMinutes(), se=n.getSeconds(); const m=String(mi).padStart(2,'0');
+  $('t').textContent=(S.fmt==='24'?String(h).padStart(2,'0'):(h%12||12))+':'+m;
+  $('ap').textContent=S.fmt==='24'?'':(h>=12?'م':'ص');
+  $('d').textContent=days[n.getDay()]+' • '+n.getDate()+' '+months[n.getMonth()]+' '+n.getFullYear();
+  $('h').textContent=h<12?'صباح الخير ☀️':(h<18?'مساء النور 🌤️':'مساء الخير 🌙');
+  $('hh').setAttribute('transform','rotate('+((h%12)*30+mi*0.5)+' 100 100)');
+  $('mh').setAttribute('transform','rotate('+(mi*6+se*0.1)+' 100 100)');
+  $('sh').setAttribute('transform','rotate('+(se*6)+' 100 100)');
+}
+
+const BT=['intent:#Intent;action=android.settings.BLUETOOTH_SETTINGS;end',
+  'intent:#Intent;action=android.bluetooth.adapter.action.REQUEST_ENABLE;end',
+  pkgIntent('com.syu.bt'), pkgIntent('com.microntek.bt')];
+let BT_I=+store.get('bt','0'); if(!BT[BT_I]) BT_I=0;
+makeOpts('btRow',BT.map((x,i)=>[i,'جرّب '+(i+1)]),BT_I,v=>{BT_I=v;store.set('bt',v);go(BT[v]);});
+const RADIOS=['com.syu.radio','com.microntek.radio','com.android.fmradio','com.caf.fmradio','com.mediatek.FMRadio'];
+let RADIO=store.get('radio',RADIOS[0]);
+makeOpts('radioRow',RADIOS.map((p,i)=>[p,'جرّب '+(i+1)]),RADIO,v=>{RADIO=v;store.set('radio',v);go(pkgIntent(v));});
+
+const CATALOG={
+  youtube:{n:'يوتيوب',pkg:'com.google.android.youtube',url:'https://www.youtube.com',i:IC.yt},
+  bt:{n:'بلوتوث',sp:'bt',i:IC.bt},
+  radio:{n:'راديو',sp:'radio',i:IC.radio},
+  maps:{n:'خرائط',pkg:'com.google.android.apps.maps',url:'https://maps.google.com',i:IC.map},
+  waze:{n:'ويز',pkg:'com.waze',url:'https://www.waze.com',e:'🚙'},
+  phone:{n:'الاتصال',sp:'dial',e:'📞'},
+  spotify:{n:'سبوتيفاي',pkg:'com.spotify.music',url:'https://open.spotify.com',i:IC.sp},
+  anghami:{n:'أنغامي',pkg:'com.anghami',url:'https://play.anghami.com',e:'🎶'},
+  whatsapp:{n:'واتساب',pkg:'com.whatsapp',url:'https://web.whatsapp.com',i:IC.wa},
+  snap:{n:'سناب',pkg:'com.snapchat.android',url:'https://www.snapchat.com',e:'👻'},
+  telegram:{n:'تيليجرام',pkg:'org.telegram.messenger',url:'https://web.telegram.org',e:'✈️'},
+  chrome:{n:'كروم',pkg:'com.android.chrome',url:'https://www.google.com',e:'🌐'},
+  netflix:{n:'نتفليكس',pkg:'com.netflix.mediaclient',url:'https://www.netflix.com',e:'🎬'},
+  shahid:{n:'شاهد',pkg:'net.mbc.shahid',url:'https://shahid.mbc.net',e:'📺'},
+  tiktok:{n:'تيك توك',pkg:'com.zhiliaoapp.musically',url:'https://www.tiktok.com',e:'🎵'},
+  gplay:{n:'المتجر',pkg:'com.android.vending',url:'https://play.google.com',e:'🛍️'}
+};
+let DOCK; try{DOCK=JSON.parse(store.get('dock','null'))}catch(e){DOCK=null}
+if(!Array.isArray(DOCK)) DOCK=['youtube','bt','radio','maps'];
+function info(x){return typeof x==='string'?CATALOG[x]:x;}
+function iconHTML(a){return a.i?a.i:(a.e||'🔗');}
+function launch(a){
+  if(a.sp==='bt') return go(BT[BT_I]);
+  if(a.sp==='radio') return go(pkgIntent(RADIO));
+  if(a.sp==='dial') return go('intent:#Intent;action=android.intent.action.DIAL;end');
+  if(a.pkg && isAndroid){ location.href=pkgIntent(a.pkg,a.url); return; }
+  if(a.url) openUrl(a.url);
+}
+function tile(a,onClick,cls){
+  const b=document.createElement('button'); b.className='app'+(cls?' '+cls:'');
+  b.innerHTML='<span class="ic">'+iconHTML(a)+'</span><span class="lbl">'+a.n+'</span>';
+  b.onclick=onClick; return b;
+}
+function saveDock(){store.set('dock',JSON.stringify(DOCK));drawDock();drawMyList();drawCatalog();}
+function drawDock(){
+  const d=$('dock'); d.innerHTML='';
+  DOCK.forEach(x=>{const a=info(x); if(a) d.appendChild(tile(a,()=>launch(a)));});
+  d.appendChild(tile({n:'أضف',e:'＋'},()=>$('addOv').classList.add('show'),'add'));
+  d.appendChild(tile({n:'الإعدادات',i:IC.gear},()=>$('ov').classList.add('show')));
+}
+function drawMyList(){
+  const l=$('mylist'); l.innerHTML='';
+  DOCK.forEach((x,idx)=>{const a=info(x); if(!a) return;
+    const r=document.createElement('div'); r.className='myapp';
+    r.innerHTML='<span class="e">'+iconHTML(a)+'</span><span>'+a.n+'</span>';
+    const up=document.createElement('button'); up.textContent='▲'; up.title='قدّمه';
+    up.onclick=()=>{if(idx>0){[DOCK[idx-1],DOCK[idx]]=[DOCK[idx],DOCK[idx-1]];saveDock();}};
+    const del=document.createElement('button'); del.textContent='✕'; del.title='شيله';
+    del.onclick=()=>{DOCK.splice(idx,1);saveDock();toast('انشال '+a.n);};
+    r.appendChild(up); r.appendChild(del); l.appendChild(r);});
+}
+function drawCatalog(){
+  const c=$('catalog'); c.innerHTML='';
+  Object.entries(CATALOG).forEach(([k,a])=>{ if(DOCK.includes(k)) return;
+    c.appendChild(tile(a,()=>{DOCK.push(k);saveDock();$('addOv').classList.remove('show');toast('انضاف '+a.n+' تحت ✅');}));});
+  if(!c.children.length) c.innerHTML='<p class="note">كل التطبيقات مضافة 👍</p>';
+}
+$('addFromSet').onclick=()=>$('addOv').classList.add('show');
+$('cform').onsubmit=e=>{
+  e.preventDefault(); const n=$('cName').value.trim(); let u=$('cUrl').value.trim();
+  if(!n||!u){toast('اكتب الاسم والرابط');return;}
+  if(!/^https?:\/\//i.test(u)) u='https://'+u;
+  DOCK.push({n,url:u,e:'🔗'}); saveDock(); $('cName').value=''; $('cUrl').value='';
+  $('addOv').classList.remove('show'); toast('انضاف '+n+' تحت ✅');
+};
+
+document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>$(b.dataset.close).classList.remove('show'));
+document.querySelectorAll('.overlay').forEach(o=>o.onclick=e=>{if(e.target===o)o.classList.remove('show');});
+$('homeBtn').onclick=()=>go('intent:#Intent;action=android.settings.HOME_SETTINGS;end');
+
+const audio=$('audio');
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x===t));
+  $('musicView').hidden=t.dataset.v!=='music'; $('ytView').hidden=t.dataset.v!=='yt';
+  if(t.dataset.v==='yt'&&!audio.paused) audio.pause();
+  if(t.dataset.v==='music') ytCmd('pauseVideo');
+});
+
+const PLAY='<path d="M8 5v14l11-7z"/>', PAUSE='<path d="M6 5h4v14H6zm8 0h4v14h-4z"/>';
+let list=[], idx=0;
+$('pickBtn').onclick=()=>$('files').click();
+$('files').onchange=()=>{const f=$('files').files; if(!f.length)return; list=[...f]; idx=0; load(); play();};
+function load(){const f=list[idx]; audio.src=URL.createObjectURL(f); $('song').textContent=f.name.replace(/\.[^.]+$/,''); $('count').textContent='أغنية '+(idx+1)+' من '+list.length;}
+function play(){audio.play().catch(()=>{});}
+$('play').onclick=()=>{ if(!list.length){$('files').click();return;} audio.paused?play():audio.pause(); };
+$('next').onclick=()=>{ if(!list.length)return; idx=(idx+1)%list.length; load(); play(); };
+$('prev').onclick=()=>{ if(!list.length)return; idx=(idx-1+list.length)%list.length; load(); play(); };
+audio.onended=()=>$('next').click();
+audio.onplay=()=>{$('disc').classList.add('spin');$('playIc').innerHTML=PAUSE;};
+audio.onpause=()=>{$('disc').classList.remove('spin');$('playIc').innerHTML=PLAY;};
+audio.ontimeupdate=()=>{ if(audio.duration) $('prog').style.width=(audio.currentTime/audio.duration*100)+'%'; };
+$('bar').onclick=e=>{ if(!audio.duration)return; const r=e.currentTarget.getBoundingClientRect(); audio.currentTime=((r.right-e.clientX)/r.width)*audio.duration; };
+
+let ytFrame=null, ytCur=0, ytState=-1;
+function ytCmd(func,args){ if(!ytFrame||!ytFrame.contentWindow)return; ytFrame.contentWindow.postMessage(JSON.stringify({event:'command',func,args:args||[],id:'yt',channel:'widget'}),'*'); }
+window.addEventListener('message',e=>{
+  if(!/youtube/.test(e.origin))return; let d; try{d=typeof e.data==='string'?JSON.parse(e.data):e.data}catch(x){return}
+  if(d&&d.info){ if(typeof d.info.currentTime==='number') ytCur=d.info.currentTime;
+    if(typeof d.info.playerState==='number'){ const was=ytState; ytState=d.info.playerState; $('ytIc').innerHTML=ytState===1?PAUSE:PLAY;
+      if(ytState===0 && was!==0 && recent.length>1) setTimeout(()=>playAt(ytPos+1),800); } }
+});
+function ytId(u){u=u.trim();const m=u.match(/(?:youtu\.be\/|v=|\/embed\/|\/shorts\/|\/live\/)([A-Za-z0-9_-]{11})/);if(m)return m[1];return /^[A-Za-z0-9_-]{11}$/.test(u)?u:null;}
+let recent=[]; try{recent=JSON.parse(store.get('ytlist','[]'))||[]}catch(e){recent=[]}
+let ytPos=-1;
+function drawRecent(){const r=$('recent'); r.innerHTML=''; recent.forEach((id,i)=>{const b=document.createElement('button');b.className=i===ytPos?'cur':'';b.textContent='🎬 مقطع '+(i+1);b.onclick=()=>playAt(i);r.appendChild(b);});
+  const c=r.querySelector('.cur'); if(c) c.scrollIntoView({block:'nearest',inline:'nearest'});}
+function playAt(i){ if(!recent.length)return; ytPos=(i+recent.length)%recent.length; playYt(recent[ytPos],true); }
+function playYt(id,fromList){
+  $('ytBox').innerHTML='<iframe id="ytf" src="https://www.youtube-nocookie.com/embed/'+id+'?autoplay=1&playsinline=1&enablejsapi=1&rel=0&origin=https://cartheme.local" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>';
+  ytFrame=$('ytf'); ytCur=0; ytState=-1;
+  ytFrame.onload=()=>{ytFrame.contentWindow.postMessage(JSON.stringify({event:'listening',id:'yt',channel:'widget'}),'*');};
+  if(!audio.paused) audio.pause();
+  if(!fromList){ let i=recent.indexOf(id); if(i<0){recent.push(id); if(recent.length>20) recent.shift(); i=recent.indexOf(id);} ytPos=i; store.set('ytlist',JSON.stringify(recent)); }
+  drawRecent();
+}
+$('ytForm').onsubmit=e=>{e.preventDefault(); const id=ytId($('ytUrl').value);
+  if(!id){toast('الرابط هذا مو رابط يوتيوب، انسخه من زر "مشاركة"');return;} playYt(id); $('ytUrl').value='';};
+function needVideo(){ if(!ytFrame){toast('شغّل فيديو أول');return true;} return false; }
+$('ytBack').onclick=()=>{ if(needVideo())return; ytCur=Math.max(0,ytCur-10); ytCmd('seekTo',[ytCur,true]); };
+$('ytFwd').onclick=()=>{ if(needVideo())return; ytCur=ytCur+10; ytCmd('seekTo',[ytCur,true]); };
+$('ytNext').onclick=()=>{ if(recent.length<2){toast(recent.length?'ضيف مقطع ثاني عشان تنتقل له':'شغّل مقطع أول');return;} playAt(ytPos+1); };
+$('ytPrev').onclick=()=>{ if(recent.length<2){toast(recent.length?'ما فيه مقطع قبله':'شغّل مقطع أول');return;} playAt(ytPos-1); };
+$('ytPlay').onclick=()=>{ if(needVideo())return; ytCmd(ytState===1?'pauseVideo':'playVideo'); };
+
+if(S.bg==='photo' && !store.get('photo','')) S.bg='flow';
+applyAll(); tick(); setInterval(tick,1000); drawDock(); drawMyList(); drawCatalog(); drawRecent();
+</script>
+</body>
+</html>
