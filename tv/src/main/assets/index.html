@@ -163,6 +163,17 @@
   body[data-l="appletv"] .app::after{content:'';position:absolute;inset:0;border-radius:1.2vw;background:linear-gradient(160deg,rgba(255,255,255,.28),transparent 45%);opacity:0;transition:opacity .2s;pointer-events:none}
   body[data-l="appletv"] .app.f.on::after{opacity:1}
 
+
+  /* مواقيت الصلاة */
+  .pray{display:flex;gap:.6vw;flex-wrap:wrap;margin-top:1.4vh}
+  .pray span{display:inline-flex;gap:.5vw;align-items:center;font-size:1.1vw;padding:.5vh .9vw;border-radius:1vw;background:rgba(255,255,255,.08);border:1px solid var(--line);color:var(--soft);white-space:nowrap}
+  .pray span b{color:var(--text);font-weight:500;direction:ltr}
+  .pray span.nx{background:var(--accent);color:var(--bg1);border-color:var(--accent)}
+  .pray span.nx b{color:var(--bg1)}
+  #shelfPray{position:absolute;top:2.4vh;inset-inline-end:2.4vw;margin:0;z-index:1}
+  #shelfPray span{background:rgba(0,0,0,.28);border-color:rgba(255,255,255,.18);color:rgba(255,255,255,.85)}
+  #shelfPray span.nx{background:#fff;color:#111;border-color:#fff} #shelfPray span.nx b{color:#111}
+  body[data-l="iphone"] #hdrPray,body[data-l="cinema"] #hdrPray{display:none}
   /* ===== مشغل يوتيوب ===== */
   #yt{display:flex;flex-direction:column;gap:1.6vh;background:var(--card);border:2px solid var(--line);border-radius:2vw;padding:1.6vh 1.2vw}
   #yt.focus{border-color:#ff3b30;box-shadow:0 0 0 3px #ff3b30}
@@ -191,6 +202,7 @@
 <body data-l="classic" data-i="orig">
 <div id="home">
   <section id="shelf"><div id="shelfBg"></div>
+    <div class="pray" id="shelfPray"></div>
     <div id="shelfTop"><span class="tm" id="shTime"></span><span id="shWx"></span></div>
     <div id="shelfArt"></div>
     <div id="shelfTxt"><b id="shName">أهلاً 👋</b><span id="shSub">اختر تطبيق بالأسهم واضغط موافق</span></div>
@@ -199,6 +211,7 @@
     <div class="clock" id="clock">--:--</div>
     <div class="date" id="date"></div>
     <div class="greet" id="greet"></div>
+    <div class="pray" id="hdrPray"></div>
   </section>
   <div id="wx"><span class="i" id="wxI">⛅</span><span class="t" id="wxT">--°</span><span class="d"><b id="wxC">الرياض</b><span id="wxD">جاري التحميل…</span></span></div>
   <div id="quick">
@@ -284,6 +297,28 @@ async function wxUpdate(){
 }
 try{const L=JSON.parse(store.get('wx','null')); if(L) wxDraw(L);}catch(e){}
 wxUpdate(); setInterval(wxUpdate,20*60*1000);
+
+
+/* ===== مواقيت الصلاة (تقويم أم القرى) ===== */
+const PR=[['Fajr','الفجر'],['Dhuhr','الظهر'],['Asr','العصر'],['Maghrib','المغرب'],['Isha','العشاء']];
+let prayT=null;
+function to12(t){const [h,m]=t.split(':').map(Number);return ((h%12)||12)+':'+String(m).padStart(2,'0');}
+function prayDraw(){
+  if(!prayT) return;
+  const now=new Date(), mins=now.getHours()*60+now.getMinutes();
+  let nx=PR.findIndex(([k])=>{const [h,m]=prayT[k].split(':').map(Number);return h*60+m>mins;}); if(nx<0) nx=0;
+  const html=PR.map(([k,n],i)=>'<span'+(i===nx?' class="nx"':'')+'>'+n+'<b>'+to12(prayT[k])+'</b></span>').join('');
+  $('hdrPray').innerHTML=html; $('shelfPray').innerHTML=html;
+}
+async function prayUpdate(){
+  const d=new Date(), key='pray|'+d.toDateString();
+  try{const c=JSON.parse(store.get(key,'null')); if(c){prayT=c;prayDraw();return;}}catch(e){}
+  try{const r=await fetch('https://api.aladhan.com/v1/timings/'+d.getDate()+'-'+(d.getMonth()+1)+'-'+d.getFullYear()+'?latitude=24.7136&longitude=46.6753&method=4');
+    const j=await r.json(); const t=j.data.timings; prayT={}; PR.forEach(([k])=>prayT[k]=t[k].slice(0,5));
+    store.set(key,JSON.stringify(prayT)); prayDraw();}
+  catch(e){ setTimeout(prayUpdate,60000); }
+}
+prayUpdate(); setInterval(()=>{prayDraw(); if(new Date().getHours()===0) prayUpdate();},60000);
 
 /* ===== التطبيقات ===== */
 const hasNative=!!window.Native;
