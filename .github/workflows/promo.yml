@@ -1,0 +1,33 @@
+name: مقاطع الدعاية بالصوت
+
+on:
+  push:
+    branches: [main]
+    paths: ["promo/**", ".github/workflows/promo.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  voice:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          pip install edge-tts
+      - name: Make voiced videos
+        working-directory: promo
+        run: python voice.py
+      - name: Publish videos
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: promo
+          name: مقاطع الدعاية
+          make_latest: false
+          files: promo/out/*.mp4
