@@ -100,6 +100,12 @@ body.full .player{grid-column:1}
 .applist.big .tile{height:104px}
 .applist.big .tile .ti{width:52px;height:52px;font-size:32px}
 .tile.all .ti{background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;font-size:24px}
+.vers{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.ver-b{border:1px solid var(--line);background:var(--btn);color:var(--txt);font-family:inherit;border-radius:18px;padding:12px 14px;cursor:pointer;text-align:right;display:flex;gap:10px;align-items:center}
+.ver-b i{font-style:normal;font-size:30px}
+.ver-b b{display:block;font-size:17px}
+.ver-b small{color:var(--soft);font-size:13px}
+.ver-b.on{border-color:var(--ac);box-shadow:0 0 0 2px var(--ac)}
 .x{border:0;background:var(--btn);color:var(--txt);width:40px;height:40px;border-radius:12px;font-size:20px;cursor:pointer}
 .toast{position:fixed;bottom:110px;left:50%;transform:translateX(-50%);background:#000c;color:#fff;padding:10px 18px;border-radius:14px;font-size:15px;font-weight:700;opacity:0;transition:.3s;z-index:10;pointer-events:none}
 .toast.show{opacity:1}
@@ -111,6 +117,7 @@ body.full .player{grid-column:1}
     <div class="phead">
       <div class="ytlogo"><i></i>يوتيوب</div>
       <div class="sp"></div>
+      <button class="chip ver" id="bVer">🔄 <span id="verTxt">يوتيوب</span></button>
       <button class="chip" id="bHome">🏠 الرئيسية</button>
       <button class="chip" id="bFull">⛶ <span id="fullTxt">تكبير</span></button>
     </div>
@@ -160,6 +167,15 @@ body.full .player{grid-column:1}
   <h3>أضف تطبيق <button class="x" data-close>✕</button></h3>
   <input class="search" id="q" placeholder="ابحث باسم التطبيق…">
   <div class="applist" id="appList"></div>
+</div></div>
+
+<div class="ov" id="verOv"><div class="panel">
+  <h3>اختر نسخة يوتيوب <button class="x" data-close>✕</button></h3>
+  <h4>تشتغل داخل الشاشة</h4>
+  <div class="vers" id="verList"></div>
+  <h4>نسخ يوتيوب المثبتة في شاشتك</h4>
+  <p class="hint">تطبيقات الأندرويد ما تقدر تنفتح داخل مربع تطبيق ثاني، فهذي تنفتح جنب مشغّلي إذا شاشتك تدعم تقسيم الشاشة، وإلا تنفتح كاملة.</p>
+  <div class="applist" id="verApps"></div>
 </div></div>
 
 <div class="ov" id="allOv"><div class="panel wide">
@@ -284,11 +300,38 @@ document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>b.closest('.o
 document.querySelectorAll('.ov').forEach(o=>o.onclick=e=>{if(e.target===o)o.classList.remove('show')});
 drawDock();applyTheme();
 
+/* ===== نسخ يوتيوب ===== */
+const UA_PC='Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36';
+const UA_TV='Mozilla/5.0 (SMART-TV; LINUX; Tizen 6.5) AppleWebKit/537.36 (KHTML, like Gecko) 85.0.4183.93/6.5 TV Safari/537.36';
+const VERS=[
+  {k:'m',n:'يوتيوب',d:'النسخة العادية مثل الجوال',e:'▶️',u:'https://m.youtube.com/',ua:''},
+  {k:'pc',n:'يوتيوب الكبير',d:'شكل الكمبيوتر، يناسب الشاشة العريضة',e:'🖥️',u:'https://www.youtube.com/',ua:UA_PC},
+  {k:'music',n:'يوتيوب ميوزك',d:'أغاني وقوائم تشغيل',e:'🎵',u:'https://music.youtube.com/',ua:''},
+  {k:'tv',n:'يوتيوب التلفزيون',d:'أزرار كبيرة (تجربة)',e:'📺',u:'https://www.youtube.com/tv',ua:UA_TV},
+  {k:'kids',n:'يوتيوب كيدز',d:'للأطفال',e:'🧒',u:'https://www.youtubekids.com/',ua:''}
+];
+let VER=VERS.find(v=>v.k===store.get('ver','m'))||VERS[0];
+function setVer(v){VER=v;store.set('ver',v.k);$('verTxt').textContent=v.n;
+  [...$('verList').children].forEach((b,i)=>b.classList.toggle('on',VERS[i]===v));
+  if(window.YT&&YT.setMode)YT.setMode(v.u,v.ua)}
+VERS.forEach(v=>{const b=document.createElement('button');b.className='ver-b';b.innerHTML='<i>'+v.e+'</i><span><b></b><small></small></span>';
+  b.querySelector('b').textContent=v.n;b.querySelector('small').textContent=v.d;
+  b.onclick=()=>{setVer(v);$('verOv').classList.remove('show');toast('صار المشغل: '+v.n)};$('verList').appendChild(b)});
+function ytApps(){return apps().filter(a=>/youtube|يوتيوب|tube|vanced|newpipe|revanced|libretube|songtube/i.test(a.n+' '+a.pkg))}
+$('bVer').onclick=()=>{const L=$('verApps');L.innerHTML='';const list=NATIVE?ytApps():[];
+  if(!list.length)L.innerHTML='<p class="hint">ما لقيت تطبيقات يوتيوب مثبتة</p>';
+  list.forEach(a=>{const b=tileEl(a);b.onclick=()=>{$('verOv').classList.remove('show');
+    if(Native.openSide&&Native.openSide(a.pkg))toast('يفتح '+a.n+'…');else openApp(a)};L.appendChild(b)});
+  $('verOv').classList.add('show')};
+$('verTxt').textContent=VER.n;
+[...$('verList').children].forEach((b,i)=>b.classList.toggle('on',VERS[i]===VER));
+
 /* ===== يوتيوب ===== */
 let FULL=false;
 $('bFull').onclick=()=>{FULL=!FULL;document.body.classList.toggle('full',FULL);$('fullTxt').textContent=FULL?'تصغير':'تكبير'};
 if(HASYT){
   $('ph').innerHTML='<div class="big"></div><b>جاري فتح يوتيوب…</b>';
+  if(YT.setMode)YT.setMode(VER.u,VER.ua);
   const box=$('box');let last='';
   function sync(){const r=box.getBoundingClientRect(),d=window.devicePixelRatio||1;
     const show=!document.querySelector('.ov.show')&&r.width>20&&!document.hidden;

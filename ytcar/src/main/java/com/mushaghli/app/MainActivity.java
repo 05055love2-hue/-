@@ -41,6 +41,8 @@ public class MainActivity extends Activity {
 
     private WebView web;
     private WebView yt;
+    private String ytHome = "https://m.youtube.com/";
+    private String ytDefaultUA;
     private FrameLayout root;
     private View fullView;
     private WebChromeClient.CustomViewCallback fullCb;
@@ -165,6 +167,16 @@ public class MainActivity extends Activity {
             return true;
         }
 
+        /** يفتح تطبيق جنب مشغّلي (لو الشاشة تدعم تقسيم الشاشة) */
+        @JavascriptInterface
+        public boolean openSide(String pkg) {
+            Intent launch = getPackageManager().getLaunchIntentForPackage(pkg);
+            if (launch == null) return false;
+            launch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+            if (Build.VERSION.SDK_INT >= 24) launch.addFlags(Intent.FLAG_ACTIVITY_LAUNCH_ADJACENT);
+            try { startActivity(launch); return true; } catch (Exception e) { return false; }
+        }
+
         @JavascriptInterface
         public boolean openAction(String action) {
             try {
@@ -186,6 +198,7 @@ public class MainActivity extends Activity {
         s.setJavaScriptEnabled(true);
         s.setDomStorageEnabled(true);
         s.setMediaPlaybackRequiresUserGesture(false);
+        ytDefaultUA = s.getUserAgentString();
         CookieManager.getInstance().setAcceptCookie(true);
         CookieManager.getInstance().setAcceptThirdPartyCookies(yt, true);
         yt.setBackgroundColor(0xFF000000);
@@ -225,7 +238,7 @@ public class MainActivity extends Activity {
         @JavascriptInterface
         public void show(final int x, final int y, final int w, final int h) {
             runOnUiThread(() -> {
-                if (yt.getUrl() == null) yt.loadUrl("https://m.youtube.com/");
+                if (yt.getUrl() == null) yt.loadUrl(ytHome);
                 FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(w, h);
                 lp.leftMargin = x; lp.topMargin = y;
                 yt.setLayoutParams(lp);
@@ -246,7 +259,21 @@ public class MainActivity extends Activity {
         }
         @JavascriptInterface
         public void home() {
-            runOnUiThread(() -> yt.loadUrl("https://m.youtube.com/"));
+            runOnUiThread(() -> yt.loadUrl(ytHome));
+        }
+        /** يغيّر نسخة يوتيوب اللي داخل المربع */
+        @JavascriptInterface
+        public void setMode(final String url, final String ua) {
+            runOnUiThread(() -> {
+                boolean changed = !url.equals(ytHome);
+                ytHome = url;
+                String want = (ua == null || ua.isEmpty()) ? ytDefaultUA : ua;
+                if (!want.equals(yt.getSettings().getUserAgentString())) {
+                    yt.getSettings().setUserAgentString(want);
+                    changed = true;
+                }
+                if (changed || yt.getUrl() == null) yt.loadUrl(ytHome);
+            });
         }
     }
 
