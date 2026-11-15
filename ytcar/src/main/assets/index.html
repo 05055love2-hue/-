@@ -22,14 +22,14 @@ body.T-day .card{box-shadow:0 6px 24px rgba(15,23,42,.08)}
 .player{grid-row:1;grid-column:2;display:flex;flex-direction:column;padding:12px;gap:10px;min-height:0}
 .phead{display:flex;align-items:center;gap:10px;padding:0 6px}
 .ytlogo{display:flex;align-items:center;gap:8px;font-weight:900;font-size:20px}
-.ytlogo i{width:38px;height:27px;border-radius:8px;background:#ff0033;display:grid;place-items:center}
+.ytlogo i{width:38px;height:27px;border-radius:8px;background:linear-gradient(135deg,var(--ac),var(--ac2));display:grid;place-items:center}
 .ytlogo i:after{content:'';border-left:11px solid #fff;border-top:7px solid transparent;border-bottom:7px solid transparent;}
 .phead .sp{flex:1}
 .chip{border:0;font-family:inherit;font-size:15px;font-weight:700;color:var(--txt);background:var(--btn);border:1px solid var(--line);border-radius:14px;padding:8px 14px;cursor:pointer;display:flex;align-items:center;gap:6px}
 .chip:active{transform:scale(.95)}
 .box{flex:1;min-height:0;border-radius:20px;overflow:hidden;position:relative;background:#000;box-shadow:0 0 0 3px color-mix(in srgb,var(--ac) 70%,transparent),0 0 40px color-mix(in srgb,var(--ac) 35%,transparent)}
 .ph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;color:#fff;background:linear-gradient(135deg,#1a1a2e,#3a0d1f 60%,#160b2e)}
-.ph .big{width:110px;height:78px;border-radius:22px;background:#ff0033;display:grid;place-items:center;box-shadow:0 10px 40px #ff003366}
+.ph .big{width:96px;height:96px;border-radius:50%;background:linear-gradient(135deg,var(--ac),var(--ac2));display:grid;place-items:center;box-shadow:0 10px 40px color-mix(in srgb,var(--ac) 45%,transparent)}
 .ph .big:after{content:'';border-left:30px solid #fff;border-top:19px solid transparent;border-bottom:19px solid transparent;margin-left:8px}
 .ph b{font-size:24px}
 .ph span{font-size:15px;opacity:.75}
@@ -115,14 +115,14 @@ body.full .player{grid-column:1}
 <div class="app">
   <section class="player card">
     <div class="phead">
-      <div class="ytlogo"><i></i>يوتيوب</div>
+      <div class="ytlogo"><i></i>المشغّل</div>
       <div class="sp"></div>
       <button class="chip ver" id="bVer">🔄 <span id="verTxt">يوتيوب</span></button>
       <button class="chip" id="bHome">🏠 الرئيسية</button>
       <button class="chip" id="bFull">⛶ <span id="fullTxt">تكبير</span></button>
     </div>
     <div class="box" id="box">
-      <div class="ph" id="ph"><div class="big"></div><b>يوتيوب يظهر هنا</b><span>ابحث وشغّل أي مقطع وأنت في الشاشة الرئيسية</span></div>
+      <div class="ph" id="ph"><div class="big"></div><b>الفيديو يظهر هنا</b><span>ابحث وشغّل أي مقطع وأنت في الشاشة الرئيسية</span></div>
     </div>
     <div class="ctrl">
       <button class="cb" id="cPrev" aria-label="رجوع للصفحة السابقة"><svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg></button>
