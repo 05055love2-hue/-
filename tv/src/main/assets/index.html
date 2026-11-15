@@ -265,7 +265,7 @@
   body[data-l="scene"] #home{grid-template-columns:auto minmax(0,1fr) auto auto;grid-template-rows:auto 1fr auto;grid-template-areas:"hdr . wx quick" ". . . ." "apps apps apps apps";padding:4vh 3vw 5vh}
   body[data-l="scene"] #hdr{text-shadow:0 .4vh 2vh rgba(0,0,0,.6)}
   body[data-l="scene"] .clock{font-size:5vw;font-weight:800}
-  body[data-l="scene"] .greet,body[data-l="scene"] .pray{display:none}
+  body[data-l="scene"] .greet{display:none}
   body[data-l="scene"] #wx{background:rgba(0,0,0,.28);backdrop-filter:blur(10px);border-color:rgba(255,255,255,.18)}
   body[data-l="scene"] #quick{flex-direction:column;align-self:start}
   body[data-l="scene"] #quick .q{background:rgba(0,0,0,.3);backdrop-filter:blur(8px)}
@@ -277,6 +277,25 @@
   body[data-l="scene"] .app .ic,body[data-l="scene"] .app .lt{width:4.4vw;height:4.4vw}
   body[data-l="scene"] .app span.n{font-size:1vw}
   body[data-l="scene"] .app.f.on{transform:scale(1.14);border-color:var(--accent);box-shadow:0 0 0 2px var(--accent),0 0 3vh var(--accent);background:rgba(0,0,0,.5)!important}
+
+  #wall img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  #wall .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.25),transparent 30%,transparent 60%,rgba(0,0,0,.55))}
+  body[data-w="photo"] #wall::before,body[data-w="photo"] #wall::after{display:none}
+  .opt.thumb .tb img{width:100%;height:100%;object-fit:cover;display:block}
+  .opt.thumb .tb.add{display:grid;place-items:center;background:rgba(255,255,255,.08);border:2px dashed rgba(255,255,255,.3);font-size:3vw}
+  /* ===== إطار ألعاب ===== */
+  body[data-i="game"] .app{border-radius:1vw;border:.35vw solid color-mix(in srgb,var(--accent) 45%,#2a2a2a);background:linear-gradient(160deg,rgba(20,20,28,.82),rgba(0,0,0,.72))!important;
+    box-shadow:inset 0 0 0 .2vw rgba(0,0,0,.6),inset 0 .5vh 1.2vh rgba(255,255,255,.12),0 .8vh 2vh rgba(0,0,0,.5)}
+  body[data-i="game"] .app .bn{display:none!important} body[data-i="game"] .app .ic,body[data-i="game"] .app span.n{visibility:visible!important}
+  body[data-i="game"] .app .ic{filter:drop-shadow(0 .3vh .6vh rgba(0,0,0,.7))}
+  body[data-i="game"] .app span.n{color:#fff;text-shadow:0 .2vh .4vh #000;font-weight:700}
+  body[data-i="game"] .app.f.on{border-color:var(--accent)!important;box-shadow:0 0 0 .25vw #fff8,0 0 3.5vh var(--accent),inset 0 0 2vh color-mix(in srgb,var(--accent) 35%,transparent)!important;transform:scale(1.15)}
+  /* ===== مربعات زجاجية في شكل المشهد ===== */
+  body[data-l="scene"] #hdr{background:rgba(255,255,255,.1);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.22);border-radius:1.6vw;padding:1.6vh 1.8vw;align-self:start}
+  body[data-l="scene"] .pray{display:flex;margin-top:1vh}
+  body[data-l="scene"] .pray span{background:rgba(0,0,0,.25);font-size:.95vw}
+  body[data-l="scene"] .pray span:not(.nx){display:none}
+  body[data-l="scene"] #wx{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.22)}
 </style>
 </head>
 <body data-l="classic" data-i="orig">
@@ -349,7 +368,7 @@ try{location.hash.slice(1).split('&').forEach(kv=>{const [k,v]=kv.split('=');if(
 
 /* ===== الخيارات ===== */
 const LAYOUTS=[['scene','🏞️ مشهد'],['appletv','🍏 مثل أبل تي في'],['classic','🪟 كلاسيكي'],['cinema','🎬 سينمائي'],['youtube','▶️ مع يوتيوب'],['side','📋 قائمة جانبية'],['iphone','📱 مثل الايفون'],['minimal','⚪ بسيط'],['dash','🗂️ لوحة بطاقات']];
-const ICONS=[['orig','الأصلية'],['ios','على شكل ايفون'],['circle','دائرية'],['glass','زجاجية'],['neon','نيون مضيء'],['mono','لون واحد'],['flat','بدون خلفية'],['letter','حروف ملونة']];
+const ICONS=[['game','🎮 إطار ألعاب'],['orig','الأصلية'],['ios','على شكل ايفون'],['circle','دائرية'],['glass','زجاجية'],['neon','نيون مضيء'],['mono','لون واحد'],['flat','بدون خلفية'],['letter','حروف ملونة']];
 const THEMES={
   night:{n:'ليلي أزرق',bg1:'#0b1424',bg2:'#1b3355',accent:'#7cc4ff'},
   calm:{n:'هادي',bg1:'#0c1a1e',bg2:'#2f5e5a',accent:'#8fd3c1'},
@@ -408,14 +427,32 @@ const SCENES={
    <path d="M-100 250 C400 120 800 330 1200 200 S1800 150 2050 230 L2050 300 C1700 260 1300 360 1000 330 S300 240 -100 330Z" fill="#a78bfa" opacity=".35"/></g>
    <path d="M0 930 Q960 880 1920 930 L1920 1080 L0 1080Z" fill="#dbeafe" opacity=".85"/>${trees}`)}}
 };
-WALLS.unshift(...Object.entries(SCENES).map(([k,s])=>[k,s.n]));
+WALLS.unshift(['photo','📷 صورتي'],...Object.entries(SCENES).map(([k,s])=>[k,s.n]));
+
+/* ===== صورتي: خلفية من صور الجهاز ===== */
+let PHOTOS=[];try{PHOTOS=JSON.parse(store.get('photos','[]'))}catch(e){PHOTOS=[]}
+let PH_I=+store.get('photoI','0');
+function photoAccent(img){try{const c=document.createElement('canvas');c.width=c.height=24;const x=c.getContext('2d');x.drawImage(img,0,0,24,24);const d=x.getImageData(0,0,24,24).data;
+  let best=[124,196,255],bs=-1;for(let i=0;i<d.length;i+=4){const r=d[i],g=d[i+1],b=d[i+2],mx=Math.max(r,g,b),mn=Math.min(r,g,b),sat=mx?(mx-mn)/mx:0,sc=sat*mx;if(sc>bs&&mx>90){bs=sc;best=[r,g,b]}}
+  const k=Math.max(1,200/Math.max(...best));return 'rgb('+best.map(v=>Math.min(255,Math.round(v*k))).join(',')+')'}catch(e){return '#7cc4ff'}}
+function addPhotos(files){[...files].slice(0,5).forEach(f=>{const rd=new FileReader();rd.onload=()=>{const im=new Image();im.onload=()=>{
+  const W=1920,H=Math.round(1920*im.height/im.width),c=document.createElement('canvas');c.width=W;c.height=Math.min(H,1440);c.getContext('2d').drawImage(im,0,0,W,H);
+  const url=c.toDataURL('image/jpeg',.82);PHOTOS.unshift({u:url,a:photoAccent(im)});PHOTOS=PHOTOS.slice(0,5);
+  let ok=false;while(!ok&&PHOTOS.length){try{localStorage.setItem('photos',JSON.stringify(PHOTOS));ok=true}catch(e){PHOTOS.pop()}}
+  PH_I=0;store.set('photoI','0');S.w='photo';store.set('wall','photo');applyAll();drawWallRow();};im.src=rd.result};rd.readAsDataURL(f)})}
+const phIn=document.createElement('input');phIn.type='file';phIn.accept='image/*';phIn.multiple=true;phIn.style.display='none';document.body.appendChild(phIn);
+phIn.onchange=()=>{if(phIn.files.length)addPhotos(phIn.files);phIn.value=''};
+
 const SAVERS=[['0','بدون'],['3','بعد 3 دقايق'],['5','بعد 5 دقايق'],['10','بعد 10 دقايق'],['20','بعد 20 دقيقة']];
-if(!store.get('sceneLook','')){store.set('layout2','scene');store.set('wall','sc-moon');store.set('icons','glass');store.set('sceneLook','1');}
+if(!store.get('sceneLook','')){store.set('layout2','scene');store.set('wall','sc-moon');store.set('icons','game');store.set('sceneLook','1');}
+if(!store.get('gameLook','')){store.set('icons','game');store.set('gameLook','1');}
 const S={w:store.get('wall','aurora'),sv:store.get('saver','5'),l:store.get('layout2','appletv'),i:store.get('icons','orig'),t:store.get('theme','night')};
 if(!LAYOUTS.some(x=>x[0]===S.l)) S.l='classic'; if(!ICONS.some(x=>x[0]===S.i)) S.i='orig'; if(!THEMES[S.t]) S.t='night';
 function applyAll(){
   const t=THEMES[S.t],r=document.documentElement.style; ['bg1','bg2','accent'].forEach(k=>r.setProperty('--'+k,t[k]));
-  const sc=SCENES[S.w]; if(sc){ if($('wall').dataset.k!==S.w){$('wall').innerHTML=sc.svg();$('wall').dataset.k=S.w;} r.setProperty('--accent',sc.ac);} else {$('wall').innerHTML='';$('wall').dataset.k='';}
+  if(S.w==='photo'&&PHOTOS.length){const ph=PHOTOS[Math.min(PH_I,PHOTOS.length-1)];if($('wall').dataset.k!=='photo'+PH_I+ph.u.length){$('wall').innerHTML='<img src="'+ph.u+'" alt=""><i class="shade"></i>';$('wall').dataset.k='photo'+PH_I+ph.u.length;}r.setProperty('--accent',ph.a);}
+  else if(S.w==='photo'){$('wall').innerHTML='';$('wall').dataset.k='';}
+  const sc=SCENES[S.w]; if(S.w==='photo'){} else if(sc){ if($('wall').dataset.k!==S.w){$('wall').innerHTML=sc.svg();$('wall').dataset.k=S.w;} r.setProperty('--accent',sc.ac);} else {$('wall').innerHTML='';$('wall').dataset.k='';}
   document.body.dataset.l=S.l; document.body.dataset.i=S.i; document.body.dataset.w=S.w;
   drawDock(); if(typeof ytSync==='function') setTimeout(ytSync,50);
 }
@@ -610,6 +647,16 @@ $('qSet').onclick=()=>{ if(hasNative) Native.settings(); };
 $('qHome').onclick=()=>{ if(hasNative) Native.homeSettings(); };
 $('qCustom').onclick=()=>{ drawCust(); $('custOv').classList.add('show'); ytSync(); focusEl($('layRow').querySelector('.sel')); };
 $('custClose').onclick=onBack;
+function drawWallRow(){
+  optRow('wRow',WALLS,S.w==='photo'?'photo:'+PH_I:S.w,v=>{S.w=v;store.set('wall',v);applyAll();});
+  const row=$('wRow');
+  row.querySelectorAll('.opt').forEach(b=>{const sc=SCENES[b.dataset.v];if(sc){b.classList.add('thumb');b.insertAdjacentHTML('afterbegin','<span class="tb">'+sc.svg()+'</span>');}});
+  const pb=row.querySelector('.opt[data-v="photo"]');if(pb){
+    PHOTOS.forEach((ph,i)=>{const b=document.createElement('button');b.className='opt f thumb'+(S.w==='photo'&&PH_I===i?' sel':'');b.innerHTML='<span class="tb"><img src="'+ph.u+'" alt=""></span>📷 صورة '+(i+1);
+      b.onclick=()=>{row.querySelectorAll('.opt').forEach(x=>x.classList.toggle('sel',x===b));PH_I=i;store.set('photoI',i);S.w='photo';store.set('wall','photo');applyAll()};row.insertBefore(b,pb)});
+    pb.classList.add('thumb');pb.classList.remove('sel');pb.innerHTML='<span class="tb add">＋</span>➕ أضف صورة من جهازك';pb.onclick=()=>phIn.click();
+    if(PHOTOS.length){const d=document.createElement('button');d.className='opt f';d.textContent='🗑️ امسح صوري';d.onclick=()=>{PHOTOS=[];store.set('photos','[]');if(S.w==='photo'){S.w='sc-moon';store.set('wall','sc-moon')}applyAll();drawWallRow()};row.insertBefore(d,pb.nextSibling)}}
+}
 function optRow(id,items,curVal,pick){
   const r=$(id); r.innerHTML='';
   items.forEach(([v,label,sw])=>{const b=document.createElement('button');b.className='opt f'+(v===curVal?' sel':'');b.dataset.v=v;
@@ -626,8 +673,7 @@ function drawCust(){
   optRow('layRow',LAYOUTS,S.l,v=>{S.l=v;store.set('layout2',v);applyAll();});
   optRow('icRow',ICONS,S.i,v=>{S.i=v;store.set('icons',v);applyAll();});
   optRow('thRow',Object.entries(THEMES).map(([k,t])=>[k,t.n,t.accent]),S.t,v=>{S.t=v;store.set('theme',v);applyAll();});
-  optRow('wRow',WALLS,S.w,v=>{S.w=v;store.set('wall',v);applyAll();});
-  $('wRow').querySelectorAll('.opt').forEach(b=>{const sc=SCENES[b.dataset.v];if(sc){b.classList.add('thumb');b.insertAdjacentHTML('afterbegin','<span class="tb">'+sc.svg()+'</span>');}});
+  drawWallRow();
   optRow('svRow',SAVERS,S.sv,v=>{S.sv=v;store.set('saver',v);});
   drawHidden();
 }

@@ -18,6 +18,9 @@ import android.view.WindowManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.CookieManager;
 import android.webkit.WebChromeClient;
+import android.webkit.ValueCallback;
+import android.net.Uri;
+import android.widget.Toast;
 import android.widget.FrameLayout;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
@@ -43,6 +46,8 @@ public class MainActivity extends Activity {
     private FrameLayout.LayoutParams ytBoxLp;
     private View customView;
     private WebChromeClient.CustomViewCallback customCb;
+    private ValueCallback<Uri[]> fileCb;
+    private static final int PICK = 4242;
 
     // واجهة يوتيوب المصممة للتلفزيون والريموت
     private static final String YT_URL = "https://www.youtube.com/tv";
@@ -71,6 +76,26 @@ public class MainActivity extends Activity {
         web.setFocusableInTouchMode(true);
         web.addJavascriptInterface(new Bridge(), "Native");
         web.addJavascriptInterface(new YtBridge(), "YT");
+        // اختيار صورة من الجهاز للخلفية
+        web.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public boolean onShowFileChooser(WebView view, ValueCallback<Uri[]> cb, FileChooserParams params) {
+                if (fileCb != null) fileCb.onReceiveValue(null);
+                fileCb = cb;
+                Intent i = new Intent(Intent.ACTION_GET_CONTENT);
+                i.addCategory(Intent.CATEGORY_OPENABLE);
+                i.setType("image/*");
+                i.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                try {
+                    startActivityForResult(Intent.createChooser(i, "اختر صورة"), PICK);
+                } catch (Exception e) {
+                    fileCb = null;
+                    Toast.makeText(MainActivity.this, "ما فيه مدير ملفات في التلفزيون، ثبّت واحد من المتجر", Toast.LENGTH_LONG).show();
+                    return false;
+                }
+                return true;
+            }
+        });
 
         web.setWebViewClient(new WebViewClient() {
             @Override
@@ -321,5 +346,21 @@ public class MainActivity extends Activity {
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         if (hasFocus) goFullScreen();
+    }
+
+    @Override
+    protected void onActivityResult(int req, int res, Intent data) {
+        super.onActivityResult(req, res, data);
+        if (req != PICK || fileCb == null) return;
+        Uri[] out = null;
+        if (res == RESULT_OK && data != null) {
+            if (data.getClipData() != null) {
+                int n = data.getClipData().getItemCount();
+                out = new Uri[n];
+                for (int k = 0; k < n; k++) out[k] = data.getClipData().getItemAt(k).getUri();
+            } else if (data.getData() != null) out = new Uri[]{data.getData()};
+        }
+        fileCb.onReceiveValue(out);
+        fileCb = null;
     }
 }
