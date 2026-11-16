@@ -37,6 +37,7 @@
   .dl{display:inline-flex;align-items:center;gap:10px;text-decoration:none;font-weight:800;font-size:18px;padding:13px 26px;border-radius:16px;color:#0a0f1a}
   .car .dl{background:var(--car);box-shadow:0 10px 30px rgba(143,211,193,.25)} .tv .dl{background:var(--tv);box-shadow:0 10px 30px rgba(124,196,255,.25)}
   .dl svg{width:22px;height:22px}
+  .ver{display:table;margin:6px 0 0;padding:4px 12px;border-radius:999px;font-size:13px;font-weight:800;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:inherit}
   .apphead .dl{margin-inline-start:auto}
   .shots{display:grid;grid-template-columns:2fr 1fr;gap:12px}
   .shots .side{display:grid;gap:12px}
@@ -1315,6 +1316,12 @@ loop();
       apks.forEach(a=>{const n=a.getAttribute('href').split('/').pop(),c=by[n]||0;total+=c;
         if(!a.nextElementSibling||!a.nextElementSibling.classList.contains('cnt')){const s=document.createElement('span');s.className='cnt';s.textContent='⬇️ '+fmt(c)+' تحميل';a.after(s)}});
       document.getElementById('dCount').textContent=fmt(total);
+    }).catch(()=>{});
+    // رقم آخر نسخة لكل تطبيق
+    fetch('https://tatbeeqati-sa.pages.dev/api/versions').then(r=>r.json()).then(v=>{
+      apks.forEach(a=>{const key=a.getAttribute('href').split('/').pop().replace('.apk',''),x=v[key];if(!x||!x.name)return;
+        const t=(a.parentNode.querySelector('h2')||a).parentNode;let b=t.querySelector('.ver');if(!b){b=document.createElement('span');b.className='ver';t.appendChild(b)}
+        b.textContent='🆕 نسخة '+x.name;});
     }).catch(()=>{});
   })();
 
