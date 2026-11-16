@@ -12,6 +12,8 @@
     <uses-feature android:name="android.software.leanback" android:required="false" />
     <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
 
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+
     <application
         android:label="شاشتي"
         android:icon="@drawable/ic_launcher"
@@ -39,5 +41,6 @@
             </intent-filter>
         </activity>
         <receiver android:name=".PrayerReceiver" android:exported="false" />
+        <receiver android:name=".InstallReceiver" android:exported="false" />
     </application>
 </manifest>
