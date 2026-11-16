@@ -1,6 +1,6 @@
 # يسوي ملف versions.json من أرقام النسخ في كل تطبيق — يشتغل وقت البناء
 import json, re
-mods = {'app': 'car-theme', 'tv': 'tv-launcher', 'ytcar': 'mushaghli', 'seasons': 'seasons', 'rawatib': 'rawatib', 'hammil': 'hammil', 'obd': 'fahes', 'store': 'tatbeeqati'}
+mods = {'app': 'car-theme', 'tv': 'tv-launcher', 'ytcar': 'mushaghli', 'seasons': 'seasons', 'rawatib': 'rawatib', 'hammil': 'hammil', 'obd': 'fahes', 'store': 'tatbeeqati', 'cleaner': 'monadhif'}
 notes = json.load(open('updates/notes.json', encoding='utf-8'))
 out = {}
 for m, key in mods.items():

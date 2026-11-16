@@ -44,6 +44,7 @@ jobs:
           cp obd/build/outputs/apk/debug/obd-debug.apk fahes.apk
           cp hammil/build/outputs/apk/debug/hammil-debug.apk hammil.apk
           cp store/build/outputs/apk/debug/store-debug.apk tatbeeqati.apk
+          cp cleaner/build/outputs/apk/debug/cleaner-debug.apk monadhif.apk
           python3 updates/make_versions.py
 
       - name: Hammil engine info
@@ -72,6 +73,7 @@ jobs:
             fahes.apk
             hammil.apk
             tatbeeqati.apk
+            monadhif.apk
             versions.json
           make_latest: true
 
