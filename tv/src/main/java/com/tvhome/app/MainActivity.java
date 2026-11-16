@@ -64,8 +64,13 @@ public class MainActivity extends Activity {
         root = new FrameLayout(this);
         root.addView(web, new FrameLayout.LayoutParams(-1, -1));
         setContentView(root);
-        if (Build.VERSION.SDK_INT >= 33 && checkSelfPermission("android.permission.POST_NOTIFICATIONS") != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{"android.permission.POST_NOTIFICATIONS"}, 9);
+        if (Build.VERSION.SDK_INT >= 23) {
+            java.util.ArrayList<String> ask = new java.util.ArrayList<>();
+            if (Build.VERSION.SDK_INT >= 33 && checkSelfPermission("android.permission.POST_NOTIFICATIONS") != PackageManager.PERMISSION_GRANTED)
+                ask.add("android.permission.POST_NOTIFICATIONS");
+            if (checkSelfPermission("android.permission.ACCESS_COARSE_LOCATION") != PackageManager.PERMISSION_GRANTED)
+                ask.add("android.permission.ACCESS_COARSE_LOCATION");
+            if (!ask.isEmpty()) requestPermissions(ask.toArray(new String[0]), 9);
         }
         setupYouTube();
         goFullScreen();
@@ -186,6 +191,21 @@ public class MainActivity extends Activity {
             try {
                 startActivity(new Intent(Settings.ACTION_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
             } catch (Exception ignored) { }
+        }
+
+        /** موقع التلفزيون من الجهاز نفسه (لو يعرفه) — يرجّع "lat,lon" أو فاضي */
+        @JavascriptInterface
+        public String getLocation() {
+            try {
+                if (Build.VERSION.SDK_INT >= 23 && checkSelfPermission("android.permission.ACCESS_COARSE_LOCATION") != PackageManager.PERMISSION_GRANTED) return "";
+                android.location.LocationManager lm = (android.location.LocationManager) getSystemService(LOCATION_SERVICE);
+                android.location.Location best = null;
+                for (String pr : lm.getProviders(true)) {
+                    android.location.Location l = lm.getLastKnownLocation(pr);
+                    if (l != null && (best == null || l.getTime() > best.getTime())) best = l;
+                }
+                return best == null ? "" : best.getLatitude() + "," + best.getLongitude();
+            } catch (Exception e) { return ""; }
         }
 
         @JavascriptInterface
@@ -413,6 +433,13 @@ public class MainActivity extends Activity {
                 pendingPrayer = null;
             }
         }, 1500);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int req, String[] perms, int[] res) {
+        super.onRequestPermissionsResult(req, perms, res);
+        // أول ما يوافق على الموقع، نحدّث الطقس على طول
+        if (web != null) web.evaluateJavascript("typeof locate==='function'&&locate()", null);
     }
 
     @Override
