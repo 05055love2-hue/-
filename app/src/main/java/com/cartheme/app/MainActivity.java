@@ -41,6 +41,7 @@ public class MainActivity extends Activity {
 
     private WebView web;
     private WebView yt;
+    private WebView mp;
     private FrameLayout root;
     private View fullView;
     private WebChromeClient.CustomViewCallback fullCb;
@@ -57,6 +58,7 @@ public class MainActivity extends Activity {
         root.addView(web, new FrameLayout.LayoutParams(-1, -1));
         setContentView(root);
         setupYouTube();
+        setupMaps();
         goFullScreen();
 
         WebSettings s = web.getSettings();
@@ -138,6 +140,7 @@ public class MainActivity extends Activity {
 
         web.addJavascriptInterface(new Bridge(), "Native");
         web.addJavascriptInterface(new YtBridge(), "YT");
+        web.addJavascriptInterface(new MapBridge(), "MP");
         web.loadUrl(BASE + "index.html");
     }
 
@@ -205,6 +208,54 @@ public class MainActivity extends Activity {
         });
         yt.setVisibility(View.GONE);
         root.addView(yt, new FrameLayout.LayoutParams(1, 1));
+    }
+
+    /** الخرائط داخل الواجهة */
+    private static final String MP_HOME = "https://www.google.com/maps";
+    private void setupMaps() {
+        mp = new WebView(this);
+        WebSettings s = mp.getSettings();
+        s.setJavaScriptEnabled(true);
+        s.setDomStorageEnabled(true);
+        s.setDatabaseEnabled(true);
+        s.setGeolocationEnabled(true);
+        s.setTextZoom(100);
+        CookieManager.getInstance().setAcceptThirdPartyCookies(mp, true);
+        mp.setBackgroundColor(0xFF1c2733);
+        mp.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                String u = request.getUrl().toString();
+                return !(u.startsWith("http://") || u.startsWith("https://"));
+            }
+        });
+        mp.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public void onGeolocationPermissionsShowPrompt(String origin, GeolocationPermissions.Callback cb) {
+                cb.invoke(origin, true, true);
+            }
+        });
+        mp.setVisibility(View.GONE);
+        root.addView(mp, new FrameLayout.LayoutParams(1, 1));
+    }
+
+    private class MapBridge {
+        @JavascriptInterface
+        public void show(final int x, final int y, final int w, final int h) {
+            runOnUiThread(() -> {
+                if (mp.getUrl() == null) mp.loadUrl(MP_HOME);
+                FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(w, h);
+                lp.leftMargin = x; lp.topMargin = y;
+                mp.setLayoutParams(lp);
+                mp.setVisibility(View.VISIBLE);
+            });
+        }
+        @JavascriptInterface
+        public void hide() { runOnUiThread(() -> mp.setVisibility(View.GONE)); }
+        @JavascriptInterface
+        public void home() { runOnUiThread(() -> mp.loadUrl(MP_HOME)); }
+        @JavascriptInterface
+        public void back() { runOnUiThread(() -> { if (mp.canGoBack()) mp.goBack(); }); }
     }
 
     private void exitVideoFull() {
@@ -355,6 +406,7 @@ public class MainActivity extends Activity {
     public void onBackPressed() {
         if (fullView != null) { exitVideoFull(); return; }
         if (yt != null && yt.getVisibility() == View.VISIBLE && yt.canGoBack()) { yt.goBack(); return; }
+        if (mp != null && mp.getVisibility() == View.VISIBLE && mp.canGoBack()) { mp.goBack(); return; }
         // التطبيق شاشة رئيسية، فزر الرجوع يسكّر النوافذ بس وما يطلع من التطبيق
         web.evaluateJavascript(
                 "document.querySelectorAll('.overlay.show').forEach(o=>o.classList.remove('show'))", null);

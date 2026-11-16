@@ -542,6 +542,51 @@
   body.L-luxe .dock{background:none;border:none;border-top:1px solid var(--line);border-radius:0} body.L-luxe .app .ic{background:none;border-color:#5c4a1e;border-radius:50%} body.L-luxe .app svg{fill:#d4af37}
   @media (orientation:portrait){body.L-retro main,body.L-luxe main{grid-template-columns:1fr;grid-template-rows:auto}
     body.L-retro main>*,body.L-luxe main>*{grid-column:1!important;grid-row:auto!important}}
+  /* ===== الخرائط في الواجهة ===== */
+  .mapc{display:none;flex-direction:column;gap:1vh;padding:1vh;min-width:0;min-height:0;overflow:hidden}
+  .mapbox{flex:1;min-height:0;border-radius:18px;overflow:hidden;background:#1c2733;position:relative}
+  .mapbox iframe{width:100%;height:100%;border:0;display:block}
+  .mapempty{position:absolute;inset:0;display:grid;place-items:center;text-align:center;font-size:clamp(28px,5vw,60px);color:var(--soft);line-height:1.3;
+    background:linear-gradient(#24364a 2px,transparent 2px) 0 0/60px 60px,linear-gradient(90deg,#24364a 2px,transparent 2px) 0 0/60px 60px,#1a2633}
+  .mapbar{display:flex;gap:.8vw;justify-content:center}
+  .mapbar button{flex:1;max-width:200px;padding:.9vh 1vw;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.06);color:var(--text);font:inherit;font-size:clamp(12px,1.3vw,16px)}
+  body.L-mapfull .mapc,body.L-mapplay .mapc{display:flex}
+  body.L-mapfull .bgl,body.L-mapplay .bgl{display:none!important}
+
+  /* 11) الخريطة الحيّة: خريطة كبيرة وعمود جانبي للساعة والسرعة */
+  body.L-mapfull{--accent:#38bdf8;--text:#e2f1ff;--soft:#7d93ab;--line:rgba(125,147,171,.22);--bg1:#0b1622;background:#0b1622}
+  body.L-mapfull main{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);gap:1.4vh 1.2vw}
+  body.L-mapfull .mapc{grid-column:1;grid-row:1/3;padding:.8vh;border-radius:22px}
+  body.L-mapfull .clock{grid-column:2;grid-row:1;padding:2vh 1vw;border-radius:22px}
+  body.L-mapfull .time{display:block!important;font-size:clamp(30px,4.4vw,62px);font-weight:700}
+  body.L-mapfull .analog,body.L-mapfull .hello,body.L-mapfull .wx .wxx,body.L-mapfull .wx .wxf,body.L-mapfull .wx .wd small{display:none!important}
+  body.L-mapfull .date{font-size:clamp(11px,1.2vw,15px)}
+  body.L-mapfull .speedo{display:flex;grid-column:2;grid-row:2;border-radius:22px;flex-direction:column}
+  body.L-mapfull .sdial{display:none} body.L-mapfull .sread b{font-size:clamp(46px,7vw,100px);color:#38bdf8}
+  body.L-mapfull .player{display:none}
+  body.L-mapfull .strip{display:grid;grid-template-columns:1fr 1fr;position:static;gap:.6vh .6vw;margin-top:1.4vh;padding:0 .6vw}
+  body.L-mapfull .dock{border-radius:22px}
+  body.L-mapfull .app .ic{border-radius:14px} body.L-mapfull .app svg{fill:#38bdf8}
+
+  /* 12) خريطة ومشغل: فاتح عصري، الخريطة والمشغل جنب بعض */
+  body.L-mapplay{--accent:#16a34a;--text:#0f172a;--soft:#64748b;--line:rgba(15,23,42,.1);--bg1:#e2e8f0;--card:#fff;background:#e5e9f0}
+  body.L-mapplay .card{background:#fff;border:none;box-shadow:0 6px 18px rgba(15,23,42,.08);backdrop-filter:none}
+  body.L-mapplay main{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);gap:1.4vh 1.2vw}
+  body.L-mapplay .mapc{grid-column:1;grid-row:1/3;border-radius:24px}
+  body.L-mapplay .mapbar button{background:#f1f5f9;border:none;color:#0f172a}
+  body.L-mapplay .clock{grid-column:2;grid-row:1;flex-direction:row;justify-content:space-between;padding:1.4vh 1.6vw;border-radius:20px}
+  body.L-mapplay .time{display:block!important;font-size:clamp(28px,4vw,54px);font-weight:800;color:#0f172a}
+  body.L-mapplay .analog,body.L-mapplay .hello,body.L-mapplay .date,body.L-mapplay .wx .wxx,body.L-mapplay .wx .wxf,body.L-mapplay .wx .wd small{display:none!important}
+  body.L-mapplay .wx{margin:0;background:#f1f5f9;border:none}
+  body.L-mapplay .player{grid-column:2;grid-row:2;border-radius:24px}
+  body.L-mapplay .disc{width:clamp(56px,13vh,110px)!important}
+  body.L-mapplay .tabs{background:#f1f5f9} body.L-mapplay .tab{color:#334155}
+  body.L-mapplay .btn{color:#0f172a} body.L-mapplay .btn.big{background:#16a34a;color:#fff}
+  body.L-mapplay .pick{color:#0f172a;border-color:#cbd5e1}
+  body.L-mapplay .dock{background:#fff;border-radius:999px}
+  body.L-mapplay .app{color:#334155} body.L-mapplay .app .ic{background:#f1f5f9;border:none;border-radius:50%} body.L-mapplay .app svg{fill:#16a34a}
+  @media (orientation:portrait){body.L-mapfull main,body.L-mapplay main{grid-template-columns:1fr;grid-template-rows:minmax(0,2fr) auto auto}
+    body.L-mapfull main>*,body.L-mapplay main>*{grid-column:1!important;grid-row:auto!important}}
   .lgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
   .lgrid .opt{display:flex;flex-direction:column;align-items:center;gap:4px}
   .lgrid .opt b{font-size:22px;font-weight:400}
@@ -585,6 +630,11 @@
     <div class="date" id="d"></div>
     <div class="hello" id="h"></div>
     <div class="wx" id="wx"><span class="wi" id="wxI">⛅</span><span class="wt" id="wxT">--°</span><span class="wd"><b id="wxC">الطقس</b><small id="wxD">جاري التحميل…</small></span><div class="wxx" id="wxX"></div><div class="wxf" id="wxF"></div></div>
+  </section>
+
+  <section class="card mapc" id="mapc">
+    <div class="mapbox" id="mapBox"><div class="mapempty">🗺️<br>الخريطة</div></div>
+    <div class="mapbar"><button id="mapHome">📍 موقعي</button><button id="mapBack">↩ رجوع</button></div>
   </section>
 
   <section class="card speedo" id="speedo">
@@ -810,7 +860,7 @@ function speedOn(){
 }
 function speedOff(){if(SPD.watch!==null){navigator.geolocation.clearWatch(SPD.watch);SPD.watch=null}}
 (function anim(){SPD.cur+=(SPD.target-SPD.cur)*.12;if(Math.abs(SPD.target-SPD.cur)<.05)SPD.cur=SPD.target;if(SPD.on)sdialSet(SPD.cur);requestAnimationFrame(anim)})();
-function speedSync(){const on=['speedo','hud','twin','retro','bar','luxe'].includes(S.layout);SPD.on=on;if(on){if(!$('sNdl'))sdialBuild();speedOn()}else speedOff()}
+function speedSync(){const on=['speedo','hud','twin','retro','bar','luxe','mapfull'].includes(S.layout);SPD.on=on;if(on){if(!$('sNdl'))sdialBuild();speedOn()}else speedOff()}
 
 function applyAll(){
   const t=THEMES[S.theme], r=document.documentElement.style;
@@ -834,7 +884,8 @@ const LAYOUTS=[['classic','🪟','كلاسيكي'],['sport','🏁','رياضي']
   ['cinema','🎬','سينمائي'],['player','🎵','المشغل أكبر'],['minimal','✨','بسيط'],['clock','🕰️','ساعة بس'],['side','📱','جانبي'],
   ['cockpit','🎛️','لوحة العدادات'],['drive','🚗','وضع السواقة'],['split','🪟','الشاشة المقسومة'],['neon','🛸','الكوكبي'],
   ['speedo','🏎️','عداد السرعة'],['hud','🟢','شاشة HUD'],['twin','⏱️','عدادين فخم'],
-  ['retro','🕰️','عداد كلاسيكي قديم'],['bar','🏁','الشريط الرياضي'],['luxe','👑','الفخم الذهبي']];
+  ['retro','🕰️','عداد كلاسيكي قديم'],['bar','🏁','الشريط الرياضي'],['luxe','👑','الفخم الذهبي'],
+  ['mapfull','🗺️','الخريطة الحيّة'],['mapplay','🧭','خريطة ومشغل']];
 (function(){const r=$('layoutRow');LAYOUTS.forEach(([k,ic,n])=>{const b=document.createElement('button');b.className='opt'+(k===S.layout?' on':'');
   b.innerHTML='<b>'+ic+'</b>'+n;b.onclick=()=>{r.querySelectorAll('.opt').forEach(x=>x.classList.toggle('on',x===b));save('layout',k);applyAll();tick();};r.appendChild(b);});})();
 makeOpts('iconRow',[['round','مربع ناعم'],['circle','دائري'],['glow','مضيء'],['bare','بدون خلفية']],S.icons,v=>{save('icons',v);applyAll();});
@@ -1193,6 +1244,30 @@ $('logoIn').onchange=()=>{const f=$('logoIn').files[0];if(!f)return;const img=ne
 $('tripReset').onclick=()=>{TRIP.max=0;TRIP.m=0;TRIP.t=0;store.set('trip',JSON.stringify(TRIP));tripDraw();toast('صفّرنا الرحلة ✅');};
 spSettings();logoDraw();tripDraw();
 setInterval(()=>{if(SPD.on)tripTick(SPD.target,Date.now())},1000);
+
+/* ===== الخرائط داخل الواجهة ===== */
+(function(){
+  const box=$('mapBox');const isMap=()=>['mapfull','mapplay'].includes(S.layout);
+  if(window.MP&&MP.show){
+    let last='';
+    function mapSync(){
+      const r=box.getBoundingClientRect(),d=(window.devicePixelRatio||1)*(window.FIT||1);
+      const overlay=document.querySelector('.overlay.show');
+      const show=isMap()&&!overlay&&r.width>20&&r.height>20&&!document.hidden;
+      const key=show?[r.left,r.top,r.width,r.height].map(v=>Math.round(v*d)).join(','):'off';
+      if(key===last)return;last=key;
+      if(show){const [x,y,w,h]=key.split(',').map(Number);MP.show(x,y,w,h);}else MP.hide();
+    }
+    new ResizeObserver(mapSync).observe(box);
+    new MutationObserver(mapSync).observe(document.body,{attributes:true,subtree:true,attributeFilter:['class','hidden','style']});
+    window.addEventListener('resize',mapSync);document.addEventListener('visibilitychange',mapSync);setInterval(mapSync,700);
+    $('mapHome').onclick=()=>MP.home();$('mapBack').onclick=()=>MP.back();
+  }else{
+    // في المتصفح: خريطة مضمّنة
+    function load(){if(!isMap()||box.querySelector('iframe'))return;const f=document.createElement('iframe');f.src='https://www.google.com/maps?q=Riyadh&z=12&output=embed';f.loading='lazy';box.appendChild(f);}
+    setInterval(load,1500);$('mapHome').onclick=()=>{const f=box.querySelector('iframe');if(f)f.src=f.src};$('mapBack').onclick=()=>history.back();
+  }
+})();
 </script>
 <div style="position:fixed;bottom:4px;left:10px;z-index:5;font-family:Tajawal,system-ui,sans-serif;font-size:11px;font-weight:700;color:#fff;opacity:.5;pointer-events:none;text-shadow:0 1px 2px #000">برمجة أبو نواف</div>
 </body>
