@@ -643,6 +643,35 @@
   .colgrid button.on{border-color:#fff;box-shadow:0 0 0 2px var(--accent)}
   .colgrid button.none{background:repeating-linear-gradient(45deg,#444 0 6px,#222 6px 12px)}
   .app .ic.cbg svg{fill:#fff}
+  /* ===== تصميم «سيارتي»: سيارتك بالنص ===== */
+  .hero{display:none;position:relative;overflow:hidden;flex-direction:column;align-items:center;justify-content:center;min-width:0;min-height:0}
+  body.L-mycar .hero{display:flex}
+  body.L-mycar .bgl{display:none!important}
+  body.L-mycar{--accent:#7dd3fc;--text:#f1f5f9;--soft:#94a3b8;--line:rgba(148,163,184,.18);--bg1:#0b1220;
+    background:radial-gradient(ellipse at 50% 115%,#1e3a5f 0,transparent 60%),linear-gradient(180deg,#0b1220,#111c2e 60%,#0a0f1a)}
+  body.L-mycar main{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2.4fr) minmax(0,1fr);gap:1.4vw}
+  body.L-mycar .card{background:rgba(15,23,42,.55);border-color:var(--line)}
+  body.L-mycar .hero{grid-column:2;grid-row:1;background:none;border:none;backdrop-filter:none}
+  body.L-mycar .clock{grid-column:1;grid-row:1;border-radius:24px}
+  body.L-mycar .time{display:block!important;font-size:clamp(34px,5vw,70px);font-weight:300}
+  body.L-mycar .analog,body.L-mycar .hello,body.L-mycar .wx .wxx,body.L-mycar .wx .wxf{display:none!important}
+  body.L-mycar .player{grid-column:3;grid-row:1;border-radius:24px;justify-content:center}
+  body.L-mycar .player .tabs,body.L-mycar .pick,body.L-mycar .ytform,body.L-mycar .recent,body.L-mycar .ytnav{display:none}
+  body.L-mycar .disc{width:clamp(60px,12vh,110px)!important}
+  body.L-mycar .dock{border-radius:24px;background:rgba(15,23,42,.6)}
+  .hbrand{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:.4vh;margin-bottom:1vh}
+  .hbrand .slogo{position:static!important;transform:none!important;height:auto;max-width:none;margin:0}
+  .hbrand .slogo img{max-height:7vh}
+  .hbrand .slogo span{font-size:clamp(16px,2.4vw,32px);letter-spacing:8px}
+  .hbrand b{font-size:clamp(13px,1.6vw,20px);font-weight:500;color:var(--soft);letter-spacing:2px}
+  .hcar{position:relative;z-index:1;width:100%;flex:1;min-height:0;display:flex;align-items:flex-end;justify-content:center}
+  .hcar svg{width:94%;max-height:100%;filter:drop-shadow(0 24px 22px rgba(0,0,0,.55))}
+  .hcar img{max-width:96%;max-height:100%;object-fit:contain;filter:drop-shadow(0 24px 22px rgba(0,0,0,.55))}
+  .hroad{position:absolute;left:4%;right:4%;bottom:21%;height:2px;background:linear-gradient(90deg,transparent,rgba(125,211,252,.55),transparent);box-shadow:0 0 24px rgba(125,211,252,.5)}
+  .hstats{position:relative;z-index:2;display:flex;gap:1vw;margin-top:1.4vh}
+  .hstats div{display:flex;flex-direction:column;align-items:center;min-width:8vw;padding:.8vh 1vw;border-radius:14px;background:rgba(15,23,42,.6);border:1px solid var(--line)}
+  .hstats i{font-style:normal;font-size:clamp(10px,1vw,13px);color:var(--soft)} .hstats b{font-size:clamp(18px,2.4vw,32px);direction:ltr;line-height:1.1} .hstats small{font-size:10px;color:var(--soft)}
+  @media (orientation:portrait){body.L-mycar main{grid-template-columns:1fr;grid-template-rows:2fr auto auto}body.L-mycar main>*{grid-column:1!important;grid-row:auto!important}}
   .lgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
   .lgrid .opt{display:flex;flex-direction:column;align-items:center;gap:4px}
   .lgrid .opt b{font-size:22px;font-weight:400}
@@ -686,6 +715,13 @@
     <div class="date" id="d"></div>
     <div class="hello" id="h"></div>
     <div class="wx" id="wx"><span class="wi" id="wxI">⛅</span><span class="wt" id="wxT">--°</span><span class="wd"><b id="wxC">الطقس</b><small id="wxD">جاري التحميل…</small></span><div class="wxx" id="wxX"></div><div class="wxf" id="wxF"></div></div>
+  </section>
+
+  <section class="card hero" id="hero">
+    <div class="hbrand"><div class="slogo on" id="hLogo"></div><b id="hModel"></b></div>
+    <div class="hcar" id="hCar"></div>
+    <div class="hroad"></div>
+    <div class="hstats"><div><i>السرعة</i><b id="hSpd">0</b><small>كم/س</small></div><div><i>المسافة</i><b id="hKm">0.0</b><small>كم</small></div><div><i>أعلى سرعة</i><b id="hMax">0</b><small>كم/س</small></div></div>
   </section>
 
   <section class="card mapc" id="mapc">
@@ -757,6 +793,7 @@
     <h2>الإعدادات <button class="close" data-close="ov" aria-label="إغلاق">✕</button></h2>
     <div class="stabs" id="stabs">
       <button class="on" data-p="look">🎨<span>الشكل</span></button>
+      <button data-p="mycar">🚙<span>سيارتي</span></button>
       <button data-p="speed">🏎️<span>العداد</span></button>
       <button data-p="wx">⛅<span>الطقس</span></button>
       <button data-p="apps">📲<span>التطبيقات</span></button>
@@ -775,6 +812,17 @@
         <div><h3><i>🗂️</i>شكل البطاقات</h3><div class="row" id="cardRow"></div></div>
         <div><h3><i>🔲</i>شكل الأيقونات</h3><div class="row" id="iconRow"></div></div>
       </section>
+    </div>
+
+    <div class="spage" data-p="mycar">
+      <section class="sgroup"><h3><i>🚙</i>شكل سيارتك</h3><div class="row" id="carTypeRow"></div></section>
+      <section class="sgroup"><h3><i>🎨</i>لون سيارتك</h3><div class="colgrid" id="carColRow"></div></section>
+      <section class="sgroup"><h3><i>✍️</i>اسم الموديل</h3><input class="devsearch" id="carModel" placeholder="مثلاً: لاندكروزر 2025" maxlength="28" autocomplete="off">
+        <p class="note">يطلع فوق سيارتك في تصميم «سيارتي». والماركة تختارها من قسم «العداد».</p></section>
+      <section class="sgroup"><h3><i>📷</i>صورة سيارتك الحقيقية</h3>
+        <div class="row"><button class="opt" id="carPhotoBtn">📷 حط صورة سيارتك</button><button class="opt" id="carPhotoDel">🗑️ ارجع للرسمة</button></div>
+        <input type="file" id="carPhotoIn" accept="image/*" hidden>
+        <p class="note">أحلى شي صورة من الجنب وخلفيتها سادة.</p></section>
     </div>
 
     <div class="spage" data-p="speed">
@@ -920,7 +968,7 @@ function sdialBuild(){
   g.innerHTML=h;
   const p=$('sArc'),L=p.getTotalLength();p.style.strokeDasharray=L;p.dataset.l=L;sdialSet(SPD.cur);
 }
-function sdialSet(v){sbarSet(v);const p=$('sArc'),n=$('sNdl');if(!p||!n)return;const f=Math.min(v,SPD.max)/SPD.max,L=+p.dataset.l;
+function sdialSet(v){sbarSet(v);if($('hSpd'))$('hSpd').textContent=Math.round(v);const p=$('sArc'),n=$('sNdl');if(!p||!n)return;const f=Math.min(v,SPD.max)/SPD.max,L=+p.dataset.l;
   p.style.strokeDashoffset=L*(1-f);n.setAttribute('transform','rotate('+(-135+270*f)+' 150 150)');$('spd').textContent=Math.round(v);}
 function dist(a,b){const R=6371000,t=Math.PI/180,x=(b.latitude-a.latitude)*t,y=(b.longitude-a.longitude)*t,h=Math.sin(x/2)**2+Math.cos(a.latitude*t)*Math.cos(b.latitude*t)*Math.sin(y/2)**2;return 2*R*Math.asin(Math.sqrt(h))}
 function speedOn(){
@@ -934,7 +982,7 @@ function speedOn(){
 }
 function speedOff(){if(SPD.watch!==null){navigator.geolocation.clearWatch(SPD.watch);SPD.watch=null}}
 (function anim(){SPD.cur+=(SPD.target-SPD.cur)*.12;if(Math.abs(SPD.target-SPD.cur)<.05)SPD.cur=SPD.target;if(SPD.on)sdialSet(SPD.cur);requestAnimationFrame(anim)})();
-function speedSync(){const on=['speedo','hud','twin','retro','bar','luxe','mapfull'].includes(S.layout);SPD.on=on;if(on){if(!$('sNdl'))sdialBuild();speedOn()}else speedOff()}
+function speedSync(){const on=['speedo','hud','twin','retro','bar','luxe','mapfull','mycar'].includes(S.layout);SPD.on=on;if(on){if(!$('sNdl'))sdialBuild();speedOn()}else speedOff()}
 
 function applyAll(){
   const t=THEMES[S.theme], r=document.documentElement.style;
@@ -959,7 +1007,7 @@ const LAYOUTS=[['classic','🪟','كلاسيكي'],['sport','🏁','رياضي']
   ['cockpit','🎛️','لوحة العدادات'],['drive','🚗','وضع السواقة'],['split','🪟','الشاشة المقسومة'],['neon','🛸','الكوكبي'],
   ['speedo','🏎️','عداد السرعة'],['hud','🟢','شاشة HUD'],['twin','⏱️','عدادين فخم'],
   ['retro','🕰️','عداد كلاسيكي قديم'],['bar','🏁','الشريط الرياضي'],['luxe','👑','الفخم الذهبي'],
-  ['mapfull','🗺️','الخريطة الحيّة'],['mapplay','🧭','خريطة ومشغل']];
+  ['mapfull','🗺️','الخريطة الحيّة'],['mapplay','🧭','خريطة ومشغل'],['mycar','🚙','سيارتي']];
 (function(){const r=$('layoutRow');LAYOUTS.forEach(([k,ic,n])=>{const b=document.createElement('button');b.className='opt'+(k===S.layout?' on':'');
   b.innerHTML='<b>'+ic+'</b>'+n;b.onclick=()=>{r.querySelectorAll('.opt').forEach(x=>x.classList.toggle('on',x===b));save('layout',k);applyAll();tick();};r.appendChild(b);});})();
 makeOpts('iconRow',[['round','مربع ناعم'],['circle','دائري'],['glow','مضيء'],['bare','بدون خلفية']],S.icons,v=>{save('icons',v);applyAll();});
@@ -1303,7 +1351,8 @@ function sbarSet(v){const b=$('sbar');if(!b)return;if(!b.children.length)b.inner
   const n=Math.round(Math.min(v,SPD.max)/SPD.max*24);[...b.children].forEach((x,i)=>x.classList.toggle('on',i<n));}
 function fmtDur(s){s=Math.floor(s);const h=Math.floor(s/3600),m=Math.floor(s%3600/60);return h?h+':'+String(m).padStart(2,'0')+'س':m+':'+String(s%60).padStart(2,'0')}
 function tripDraw(){const mx=Math.round(TRIP.max),km=(TRIP.m/1000).toFixed(1),av=TRIP.t>0?Math.round(TRIP.m/TRIP.t*3.6):0,du=fmtDur(TRIP.t);
-  [['tMax','sMax',mx],['tKm','sKm',km],['tAvg','sAvg',av],['tDur','sDur',du]].forEach(([a,b,v])=>{$(a).textContent=v;if($(b))$(b).textContent=v});}
+  [['tMax','sMax',mx],['tKm','sKm',km],['tAvg','sAvg',av],['tDur','sDur',du]].forEach(([a,b,v])=>{$(a).textContent=v;if($(b))$(b).textContent=v});
+  if($('hKm')){$('hKm').textContent=km;$('hMax').textContent=mx;}}
 function tripTick(v,now){ // v كم/س
   if(tripLastT&&v>0){const dt=Math.min((now-tripLastT)/1000,5);TRIP.m+=v/3.6*dt;TRIP.t+=dt;}
   tripLastT=now;if(v>TRIP.max)TRIP.max=v;store.set('trip',JSON.stringify(TRIP));tripDraw();
@@ -1314,7 +1363,7 @@ function beep(){try{const A=window.AudioContext||window.webkitAudioContext,c=bee
   g.gain.setValueAtTime(.0001,c.currentTime+d);g.gain.exponentialRampToValueAtTime(.4,c.currentTime+d+.02);g.gain.exponentialRampToValueAtTime(.0001,c.currentTime+d+.18);o.start(c.currentTime+d);o.stop(c.currentTime+d+.2);})}catch(e){}}
 const BRANDS=['تويوتا','لكزس','نيسان','هيونداي','كيا','فورد','شفروليه','جي إم سي','هوندا','مازدا','ميتسوبيشي','سوزوكي','جيب','دودج','رام','كاديلاك','لاند روفر','رنج روفر','بي إم دبليو','مرسيدس','أودي','فولكس واجن','بورش','جينيسيس','إنفينيتي','شانجان','جيلي','إم جي','هافال','شيري','تسلا','بيجو'];
 function logoHTML(){const v=store.get('spLogo','');if(v==='img'){const d=store.get('spLogoImg','');return d?'<img src="'+d+'" alt="">':''}return v?'<span>'+v.replace(/[<>&]/g,'')+'</span>':''}
-function logoDraw(){const v=store.get('spLogo',''),h=logoHTML();$('slogo').classList.toggle('on',!!v);$('slogo').innerHTML=h;
+function logoDraw(){const v=store.get('spLogo',''),h=logoHTML();$('slogo').classList.toggle('on',!!v);$('slogo').innerHTML=h;if($('hLogo'))$('hLogo').innerHTML=h;
   const p=$('bPrev');if(p)p.innerHTML=h||'<span style="opacity:.4">—</span>';}
 function brandGrid(){
   const g=$('spLogoRow'),q=($('brandSearch').value||'').trim(),cur=store.get('spLogo',''),img=store.get('spLogoImg','');g.innerHTML='';
@@ -1385,6 +1434,52 @@ $('icPhoto').onclick=()=>$('icFile').click();
 $('icFile').onchange=()=>{const f=$('icFile').files[0];if(!f)return;const img=new Image();img.onload=()=>{const k=Math.min(1,192/Math.max(img.width,img.height)),c=document.createElement('canvas');
   c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);c.getContext('2d').drawImage(img,0,0,c.width,c.height);IE.a.img=c.toDataURL('image/png');IE.a.i='';icDraw();URL.revokeObjectURL(img.src);$('icFile').value='';};img.src=URL.createObjectURL(f);};
 $('icSave').onclick=()=>{const a=IE.a;a.n=($('icName').value||a.orig.n).trim();DOCK[IE.idx]=a;saveDock();$('icOv').classList.remove('show');toast('تم تخصيص '+a.n+' ✅');};
+
+/* ===== سيارتي: رسمة سيارة من تصميمنا بلونك ===== */
+const CAR_COLS=[['#f5f5f4','أبيض لؤلؤي'],['#111827','أسود'],['#9ca3af','فضي'],['#4b5563','رمادي'],['#b91c1c','أحمر'],['#1d4ed8','أزرق'],['#0f766e','أخضر'],['#a16207','ذهبي'],['#d6c7a1','بيج']];
+function carSVG(type,c){
+  const W='#0b1220',G='url(#cgl)',R=(x)=>`<g transform="translate(${x} 300)"><circle r="58" fill="#0a0a0a"/><circle r="40" fill="#2b2f36"/><circle r="40" fill="url(#rim)"/>${[0,60,120,180,240,300].map(a=>`<rect x="-4" y="-38" width="8" height="30" rx="3" fill="#c7ccd4" transform="rotate(${a})"/>`).join('')}<circle r="10" fill="#9aa1ab"/></g>`;
+  const defs=`<defs><linearGradient id="cbody" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".35" stop-color="#fff" stop-opacity=".08"/><stop offset=".7" stop-color="#000" stop-opacity=".05"/><stop offset="1" stop-color="#000" stop-opacity=".45"/></linearGradient>
+   <linearGradient id="cgl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5b7aa0"/><stop offset=".5" stop-color="#1b2635"/><stop offset="1" stop-color="#0d131c"/></linearGradient>
+   <radialGradient id="rim"><stop offset="0" stop-color="#e5e7eb" stop-opacity=".9"/><stop offset="1" stop-color="#4b5563" stop-opacity=".9"/></radialGradient>
+   <radialGradient id="cshd"><stop offset="0" stop-color="#000" stop-opacity=".7"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient></defs>`;
+  let body,win,x1=190,x2=650;
+  if(type==='suv'){
+    body=`M70 300 L70 205 Q72 178 100 172 L190 162 L250 92 Q262 80 285 80 L610 80 Q640 80 655 100 L705 170 L770 182 Q805 190 808 225 L810 300 Z`;
+    win=`<path d="M262 160 L300 100 Q306 94 318 94 L440 94 L440 160 Z" fill="${G}"/><path d="M455 94 L600 94 Q620 94 632 110 L668 160 L455 160 Z" fill="${G}"/><rect x="446" y="94" width="9" height="66" fill="${W}"/>`;
+    x1=200;x2=660;
+  }else if(type==='pickup'){
+    body=`M60 300 L60 210 Q62 185 92 178 L180 168 L240 98 Q252 86 274 86 L470 86 Q490 86 492 106 L496 178 L800 178 Q820 180 822 205 L824 300 Z`;
+    win=`<path d="M252 164 L290 106 Q296 100 308 100 L380 100 L380 164 Z" fill="${G}"/><path d="M394 100 L468 100 Q476 100 477 110 L480 164 L394 164 Z" fill="${G}"/><path d="M500 186 L812 186" stroke="#000" stroke-opacity=".25" stroke-width="4"/>`;
+    x1=200;x2=690;
+  }else{
+    body=`M60 300 L58 232 Q60 205 92 198 L210 182 Q260 120 320 104 Q360 94 420 94 L540 96 Q590 98 630 130 L690 180 L790 196 Q818 202 820 232 L822 300 Z`;
+    win=`<path d="M246 178 Q290 126 340 112 Q370 106 420 106 L430 106 L430 178 Z" fill="${G}"/><path d="M445 106 L530 108 Q570 110 600 136 L640 178 L445 178 Z" fill="${G}"/>`;
+    x1=200;x2=670;
+  }
+  return `<svg viewBox="0 0 880 380" xmlns="http://www.w3.org/2000/svg">${defs}<ellipse cx="440" cy="350" rx="410" ry="26" fill="url(#cshd)"/><g${type==='pickup'?' transform="translate(880 0) scale(-1 1)"':''}>
+    <path d="${body}" fill="${c}"/><path d="${body}" fill="url(#cbody)"/>${win}
+    <path d="M90 236 L800 236" stroke="#000" stroke-opacity=".18" stroke-width="3"/>
+    ${type==='pickup'?'<rect x="62" y="200" width="26" height="14" rx="6" fill="#fef3c7"/><rect x="800" y="196" width="22" height="12" rx="5" fill="#ef4444"/>':`<rect x="782" y="${type==='suv'?196:206}" width="26" height="14" rx="6" fill="#fef3c7"/><rect x="62" y="${type==='suv'?200:212}" width="22" height="12" rx="5" fill="#ef4444"/>`}
+    <path d="M${x1-75} 300 a75 75 0 0 1 150 0" fill="${W}"/><path d="M${x2-75} 300 a75 75 0 0 1 150 0" fill="${W}"/>${R(x1)}${R(x2)}</g></svg>`;
+}
+function heroDraw(){
+  const ph=store.get('carPhoto','');$('hCar').innerHTML=ph?'<img src="'+ph+'" alt="">':carSVG(store.get('carType','suv'),store.get('carCol','#f5f5f4'));
+  $('hModel').textContent=store.get('carModel','');
+}
+function myCarSettings(){
+  makeOpts('carTypeRow',[['suv','🚙 جيب'],['sedan','🚗 سيدان'],['pickup','🛻 بيك أب']],store.get('carType','suv'),v=>{store.set('carType',v);heroDraw()});
+  const cg=$('carColRow');cg.innerHTML='';const cur=store.get('carCol','#f5f5f4');
+  CAR_COLS.forEach(([c,n])=>{const b=document.createElement('button');b.style.background=c;b.title=n;b.className=c===cur?'on':'';b.onclick=()=>{store.set('carCol',c);myCarSettings();heroDraw()};cg.appendChild(b)});
+  $('carModel').value=store.get('carModel','');
+}
+$('carModel').oninput=()=>{store.set('carModel',$('carModel').value.trim());heroDraw()};
+$('carPhotoBtn').onclick=()=>$('carPhotoIn').click();
+$('carPhotoDel').onclick=()=>{store.set('carPhoto','');heroDraw();toast('رجعنا للرسمة ✅')};
+$('carPhotoIn').onchange=()=>{const f=$('carPhotoIn').files[0];if(!f)return;const img=new Image();img.onload=()=>{const k=Math.min(1,1100/Math.max(img.width,img.height)),c=document.createElement('canvas');
+  c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+  if(!store.set('carPhoto',c.toDataURL('image/png')))store.set('carPhoto',c.toDataURL('image/jpeg',.8));heroDraw();URL.revokeObjectURL(img.src);$('carPhotoIn').value='';};img.src=URL.createObjectURL(f);};
+myCarSettings();heroDraw();logoDraw();
 </script>
 <div style="position:fixed;bottom:4px;left:10px;z-index:5;font-family:Tajawal,system-ui,sans-serif;font-size:11px;font-weight:700;color:#fff;opacity:.5;pointer-events:none;text-shadow:0 1px 2px #000">برمجة أبو نواف</div>
 </body>
