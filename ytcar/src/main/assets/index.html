@@ -112,6 +112,13 @@ body.full .player{grid-column:1}
 .x{border:0;background:var(--btn);color:var(--txt);width:40px;height:40px;border-radius:12px;font-size:20px;cursor:pointer}
 .toast{position:fixed;bottom:110px;left:50%;transform:translateX(-50%);background:#000c;color:#fff;padding:10px 18px;border-radius:14px;font-size:15px;font-weight:700;opacity:0;transition:.3s;z-index:10;pointer-events:none}
 .toast.show{opacity:1}
+
+/* ===== التحكم بالحجم ===== */
+body.dk-s .dock .tile{height:clamp(48px,9vh,60px);font-size:12px}body.dk-s .dock .tile .ti{width:26px;height:26px;font-size:20px}
+body.dk-l .dock .tile{height:clamp(84px,17vh,112px);font-size:16px}body.dk-l .dock .tile .ti{width:clamp(44px,9vh,58px);height:clamp(44px,9vh,58px);font-size:34px}
+body.sd-s .app{grid-template-columns:clamp(210px,21vw,270px) minmax(0,1fr)}
+body.sd-l .app{grid-template-columns:clamp(320px,36vw,470px) minmax(0,1fr)}
+body.full .app{grid-template-columns:1fr!important}
 </style>
 </head>
 <body>
@@ -160,6 +167,10 @@ body.full .player{grid-column:1}
   <h3>الإعدادات <button class="x" data-close>✕</button></h3>
   <h4>الألوان</h4>
   <div class="themes" id="themes"></div>
+  <h4>حجم الأيقونات اللي تحت</h4>
+  <div class="row" id="dkRow"></div>
+  <h4>عرض الساعة والأزرار الملونة</h4>
+  <div class="row" id="sdRow"></div>
   <h4>شكل الساعة</h4>
   <div class="row" id="fmtRow"></div>
   <h4>الأزرار الملونة</h4>
@@ -220,6 +231,11 @@ function opts(row,list,cur,fn){const r=$(row);list.forEach(([v,n])=>{const b=doc
 
 /* ===== الساعة ===== */
 let FMT=store.get('fmt','12');
+let DK=store.get('dk','m'),SD=store.get('sd','m');
+function applySize(){document.body.classList.remove('dk-s','dk-l','sd-s','sd-l');if(DK!=='m')document.body.classList.add('dk-'+DK);if(SD!=='m')document.body.classList.add('sd-'+SD)}
+applySize();
+opts('dkRow',[['s','صغير'],['m','وسط'],['l','كبير']],DK,v=>{DK=v;store.set('dk',v);applySize()});
+opts('sdRow',[['s','ضيّق'],['m','وسط'],['l','عريض']],SD,v=>{SD=v;store.set('sd',v);applySize()});
 opts('fmtRow',[['12','12 ساعة'],['24','24 ساعة']],FMT,v=>{FMT=v;store.set('fmt',v);tick()});
 const days=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
 const months=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
