@@ -460,6 +460,45 @@ const SCENES={
    <path d="M520 830 q8 -40 0 -60 q-6 20 -10 10 q-8 30 10 50z" fill="#ff8a2a" opacity=".85"/><path d="M490 800 Q520 700 560 640" stroke="#d8c4b0" stroke-width="10" fill="none" opacity=".15"/>
    ${horse(1040,880,1.3,1)}${horse(1260,900,1.1,-1)}
    <path d="M0 950 Q960 900 1920 950 L1920 1080 L0 1080Z" fill="#1f1108"/>${grass}`)}},
+ 'sc-madinah':{n:'🕌 المدينة المنورة',ac:'#34d399',svg(){const r=rnd(41);
+  const minaret=(x,h,w)=>`<g fill="#0b1f1a"><rect x="${x-w/2}" y="${900-h}" width="${w}" height="${h}"/><rect x="${x-w/2-8}" y="${900-h*.62}" width="${w+16}" height="10"/><rect x="${x-w/2-8}" y="${900-h*.85}" width="${w+16}" height="10"/><path d="M${x-w/2} ${900-h} Q${x} ${900-h-70} ${x+w/2} ${900-h}Z"/><rect x="${x-2}" y="${900-h-110}" width="4" height="44"/><path d="M${x+6} ${900-h-112} a10 10 0 1 0 0 18 a8 8 0 1 1 0 -18z"/></g>`;
+  let lamps='';for(let i=0;i<26;i++){const x=120+i*68;lamps+=`<circle cx="${x}" cy="${860+(i%2)*6}" r="5" fill="#ffd98a" opacity="${(.6+r()*.4).toFixed(2)}"/>`}
+  let ub='';for(let x=60;x<1880;x+=150){ub+=`<path d="M${x} 1000 L${x+60} 940 L${x+120} 1000Z" fill="#e8efe9" opacity=".18"/><path d="M${x+60} 940 L${x+60} 1010" stroke="#e8efe9" stroke-width="3" opacity=".25"/>`}
+  return SVG(`<linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#071a2b"/><stop offset=".55" stop-color="#174a5a"/><stop offset="1" stop-color="#e3a56b"/></linearGradient>
+   <radialGradient id="dg" cx=".4" cy=".3"><stop offset="0" stop-color="#4ade80"/><stop offset="1" stop-color="#15803d"/></radialGradient>
+   <radialGradient id="gl"><stop offset="0" stop-color="#34d399" stop-opacity=".45"/><stop offset="1" stop-color="#34d399" stop-opacity="0"/></radialGradient>`,
+   `<rect width="1920" height="1080" fill="url(#sk)"/>${stars(r,120,520)}<path d="M1560 150 a70 70 0 1 0 46 124 a56 56 0 1 1 -46 -124z" fill="#fff4cf"/>
+   <circle cx="960" cy="700" r="330" fill="url(#gl)"/>
+   <rect x="380" y="760" width="1160" height="140" fill="#0e2a24"/>
+   <rect x="890" y="700" width="140" height="70" fill="#0e2a24"/>
+   <path d="M860 712 Q960 500 1060 712Z" fill="url(#dg)"/><rect x="956" y="540" width="8" height="40" fill="#fde68a"/><circle cx="960" cy="532" r="9" fill="#fde68a"/>
+   ${minaret(420,420,46)}${minaret(640,380,40)}${minaret(1280,380,40)}${minaret(1500,420,46)}${minaret(300,300,34)}${minaret(1620,300,34)}
+   ${lamps}<rect y="900" width="1920" height="180" fill="#0a1714"/>${ub}`)}},
+ 'sc-makkah':{n:'🕋 مكة المكرمة',ac:'#fbbf24',svg(){const r=rnd(53);
+  let ring='';for(let k=0;k<5;k++){const rx=360+k*120,ry=70+k*24;ring+=`<ellipse cx="960" cy="880" rx="${rx}" ry="${ry}" fill="none" stroke="#f8fafc" stroke-width="${10-k}" stroke-dasharray="3 9" opacity="${(.55-k*.08).toFixed(2)}"/>`}
+  let lights='';for(let i=0;i<180;i++){const x=r()*1920,y=620+r()*200;lights+=`<rect x="${x|0}" y="${y|0}" width="3" height="5" fill="#ffe7a8" opacity="${(.3+r()*.6).toFixed(2)}"/>`}
+  return SVG(`<linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#050816"/><stop offset=".6" stop-color="#1e1b4b"/><stop offset="1" stop-color="#7c4a2a"/></linearGradient>
+   <radialGradient id="gl"><stop offset="0" stop-color="#ffe7a8" stop-opacity=".55"/><stop offset="1" stop-color="#ffe7a8" stop-opacity="0"/></radialGradient>
+   <linearGradient id="fl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e5e7eb"/><stop offset="1" stop-color="#94a3b8"/></linearGradient>`,
+   `<rect width="1920" height="1080" fill="url(#sk)"/>${stars(r,140,420)}
+   ${ridge(r,640,160,70,'#120d1f',.95)}${lights}
+   <rect x="1460" y="250" width="120" height="460" fill="#141026"/><rect x="1478" y="190" width="84" height="70" fill="#141026"/><circle cx="1520" cy="320" r="40" fill="#fef3c7" opacity=".9"/><circle cx="1520" cy="320" r="34" fill="none" stroke="#1e1b4b" stroke-width="3"/><path d="M1520 190 L1520 120" stroke="#fde68a" stroke-width="6"/><path d="M1530 112 a14 14 0 1 0 0 24 a11 11 0 1 1 0 -24z" fill="#fde68a"/>
+<g transform="translate(0 -190) scale(1 1.05)"><rect x="300" y="700" width="1320" height="80" fill="#1a1530"/><g fill="#1a1530">${[340,560,1360,1580].map(x=>`<rect x="${x-14}" y="520" width="28" height="200"/><path d="M${x-14} 520 Q${x} 470 ${x+14} 520Z"/>`).join('')}</g>
+   <rect y="780" width="1920" height="300" fill="url(#fl)"/><circle cx="960" cy="860" r="420" fill="url(#gl)"/>${ring}
+   <path d="M890 900 L890 790 L1030 790 L1030 900 Z" fill="#0b0b0f"/><path d="M890 810 L1030 810 L1030 826 L890 826Z" fill="#d4a017"/><path d="M1000 900 L1000 846 L1020 846 L1020 900Z" fill="#b8860b"/>
+   <path d="M860 900 L890 900 L890 790 L860 805Z" fill="#141418"/><path d="M860 805 L890 790 L890 810 L860 823Z" fill="#a37b12"/></g><rect y="780" width="1920" height="300" fill="#94a3b8" opacity=".9"/>`)}},
+ 'sc-castle':{n:'🏰 قلعة الهلال',ac:'#f87171',svg(){const r=rnd(61);
+  const tower=(x,y,w,h)=>{let t=`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#140b0b"/>`;for(let i=0;i<w;i+=22)t+=`<rect x="${x+i}" y="${y-18}" width="13" height="18" fill="#140b0b"/>`;t+=`<rect x="${x+w/2-6}" y="${y+40}" width="12" height="22" fill="#ffb347" opacity=".9"/>`;return t};
+  return SVG(`<linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0c0a1e"/><stop offset=".6" stop-color="#3b1d2e"/><stop offset="1" stop-color="#8a3b2a"/></linearGradient>
+   <radialGradient id="mg"><stop offset="0" stop-color="#fff5d6" stop-opacity=".5"/><stop offset="1" stop-color="#fff5d6" stop-opacity="0"/></radialGradient>`,
+   `<rect width="1920" height="1080" fill="url(#sk)"/>${stars(r,200,600)}<circle cx="1420" cy="230" r="220" fill="url(#mg)"/><path d="M1420 130 a100 100 0 1 0 70 175 a82 82 0 1 1 -70 -175z" fill="#fff4cf"/>
+   ${ridge(r,760,120,90,'#2a1420',.8)}
+   <path d="M420 1080 L560 640 Q760 560 960 600 Q1160 560 1360 640 L1500 1080Z" fill="#1d0f12"/>
+   ${tower(640,470,120,200)}${tower(1140,470,120,200)}${tower(860,380,180,260)}<rect x="760" y="560" width="400" height="110" fill="#140b0b"/>
+   ${Array.from({length:18},(_,i)=>`<rect x="${760+i*22}" y="544" width="13" height="16" fill="#140b0b"/>`).join('')}
+   <path d="M930 670 L930 610 Q950 585 970 610 L970 670Z" fill="#ffb347" opacity=".8"/>
+   <path d="M950 380 L950 300" stroke="#140b0b" stroke-width="5"/><path d="M950 300 L1010 316 L950 332Z" fill="#b91c1c"/>
+   ${ridge(r,960,60,60,'#0e0708',1)}`)}},
  'sc-aurora':{n:'🌌 الشفق القطبي',ac:'#34d399',svg(){const r=rnd(23);let trees='';
   for(let x=-20;x<1960;x+=38+r()*30){const h=120+r()*170,y=900+r()*40;trees+=`<path d="M${x|0} ${y|0} l${-h*.22|0} 0 l${h*.22|0} ${-h|0} l${h*.22|0} ${h|0}z" fill="#06141a"/>`}
   return SVG(`<linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#020617"/><stop offset="1" stop-color="#0b2a3a"/></linearGradient>
