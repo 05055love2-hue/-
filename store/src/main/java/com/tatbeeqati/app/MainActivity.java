@@ -52,6 +52,16 @@ public class MainActivity extends Activity {
             public void onPageStarted(WebView v, String url, Bitmap f) { failed = false; }
 
             @Override
+            public void onPageFinished(WebView v, String url) {
+                // رقم نسخة التطبيق تحت في الزاوية
+                String ver = "";
+                try { ver = getPackageManager().getPackageInfo(getPackageName(), 0).versionName; } catch (Exception ignored) { }
+                v.evaluateJavascript("(function(){if(document.getElementById('appVer'))return;var d=document.createElement('div');d.id='appVer';"
+                    + "d.textContent='تطبيقاتي • نسخة " + ver + "';d.style.cssText='position:fixed;bottom:6px;left:10px;z-index:99;font:700 11px system-ui,sans-serif;color:#6e6e73;opacity:.7;pointer-events:none';"
+                    + "document.body.appendChild(d)})()", null);
+            }
+
+            @Override
             public void onReceivedError(WebView v, WebResourceRequest r, WebResourceError e) {
                 if (r.isForMainFrame() && !failed) {
                     failed = true;
