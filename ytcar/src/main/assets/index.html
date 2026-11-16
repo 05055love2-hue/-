@@ -64,7 +64,10 @@ body.T-day .card{box-shadow:0 6px 24px rgba(15,23,42,.08)}
 .q3{background:linear-gradient(135deg,#f59e0b,#d97706)}
 .q4{background:linear-gradient(135deg,#ec4899,#be185d)}
 /* ===== الشريط السفلي ===== */
-.dock{grid-row:2;grid-column:1/3;display:flex;gap:10px;padding:10px;overflow-x:auto;scrollbar-width:none}
+.dock{grid-row:2;grid-column:1/3;display:grid;grid-template-columns:repeat(6,1fr);gap:10px;padding:10px}
+.dock .tile{min-width:0;width:100%}
+.dock .tile span:last-child{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 4px}
+.dock .tile.add{opacity:.55;border-style:dashed}
 .dock::-webkit-scrollbar{display:none}
 .tile{flex:0 0 auto;min-width:92px;height:clamp(64px,13vh,84px);border:0;border-radius:20px;background:var(--btn);border:1px solid var(--line);color:var(--txt);font-family:inherit;font-size:14px;font-weight:700;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;padding:0 10px}
 .tile .ti{width:clamp(30px,6.5vh,40px);height:clamp(30px,6.5vh,40px);border-radius:12px;display:grid;place-items:center;font-size:26px;overflow:hidden}
@@ -120,6 +123,8 @@ body.full .player{grid-column:1}
       <button class="chip ver" id="bVer">🔄 <span id="verTxt">يوتيوب</span></button>
       <button class="chip" id="bHome">🏠 الرئيسية</button>
       <button class="chip" id="bFull">⛶ <span id="fullTxt">تكبير</span></button>
+      <button class="chip" id="bAll">▦ التطبيقات</button>
+      <button class="chip" id="bSet">⚙️ الإعدادات</button>
     </div>
     <div class="box" id="box">
       <div class="ph" id="ph"><div class="big"></div><b>الفيديو يظهر هنا</b><span>ابحث وشغّل أي مقطع وأنت في الشاشة الرئيسية</span></div>
@@ -269,12 +274,15 @@ document.querySelectorAll('[data-q]').forEach(b=>{let t,long=false;
   b.onpointerup=b.onpointerleave=b.onpointercancel=()=>clearTimeout(t);
   b.onclick=()=>{if(!long)quick(b.dataset.q)};
   b.oncontextmenu=e=>e.preventDefault()});
+$('bAll').onclick=()=>openAll();
+$('bSet').onclick=()=>$('setOv').classList.add('show');
 $('setHome').onclick=()=>{if(NATIVE&&Native.openAction&&Native.openAction('android.settings.HOME_SETTINGS'))return;go('intent:#Intent;action=android.settings.HOME_SETTINGS;end')};
 
 /* ===== الشريط السفلي ===== */
 const DEF=[{n:'واتساب',pkg:'com.whatsapp',e:'💬'},{n:'سبوتيفاي',pkg:'com.spotify.music',e:'🎵'},{n:'ويز',pkg:'com.waze',e:'🚙'},{n:'أنغامي',pkg:'com.anghami',e:'🎶'}];
 let DOCK;try{DOCK=JSON.parse(store.get('dock','null'))}catch(e){}
-if(!Array.isArray(DOCK)){DOCK=NATIVE?apps().filter(a=>!/settings|إعدادات/i.test(a.n)).slice(0,5):DEF;if(NATIVE)store.set('dock',JSON.stringify(DOCK))}
+if(!Array.isArray(DOCK)){DOCK=NATIVE?apps().filter(a=>!/settings|إعدادات/i.test(a.n)).slice(0,6):DEF;if(NATIVE)store.set('dock',JSON.stringify(DOCK))}
+const MAXD=6;if(DOCK.length>MAXD)DOCK=DOCK.slice(0,MAXD);
 function tileEl(a,cls){const b=document.createElement('button');b.className='tile'+(cls?' '+cls:'');
   b.innerHTML='<span class="ti">'+(a.img?'<img src="'+a.img+'" alt="">':(a.e||'📱'))+'</span><span></span>';b.lastChild.textContent=a.n;return b}
 function openApp(a){if(NATIVE){if(Native.open(a.pkg))toast('يفتح '+a.n+'…');else toast('التطبيق مو موجود في الشاشة، شيله واختر غيره');return}toast('يفتح '+a.n+' داخل التطبيق')}
@@ -282,9 +290,7 @@ function drawDock(){const d=$('dock');d.innerHTML='';
   DOCK.forEach((a,i)=>{const b=tileEl(a);let t;b.onclick=()=>{if(b.classList.contains('shake')){DOCK.splice(i,1);saveDock();toast('انشال '+a.n);return}openApp(a)};
     b.onpointerdown=()=>{t=setTimeout(()=>{d.querySelectorAll('.tile').forEach(x=>x.classList.add('shake'));toast('اضغط على التطبيق اللي تبي تشيله')},700)};
     b.onpointerup=b.onpointerleave=()=>clearTimeout(t);d.appendChild(b)});
-  const all=tileEl({n:'كل التطبيقات',e:'▦'},'all');all.onclick=openAll;d.insertBefore(all,d.firstChild);
-  const add=tileEl({n:'أضف',e:'+'},'add');add.onclick=()=>openAdd();d.appendChild(add);
-  const s=tileEl({n:'الإعدادات',e:'⚙️'},'set');s.onclick=()=>$('setOv').classList.add('show');d.appendChild(s)}
+  for(let k=DOCK.length;k<MAXD;k++){const add=tileEl({n:'أضف',e:'+'},'add');add.onclick=()=>openAdd();d.appendChild(add)}}
 function saveDock(){store.set('dock',JSON.stringify(DOCK));drawDock()}
 document.addEventListener('pointerdown',e=>{if(!e.target.closest('#dock'))$('dock').querySelectorAll('.shake').forEach(x=>x.classList.remove('shake'))});
 let ALL=null,PICK=null;
@@ -292,7 +298,7 @@ function openAdd(k){PICK=typeof k==='string'?k:null;if(!ALL){ALL=(NATIVE?apps():
   $('addOv').querySelector('h3').firstChild.textContent=PICK?'اختر تطبيق '+QN[PICK]+' ':'أضف تطبيق ';
   $('q').value='';drawList();$('addOv').classList.add('show')}
 function drawList(){const q=$('q').value.trim().toLowerCase(),L=$('appList');L.innerHTML='';
-  ALL.filter(a=>!q||a.n.toLowerCase().includes(q)).forEach(a=>{const b=tileEl(a);b.onclick=()=>{$('addOv').classList.remove('show');if(PICK){store.set('q_'+PICK,JSON.stringify({n:a.n,pkg:a.pkg}));toast('زر '+QN[PICK]+' صار يفتح '+a.n);return}if(!DOCK.some(x=>x.pkg===a.pkg))DOCK.push(a);saveDock();toast('انضاف '+a.n)};L.appendChild(b)})}
+  ALL.filter(a=>!q||a.n.toLowerCase().includes(q)).forEach(a=>{const b=tileEl(a);b.onclick=()=>{$('addOv').classList.remove('show');if(PICK){store.set('q_'+PICK,JSON.stringify({n:a.n,pkg:a.pkg}));toast('زر '+QN[PICK]+' صار يفتح '+a.n);return}if(DOCK.some(x=>x.pkg===a.pkg)){toast(a.n+' موجود');return}if(DOCK.length>=MAXD){toast('الشريط فيه 6 تطبيقات بس، اضغط مطوّل على واحد وشيله أول');return}DOCK.push(a);saveDock();toast('انضاف '+a.n)};L.appendChild(b)})}
 $('q').oninput=drawList;
 function openAll(){if(!ALL){ALL=(NATIVE?apps():DEF).slice();ALL.sort((a,b)=>a.n.localeCompare(b.n,'ar'))}$('aq').value='';drawAll();$('allOv').classList.add('show')}
 function drawAll(){const q=$('aq').value.trim().toLowerCase(),L=$('allList');L.innerHTML='';
