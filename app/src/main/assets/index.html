@@ -672,6 +672,21 @@
   .hstats div{display:flex;flex-direction:column;align-items:center;min-width:8vw;padding:.8vh 1vw;border-radius:14px;background:rgba(15,23,42,.6);border:1px solid var(--line)}
   .hstats i{font-style:normal;font-size:clamp(10px,1vw,13px);color:var(--soft)} .hstats b{font-size:clamp(18px,2.4vw,32px);direction:ltr;line-height:1.1} .hstats small{font-size:10px;color:var(--soft)}
   @media (orientation:portrait){body.L-mycar main{grid-template-columns:1fr;grid-template-rows:2fr auto auto}body.L-mycar main>*{grid-column:1!important;grid-row:auto!important}}
+  /* سيارتي: عداد السرعة بالنص بدل السيارة */
+  body.L-mycar.MC-gauge .speedo,body.L-mycar.MC-both .speedo{display:flex;grid-column:2;grid-row:1;background:none;border:none;backdrop-filter:none;z-index:1}
+  body.L-mycar.MC-gauge .hero,body.L-mycar.MC-both .hero{z-index:2;pointer-events:none;justify-content:space-between}
+  body.L-mycar.MC-gauge .hcar,body.L-mycar.MC-gauge .hroad{visibility:hidden}
+  body.L-mycar.MC-gauge .hstats div:first-child,body.L-mycar.MC-both .hstats div:first-child{display:none}
+  body.L-mycar .speedo .strip,body.L-mycar .speedo .slogo,body.L-mycar .speedo .sstat{display:none!important}
+  body.L-mycar .sdial{height:74%;filter:drop-shadow(0 0 16px rgba(125,211,252,.35))}
+  body.L-mycar .sdial .arc{stroke:url(#mcg);stroke:#7dd3fc}
+  body.L-mycar .sread{transform:translateY(64%)} body.L-mycar .sread b{font-size:clamp(26px,4.2vw,60px);color:#fff;background:rgba(11,18,32,.75);padding:0 .25em;border-radius:.2em}
+  /* الاثنين: العداد على جنب والسيارة على الجنب الثاني */
+  body.L-mycar.MC-both .speedo{justify-self:start;align-self:center;width:44%;height:64%}
+  body.L-mycar.MC-both .sdial{height:100%}
+  body.L-mycar.MC-both .sread b{font-size:clamp(18px,2.6vw,38px)}
+  body.L-mycar.MC-both .hcar{padding-inline-start:44%;box-sizing:border-box}
+  body.L-mycar.MC-both .hcar svg{width:100%}
   .lgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
   .lgrid .opt{display:flex;flex-direction:column;align-items:center;gap:4px}
   .lgrid .opt b{font-size:22px;font-weight:400}
@@ -815,6 +830,7 @@
     </div>
 
     <div class="spage" data-p="mycar">
+      <section class="sgroup"><h3><i>🎯</i>وش يطلع بالنص</h3><div class="row" id="carViewRow"></div></section>
       <section class="sgroup"><h3><i>🚙</i>شكل سيارتك</h3><div class="row" id="carTypeRow"></div></section>
       <section class="sgroup"><h3><i>🎨</i>لون سيارتك</h3><div class="colgrid" id="carColRow"></div></section>
       <section class="sgroup"><h3><i>✍️</i>اسم الموديل</h3><input class="devsearch" id="carModel" placeholder="مثلاً: لاندكروزر 2025" maxlength="28" autocomplete="off">
@@ -987,7 +1003,7 @@ function speedSync(){const on=['speedo','hud','twin','retro','bar','luxe','mapfu
 function applyAll(){
   const t=THEMES[S.theme], r=document.documentElement.style;
   ['bg1','bg2','accent','soft','g1','g2'].forEach(k=>r.setProperty('--'+k,t[k]));
-  document.body.className='L-'+S.layout+' C-'+S.clock+' K-'+S.cards+' I-'+S.icons;
+  document.body.className='L-'+S.layout+' C-'+S.clock+' K-'+S.cards+' I-'+S.icons+' MC-'+store.get('carView','gauge');
   try{speedSync()}catch(e){}
   document.body.style.fontFamily=(FONTS[S.font]||FONTS.tajawal)[0]+',sans-serif';
   document.body.dataset.bg=S.bg;
@@ -1464,10 +1480,12 @@ function carSVG(type,c){
     <path d="M${x1-75} 300 a75 75 0 0 1 150 0" fill="${W}"/><path d="M${x2-75} 300 a75 75 0 0 1 150 0" fill="${W}"/>${R(x1)}${R(x2)}</g></svg>`;
 }
 function heroDraw(){
+  const mv=store.get('carView','gauge');document.body.classList.remove('MC-car','MC-gauge','MC-both');document.body.classList.add('MC-'+mv);
   const ph=store.get('carPhoto','');$('hCar').innerHTML=ph?'<img src="'+ph+'" alt="">':carSVG(store.get('carType','suv'),store.get('carCol','#f5f5f4'));
   $('hModel').textContent=store.get('carModel','');
 }
 function myCarSettings(){
+  makeOpts('carViewRow',[['gauge','🏎️ عداد السرعة'],['car','🚙 السيارة'],['both','🚙+🏎️ الاثنين']],store.get('carView','gauge'),v=>{store.set('carView',v);heroDraw()});
   makeOpts('carTypeRow',[['suv','🚙 جيب'],['sedan','🚗 سيدان'],['pickup','🛻 بيك أب']],store.get('carType','suv'),v=>{store.set('carType',v);heroDraw()});
   const cg=$('carColRow');cg.innerHTML='';const cur=store.get('carCol','#f5f5f4');
   CAR_COLS.forEach(([c,n])=>{const b=document.createElement('button');b.style.background=c;b.title=n;b.className=c===cur?'on':'';b.onclick=()=>{store.set('carCol',c);myCarSettings();heroDraw()};cg.appendChild(b)});
