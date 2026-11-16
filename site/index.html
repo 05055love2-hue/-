@@ -260,6 +260,7 @@ footer{color:#6e6e73}
 header.abar .logo,.about .av{background:linear-gradient(135deg,#0071e3,#8e44ff)!important;color:#fff!important}
 .zoom,.appframe{background:rgba(255,255,255,.96)!important}
 .appframe button{background:#f5f5f7!important;color:#0066cc!important;border-bottom:1px solid rgba(0,0,0,.08)!important}
+.support .alt{text-align:center;font-size:13.5px;color:var(--soft);margin-top:10px}.support .alt a{color:var(--acc)}
 </style></style></style></style>
 </head>
 <body>
@@ -508,6 +509,7 @@ header.abar .logo,.about .av{background:linear-gradient(135deg,#0071e3,#8e44ff)!
     <p>كل تطبيقاتي مجانية وبدون إعلانات. دعمك يساعد في تجديد الدومين والاستضافة واشتراكات أدوات الذكاء الاصطناعي اللي أستخدمها في البرمجة والتصميم، ويساعدني أستمر في التحسين والتحديث.</p>
     <details class="priv"><summary>خصوصيتك مهمة</summary><p>الدعم يتم عن طريق صفحة دفع خارجية آمنة، وما يوصلني رقم بطاقتك ولا بياناتك البنكية. وتطبيقاتي ما تجمع بياناتك ولا ترسلها لأي مكان. اسمك ينكتب في قائمة الداعمين بس إذا أنت تبي.</p></details>
     <a class="give" id="giveBtn" href="#support">ادعم المشروع 💚 ↗</a>
+    <div class="alt">يدعم مدى وApple Pay والفيزا • أو <a href="https://paypal.me/AbuNawafApps" target="_blank" rel="noopener">عن طريق PayPal</a></div>
     <div class="thanks">شكرًا لكل من يساهم، بأي مبلغ.</div>
     <details class="backers" open><summary>شكرًا لداعمينا</summary>
       <div class="blist" id="backers"></div>
@@ -1226,7 +1228,7 @@ loop();
   /* ===== الدعم ===== */
   (function(){
     // رابط الدعم: يتحط هنا لما يجهز
-    const GIVE='https://paypal.me/AbuNawafApps';
+    const GIVE='https://creators.sa/abdulaziz1407';
     const g=document.getElementById('giveBtn');
     if(GIVE){g.href=GIVE;g.target='_blank';g.rel='noopener'}else{g.textContent='رابط الدعم قريبًا 💚';g.classList.add('soon')}
     // الداعمين: [الاسم، 'g' ذهبي أو 's' فضي أو 'b' برونزي]
