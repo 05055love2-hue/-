@@ -121,6 +121,17 @@ select option{background:#0f2236}
 .splash h1{font-size:30px;margin:18px 0 8px;color:var(--gold);font-weight:900}
 .splash p{font-size:17px;line-height:2;color:#dbe7f3;margin:0;font-family:"Amiri","Noto Naskh Arabic",serif}
 .splash small{position:absolute;bottom:34px;color:#6f86a0;font-size:12px}
+.w7p{border-radius:20px;padding:22px 10px;margin:4px 0 14px;background:linear-gradient(160deg,#2f6f8f,#0d3550 60%,#1b4d6b)}
+.w7{display:flex;align-items:center;gap:4px;padding:6px;height:86px;position:relative;font-family:Roboto,system-ui,sans-serif}
+.w7 .bgl{position:absolute;inset:0}
+.w7 .inf{position:relative;padding:0 6px 0 2px}.w7 .r{display:flex;align-items:center;gap:6px;margin:4px 0;white-space:nowrap}
+.w7 .d{width:22px;height:22px;border-radius:50%;background:rgba(0,0,0,.13);display:grid;place-items:center;flex:none}
+.w7 .cd{position:relative;flex:1;text-align:center;direction:ltr}
+.w7 .bx{position:relative;height:100%;min-width:62px;padding:0 10px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:700}
+.w7 .bx .bl{position:absolute;inset:0}.w7 .bx span,.w7 .bx b{position:relative}
+.sw7{display:flex;flex-wrap:wrap;gap:7px;margin:8px 0 4px}.sw7 button{width:30px;height:30px;border-radius:50%;border:2px solid rgba(255,255,255,.25)}.sw7 button.on{border:3px solid #fff;box-shadow:0 0 0 2px var(--acc)}
+.rng{width:100%;accent-color:var(--acc)}
+.sheet .lbl7{display:block;font-size:13.5px;font-weight:800;margin-top:12px}
 </style>
 </head>
 <body>
@@ -227,7 +238,7 @@ select option{background:#0f2236}
       <div class="wg"><b>🕰️ ساعة صلاتي</b>ساعة كبيرة والصلاة الجاية</div>
       <div class="wg"><b>🌙 التاريخ الهجري</b>الهجري والميلادي</div>
       <div class="wg"><b>📋 قائمة الصلوات</b>الست بشكل طولي</div>
-      <div class="wg" style="grid-column:1/-1;background:rgba(212,221,228,.6);color:#111"><b>🪟 الشريط الزجاجي</b>التاريخ والمدينة والعد والصلاة الجاية — لونه ثابت زجاجي</div>
+      <div class="wg" style="grid-column:1/-1;background:rgba(212,221,228,.6);color:#111"><b>🪟 الشريط الزجاجي</b>التاريخ والمدينة والعد والصلاة الجاية — تتحكم بكل شي فيه<br><button class="go" style="margin-top:8px" onclick="openW7()">🎨 خصّص الشريط</button></div>
     </div>
     <p style="font-size:12.5px;color:var(--soft);line-height:1.8;margin:12px 0 0">اضغط مطوّل على الشاشة الرئيسية ← أدوات ← صلاتي، واختر اللي يعجبك. وتقدر تكبّرها وتصغّرها.</p>
   </div>
@@ -250,6 +261,11 @@ select option{background:#0f2236}
 <div class="ov" id="cityOv" onclick="if(event.target===this)closeOv()"><div class="sheet"><h2>📍 اختر مدينتك</h2>
   <button class="go" style="width:100%;margin-bottom:10px" onclick="closeOv();detect()">📡 حدد موقعي تلقائيًا</button>
   <input class="srch" id="cSrch" placeholder="ابحث عن مدينة…"><div class="cityl" id="cList"></div></div></div>
+<div class="ov" id="w7Ov" onclick="if(event.target===this)closeOv()"><div class="sheet"><h2>🎨 تخصيص الشريط الزجاجي</h2>
+  <div class="w7p"><div class="w7" id="w7prev"></div></div>
+  <div id="w7ctl"></div>
+  <p style="display:flex;gap:8px"><button class="go" style="flex:1" onclick="closeOv();toast('✅ تم، شوف الويدجت')">تم</button><button class="go gray" onclick="W7={};saveW7()">↺ الافتراضي</button></p>
+</div></div>
 <div class="adhanOv" id="adhanOv"><div class="m">🕌</div><h1 id="adN">الله أكبر</h1><p id="adP">حان وقت الصلاة</p><button class="go red" style="font-size:18px;padding:16px 40px" onclick="Sl.stopAdhan();$('adhanOv').classList.remove('on')">⏹ إيقاف الأذان</button></div>
 <div class="toast" id="toast"></div>
 
@@ -422,6 +438,42 @@ $('sAsr').onchange=e=>{Sl.setInt('asr',+e.target.value);toast('تم ✅')};
 $('kahfSw').onclick=()=>{Sl.setBool('kahf',!S.kahf);paintSettings()};
 $('thm').onclick=e=>{const b=e.target.closest('button');if(b){Sl.setInt('wtheme',+b.dataset.i);paintSettings();toast('🎨 تغيّر لون الويدجت')}};
 window.onSound=()=>{paintSettings();toast('🔊 تم اختيار الصوت')};
+
+// ===== تخصيص الشريط الزجاجي =====
+const W7D={bg:'#d4dde4',op:60,txt:'#111111',box:'#3f9a84',bop:100,btxt:'#ffffff',rad:3,size:1,date:0,sDate:true,sCity:true,sIcons:true,sCd:true,sBox:true};
+let W7={};
+const PAL=['#ffffff','#d4dde4','#94a3b8','#475569','#000000','#0b1a2a','#1e3a8a','#2563eb','#0e7490','#3f9a84','#16a34a','#65a30d','#ca8a04','#ea580c','#dc2626','#be185d','#7c3aed','#78350f'];
+const TXP=['#111111','#ffffff','#f5c96a','#3f9a84','#1e3a8a','#dc2626','#7c3aed','#94a3b8'];
+function w7g(k){return k in W7?W7[k]:W7D[k]}
+function hexA(h,o){const n=parseInt(h.slice(1),16);return 'rgba('+(n>>16)+','+(n>>8&255)+','+(n&255)+','+o/100+')'}
+function openW7(){try{W7=JSON.parse(Sl.getStr('w7','{}'))}catch(e){W7={}}paintW7();$('w7Ov').classList.add('on')}
+function saveW7(){Sl.setStr('w7',JSON.stringify(W7));paintW7()}
+function setW7(k,v){W7[k]=v;saveW7()}
+function paintW7(){
+  const R=[0,10,18,28,40][w7g('rad')],B=[0,8,14,22,32][w7g('rad')],z=[.82,1,1.2,1.4][w7g('size')],tx=w7g('txt'),bt=w7g('btxt');
+  const moon='<svg width="14" height="14" viewBox="0 0 24 24"><path fill="'+tx+'" d="M12,3a9,9 0,1 0,0 18a6,9 0,0 1,0 -18z"/></svg>',pin='<svg width="14" height="14" viewBox="0 0 24 24"><path fill="'+tx+'" d="M12,2C8.13,2 5,5.13 5,9c0,5.25 7,13 7,13s7,-7.75 7,-13c0,-3.87 -3.13,-7 -7,-7zM12,6.5a2.5,2.5 0,1 0,0 5a2.5,2.5 0,1 0,0 -5z"/></svg>';
+  const nx=nextP(Date.now()),dd=new Date(),days=['أحد','اثنين','ثلاثاء','أربعاء','خميس','جمعة','سبت'];
+  const dt=days[dd.getDay()]+'، '+(w7g('date')?dd.getDate()+' '+['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'][dd.getMonth()]:TODAY.hijri.replace(/ \d+ هـ$/,''));
+  const sd=w7g('sDate'),sc=w7g('sCity'),si=w7g('sIcons');
+  $('w7prev').style.fontSize=(13*z)+'px';
+  $('w7prev').innerHTML='<div class="bgl" style="border-radius:'+R+'px;background:'+hexA(w7g('bg'),w7g('op'))+'"></div>'+
+   (sd||sc?'<div class="inf" style="color:'+tx+'">'+(sd?'<div class="r">'+(si?'<span class="d">'+moon+'</span>':'')+dt+'</div>':'')+(sc?'<div class="r">'+(si?'<span class="d">'+pin+'</span>':'')+(S.city||'')+'</div>':'')+'</div>':'')+
+   '<div class="cd" style="color:'+tx+';font-size:'+(16*z)+'px;visibility:'+(w7g('sCd')?'visible':'hidden')+'">'+$('nxC').textContent.replace(/^0/,'')+'</div>'+
+   (w7g('sBox')?'<div class="bx" style="color:'+bt+'"><div class="bl" style="border-radius:'+B+'px;background:'+hexA(w7g('box'),w7g('bop'))+'"></div><span style="font-size:'+(13*z)+'px">'+NAMES[nx.i]+'</span><b style="font-size:'+(17*z)+'px">'+hm(nx.t).replace(/ [صم]/,'')+'</b></div>':'');
+  const sw=(k,pal)=>'<div class="sw7">'+pal.map(c=>'<button style="background:'+c+'" class="'+(w7g(k)===c?'on':'')+'" onclick="setW7(\''+k+'\',\''+c+'\')"></button>').join('')+'</div>';
+  const rg=(k)=>'<input type="range" class="rng" min="0" max="100" value="'+w7g(k)+'" oninput="W7[\''+k+'\']=+this.value;saveW7()">';
+  const ch=(k,vals,labs)=>'<div class="chips" style="justify-content:flex-start;margin-top:8px">'+vals.map((v,i)=>'<button class="'+(w7g(k)===v?'on':'')+'" onclick="setW7(\''+k+'\','+v+')">'+labs[i]+'</button>').join('')+'</div>';
+  const tg=(k,l)=>'<div class="set"><div class="t"><b>'+l+'</b></div><button class="sw '+(w7g(k)?'on':'')+'" onclick="setW7(\''+k+'\','+!w7g(k)+')"></button></div>';
+  if(document.activeElement&&document.activeElement.type==='range')return;
+  $('w7ctl').innerHTML='<span class="lbl7">لون الخلفية</span>'+sw('bg',PAL)+'<span class="lbl7">شفافية الخلفية '+w7g('op')+'%</span>'+rg('op')+
+   '<span class="lbl7">لون الكتابة</span>'+sw('txt',TXP)+
+   '<span class="lbl7">لون مربع الصلاة</span>'+sw('box',PAL)+'<span class="lbl7">شفافية المربع '+w7g('bop')+'%</span>'+rg('bop')+
+   '<span class="lbl7">لون كتابة المربع</span>'+sw('btxt',TXP)+
+   '<span class="lbl7">الحواف</span>'+ch('rad',[0,1,2,3,4],['مربعة','خفيفة','وسط','دائرية','كبسولة'])+
+   '<span class="lbl7">حجم الخط</span>'+ch('size',[0,1,2,3],['صغير','عادي','كبير','كبير جدًا'])+
+   '<span class="lbl7">التاريخ</span>'+ch('date',[0,1],['هجري','ميلادي'])+
+   '<div class="card" style="margin-top:12px;padding:4px 14px">'+tg('sDate','إظهار التاريخ')+tg('sCity','إظهار المدينة')+tg('sIcons','إظهار الأيقونات')+tg('sCd','إظهار العد التنازلي')+tg('sBox','إظهار مربع الصلاة')+'</div>';
+}
 
 paintHome();
 function hideSplash(){$('splash').classList.add('hide');setTimeout(()=>$('splash').remove(),700)}

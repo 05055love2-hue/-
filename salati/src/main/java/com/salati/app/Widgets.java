@@ -122,17 +122,59 @@ public class Widgets {
 
     static final String[] SDAYS = {"أحد", "اثنين", "ثلاثاء", "أربعاء", "خميس", "جمعة", "سبت"};
 
+    static final int[] W7R = {R.drawable.w7r0, R.drawable.w7r1, R.drawable.w7r2, R.drawable.w7r3, R.drawable.w7r4};
+    static final int[] W7B = {R.drawable.w7b0, R.drawable.w7b1, R.drawable.w7b2, R.drawable.w7b3, R.drawable.w7b4};
+    static final float[] W7S = {0.82f, 1f, 1.2f, 1.4f};
+
+    static int col(org.json.JSONObject o, String k, String d) {
+        try { return android.graphics.Color.parseColor(o.optString(k, d)); } catch (Throwable e) { return android.graphics.Color.parseColor(d); }
+    }
+
     static RemoteViews w7(Context c) {
         long now = System.currentTimeMillis();
         Calendar d = Core.dayOf(now);
         int[] h = Core.hijri(c, d);
         long[] nx = Core.next(c, now, false);
+        org.json.JSONObject o;
+        try { o = new org.json.JSONObject(Core.sp(c).getString("w7", "{}")); } catch (Throwable e) { o = new org.json.JSONObject(); }
         RemoteViews v = new RemoteViews(c.getPackageName(), R.layout.w7);
-        v.setTextViewText(R.id.hijri, SDAYS[d.get(Calendar.DAY_OF_WEEK) - 1] + "، " + h[2] + " " + Core.HMONTHS[Math.max(0, Math.min(11, h[1] - 1))]);
+        String day = SDAYS[d.get(Calendar.DAY_OF_WEEK) - 1] + "، ";
+        v.setTextViewText(R.id.hijri, o.optInt("date", 0) == 1
+            ? day + d.get(Calendar.DAY_OF_MONTH) + " " + Core.GMONTHS[d.get(Calendar.MONTH)]
+            : day + h[2] + " " + Core.HMONTHS[Math.max(0, Math.min(11, h[1] - 1))]);
         v.setTextViewText(R.id.city, Core.sp(c).getString("city", ""));
         v.setTextViewText(R.id.name, Core.NAMES[(int) nx[0]]);
         v.setTextViewText(R.id.time, Core.hm(nx[1]).replace(" ص", "").replace(" م", ""));
         countdown(v, nx[1]);
+        // الخلفية
+        int r = Math.max(0, Math.min(4, o.optInt("rad", 3)));
+        v.setImageViewResource(R.id.bgimg, W7R[r]);
+        v.setInt(R.id.bgimg, "setColorFilter", col(o, "bg", "#d4dde4"));
+        v.setInt(R.id.bgimg, "setImageAlpha", Math.round(o.optInt("op", 60) * 2.55f));
+        v.setImageViewResource(R.id.boximg, W7B[r]);
+        v.setInt(R.id.boximg, "setColorFilter", col(o, "box", "#3f9a84"));
+        v.setInt(R.id.boximg, "setImageAlpha", Math.round(o.optInt("bop", 100) * 2.55f));
+        // النصوص
+        int tx = col(o, "txt", "#111111"), bt = col(o, "btxt", "#ffffff");
+        v.setTextColor(R.id.hijri, tx); v.setTextColor(R.id.city, tx); v.setTextColor(R.id.cd, tx);
+        v.setInt(R.id.ic1, "setColorFilter", tx); v.setInt(R.id.ic2, "setColorFilter", tx);
+        v.setTextColor(R.id.name, bt); v.setTextColor(R.id.time, bt);
+        float z = W7S[Math.max(0, Math.min(3, o.optInt("size", 1)))];
+        v.setTextViewTextSize(R.id.hijri, android.util.TypedValue.COMPLEX_UNIT_SP, 15 * z);
+        v.setTextViewTextSize(R.id.city, android.util.TypedValue.COMPLEX_UNIT_SP, 15 * z);
+        v.setTextViewTextSize(R.id.cd, android.util.TypedValue.COMPLEX_UNIT_SP, 18 * z);
+        v.setTextViewTextSize(R.id.name, android.util.TypedValue.COMPLEX_UNIT_SP, 15 * z);
+        v.setTextViewTextSize(R.id.time, android.util.TypedValue.COMPLEX_UNIT_SP, 19 * z);
+        // إظهار وإخفاء
+        int G = android.view.View.GONE, V = android.view.View.VISIBLE;
+        boolean sd = o.optBoolean("sDate", true), sc = o.optBoolean("sCity", true), si = o.optBoolean("sIcons", true);
+        v.setViewVisibility(R.id.row1, sd ? V : G);
+        v.setViewVisibility(R.id.row2, sc ? V : G);
+        v.setViewVisibility(R.id.info, sd || sc ? V : G);
+        v.setViewVisibility(R.id.ic1, si ? V : G);
+        v.setViewVisibility(R.id.ic2, si ? V : G);
+        v.setViewVisibility(R.id.cd, o.optBoolean("sCd", true) ? V : android.view.View.INVISIBLE);
+        v.setViewVisibility(R.id.box, o.optBoolean("sBox", true) ? V : G);
         v.setOnClickPendingIntent(R.id.root, open(c));
         return v;
     }
