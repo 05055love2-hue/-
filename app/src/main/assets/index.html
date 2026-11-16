@@ -462,6 +462,86 @@
   body.L-twin .app .ic{border-radius:50%;background:none;border-color:#4a6286} body.L-twin .app svg{fill:#cfe0ff}
   @media (orientation:portrait){body.L-speedo main,body.L-twin main{grid-template-columns:1fr;grid-template-rows:auto}
     body.L-speedo main>*,body.L-twin main>*{grid-column:1!important;grid-row:auto!important}}
+  /* مميزات العداد: الشعار، أرقام الرحلة، تنبيه السرعة */
+  .slogo{position:relative;z-index:1;display:none;align-items:center;justify-content:center;max-width:34%;height:9%;margin-bottom:1vh;transform:translateY(-20%)}
+  .slogo.on{display:flex} .slogo img{max-width:100%;max-height:100%;object-fit:contain;filter:drop-shadow(0 2px 6px rgba(0,0,0,.6))}
+  .slogo span{font-weight:800;letter-spacing:4px;font-size:clamp(12px,1.6vw,22px);color:var(--text);opacity:.85;white-space:nowrap}
+  body.L-speedo .slogo,body.L-twin .slogo,body.L-retro .slogo,body.L-luxe .slogo{position:absolute;top:30%;transform:none}
+  .strip{display:none;position:absolute;bottom:-1%;left:0;right:0;justify-content:center;gap:1.6vw;z-index:2;direction:rtl}
+  .strip span{display:flex;flex-direction:column;align-items:center;line-height:1.1;padding:.4vh .9vw;border-radius:10px;background:rgba(0,0,0,.45);border:1px solid var(--line)}
+  .strip i{font-style:normal;font-size:clamp(9px,.95vw,12px);color:var(--soft)} .strip b{font-size:clamp(13px,1.6vw,20px);direction:ltr;font-variant-numeric:tabular-nums}
+  body.L-speedo .strip,body.L-hud .strip,body.L-twin .strip,body.L-retro .strip,body.L-bar .strip,body.L-luxe .strip{display:flex}
+  body.L-speedo .sstat,body.L-twin .sstat,body.L-retro .sstat,body.L-luxe .sstat{bottom:12%}
+  body.over .sdial .arc,body.over .sdial .ndl{stroke:#ff2d2d!important}
+  body.over .sread b{color:#ff2d2d!important;animation:blink .6s steps(2) infinite}
+  body.over .sbar i{background:#ff2d2d!important}
+  @keyframes blink{50%{opacity:.35}}
+  body.L-retro .speedo,body.L-bar .speedo,body.L-luxe .speedo{display:flex}
+  body.L-retro .bgl,body.L-bar .bgl,body.L-luxe .bgl{display:none!important}
+
+  /* 8) كلاسيكي قديم: عداد كريمي بأرقام قديمة وإطار كروم */
+  body.L-retro{--accent:#b3261e;--text:#2b2118;--soft:#6b5a48;--line:rgba(60,40,20,.25);--bg1:#1a1410;background:radial-gradient(circle at 50% 40%,#3b2d22,#120d09 70%)}
+  body.L-retro main{display:grid;grid-template-columns:1fr 2fr 1fr;gap:1.4vw;align-items:center}
+  body.L-retro .card{background:none;border:none;backdrop-filter:none}
+  body.L-retro .speedo{grid-column:2;grid-row:1;height:100%;aspect-ratio:1;justify-self:center;border-radius:50%;background:radial-gradient(circle,#f4ead5 0 62%,#e6d6b4 70%);box-shadow:0 0 0 10px #c9c9c9,0 0 0 14px #8a8a8a,0 0 0 18px #dcdcdc,0 20px 40px rgba(0,0,0,.6)}
+  body.L-retro .sdial text{font-family:Georgia,'Times New Roman',serif;font-size:17px;fill:#2b2118;font-weight:700}
+  body.L-retro .sdial .tk{stroke:#2b2118} body.L-retro .sdial .tk.big{stroke:#2b2118}
+  body.L-retro .sdial .trk,body.L-retro .sdial .arc{display:none}
+  body.L-retro .sdial .ndl{stroke:#b3261e;stroke-width:4} body.L-retro .sdial .hub{fill:#2b2118}
+  body.L-retro .sread{transform:translateY(70%)} body.L-retro .sread b{font-family:Georgia,serif;font-size:clamp(20px,3vw,40px);color:#2b2118;background:#111;color:#f4ead5;padding:0 .3em;border-radius:4px;letter-spacing:3px}
+  body.L-retro .sread small{color:#6b5a48;font-family:Georgia,serif}
+  body.L-retro .slogo span{color:#2b2118;font-family:Georgia,serif;font-style:italic}
+  body.L-retro .clock,body.L-retro .player{--text:#f4ead5;--soft:#c8b79c;color:#f4ead5}
+  body.L-retro .clock{grid-column:1;grid-row:1} body.L-retro .player{grid-column:3;grid-row:1;justify-content:center}
+  body.L-retro .time{display:block!important;font-family:Georgia,serif;font-size:clamp(30px,4.4vw,60px);color:#f4ead5}
+  body.L-retro .analog,body.L-retro .hello,body.L-retro .wx .wxx,body.L-retro .wx .wxf,body.L-retro .wx .wd small{display:none!important}
+  body.L-retro .player .tabs,body.L-retro .pick,body.L-retro .sub,body.L-retro .ytform,body.L-retro .recent,body.L-retro .ytnav{display:none}
+  body.L-retro .disc{width:clamp(60px,12vh,110px)!important}
+  body.L-retro .strip span{background:#f4ead5;border-color:#8a8a8a} body.L-retro .strip i{color:#6b5a48} body.L-retro .strip b{color:#2b2118;font-family:Georgia,serif}
+  body.L-retro .dock{background:none;border:none;border-top:1px solid #5a4636;border-radius:0} body.L-retro .app svg{fill:#e6d6b4} body.L-retro .app{color:#c8b79c}
+
+  /* 9) الشريط الرياضي: سرعة رقمية وشريط ألوان مثل سيارات السباق */
+  body.L-bar{--accent:#ffd60a;--text:#fff;--soft:#8d8d8d;--line:rgba(255,255,255,.1);--bg1:#0b0b0b;background:linear-gradient(180deg,#141414,#050505)}
+  body.L-bar main{display:grid;grid-template-columns:1fr;grid-template-rows:auto 1fr auto;gap:1.4vh}
+  body.L-bar .card{background:none;border:none;backdrop-filter:none}
+  body.L-bar .speedo{grid-row:2;flex-direction:column}
+  body.L-bar .sdial{display:none}
+  body.L-bar .sbar{display:flex}
+  body.L-bar .sread b{font-size:clamp(80px,15vw,210px);font-style:italic;font-weight:900;letter-spacing:-4px}
+  body.L-bar .sread small{color:#ffd60a;font-weight:800}
+  body.L-bar .slogo{transform:none;height:auto;max-width:none}
+  body.L-bar .strip{position:static;margin-top:1vh}
+  body.L-bar .clock{grid-row:1;flex-direction:row;justify-content:space-between;padding:0 1vw}
+  body.L-bar .time{display:block!important;font-size:clamp(22px,3vw,40px);font-weight:800;font-style:italic}
+  body.L-bar .analog,body.L-bar .hello,body.L-bar .wx .wxx,body.L-bar .wx .wxf,body.L-bar .wx .wd small{display:none!important}
+  body.L-bar .wx{margin:0;background:none;border:none}
+  body.L-bar .player{display:none}
+  body.L-bar .dock{background:none;border:none} body.L-bar .app .ic{border-radius:8px;background:#1a1a1a;border-color:#333} body.L-bar .app svg{fill:#ffd60a}
+  .sbar{display:none;gap:.5vw;width:86%;height:5vh;margin-bottom:2vh;direction:ltr}
+  .sbar i{flex:1;border-radius:3px;background:#222;transition:background .15s}
+  .sbar i.on{background:#39d353} .sbar i.on.y{background:#ffd60a} .sbar i.on.r{background:#ff3b30}
+
+  /* 10) فخم ذهبي: أسود وذهبي مع خط رفيع */
+  body.L-luxe{--accent:#d4af37;--text:#f6e7b8;--soft:#a08a52;--line:rgba(212,175,55,.25);--bg1:#070605;background:radial-gradient(ellipse at 50% 30%,#1d1810,#070605 70%)}
+  body.L-luxe main{display:grid;grid-template-columns:1fr 1.8fr 1fr;gap:1.4vw;align-items:center}
+  body.L-luxe .card{background:none;border:none;backdrop-filter:none}
+  body.L-luxe .speedo{grid-column:2;grid-row:1;height:100%}
+  body.L-luxe .sdial .trk{stroke:rgba(212,175,55,.15)} body.L-luxe .sdial .arc{stroke:url(#gold);stroke:#d4af37;filter:drop-shadow(0 0 8px rgba(212,175,55,.6))}
+  body.L-luxe .sdial text{font-family:Georgia,serif;fill:#d4af37;font-size:14px}
+  body.L-luxe .sdial .tk{stroke:#7a6430} body.L-luxe .sdial .tk.big{stroke:#d4af37}
+  body.L-luxe .sdial .ndl{stroke:#f6e7b8;stroke-width:3} body.L-luxe .sdial .hub{fill:#d4af37}
+  body.L-luxe .sread{transform:translateY(62%)} body.L-luxe .sread b{font-family:Georgia,serif;font-weight:400;font-size:clamp(28px,4.6vw,64px);color:#f6e7b8;letter-spacing:2px}
+  body.L-luxe .slogo span{color:#d4af37;font-family:Georgia,serif;letter-spacing:6px}
+  body.L-luxe .clock{grid-column:1;grid-row:1} body.L-luxe .player{grid-column:3;grid-row:1;justify-content:center}
+  body.L-luxe .time{display:block!important;font-family:Georgia,serif;font-weight:300;font-size:clamp(32px,4.6vw,64px);color:#d4af37}
+  body.L-luxe .analog,body.L-luxe .hello,body.L-luxe .wx .wxx,body.L-luxe .wx .wxf,body.L-luxe .wx .wd small{display:none!important}
+  body.L-luxe .wx{background:none;border-color:var(--line)}
+  body.L-luxe .player .tabs,body.L-luxe .pick,body.L-luxe .sub,body.L-luxe .ytform,body.L-luxe .recent,body.L-luxe .ytnav{display:none}
+  body.L-luxe .disc{width:clamp(60px,12vh,110px)!important}
+  body.L-luxe .btn.big{background:#d4af37;color:#070605}
+  body.L-luxe .dock{background:none;border:none;border-top:1px solid var(--line);border-radius:0} body.L-luxe .app .ic{background:none;border-color:#5c4a1e;border-radius:50%} body.L-luxe .app svg{fill:#d4af37}
+  @media (orientation:portrait){body.L-retro main,body.L-luxe main{grid-template-columns:1fr;grid-template-rows:auto}
+    body.L-retro main>*,body.L-luxe main>*{grid-column:1!important;grid-row:auto!important}}
   .lgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
   .lgrid .opt{display:flex;flex-direction:column;align-items:center;gap:4px}
   .lgrid .opt b{font-size:22px;font-weight:400}
@@ -509,7 +589,10 @@
 
   <section class="card speedo" id="speedo">
     <svg class="sdial" id="sdial" viewBox="0 0 300 300"></svg>
+    <div class="sbar" id="sbar"></div>
+    <div class="slogo" id="slogo"></div>
     <div class="sread"><b id="spd">0</b><small>كم/س</small></div>
+    <div class="strip" id="strip"><span><i>أعلى سرعة</i><b id="tMax">0</b></span><span><i>المسافة كم</i><b id="tKm">0.0</b></span><span><i>المتوسط</i><b id="tAvg">0</b></span><span><i>مدة الرحلة</i><b id="tDur">0:00</b></span></div>
     <div class="sstat" id="sstat">📡 جاري تحديد الموقع…</div>
   </section>
 
@@ -569,6 +652,14 @@
 
     <h3>شكل الواجهة</h3>
     <div class="lgrid" id="layoutRow"></div>
+
+    <h3>🏎️ عداد السرعة</h3>
+    <p class="note">تنبيه لما تتعدى السرعة:</p>
+    <div class="row" id="spLimRow"></div>
+    <p class="note">شعار سيارتك في نص العداد:</p>
+    <div class="row" id="spLogoRow"></div>
+    <input type="file" id="logoIn" accept="image/*" hidden>
+    <button class="opt" style="margin-top:10px;width:100%" id="tripReset">🔄 صفّر الرحلة (المسافة وأعلى سرعة)</button>
 
     <h3>الخلفية</h3>
     <div class="grid" id="bgRow"></div>
@@ -705,7 +796,7 @@ function sdialBuild(){
   g.innerHTML=h;
   const p=$('sArc'),L=p.getTotalLength();p.style.strokeDasharray=L;p.dataset.l=L;sdialSet(SPD.cur);
 }
-function sdialSet(v){const p=$('sArc'),n=$('sNdl');if(!p||!n)return;const f=Math.min(v,SPD.max)/SPD.max,L=+p.dataset.l;
+function sdialSet(v){sbarSet(v);const p=$('sArc'),n=$('sNdl');if(!p||!n)return;const f=Math.min(v,SPD.max)/SPD.max,L=+p.dataset.l;
   p.style.strokeDashoffset=L*(1-f);n.setAttribute('transform','rotate('+(-135+270*f)+' 150 150)');$('spd').textContent=Math.round(v);}
 function dist(a,b){const R=6371000,t=Math.PI/180,x=(b.latitude-a.latitude)*t,y=(b.longitude-a.longitude)*t,h=Math.sin(x/2)**2+Math.cos(a.latitude*t)*Math.cos(b.latitude*t)*Math.sin(y/2)**2;return 2*R*Math.asin(Math.sqrt(h))}
 function speedOn(){
@@ -719,7 +810,7 @@ function speedOn(){
 }
 function speedOff(){if(SPD.watch!==null){navigator.geolocation.clearWatch(SPD.watch);SPD.watch=null}}
 (function anim(){SPD.cur+=(SPD.target-SPD.cur)*.12;if(Math.abs(SPD.target-SPD.cur)<.05)SPD.cur=SPD.target;if(SPD.on)sdialSet(SPD.cur);requestAnimationFrame(anim)})();
-function speedSync(){const on=['speedo','hud','twin'].includes(S.layout);SPD.on=on;if(on){if(!$('sNdl'))sdialBuild();speedOn()}else speedOff()}
+function speedSync(){const on=['speedo','hud','twin','retro','bar','luxe'].includes(S.layout);SPD.on=on;if(on){if(!$('sNdl'))sdialBuild();speedOn()}else speedOff()}
 
 function applyAll(){
   const t=THEMES[S.theme], r=document.documentElement.style;
@@ -742,7 +833,8 @@ Object.entries(THEMES).forEach(([k,t])=>{
 const LAYOUTS=[['classic','🪟','كلاسيكي'],['sport','🏁','رياضي'],['ring','⭕','دائري'],['stack','🔢','أرقام كبيرة'],['dash','🗓️','لوحة وتقويم'],
   ['cinema','🎬','سينمائي'],['player','🎵','المشغل أكبر'],['minimal','✨','بسيط'],['clock','🕰️','ساعة بس'],['side','📱','جانبي'],
   ['cockpit','🎛️','لوحة العدادات'],['drive','🚗','وضع السواقة'],['split','🪟','الشاشة المقسومة'],['neon','🛸','الكوكبي'],
-  ['speedo','🏎️','عداد السرعة'],['hud','🟢','شاشة HUD'],['twin','⏱️','عدادين فخم']];
+  ['speedo','🏎️','عداد السرعة'],['hud','🟢','شاشة HUD'],['twin','⏱️','عدادين فخم'],
+  ['retro','🕰️','عداد كلاسيكي قديم'],['bar','🏁','الشريط الرياضي'],['luxe','👑','الفخم الذهبي']];
 (function(){const r=$('layoutRow');LAYOUTS.forEach(([k,ic,n])=>{const b=document.createElement('button');b.className='opt'+(k===S.layout?' on':'');
   b.innerHTML='<b>'+ic+'</b>'+n;b.onclick=()=>{r.querySelectorAll('.opt').forEach(x=>x.classList.toggle('on',x===b));save('layout',k);applyAll();tick();};r.appendChild(b);});})();
 makeOpts('iconRow',[['round','مربع ناعم'],['circle','دائري'],['glow','مضيء'],['bare','بدون خلفية']],S.icons,v=>{save('icons',v);applyAll();});
@@ -1072,6 +1164,35 @@ if(window.YT && YT.show){
   $('ytGoBack').onclick=()=>YT.back();
   ytSync();
 }
+
+/* ===== مميزات العداد ===== */
+const TRIP=(()=>{try{return JSON.parse(store.get('trip','null'))||null}catch(e){return null}})()||{max:0,m:0,t:0};
+let tripLastT=0,lastBeep=0;
+function sbarSet(v){const b=$('sbar');if(!b)return;if(!b.children.length)b.innerHTML=Array.from({length:24},(_,i)=>'<i class="'+(i>=20?'r':i>=14?'y':'')+'"></i>').join('');
+  const n=Math.round(Math.min(v,SPD.max)/SPD.max*24);[...b.children].forEach((x,i)=>x.classList.toggle('on',i<n));}
+function fmtDur(s){s=Math.floor(s);const h=Math.floor(s/3600),m=Math.floor(s%3600/60);return h?h+':'+String(m).padStart(2,'0')+'س':m+':'+String(s%60).padStart(2,'0')}
+function tripDraw(){$('tMax').textContent=Math.round(TRIP.max);$('tKm').textContent=(TRIP.m/1000).toFixed(1);
+  $('tAvg').textContent=TRIP.t>0?Math.round(TRIP.m/TRIP.t*3.6):0;$('tDur').textContent=fmtDur(TRIP.t);}
+function tripTick(v,now){ // v كم/س
+  if(tripLastT&&v>0){const dt=Math.min((now-tripLastT)/1000,5);TRIP.m+=v/3.6*dt;TRIP.t+=dt;}
+  tripLastT=now;if(v>TRIP.max)TRIP.max=v;store.set('trip',JSON.stringify(TRIP));tripDraw();
+  const lim=+store.get('spLim','0'),over=lim>0&&v>lim;document.body.classList.toggle('over',over);
+  if(over&&now-lastBeep>4000){lastBeep=now;beep();}
+}
+function beep(){try{const A=window.AudioContext||window.webkitAudioContext,c=beep.c||(beep.c=new A());[0,.25].forEach(d=>{const o=c.createOscillator(),g=c.createGain();o.frequency.value=1100;o.connect(g);g.connect(c.destination);
+  g.gain.setValueAtTime(.0001,c.currentTime+d);g.gain.exponentialRampToValueAtTime(.4,c.currentTime+d+.02);g.gain.exponentialRampToValueAtTime(.0001,c.currentTime+d+.18);o.start(c.currentTime+d);o.stop(c.currentTime+d+.2);})}catch(e){}}
+const BRANDS=['تويوتا','لكزس','نيسان','هيونداي','كيا','فورد','شفروليه','جي إم سي','هوندا','مازدا','ميتسوبيشي','سوزوكي','جيب','دودج','رام','كاديلاك','لاند روفر','رنج روفر','بي إم دبليو','مرسيدس','أودي','فولكس واجن','بورش','جينيسيس','إنفينيتي','شانجان','جيلي','إم جي','هافال','شيري','تسلا','بيجو'];
+function logoDraw(){const el=$('slogo'),v=store.get('spLogo','');el.classList.toggle('on',!!v);
+  if(v==='img'){const d=store.get('spLogoImg','');el.innerHTML=d?'<img src="'+d+'" alt="">':'';}else el.innerHTML=v?'<span>'+v.replace(/[<>&]/g,'')+'</span>':'';}
+function spSettings(){
+  makeOpts('spLimRow',[['0','بدون تنبيه'],['80','80'],['100','100'],['120','120'],['140','140'],['160','160']],store.get('spLim','0'),v=>store.set('spLim',v));
+  makeOpts('spLogoRow',[['','بدون'],['img','📷 صورة شعارك'],...BRANDS.map(b=>[b,b])],store.get('spLogo',''),v=>{if(v==='img'){$('logoIn').click();return}store.set('spLogo',v);logoDraw();});
+}
+$('logoIn').onchange=()=>{const f=$('logoIn').files[0];if(!f)return;const img=new Image();img.onload=()=>{const k=Math.min(1,400/Math.max(img.width,img.height)),c=document.createElement('canvas');
+  c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);c.getContext('2d').drawImage(img,0,0,c.width,c.height);store.set('spLogoImg',c.toDataURL('image/png'));store.set('spLogo','img');logoDraw();URL.revokeObjectURL(img.src);};img.src=URL.createObjectURL(f);};
+$('tripReset').onclick=()=>{TRIP.max=0;TRIP.m=0;TRIP.t=0;store.set('trip',JSON.stringify(TRIP));tripDraw();toast('صفّرنا الرحلة ✅');};
+spSettings();logoDraw();tripDraw();
+setInterval(()=>{if(SPD.on)tripTick(SPD.target,Date.now())},1000);
 </script>
 <div style="position:fixed;bottom:4px;left:10px;z-index:5;font-family:Tajawal,system-ui,sans-serif;font-size:11px;font-weight:700;color:#fff;opacity:.5;pointer-events:none;text-shadow:0 1px 2px #000">برمجة أبو نواف</div>
 </body>
