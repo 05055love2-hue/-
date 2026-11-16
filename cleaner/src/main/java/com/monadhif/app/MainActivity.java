@@ -55,6 +55,8 @@ public class MainActivity extends Activity {
         super.onCreate(b);
         Updater.check(this, "monadhif");
         Remind.schedule(this);
+        AutoClean.schedule(this);
+        CleanWidget.updateAll(this);
         web = new WebView(this);
         web.setBackgroundColor(0xfff4f7fb);
         setContentView(web);
@@ -238,6 +240,8 @@ public class MainActivity extends Activity {
                 }
                 long total = getSharedPreferences("nz", 0).getLong("freed", 0) + freed;
                 getSharedPreferences("nz", 0).edit().putLong("freed", total).putLong("lastClean", System.currentTimeMillis()).apply();
+                getSharedPreferences("nz", 0).edit().putLong("lastFreed", freed).apply();
+                CleanWidget.updateAll(MainActivity.this);
                 js("window.onDeleted&&onDeleted(" + freed + "," + n + ")");
             }).start();
         }
@@ -354,6 +358,35 @@ public class MainActivity extends Activity {
         public void setRemind(boolean on) {
             getSharedPreferences("nz", 0).edit().putBoolean("remind", on).apply();
             Remind.schedule(MainActivity.this);
+        }
+
+        @JavascriptInterface
+        public String getAuto() {
+            try {
+                android.content.SharedPreferences sp = getSharedPreferences("nz", 0);
+                return new JSONObject().put("on", sp.getBoolean("auto", false)).put("freq", sp.getString("freq", "d"))
+                    .put("hour", sp.getInt("hour", 3)).put("apk", sp.getBoolean("autoApk", false)).put("wa", sp.getBoolean("autoWa", false))
+                    .put("next", sp.getLong("nextAuto", 0)).put("lastAuto", sp.getLong("lastAuto", 0)).put("label", AutoClean.label(MainActivity.this)).toString();
+            } catch (Exception e) { return "{}"; }
+        }
+
+        @JavascriptInterface
+        public String setAuto(String json) {
+            try {
+                JSONObject o = new JSONObject(json);
+                getSharedPreferences("nz", 0).edit().putBoolean("auto", o.optBoolean("on")).putString("freq", o.optString("freq", "d"))
+                    .putInt("hour", o.optInt("hour", 3)).putBoolean("autoApk", o.optBoolean("apk")).putBoolean("autoWa", o.optBoolean("wa")).apply();
+                AutoClean.schedule(MainActivity.this);
+                CleanWidget.updateAll(MainActivity.this);
+            } catch (Exception ignored) {}
+            return getAuto();
+        }
+
+        @JavascriptInterface
+        public void cleanNow() {
+            getSharedPreferences("nz", 0).edit().putBoolean("busy", true).putLong("busyAt", System.currentTimeMillis()).apply();
+            CleanWidget.updateAll(MainActivity.this);
+            AutoReceiver.startJob(MainActivity.this, false);
         }
 
         @JavascriptInterface
