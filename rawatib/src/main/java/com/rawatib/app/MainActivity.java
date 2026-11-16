@@ -23,6 +23,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle b) {
         super.onCreate(b);
+        Updater.check(this, "rawatib");
         web = new WebView(this);
         web.setBackgroundColor(0xff07130f);
         setContentView(web);

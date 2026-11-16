@@ -35,6 +35,7 @@ class MainActivity : Activity() {
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(b: Bundle?) {
         super.onCreate(b)
+        Updater.check(this, "hammil")
         self = this
         web = WebView(this)
         web.setBackgroundColor(0xff0b0f19.toInt())

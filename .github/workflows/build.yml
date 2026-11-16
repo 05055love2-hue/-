@@ -43,6 +43,7 @@ jobs:
           cp rawatib/build/outputs/apk/debug/rawatib-debug.apk rawatib.apk
           cp obd/build/outputs/apk/debug/obd-debug.apk fahes.apk
           cp hammil/build/outputs/apk/debug/hammil-debug.apk hammil.apk
+          python3 updates/make_versions.py
 
       - name: Hammil engine info
         continue-on-error: true
@@ -69,6 +70,7 @@ jobs:
             rawatib.apk
             fahes.apk
             hammil.apk
+            versions.json
           make_latest: true
 
       - name: Screenshots
