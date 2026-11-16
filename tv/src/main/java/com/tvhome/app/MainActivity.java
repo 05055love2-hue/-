@@ -188,7 +188,21 @@ public class MainActivity extends Activity {
         }
 
         @JavascriptInterface
+        public boolean guardOn() {
+            return HomeGuard.isOn(MainActivity.this);
+        }
+
+        @JavascriptInterface
         public void homeSettings() {
+            // أول شيء: نفعّل الحارس اللي يمنع التلفزيون يرجّع شاشته الأصلية
+            if (!HomeGuard.isOn(MainActivity.this)) {
+                try {
+                    startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                    runOnUiThread(() -> Toast.makeText(MainActivity.this,
+                            "اختر «شاشتي - تثبيت الشاشة الرئيسية» وشغّله", Toast.LENGTH_LONG).show());
+                    return;
+                } catch (Exception ignored) { }
+            }
             try {
                 startActivity(new Intent(Settings.ACTION_HOME_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
             } catch (Exception e) {
@@ -325,7 +339,7 @@ public class MainActivity extends Activity {
         goFullScreen();
         if (web != null) {
             if (yt == null || !yt.hasFocus()) web.requestFocus();
-            web.evaluateJavascript("typeof refreshApps==='function'&&refreshApps()", null);
+            web.evaluateJavascript("typeof refreshApps==='function'&&refreshApps();typeof guardLabel==='function'&&guardLabel()", null);
         }
     }
 

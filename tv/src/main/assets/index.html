@@ -722,6 +722,8 @@ function onBack(){
 /* ===== الأزرار ===== */
 $('qSet').onclick=()=>{ if(hasNative) Native.settings(); };
 $('qHome').onclick=()=>{ if(hasNative) Native.homeSettings(); };
+function guardLabel(){try{if(hasNative&&Native.guardOn)$('qHome').textContent=Native.guardOn()?'🏠 الشاشة الرئيسية ✅':'🏠 ثبّتها رئيسية';}catch(e){}}
+guardLabel();document.addEventListener('visibilitychange',guardLabel);
 $('qCustom').onclick=()=>{ drawCust(); $('custOv').classList.add('show'); ytSync(); focusEl($('layRow').querySelector('.sel')); };
 $('custClose').onclick=onBack;
 function drawWallRow(){
