@@ -331,6 +331,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
+        HomeGuard.onTop = false;
         // لو فتحت تطبيق ثاني، يوقف فيديو اليوتيوب
         if (yt != null) yt.evaluateJavascript("var v=document.querySelector('video');if(v)v.pause()", null);
     }
@@ -341,8 +342,11 @@ public class MainActivity extends Activity {
         goFullScreen();
         HomeGuard.start(this);
         // الشاشة الرئيسية ما تتسكّر أبد، فنشيّك على التحديث كل ما ترجع لها
-        Updater.check(this, "tv-launcher");
-        try { getSystemService(android.app.NotificationManager.class).cancel(7311); } catch (Exception ignored) { }
+        if (System.currentTimeMillis() - lastUpd > 3 * 60 * 60 * 1000L) {
+            lastUpd = System.currentTimeMillis();
+            Updater.check(this, "tv-launcher");
+        }
+        HomeGuard.onTop = true;
         if (web != null) {
             if (yt == null || !yt.hasFocus()) web.requestFocus();
             web.evaluateJavascript("typeof refreshApps==='function'&&refreshApps();typeof guardLabel==='function'&&guardLabel()", null);
@@ -396,6 +400,7 @@ public class MainActivity extends Activity {
     }
 
     private String pendingPrayer;
+    private static long lastUpd = System.currentTimeMillis();
 
     private void handlePrayerIntent(Intent i) {
         if (i == null) return;
