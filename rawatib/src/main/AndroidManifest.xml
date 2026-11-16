@@ -25,11 +25,25 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".SeasonWidget" android:exported="true" android:label="مواعيد الصرف">
+        <receiver android:name=".SeasonWidget" android:exported="true" android:label="الصرف — كبير">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_info" />
+        </receiver>
+
+        <receiver android:name=".SmallWidget" android:exported="true" android:label="الصرف — مربع صغير">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_small_info" />
+        </receiver>
+
+        <receiver android:name=".StripWidget" android:exported="true" android:label="الصرف — شريط">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_strip_info" />
         </receiver>
 
         <receiver android:name=".DailyReceiver" android:exported="true">

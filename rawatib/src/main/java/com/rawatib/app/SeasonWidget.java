@@ -16,6 +16,8 @@ public class SeasonWidget extends AppWidgetProvider {
         AppWidgetManager m = AppWidgetManager.getInstance(c);
         int[] ids = m.getAppWidgetIds(new ComponentName(c, SeasonWidget.class));
         if (ids.length > 0) draw(c, m, ids);
+        SmallWidget.updateAll(c);
+        StripWidget.updateAll(c);
     }
 
     static void draw(Context c, AppWidgetManager m, int[] ids) {

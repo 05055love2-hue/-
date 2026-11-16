@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root" android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="horizontal" android:gravity="center_vertical" android:padding="8dp"
+    android:layoutDirection="rtl" android:background="@drawable/widget_bg">
+    <LinearLayout android:id="@+id/c0" android:layout_width="0dp" android:layout_weight="1" android:layout_height="match_parent"
+        android:orientation="vertical" android:gravity="center" android:background="@drawable/days_bg" android:layout_margin="3dp">
+        <TextView android:id="@+id/d0" android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:textColor="#ffffff" android:textSize="22sp" android:textStyle="bold" android:includeFontPadding="false" android:text="11" />
+        <TextView android:id="@+id/n0" android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:textColor="#d1fae5" android:textSize="11sp" android:maxLines="1" android:text="🏛️ الراتب" />
+    </LinearLayout>
+    <LinearLayout android:id="@+id/c1" android:layout_width="0dp" android:layout_weight="1" android:layout_height="match_parent"
+        android:orientation="vertical" android:gravity="center" android:background="@drawable/days_bg" android:layout_margin="3dp">
+        <TextView android:id="@+id/d1" android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:textColor="#ffffff" android:textSize="22sp" android:textStyle="bold" android:includeFontPadding="false" android:text="20" />
+        <TextView android:id="@+id/n1" android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:textColor="#dbeafe" android:textSize="11sp" android:maxLines="1" android:text="🏠 المواطن" />
+    </LinearLayout>
+    <LinearLayout android:id="@+id/c2" android:layout_width="0dp" android:layout_weight="1" android:layout_height="match_parent"
+        android:orientation="vertical" android:gravity="center" android:background="@drawable/days_bg" android:layout_margin="3dp">
+        <TextView android:id="@+id/d2" android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:textColor="#ffffff" android:textSize="22sp" android:textStyle="bold" android:includeFontPadding="false" android:text="10" />
+        <TextView android:id="@+id/n2" android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:textColor="#fef3c7" android:textSize="11sp" android:maxLines="1" android:text="🤝 الضمان" />
+    </LinearLayout>
+</LinearLayout>
