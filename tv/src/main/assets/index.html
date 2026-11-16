@@ -242,7 +242,7 @@
   /* ===== نافذة التخصيص ===== */
   .ov{position:fixed;inset:0;background:rgba(0,0,0,.65);display:none;align-items:center;justify-content:center;z-index:9}
   .ov.show{display:flex}
-  .panel{background:var(--bg1);border:2px solid var(--line);border-radius:2vw;padding:3.5vh 3vw;width:70vw;max-height:90vh;overflow:auto}
+  .panel{background:var(--bg1);border:2px solid var(--line);border-radius:2vw;padding:3vh 2.4vw;width:92vw;max-height:94vh;overflow:auto;scroll-behavior:smooth;box-sizing:border-box}
   .panel h3{font-size:1.9vw;margin:0 0 2vh}
   .panel h4{font-size:1.4vw;color:var(--soft);font-weight:500;margin:2.4vh 0 1.2vh}
   .row{display:flex;flex-wrap:wrap;gap:1vw}
@@ -257,8 +257,8 @@
   @keyframes tw{from{opacity:.25}to{opacity:1}}
   #wall .au{animation:au 12s ease-in-out infinite alternate;transform-origin:center}
   @keyframes au{from{transform:translateX(-3%) skewX(-4deg);opacity:.8}to{transform:translateX(3%) skewX(4deg);opacity:1}}
-  .opt.thumb{display:inline-flex;flex-direction:column;align-items:center;gap:.6vh;padding:.6vh .6vw}
-  .opt.thumb .tb{display:block;width:12vw;aspect-ratio:16/9;border-radius:.8vw;overflow:hidden;position:relative}
+  .opt.thumb{display:inline-flex;flex-direction:column;align-items:center;gap:.6vh;padding:.6vh .6vw;font-size:1.05vw;max-width:11vw}
+  .opt.thumb .tb{display:block;width:10vw;aspect-ratio:16/9;border-radius:.8vw;overflow:hidden;position:relative}
   .opt.thumb .tb svg{width:100%;height:100%;display:block}
   .opt.thumb .tb .tw,.opt.thumb .tb .au{animation:none}
   /* ===== شكل «مشهد» ===== */
@@ -792,6 +792,12 @@ function focusEl(el){
     if(r.top<gr.top+m) g.scrollTop-=gr.top-r.top+m*3;
     if(r.left<gr.left+m) g.scrollLeft-=gr.left-r.left+m*3;
     if(r.right>gr.right-m) g.scrollLeft+=r.right-gr.right+m*3;}
+  // داخل نافذة التخصيص: ننزّل القائمة مع الاختيار عشان تبان كل الخلفيات
+  const pn=el.closest('.panel');
+  if(pn){const r=el.getBoundingClientRect(),pr=pn.getBoundingClientRect(),m=24;
+    if(r.bottom>pr.bottom-m) pn.scrollTop+=r.bottom-pr.bottom+m*2;
+    if(r.top<pr.top+m) pn.scrollTop-=pr.top-r.top+m*2;
+    if(el===pn.querySelector('.f')) pn.scrollTop=0;}
   window.scrollTo(0,0); document.documentElement.scrollTop=0; document.body.scrollTop=0;
 }
 function move(dir){
