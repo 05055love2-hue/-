@@ -662,6 +662,9 @@
   .hbrand{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:.4vh;margin-bottom:1vh}
   .hbrand .slogo{position:static!important;transform:none!important;height:auto;max-width:none;margin:0}
   .hbrand .slogo img{max-height:7vh}
+  body.L-mycar .hbrand .slogo img{max-height:16vh;max-width:22vw}
+  body.L-mycar .hbrand .slogo span{font-size:clamp(22px,3.4vw,46px);letter-spacing:10px}
+  body.L-mycar.MC-gauge .speedo{align-self:end;height:82%}
   .hbrand .slogo span{font-size:clamp(16px,2.4vw,32px);letter-spacing:8px}
   .hbrand b{font-size:clamp(13px,1.6vw,20px);font-weight:500;color:var(--soft);letter-spacing:2px}
   .hcar{position:relative;z-index:1;width:100%;flex:1;min-height:0;display:flex;align-items:flex-end;justify-content:center}
@@ -830,15 +833,11 @@
     </div>
 
     <div class="spage" data-p="mycar">
-      <section class="sgroup"><h3><i>🎯</i>وش يطلع بالنص</h3><div class="row" id="carViewRow"></div></section>
-      <section class="sgroup"><h3><i>🚙</i>شكل سيارتك</h3><div class="row" id="carTypeRow"></div></section>
-      <section class="sgroup"><h3><i>🎨</i>لون سيارتك</h3><div class="colgrid" id="carColRow"></div></section>
+      <section class="sgroup"><h3><i>🏷️</i>علامة الماركة</h3>
+        <div class="row"><button class="opt" id="mcLogoBtn">📷 حط صورة علامة ماركتك</button><button class="opt" id="mcLogoName">🔤 اختر اسم الماركة</button></div>
+        <p class="note">حط صورة العلامة من جوالك (أحلى شي تكون خلفيتها شفافة أو سادة)، وتطلع كبيرة فوق العداد.</p></section>
       <section class="sgroup"><h3><i>✍️</i>اسم الموديل</h3><input class="devsearch" id="carModel" placeholder="مثلاً: لاندكروزر 2025" maxlength="28" autocomplete="off">
-        <p class="note">يطلع فوق سيارتك في تصميم «سيارتي». والماركة تختارها من قسم «العداد».</p></section>
-      <section class="sgroup"><h3><i>📷</i>صورة سيارتك الحقيقية</h3>
-        <div class="row"><button class="opt" id="carPhotoBtn">📷 حط صورة سيارتك</button><button class="opt" id="carPhotoDel">🗑️ ارجع للرسمة</button></div>
-        <input type="file" id="carPhotoIn" accept="image/*" hidden>
-        <p class="note">أحلى شي صورة من الجنب وخلفيتها سادة.</p></section>
+        <p class="note">يطلع تحت علامة الماركة.</p></section>
     </div>
 
     <div class="spage" data-p="speed">
@@ -1003,7 +1002,7 @@ function speedSync(){const on=['speedo','hud','twin','retro','bar','luxe','mapfu
 function applyAll(){
   const t=THEMES[S.theme], r=document.documentElement.style;
   ['bg1','bg2','accent','soft','g1','g2'].forEach(k=>r.setProperty('--'+k,t[k]));
-  document.body.className='L-'+S.layout+' C-'+S.clock+' K-'+S.cards+' I-'+S.icons+' MC-'+store.get('carView','gauge');
+  document.body.className='L-'+S.layout+' C-'+S.clock+' K-'+S.cards+' I-'+S.icons+' MC-gauge';
   try{speedSync()}catch(e){}
   document.body.style.fontFamily=(FONTS[S.font]||FONTS.tajawal)[0]+',sans-serif';
   document.body.dataset.bg=S.bg;
@@ -1451,52 +1450,15 @@ $('icFile').onchange=()=>{const f=$('icFile').files[0];if(!f)return;const img=ne
   c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);c.getContext('2d').drawImage(img,0,0,c.width,c.height);IE.a.img=c.toDataURL('image/png');IE.a.i='';icDraw();URL.revokeObjectURL(img.src);$('icFile').value='';};img.src=URL.createObjectURL(f);};
 $('icSave').onclick=()=>{const a=IE.a;a.n=($('icName').value||a.orig.n).trim();DOCK[IE.idx]=a;saveDock();$('icOv').classList.remove('show');toast('تم تخصيص '+a.n+' ✅');};
 
-/* ===== سيارتي: رسمة سيارة من تصميمنا بلونك ===== */
-const CAR_COLS=[['#f5f5f4','أبيض لؤلؤي'],['#111827','أسود'],['#9ca3af','فضي'],['#4b5563','رمادي'],['#b91c1c','أحمر'],['#1d4ed8','أزرق'],['#0f766e','أخضر'],['#a16207','ذهبي'],['#d6c7a1','بيج']];
-function carSVG(type,c){
-  const W='#0b1220',G='url(#cgl)',R=(x)=>`<g transform="translate(${x} 300)"><circle r="58" fill="#0a0a0a"/><circle r="40" fill="#2b2f36"/><circle r="40" fill="url(#rim)"/>${[0,60,120,180,240,300].map(a=>`<rect x="-4" y="-38" width="8" height="30" rx="3" fill="#c7ccd4" transform="rotate(${a})"/>`).join('')}<circle r="10" fill="#9aa1ab"/></g>`;
-  const defs=`<defs><linearGradient id="cbody" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".35" stop-color="#fff" stop-opacity=".08"/><stop offset=".7" stop-color="#000" stop-opacity=".05"/><stop offset="1" stop-color="#000" stop-opacity=".45"/></linearGradient>
-   <linearGradient id="cgl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5b7aa0"/><stop offset=".5" stop-color="#1b2635"/><stop offset="1" stop-color="#0d131c"/></linearGradient>
-   <radialGradient id="rim"><stop offset="0" stop-color="#e5e7eb" stop-opacity=".9"/><stop offset="1" stop-color="#4b5563" stop-opacity=".9"/></radialGradient>
-   <radialGradient id="cshd"><stop offset="0" stop-color="#000" stop-opacity=".7"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient></defs>`;
-  let body,win,x1=190,x2=650;
-  if(type==='suv'){
-    body=`M70 300 L70 205 Q72 178 100 172 L190 162 L250 92 Q262 80 285 80 L610 80 Q640 80 655 100 L705 170 L770 182 Q805 190 808 225 L810 300 Z`;
-    win=`<path d="M262 160 L300 100 Q306 94 318 94 L440 94 L440 160 Z" fill="${G}"/><path d="M455 94 L600 94 Q620 94 632 110 L668 160 L455 160 Z" fill="${G}"/><rect x="446" y="94" width="9" height="66" fill="${W}"/>`;
-    x1=200;x2=660;
-  }else if(type==='pickup'){
-    body=`M60 300 L60 210 Q62 185 92 178 L180 168 L240 98 Q252 86 274 86 L470 86 Q490 86 492 106 L496 178 L800 178 Q820 180 822 205 L824 300 Z`;
-    win=`<path d="M252 164 L290 106 Q296 100 308 100 L380 100 L380 164 Z" fill="${G}"/><path d="M394 100 L468 100 Q476 100 477 110 L480 164 L394 164 Z" fill="${G}"/><path d="M500 186 L812 186" stroke="#000" stroke-opacity=".25" stroke-width="4"/>`;
-    x1=200;x2=690;
-  }else{
-    body=`M60 300 L58 232 Q60 205 92 198 L210 182 Q260 120 320 104 Q360 94 420 94 L540 96 Q590 98 630 130 L690 180 L790 196 Q818 202 820 232 L822 300 Z`;
-    win=`<path d="M246 178 Q290 126 340 112 Q370 106 420 106 L430 106 L430 178 Z" fill="${G}"/><path d="M445 106 L530 108 Q570 110 600 136 L640 178 L445 178 Z" fill="${G}"/>`;
-    x1=200;x2=670;
-  }
-  return `<svg viewBox="0 0 880 380" xmlns="http://www.w3.org/2000/svg">${defs}<ellipse cx="440" cy="350" rx="410" ry="26" fill="url(#cshd)"/><g${type==='pickup'?' transform="translate(880 0) scale(-1 1)"':''}>
-    <path d="${body}" fill="${c}"/><path d="${body}" fill="url(#cbody)"/>${win}
-    <path d="M90 236 L800 236" stroke="#000" stroke-opacity=".18" stroke-width="3"/>
-    ${type==='pickup'?'<rect x="62" y="200" width="26" height="14" rx="6" fill="#fef3c7"/><rect x="800" y="196" width="22" height="12" rx="5" fill="#ef4444"/>':`<rect x="782" y="${type==='suv'?196:206}" width="26" height="14" rx="6" fill="#fef3c7"/><rect x="62" y="${type==='suv'?200:212}" width="22" height="12" rx="5" fill="#ef4444"/>`}
-    <path d="M${x1-75} 300 a75 75 0 0 1 150 0" fill="${W}"/><path d="M${x2-75} 300 a75 75 0 0 1 150 0" fill="${W}"/>${R(x1)}${R(x2)}</g></svg>`;
-}
+/* ===== سيارتي: علامة الماركة وعداد السرعة ===== */
 function heroDraw(){
-  const mv=store.get('carView','gauge');document.body.classList.remove('MC-car','MC-gauge','MC-both');document.body.classList.add('MC-'+mv);
-  const ph=store.get('carPhoto','');$('hCar').innerHTML=ph?'<img src="'+ph+'" alt="">':carSVG(store.get('carType','suv'),store.get('carCol','#f5f5f4'));
-  $('hModel').textContent=store.get('carModel','');
+  document.body.classList.remove('MC-car','MC-both');document.body.classList.add('MC-gauge');
+  $('hCar').innerHTML='';$('hModel').textContent=store.get('carModel','');
 }
-function myCarSettings(){
-  makeOpts('carViewRow',[['gauge','🏎️ عداد السرعة'],['car','🚙 السيارة'],['both','🚙+🏎️ الاثنين']],store.get('carView','gauge'),v=>{store.set('carView',v);heroDraw()});
-  makeOpts('carTypeRow',[['suv','🚙 جيب'],['sedan','🚗 سيدان'],['pickup','🛻 بيك أب']],store.get('carType','suv'),v=>{store.set('carType',v);heroDraw()});
-  const cg=$('carColRow');cg.innerHTML='';const cur=store.get('carCol','#f5f5f4');
-  CAR_COLS.forEach(([c,n])=>{const b=document.createElement('button');b.style.background=c;b.title=n;b.className=c===cur?'on':'';b.onclick=()=>{store.set('carCol',c);myCarSettings();heroDraw()};cg.appendChild(b)});
-  $('carModel').value=store.get('carModel','');
-}
+function myCarSettings(){$('carModel').value=store.get('carModel','');}
 $('carModel').oninput=()=>{store.set('carModel',$('carModel').value.trim());heroDraw()};
-$('carPhotoBtn').onclick=()=>$('carPhotoIn').click();
-$('carPhotoDel').onclick=()=>{store.set('carPhoto','');heroDraw();toast('رجعنا للرسمة ✅')};
-$('carPhotoIn').onchange=()=>{const f=$('carPhotoIn').files[0];if(!f)return;const img=new Image();img.onload=()=>{const k=Math.min(1,1100/Math.max(img.width,img.height)),c=document.createElement('canvas');
-  c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);c.getContext('2d').drawImage(img,0,0,c.width,c.height);
-  if(!store.set('carPhoto',c.toDataURL('image/png')))store.set('carPhoto',c.toDataURL('image/jpeg',.8));heroDraw();URL.revokeObjectURL(img.src);$('carPhotoIn').value='';};img.src=URL.createObjectURL(f);};
+$('mcLogoBtn').onclick=()=>$('logoIn').click();
+$('mcLogoName').onclick=()=>{document.querySelector('#stabs [data-p="speed"]').click();setTimeout(()=>$('brandSearch').focus(),200)};
 myCarSettings();heroDraw();logoDraw();
 </script>
 <div style="position:fixed;bottom:4px;left:10px;z-index:5;font-family:Tajawal,system-ui,sans-serif;font-size:11px;font-weight:700;color:#fff;opacity:.5;pointer-events:none;text-shadow:0 1px 2px #000">برمجة أبو نواف</div>
