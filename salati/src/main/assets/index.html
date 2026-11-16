@@ -115,10 +115,17 @@ select option{background:#0f2236}
 .toast{position:fixed;left:16px;right:16px;bottom:92px;background:#e2f5ee;color:#06281d;font-weight:800;border-radius:14px;padding:12px 16px;font-size:14px;z-index:40;opacity:0;transform:translateY(10px);transition:.25s;pointer-events:none;text-align:center}
 .toast.on{opacity:1;transform:none}
 .credit{text-align:center;color:#6f86a0;font-size:11.5px;margin:22px 0 6px}
+.splash{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px;background:radial-gradient(circle at 50% 35%,#1d4e7a,#06111d);transition:opacity .6s}
+.splash.hide{opacity:0;pointer-events:none}
+.splash .m{font-size:70px;animation:pul 2.4s infinite}
+.splash h1{font-size:30px;margin:18px 0 8px;color:var(--gold);font-weight:900}
+.splash p{font-size:17px;line-height:2;color:#dbe7f3;margin:0;font-family:"Amiri","Noto Naskh Arabic",serif}
+.splash small{position:absolute;bottom:34px;color:#6f86a0;font-size:12px}
 </style>
 </head>
 <body>
 
+<div class="splash" id="splash" onclick="hideSplash()"><div class="m">🤲</div><h1>صدقة عن والديّ</h1><p>اللهم اغفر لهما وارحمهما<br>واجعل هذا العمل في ميزان حسناتهما</p><small>صلاتي • برمجة أبو نواف</small></div>
 <!-- ===== الرئيسية ===== -->
 <section class="scr on" id="home">
   <div class="top"><div class="city" onclick="openCities()"><b id="cityN">—</b><span id="dateL">—</span></div><button class="ib" onclick="tab('settings')">⚙️</button></div>
@@ -416,6 +423,8 @@ $('thm').onclick=e=>{const b=e.target.closest('button');if(b){Sl.setInt('wtheme'
 window.onSound=()=>{paintSettings();toast('🔊 تم اختيار الصوت')};
 
 paintHome();
+function hideSplash(){$('splash').classList.add('hide');setTimeout(()=>$('splash').remove(),700)}
+setTimeout(hideSplash,2800);
 </script>
 </body>
 </html>
