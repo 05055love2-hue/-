@@ -119,6 +119,14 @@ body.dk-l .dock .tile{height:clamp(84px,17vh,112px);font-size:16px}body.dk-l .do
 body.sd-s .app{grid-template-columns:clamp(210px,21vw,270px) minmax(0,1fr)}
 body.sd-l .app{grid-template-columns:clamp(320px,36vw,470px) minmax(0,1fr)}
 body.full .app{grid-template-columns:1fr!important}
+
+/* الصف اللي فوق يدخل كله في الشاشة */
+.phead{gap:clamp(4px,.8vw,10px);min-width:0;flex-wrap:nowrap}
+.phead .chip{flex:0 1 auto;min-width:0;white-space:nowrap;font-size:clamp(12px,1.25vw,15px);padding:clamp(5px,1vh,8px) clamp(8px,1vw,14px)}
+.phead .chip.ico{font-size:clamp(16px,1.8vw,20px);padding:clamp(4px,.8vh,7px) clamp(8px,1vw,12px)}
+.phead .ytlogo{flex:0 1 auto;min-width:0;white-space:nowrap}
+@media (max-width:1180px){.phead .chip .lb{display:none}.phead .chip{font-size:18px}}
+@media (max-width:900px){.phead .ytlogo{font-size:0}.phead .ytlogo i{font-size:initial}}
 </style>
 </head>
 <body>
@@ -128,10 +136,10 @@ body.full .app{grid-template-columns:1fr!important}
       <div class="ytlogo"><i></i>المشغّل</div>
       <div class="sp"></div>
       <button class="chip ver" id="bVer">🔄 <span id="verTxt">يوتيوب</span></button>
-      <button class="chip" id="bHome">🏠 الرئيسية</button>
-      <button class="chip" id="bFull">⛶ <span id="fullTxt">تكبير</span></button>
-      <button class="chip" id="bAll">▦ التطبيقات</button>
-      <button class="chip" id="bSet">⚙️ الإعدادات</button>
+      <button class="chip" id="bHome">🏠<span class="lb"> الرئيسية</span></button>
+      <button class="chip" id="bFull">⛶<span class="lb"> <span id="fullTxt">تكبير</span></span></button>
+      <button class="chip" id="bAll">▦<span class="lb"> التطبيقات</span></button>
+      <button class="chip ico" id="bSet" aria-label="الإعدادات">⚙️</button>
     </div>
     <div class="box" id="box">
       <div class="ph" id="ph"><div class="big"></div><b>الفيديو يظهر هنا</b><span>ابحث وشغّل أي مقطع وأنت في الشاشة الرئيسية</span></div>

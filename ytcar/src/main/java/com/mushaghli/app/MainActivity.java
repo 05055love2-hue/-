@@ -62,6 +62,7 @@ public class MainActivity extends Activity {
         goFullScreen();
 
         WebSettings s = web.getSettings();
+        s.setTextZoom(100); // حجم الخط ثابت عشان الصف اللي فوق يدخل في الشاشة
         s.setJavaScriptEnabled(true);
         s.setDomStorageEnabled(true);
         s.setDatabaseEnabled(true);
