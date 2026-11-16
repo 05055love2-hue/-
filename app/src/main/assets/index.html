@@ -313,51 +313,87 @@
   body.I-bare .app .ic{background:none;border-color:transparent}
   body.I-glow .app .ic{background:color-mix(in srgb,var(--accent) 16%,transparent);border-color:var(--accent);box-shadow:0 0 14px color-mix(in srgb,var(--accent) 40%,transparent)}
   body.I-glow .app svg{fill:var(--accent)}
-  /* ===== تصاميم احترافية جديدة ===== */
-  /* لوحة العدادات: الساعة في عداد بالنص، التقويم يمين والمشغل يسار */
-  body.L-cockpit main{display:grid;grid-template-columns:1fr 1.5fr 1.2fr;grid-template-rows:minmax(0,1fr);gap:2vw}
-  body.L-cockpit .cal{display:flex;grid-column:1;grid-row:1}
-  body.L-cockpit .clock{grid-column:2;grid-row:1;position:relative;border-radius:36px}
-  body.L-cockpit .player{grid-column:3;grid-row:1}
-  body.L-cockpit .disc{width:clamp(70px,14vh,130px)!important;height:auto!important;aspect-ratio:1}
-  body.L-cockpit .gauge{display:block} body.L-cockpit .gauge .gring{display:inline}
-  body.L-cockpit .gauge .prg{filter:drop-shadow(0 0 8px var(--accent))}
+  /* ===== تصاميم احترافية جديدة — كل واحد له شخصية ===== */
+  body.L-cockpit .bgl,body.L-drive .bgl,body.L-split .bgl,body.L-neon .bgl{display:none!important}
+
+  /* 1) لوحة العدادات: كربون أسود وأحمر رياضي، ثلاث عدادات دائرية */
+  body.L-cockpit{--accent:#ff3b30;--text:#f5f5f5;--soft:#8e8e93;--line:rgba(255,255,255,.08);--bg1:#0a0a0a;
+    background:radial-gradient(ellipse at 50% 120%,#3a0a08 0,transparent 55%),repeating-linear-gradient(45deg,#121212 0 6px,#0c0c0c 6px 12px)}
+  body.L-cockpit main{display:grid;grid-template-columns:1fr 1.7fr 1fr;grid-template-rows:minmax(0,1fr);gap:1vw;align-items:center}
+  body.L-cockpit .card{background:radial-gradient(circle at 50% 35%,#1f1f1f,#060606 70%);border:3px solid #2a2a2a;box-shadow:inset 0 0 0 6px #111,inset 0 0 40px rgba(0,0,0,.9),0 0 30px rgba(255,59,48,.12)}
+  body.L-cockpit .clock{grid-column:2;grid-row:1;position:relative;border-radius:50%;aspect-ratio:1;max-height:100%;justify-self:center;width:auto;height:100%}
+  body.L-cockpit .cal{display:flex;grid-column:1;grid-row:1;border-radius:50%;aspect-ratio:1;width:85%;justify-self:center}
+  body.L-cockpit .player{grid-column:3;grid-row:1;border-radius:50%;aspect-ratio:1;width:92%;justify-self:center;padding:3vh 2vw;justify-content:center}
+  body.L-cockpit .player .tabs,body.L-cockpit .player .pick,body.L-cockpit .player .sub,body.L-cockpit .player .bar,body.L-cockpit .ytform,body.L-cockpit .recent,body.L-cockpit .ytnav{display:none}
+  body.L-cockpit .disc{width:clamp(50px,9vh,90px)!important;aspect-ratio:1}
+  body.L-cockpit .song{font-size:clamp(11px,1.2vw,15px)}
+  body.L-cockpit .gauge{display:block} body.L-cockpit .gauge .gsport{display:inline}
+  body.L-cockpit .gauge .prg{filter:drop-shadow(0 0 10px #ff3b30)}
   body.L-cockpit .analog,body.L-cockpit .hello{display:none!important}
-  body.L-cockpit .time{display:block!important;font-weight:200;font-size:clamp(34px,6vw,86px)}
-  body.L-cockpit .wx{margin-top:.6vh;padding:4px 12px} body.L-cockpit .wx .wd small,body.L-cockpit .wx .wxx,body.L-cockpit .wx .wxf{display:none}
-  body.L-cockpit .cal .num{font-size:clamp(44px,7vw,96px);color:var(--accent)}
-  /* وضع السواقة: أزرار كبيرة وقليلة، بدون مشتتات */
-  body.L-drive .shell{gap:2.4vh}
+  body.L-cockpit .time{display:block!important;font-weight:800;font-style:italic;font-size:clamp(34px,6vw,84px);letter-spacing:-1px}
+  body.L-cockpit .date{font-size:clamp(10px,1.1vw,14px);letter-spacing:3px;color:#ff3b30;font-weight:700}
+  body.L-cockpit .wx{background:none;border:none;margin:0;padding:0} body.L-cockpit .wx .wd,body.L-cockpit .wx .wxx,body.L-cockpit .wx .wxf{display:none}
+  body.L-cockpit .cal .num{font-size:clamp(38px,6vw,80px);font-style:italic;color:#fff}
+  body.L-cockpit .cal .dn{color:#ff3b30;letter-spacing:2px;font-weight:800}
+  body.L-cockpit .dock{background:linear-gradient(#161616,#0b0b0b);border:none;border-top:2px solid #ff3b30;border-radius:0 0 22px 22px}
+  body.L-cockpit .app .ic{border-radius:50%;background:#151515;border:2px solid #2c2c2c}
+  body.L-cockpit .app svg{fill:#ff3b30}
+
+  /* 2) وضع السواقة: نهاري فاتح وتباين عالي، مربعات ملونة كبيرة */
+  body.L-drive{--accent:#0a84ff;--text:#111;--soft:#555;--line:rgba(0,0,0,.08);--bg1:#f2f2f7;--card:#fff;background:#e9ebf0}
+  body.L-drive .shell{gap:2vh}
   body.L-drive main{flex:0 0 auto}
-  body.L-drive .clock{flex-direction:row;justify-content:space-between;padding:1.6vh 2.4vw;gap:2vw;border-radius:22px}
-  body.L-drive .time{display:block!important;font-size:clamp(40px,7vw,96px);font-weight:700}
+  body.L-drive .card{background:#fff;border:none;box-shadow:0 6px 20px rgba(0,0,0,.08);backdrop-filter:none}
+  body.L-drive .clock{flex-direction:row;justify-content:space-between;padding:1.4vh 2.4vw;gap:2vw;border-radius:20px}
+  body.L-drive .time{display:block!important;font-size:clamp(40px,7vw,96px);font-weight:800;color:#111}
+  body.L-drive .date{font-weight:700;color:#333}
   body.L-drive .analog,body.L-drive .hello,body.L-drive .player{display:none!important}
-  body.L-drive .wx{margin:0} body.L-drive .wx .wxx,body.L-drive .wx .wxf{display:none}
-  body.L-drive .dock{flex:1;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(22vw,190px),1fr));align-content:center;gap:2vh 2vw;padding:3vh 2.4vw;overflow-y:auto}
-  body.L-drive .app{width:100%;font-size:clamp(14px,1.8vw,22px);font-weight:700;color:var(--text)}
-  body.L-drive .app .ic{width:100%;height:auto;aspect-ratio:16/10;border-radius:24px;font-size:clamp(34px,5vw,64px)}
-  body.L-drive .app .ic svg{width:42%;height:42%}
-  /* الشاشة المقسومة: نص للمشغل ونص للساعة والتقويم */
-  body.L-split main{display:grid;grid-template-columns:1.25fr 1fr;grid-template-rows:1fr auto;gap:2vh 2vw}
-  body.L-split .player{grid-column:1;grid-row:1/3}
-  body.L-split .clock{grid-column:2;grid-row:1}
-  body.L-split .cal{display:flex;grid-column:2;grid-row:2;flex-direction:row;gap:1.4vw;padding:1.6vh 1.6vw}
-  body.L-split .cal .num{font-size:clamp(28px,4vw,54px)}
-  body.L-split .time{font-size:clamp(44px,8vw,112px)} body.L-split .hello{display:none}
-  body.L-split .dock{border-radius:999px}
-  /* الكوكبي: خطوط نيون رفيعة وأرقام دقيقة */
-  body.L-neon .card{background:rgba(2,6,15,.55);border:1px solid color-mix(in srgb,var(--accent) 55%,transparent);border-radius:6px;box-shadow:0 0 0 1px rgba(0,0,0,.4),inset 0 0 24px color-mix(in srgb,var(--accent) 12%,transparent),0 0 18px color-mix(in srgb,var(--accent) 22%,transparent)}
-  body.L-neon .card::before{content:'';position:absolute;inset:6px;border:1px dashed color-mix(in srgb,var(--accent) 25%,transparent);border-radius:3px;pointer-events:none}
-  body.L-neon .clock,body.L-neon .player,body.L-neon .cal{position:relative}
+  body.L-drive .wx{margin:0;background:#f2f2f7;border:none} body.L-drive .wx .wxx,body.L-drive .wx .wxf{display:none}
+  body.L-drive .dock{flex:1;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(21vw,180px),1fr));align-content:stretch;gap:1.6vh 1.4vw;padding:0;background:none;box-shadow:none;overflow-y:auto}
+  body.L-drive .app{width:100%;height:100%;font-size:clamp(15px,2vw,24px);font-weight:800;color:#fff;position:relative;border-radius:22px;overflow:hidden;justify-content:center;min-height:16vh}
+  body.L-drive .app .ic{position:absolute;inset:0;width:auto;height:auto;border-radius:22px;border:none;background:#0a84ff;color:#fff;font-size:clamp(40px,6vw,72px);place-items:start center;padding-top:12%}
+  body.L-drive .app .ic svg{width:clamp(36px,5vw,64px);height:auto;fill:#fff;position:absolute;top:22%;left:50%;transform:translateX(-50%)}
+  body.L-drive .app .lbl{position:absolute;bottom:14%;left:0;right:0;text-align:center;color:#fff}
+  body.L-drive .app:nth-child(6n+1) .ic{background:#ff3b30} body.L-drive .app:nth-child(6n+2) .ic{background:#0a84ff}
+  body.L-drive .app:nth-child(6n+3) .ic{background:#ff9f0a} body.L-drive .app:nth-child(6n+4) .ic{background:#34c759}
+  body.L-drive .app:nth-child(6n+5) .ic{background:#5e5ce6} body.L-drive .app:nth-child(6n) .ic{background:#8e8e93}
+
+  /* 3) الشاشة المقسومة: أسلوب مجلة، غلاف كبير يملا النص وساعة رفيعة ضخمة */
+  body.L-split{--accent:#e8c39e;--text:#f4efe9;--soft:#a39b92;--line:rgba(255,255,255,.12);--bg1:#1b1714;background:linear-gradient(90deg,#2b231d 0 50%,#14110f 50% 100%)}
+  body.L-split .shell{padding:0;gap:0}
+  body.L-split main{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr auto;gap:0}
+  body.L-split .card{background:none;border:none;border-radius:0;backdrop-filter:none}
+  body.L-split .player{grid-column:2;grid-row:1/3;justify-content:center;background:linear-gradient(160deg,#3a2e25,#1d1814);padding:4vh 3vw}
+  body.L-split .disc{width:clamp(120px,26vh,240px)!important;border-radius:18px!important;box-shadow:0 24px 60px rgba(0,0,0,.6)}
+  body.L-split .song{font-family:Georgia,'Times New Roman',serif;font-size:clamp(18px,2.4vw,30px)}
+  body.L-split .clock{grid-column:1;grid-row:1;align-items:flex-start;padding:5vh 4vw;justify-content:flex-end}
+  body.L-split .time{display:block!important;font-weight:100;font-size:clamp(70px,13vw,190px);letter-spacing:-4px;line-height:.9}
+  body.L-split .ampm{font-size:.18em;letter-spacing:2px}
+  body.L-split .date{font-family:Georgia,serif;font-style:italic;font-size:clamp(14px,1.9vw,24px);color:var(--accent)}
+  body.L-split .analog,body.L-split .hello{display:none!important}
+  body.L-split .wx{background:none;border:none;border-top:1px solid var(--line);border-radius:0;padding:1.4vh 0 0;margin-top:2vh}
+  body.L-split .cal{display:flex;grid-column:1;grid-row:2;flex-direction:row;align-items:baseline;gap:1vw;padding:0 4vw 2vh;justify-content:flex-start}
+  body.L-split .cal .num{font-size:clamp(22px,3vw,40px);font-weight:300}
+  body.L-split .dock{border-radius:0;background:#0f0d0b;border:none;border-top:1px solid var(--line);padding:1.4vh 3vw;justify-content:flex-start}
+  body.L-split .app .ic{background:none;border:1px solid var(--line);border-radius:12px} body.L-split .app svg{fill:var(--accent)}
+  body.L-split .tabs{background:none;border-bottom:1px solid var(--line);border-radius:0}
+
+  /* 4) الكوكبي: شاشة طيارة، شبكة نيون وأرقام دقيقة */
+  body.L-neon{--accent:#22d3ee;--text:#cffafe;--soft:#5eead4;--line:rgba(34,211,238,.3);--bg1:#020617;
+    background:linear-gradient(rgba(34,211,238,.06) 1px,transparent 1px) 0 0/40px 40px,linear-gradient(90deg,rgba(34,211,238,.06) 1px,transparent 1px) 0 0/40px 40px,radial-gradient(ellipse at center,#04213a,#020617 70%)}
+  body.L-neon .card{position:relative;background:rgba(2,6,23,.7);border:1px solid rgba(34,211,238,.55);border-radius:2px;backdrop-filter:none;box-shadow:inset 0 0 24px rgba(34,211,238,.12),0 0 18px rgba(34,211,238,.18);
+    clip-path:polygon(18px 0,100% 0,100% calc(100% - 18px),calc(100% - 18px) 100%,0 100%,0 18px)}
   body.L-neon main{display:grid;grid-template-columns:1fr 1.3fr;grid-template-rows:1.6fr 1fr;gap:1.6vh 1.6vw}
   body.L-neon .clock{grid-column:1;grid-row:1} body.L-neon .cal{display:flex;grid-column:1;grid-row:2} body.L-neon .player{grid-column:2;grid-row:1/3}
-  body.L-neon .time{display:block!important;font-family:ui-monospace,'Courier New',monospace;font-weight:400;letter-spacing:4px;font-size:clamp(40px,7vw,100px);color:var(--accent);text-shadow:0 0 6px var(--accent),0 0 22px color-mix(in srgb,var(--accent) 60%,transparent)}
+  body.L-neon .time{display:block!important;font-family:ui-monospace,'Courier New',monospace;font-weight:400;letter-spacing:4px;font-size:clamp(40px,7vw,100px);color:#22d3ee;text-shadow:0 0 6px #22d3ee,0 0 22px rgba(34,211,238,.6)}
   body.L-neon .analog,body.L-neon .hello{display:none!important}
-  body.L-neon .date,body.L-neon .cal .mo,body.L-neon .cal .dn{font-family:ui-monospace,monospace;letter-spacing:2px;text-transform:uppercase}
-  body.L-neon .cal .num{font-family:ui-monospace,monospace;color:var(--accent);text-shadow:0 0 12px var(--accent)}
-  body.L-neon .app .ic{border-radius:6px;background:transparent;border-color:color-mix(in srgb,var(--accent) 60%,transparent);box-shadow:inset 0 0 12px color-mix(in srgb,var(--accent) 18%,transparent)}
-  body.L-neon .app svg{fill:var(--accent)}
-  body.L-neon .btn.big,body.L-neon .tab.on{border-radius:4px}
+  body.L-neon .date,body.L-neon .cal .mo,body.L-neon .cal .dn,body.L-neon .song,body.L-neon .sub{font-family:ui-monospace,monospace;letter-spacing:2px}
+  body.L-neon .cal .num{font-family:ui-monospace,monospace;color:#f472b6;text-shadow:0 0 12px #f472b6}
+  body.L-neon .disc{border-radius:0!important;clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%)}
+  body.L-neon .wx{border-radius:0;border-color:rgba(34,211,238,.4);background:none}
+  body.L-neon .app .ic{border-radius:0;background:transparent;border-color:rgba(34,211,238,.6);box-shadow:inset 0 0 12px rgba(34,211,238,.18)}
+  body.L-neon .app svg{fill:#22d3ee} body.L-neon .app{font-family:ui-monospace,monospace}
+  body.L-neon .btn.big,body.L-neon .tab.on{border-radius:0;background:#22d3ee;color:#020617}
   @media (orientation:portrait){body.L-cockpit main,body.L-split main,body.L-neon main{grid-template-columns:1fr;grid-template-rows:auto}
     body.L-cockpit main>*,body.L-split main>*,body.L-neon main>*{grid-column:1!important;grid-row:auto!important}}
   .lgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
