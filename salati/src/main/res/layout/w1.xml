@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/root" android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical" android:gravity="center" android:padding="10dp" android:background="@drawable/wbg_0">
+    <TextView android:id="@+id/lbl" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="#ccffffff" android:textSize="11sp" android:maxLines="1" android:includeFontPadding="false" android:text="الصلاة الجاية"/>
+    <TextView android:id="@+id/name" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="#ffffff" android:textSize="20sp" android:textStyle="bold" android:maxLines="1" android:includeFontPadding="false" android:layout_marginTop="2dp" android:text="الظهر"/>
+    <TextView android:id="@+id/time" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="#e6ffffff" android:textSize="13sp" android:maxLines="1" android:includeFontPadding="false" android:text="11:39 ص"/>
+    <Chronometer android:id="@+id/cd" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="#ffffff" android:textSize="22sp" android:textStyle="bold" android:includeFontPadding="false" />
+</LinearLayout>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="AppTheme" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">#0b1a2a</item>
+        <item name="android:statusBarColor">#0b1a2a</item>
+        <item name="android:navigationBarColor">#0b1a2a</item>
+    </style>
+    <string name="w1">الصلاة الجاية والوقت الباقي</string>
+    <string name="w2">الصلوات الخمس في شريط</string>
+    <string name="w3">بطاقة كاملة: التاريخ والصلوات والعد التنازلي</string>
+    <string name="w4">ساعة مع الصلاة الجاية</string>
+    <string name="w5">التاريخ الهجري والميلادي</string>
+    <string name="w6">قائمة الصلوات طولية</string>
+</resources>
