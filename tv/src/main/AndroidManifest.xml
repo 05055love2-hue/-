@@ -13,6 +13,10 @@
     <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
 
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
 
     <application
         android:label="شاشتي"
@@ -42,18 +46,21 @@
         </activity>
         <receiver android:name=".PrayerReceiver" android:exported="false" />
         <receiver android:name=".InstallReceiver" android:exported="false" />
-        <!-- يرجّع شاشتي لو التلفزيون رجّع شاشته الأصلية -->
+        <!-- يرجّع شاشتي لو التلفزيون رجّع شاشته الأصلية بعد الإطفاء -->
         <service
             android:name=".HomeGuard"
-            android:label="@string/guard_name"
             android:exported="false"
-            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
-            <intent-filter>
-                <action android:name="android.accessibilityservice.AccessibilityService" />
-            </intent-filter>
-            <meta-data
-                android:name="android.accessibilityservice"
-                android:resource="@xml/home_guard" />
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Keeps this launcher as the TV home screen after the TV wakes up" />
         </service>
+        <receiver android:name=".HomeGuard$Boot" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
     </application>
 </manifest>

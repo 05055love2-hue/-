@@ -1,96 +1,96 @@
 package com.tvhome.app;
 
-import android.accessibilityservice.AccessibilityService;
-import android.content.ComponentName;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
+import android.content.IntentFilter;
+import android.os.Build;
+import android.os.IBinder;
 import android.provider.Settings;
-import android.text.TextUtils;
-import android.view.accessibility.AccessibilityEvent;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
- * حارس الشاشة الرئيسية: بعض التلفزيونات ترجع شاشتها الأصلية بعد ما تطفي وتشغّل
- * أو لما تضغط زر البيت. هذا يلاحظ لما تطلع الشاشة الأصلية ويرجّع «شاشتي» فورًا.
+ * حارس الشاشة الرئيسية: كل ما يشتغل التلفزيون (من الإطفاء أو من أول تشغيل)
+ * يرجّع «شاشتي» قدّام، لأن بعض التلفزيونات ترجع شاشتها الأصلية غصب.
  */
-public class HomeGuard extends AccessibilityService {
+public class HomeGuard extends Service {
+    static final String CH = "guard";
+    private BroadcastReceiver onWake;
 
-    private final Set<String> otherHomes = new HashSet<>();
-    private final Set<String> otherPkgs = new HashSet<>();
-    private long lastJump = 0;
-
-    @Override
-    protected void onServiceConnected() {
-        super.onServiceConnected();
-        loadHomes();
+    /** يشغّل الحارس (لو التطبيق مسموح له يطلع فوق التطبيقات) */
+    static void start(Context c) {
+        if (!canJump(c)) return;
+        Intent i = new Intent(c, HomeGuard.class);
+        try {
+            if (Build.VERSION.SDK_INT >= 26) c.startForegroundService(i);
+            else c.startService(i);
+        } catch (Exception ignored) { }
     }
 
-    /** يجمع كل الشاشات الرئيسية الثانية الموجودة في الجهاز */
-    private void loadHomes() {
-        otherHomes.clear();
-        otherPkgs.clear();
+    /** هل عنده إذن «الظهور فوق التطبيقات الأخرى»؟ بدونه التلفزيون يمنعه يرجع قدّام */
+    static boolean canJump(Context c) {
+        return Build.VERSION.SDK_INT < 23 || Settings.canDrawOverlays(c);
+    }
+
+    static void bringHome(Context c) {
         try {
-            PackageManager pm = getPackageManager();
-            Intent i = new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME);
-            List<ResolveInfo> list = pm.queryIntentActivities(i, PackageManager.MATCH_ALL);
-            for (ResolveInfo r : list) {
-                String pkg = r.activityInfo.packageName;
-                if (pkg.equals(getPackageName())) continue;
-                // نتجاهل شاشة الاختيار حقت النظام
-                if (pkg.equals("android") || pkg.contains("resolver")) continue;
-                otherHomes.add(r.activityInfo.name);
-                if (r.activityInfo.targetActivity != null) otherHomes.add(r.activityInfo.targetActivity);
-                otherPkgs.add(pkg);
-            }
+            c.startActivity(new Intent(c, MainActivity.class)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT));
         } catch (Exception ignored) { }
     }
 
     @Override
-    public void onAccessibilityEvent(AccessibilityEvent e) {
-        if (e == null || e.getEventType() != AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) return;
-        CharSequence cls = e.getClassName();
-        if (cls == null) return;
-        String c = cls.toString();
-        String pkg = e.getPackageName() == null ? "" : e.getPackageName().toString();
-        String low = c.toLowerCase();
-        boolean homeLike = low.contains("home") || low.contains("launcher");
-        boolean isOther = otherHomes.contains(c) || (otherPkgs.contains(pkg) && homeLike);
-        if (!isOther && homeLike && !pkg.equals(getPackageName())) {
-            // يمكن انضاف لانشر جديد بعد التشغيل
-            loadHomes();
-            isOther = otherHomes.contains(c);
+    public void onCreate() {
+        super.onCreate();
+        NotificationManager nm = getSystemService(NotificationManager.class);
+        Notification.Builder b;
+        if (Build.VERSION.SDK_INT >= 26) {
+            nm.createNotificationChannel(new NotificationChannel(CH, "تثبيت الشاشة الرئيسية", NotificationManager.IMPORTANCE_MIN));
+            b = new Notification.Builder(this, CH);
+        } else b = new Notification.Builder(this);
+        b.setSmallIcon(android.R.drawable.ic_menu_view).setContentTitle("شاشتي").setContentText("الشاشة الرئيسية مثبّتة").setOngoing(true);
+        try {
+            if (Build.VERSION.SDK_INT >= 34)
+                startForeground(7300, b.build(), android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE);
+            else startForeground(7300, b.build());
+        } catch (Exception e) { stopSelf(); return; }
+
+        onWake = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context c, Intent i) {
+                // نعطي التلفزيون ثانيتين يفتح شاشته، بعدها نرجّع شاشتي فوقها
+                new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> bringHome(c), 2000);
+            }
+        };
+        IntentFilter f = new IntentFilter(Intent.ACTION_SCREEN_ON);
+        f.addAction(Intent.ACTION_USER_PRESENT);
+        f.addAction("android.intent.action.DREAMING_STOPPED");
+        registerReceiver(onWake, f);
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        return START_STICKY;
+    }
+
+    @Override
+    public void onDestroy() {
+        if (onWake != null) try { unregisterReceiver(onWake); } catch (Exception ignored) { }
+        super.onDestroy();
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) { return null; }
+
+    /** أول ما يشتغل التلفزيون من الصفر */
+    public static class Boot extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context c, Intent i) {
+            start(c);
+            if (canJump(c)) new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> bringHome(c), 3000);
         }
-        if (!isOther) return;
-        long now = System.currentTimeMillis();
-        if (now - lastJump < 1500) return;
-        lastJump = now;
-        try {
-            Intent go = new Intent(this, MainActivity.class)
-                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-            startActivity(go);
-        } catch (Exception ignored) { }
-    }
-
-    @Override
-    public void onInterrupt() { }
-
-    /** هل الحارس مفعّل؟ */
-    public static boolean isOn(Context ctx) {
-        try {
-            String on = Settings.Secure.getString(ctx.getContentResolver(),
-                    Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES);
-            if (TextUtils.isEmpty(on)) return false;
-            String me = new ComponentName(ctx, HomeGuard.class).flattenToString();
-            String meShort = new ComponentName(ctx, HomeGuard.class).flattenToShortString();
-            for (String s : on.split(":")) {
-                if (s.equalsIgnoreCase(me) || s.equalsIgnoreCase(meShort)) return true;
-            }
-        } catch (Exception ignored) { }
-        return false;
     }
 }

@@ -57,6 +57,7 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Updater.check(this, "tv-launcher");
+        HomeGuard.start(this);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         web = new WebView(this);
@@ -189,17 +190,18 @@ public class MainActivity extends Activity {
 
         @JavascriptInterface
         public boolean guardOn() {
-            return HomeGuard.isOn(MainActivity.this);
+            return HomeGuard.canJump(MainActivity.this);
         }
 
         @JavascriptInterface
         public void homeSettings() {
             // أول شيء: نفعّل الحارس اللي يمنع التلفزيون يرجّع شاشته الأصلية
-            if (!HomeGuard.isOn(MainActivity.this)) {
+            if (!HomeGuard.canJump(MainActivity.this)) {
                 try {
-                    startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                    startActivity(new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                            Uri.parse("package:" + getPackageName())).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                     runOnUiThread(() -> Toast.makeText(MainActivity.this,
-                            "اختر «شاشتي - تثبيت الشاشة الرئيسية» وشغّله", Toast.LENGTH_LONG).show());
+                            "شغّل «السماح» لشاشتي، بعدها ارجع", Toast.LENGTH_LONG).show());
                     return;
                 } catch (Exception ignored) { }
             }
@@ -337,6 +339,7 @@ public class MainActivity extends Activity {
     protected void onResume() {
         super.onResume();
         goFullScreen();
+        HomeGuard.start(this);
         if (web != null) {
             if (yt == null || !yt.hasFocus()) web.requestFocus();
             web.evaluateJavascript("typeof refreshApps==='function'&&refreshApps();typeof guardLabel==='function'&&guardLabel()", null);
