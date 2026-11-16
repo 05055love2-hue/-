@@ -20,7 +20,7 @@ public class Updater {
     public static void check(final Activity a, final String key) {
         final SharedPreferences p = a.getSharedPreferences("updater", 0);
         final long now = System.currentTimeMillis();
-        if (now - p.getLong("t", 0) < 4 * 3600 * 1000L) return;
+        if (now - p.getLong("t", 0) < 60 * 1000L) return;
         new Thread(() -> {
             try {
                 HttpURLConnection c = (HttpURLConnection) new URL(BASE + "versions.json?t=" + now).openConnection();
