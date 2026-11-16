@@ -1302,10 +1302,9 @@ loop();
   (function(){
     const fmt=n=>Number(n).toLocaleString('en-US');
     // الزيارات: عدّاد عام، يحسب كل متصفح مرة وحدة في اليوم
-    const C='https://abacus.jasoncameron.dev', NS='tatbeeqati-sa', KEY='visits';
     let seen='';try{seen=localStorage.getItem('vday')||''}catch(e){}
     const today=new Date().toISOString().slice(0,10);
-    const url=C+(seen===today?'/get/':'/hit/')+NS+'/'+KEY;
+    const url='https://tatbeeqati-sa.pages.dev/api/visits'+(seen===today?'':'?hit=1');
     fetch(url).then(r=>r.json()).then(d=>{if(typeof d.value==='number'){document.getElementById('vCount').textContent=fmt(d.value);try{localStorage.setItem('vday',today)}catch(e){}}}).catch(()=>{});
     // التحميلات: مجموع تحميلات كل نسخ التطبيقات من GitHub
     const apks=[...document.querySelectorAll('a.dl[href$=".apk"]')];
