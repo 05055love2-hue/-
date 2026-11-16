@@ -340,6 +340,8 @@ public class MainActivity extends Activity {
         super.onResume();
         goFullScreen();
         HomeGuard.start(this);
+        // الشاشة الرئيسية ما تتسكّر أبد، فنشيّك على التحديث كل ما ترجع لها
+        Updater.check(this, "tv-launcher");
         try { getSystemService(android.app.NotificationManager.class).cancel(7311); } catch (Exception ignored) { }
         if (web != null) {
             if (yt == null || !yt.hasFocus()) web.requestFocus();
