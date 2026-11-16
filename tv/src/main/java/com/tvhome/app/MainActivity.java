@@ -362,7 +362,7 @@ public class MainActivity extends Activity {
         goFullScreen();
         HomeGuard.start(this);
         // الشاشة الرئيسية ما تتسكّر أبد، فنشيّك على التحديث كل ما ترجع لها
-        if (System.currentTimeMillis() - lastUpd > 3 * 60 * 60 * 1000L) {
+        if (System.currentTimeMillis() - lastUpd > 10 * 60 * 1000L) {
             lastUpd = System.currentTimeMillis();
             Updater.check(this, "tv-launcher");
         }
@@ -420,7 +420,7 @@ public class MainActivity extends Activity {
     }
 
     private String pendingPrayer;
-    private static long lastUpd = System.currentTimeMillis();
+    private static long lastUpd = 0;
 
     private void handlePrayerIntent(Intent i) {
         if (i == null) return;
