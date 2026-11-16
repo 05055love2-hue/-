@@ -10,7 +10,7 @@ import android.os.SystemClock;
 import android.widget.RemoteViews;
 import java.util.Calendar;
 
-/** ويدجتات صلاتي الستة */
+/** ويدجتات صلاتي */
 public class Widgets {
 
     static final int[] BGS = {R.drawable.wbg_0, R.drawable.wbg_1, R.drawable.wbg_2, R.drawable.wbg_3, R.drawable.wbg_4, R.drawable.wbg_5, R.drawable.wbg_6, R.drawable.wbg_7};
@@ -120,16 +120,34 @@ public class Widgets {
         return v;
     }
 
+    static final String[] SDAYS = {"أحد", "اثنين", "ثلاثاء", "أربعاء", "خميس", "جمعة", "سبت"};
+
+    static RemoteViews w7(Context c) {
+        long now = System.currentTimeMillis();
+        Calendar d = Core.dayOf(now);
+        int[] h = Core.hijri(c, d);
+        long[] nx = Core.next(c, now, false);
+        RemoteViews v = new RemoteViews(c.getPackageName(), R.layout.w7);
+        v.setTextViewText(R.id.hijri, SDAYS[d.get(Calendar.DAY_OF_WEEK) - 1] + "، " + h[2] + " " + Core.HMONTHS[Math.max(0, Math.min(11, h[1] - 1))]);
+        v.setTextViewText(R.id.city, Core.sp(c).getString("city", ""));
+        v.setTextViewText(R.id.name, Core.NAMES[(int) nx[0]]);
+        v.setTextViewText(R.id.time, Core.hm(nx[1]).replace(" ص", "").replace(" م", ""));
+        countdown(v, nx[1]);
+        v.setOnClickPendingIntent(R.id.root, open(c));
+        return v;
+    }
+
     static RemoteViews build(Context c, Class<?> k) {
         if (k == W1.class) return w1(c);
         if (k == W2.class) return w2(c);
         if (k == W3.class) return w3(c);
         if (k == W4.class) return w4(c);
         if (k == W5.class) return w5(c);
+        if (k == W7.class) return w7(c);
         return w6(c);
     }
 
-    static final Class<?>[] ALL = {W1.class, W2.class, W3.class, W4.class, W5.class, W6.class};
+    static final Class<?>[] ALL = {W1.class, W2.class, W3.class, W4.class, W5.class, W6.class, W7.class};
 
     static void updateAll(Context c) {
         AppWidgetManager m = AppWidgetManager.getInstance(c);
@@ -155,4 +173,5 @@ public class Widgets {
     public static class W4 extends Base {}
     public static class W5 extends Base {}
     public static class W6 extends Base {}
+    public static class W7 extends Base {}
 }
