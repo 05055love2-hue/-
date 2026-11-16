@@ -22,7 +22,6 @@ public class HomeGuard extends Service {
 
     /** يشغّل الحارس (لو التطبيق مسموح له يطلع فوق التطبيقات) */
     static void start(Context c) {
-        if (!canJump(c)) return;
         Intent i = new Intent(c, HomeGuard.class);
         try {
             if (Build.VERSION.SDK_INT >= 26) c.startForegroundService(i);
@@ -36,6 +35,21 @@ public class HomeGuard extends Service {
     }
 
     static void bringHome(Context c) {
+        // طريقة احتياطية: تنبيه يفتح شاشتي على طول (تنفع حتى بدون إذن الظهور فوق التطبيقات)
+        try {
+            NotificationManager nm = c.getSystemService(NotificationManager.class);
+            if (Build.VERSION.SDK_INT >= 26)
+                nm.createNotificationChannel(new NotificationChannel("guard_jump", "رجوع شاشتي", NotificationManager.IMPORTANCE_HIGH));
+            Intent open = new Intent(c, MainActivity.class)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            android.app.PendingIntent pi = android.app.PendingIntent.getActivity(c, 7310, open,
+                    android.app.PendingIntent.FLAG_IMMUTABLE | android.app.PendingIntent.FLAG_UPDATE_CURRENT);
+            Notification.Builder b = Build.VERSION.SDK_INT >= 26 ? new Notification.Builder(c, "guard_jump") : new Notification.Builder(c);
+            b.setSmallIcon(android.R.drawable.ic_menu_view).setContentTitle("شاشتي").setContentText("رجوع للشاشة الرئيسية")
+                    .setContentIntent(pi).setFullScreenIntent(pi, true).setAutoCancel(true)
+                    .setCategory(Notification.CATEGORY_ALARM).setPriority(Notification.PRIORITY_MAX);
+            nm.notify(7311, b.build());
+        } catch (Exception ignored) { }
         try {
             c.startActivity(new Intent(c, MainActivity.class)
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT));
@@ -63,6 +77,7 @@ public class HomeGuard extends Service {
             public void onReceive(Context c, Intent i) {
                 // نعطي التلفزيون ثانيتين يفتح شاشته، بعدها نرجّع شاشتي فوقها
                 new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> bringHome(c), 2000);
+                new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> bringHome(c), 6000);
             }
         };
         IntentFilter f = new IntentFilter(Intent.ACTION_SCREEN_ON);
@@ -90,7 +105,7 @@ public class HomeGuard extends Service {
         @Override
         public void onReceive(Context c, Intent i) {
             start(c);
-            if (canJump(c)) new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> bringHome(c), 3000);
+            new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> bringHome(c), 3000);
         }
     }
 }

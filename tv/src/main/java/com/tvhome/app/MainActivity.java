@@ -340,6 +340,7 @@ public class MainActivity extends Activity {
         super.onResume();
         goFullScreen();
         HomeGuard.start(this);
+        try { getSystemService(android.app.NotificationManager.class).cancel(7311); } catch (Exception ignored) { }
         if (web != null) {
             if (yt == null || !yt.hasFocus()) web.requestFocus();
             web.evaluateJavascript("typeof refreshApps==='function'&&refreshApps();typeof guardLabel==='function'&&guardLabel()", null);
