@@ -132,6 +132,8 @@ function prev(t,now){const st=new Date(now.getFullYear(),now.getMonth()-2,1);let
   for(let i=0;i<4;i++){const[d]=payDate(t,st.getFullYear(),st.getMonth()+i);if(d.getTime()+DAY<=now.getTime())p=d}return p}
 const fmt=d=>days[d.getDay()]+' '+d.getDate()+' '+months[d.getMonth()];
 const same=(a,b)=>a.toDateString()===b.toDateString();
+// عدد الأيام بالتقويم (نفس حساب الويدجت): من اليوم لين يوم الصرف
+const calDays=(d,now)=>Math.max(0,Math.round((new Date(d.getFullYear(),d.getMonth(),d.getDate())-new Date(now.getFullYear(),now.getMonth(),now.getDate()))/DAY));
 
 let sel=store.get('sel','');
 const list=$('list');
@@ -152,7 +154,7 @@ function draw(full){
   if(!sel||!T.some(t=>t.k===sel))sel=order[0].k;
   const s=T.find(t=>t.k===sel);
   // البطاقات
-  T.forEach(t=>{const e=t.el,dl=Math.max(0,Math.floor(t.left/DAY)),hr=Math.max(1,Math.ceil(t.left/3600000));
+  T.forEach(t=>{const e=t.el,dl=calDays(t.next,now),hr=Math.max(1,Math.ceil(t.left/3600000));
     e.classList.toggle('on',t.k===sel);
     e.querySelector('.n b').textContent=t.isToday?'🎉':(dl>0?dl:hr);
     e.querySelector('.n small').textContent=t.isToday?'اليوم':(dl>0?'يوم':'ساعة');
