@@ -31,6 +31,7 @@ public class StripWidget extends AppWidgetProvider {
             v.setTextViewText(n[i], Pay.ICON[i] + " " + SHORT[i]);
         }
         v.setOnClickPendingIntent(R.id.root, PendingIntent.getActivity(c, 2, new Intent(c, MainActivity.class), PendingIntent.FLAG_IMMUTABLE));
+        v.setInt(R.id.root, "setBackgroundResource", WTheme.bg(c));
         m.updateAppWidget(ids, v);
     }
 

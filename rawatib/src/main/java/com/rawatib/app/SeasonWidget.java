@@ -42,6 +42,7 @@ public class SeasonWidget extends AppWidgetProvider {
             v.setTextViewText(rows[i], Pay.ICON[i] + " " + Pay.NAME[i] + ": " + Pay.left(left[i]));
         }
         v.setOnClickPendingIntent(R.id.root, PendingIntent.getActivity(c, 0, new Intent(c, MainActivity.class), PendingIntent.FLAG_IMMUTABLE));
+        v.setInt(R.id.root, "setBackgroundResource", WTheme.bg(c));
         m.updateAppWidget(ids, v);
     }
 

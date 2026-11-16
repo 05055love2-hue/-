@@ -33,6 +33,7 @@ public class SmallWidget extends AppWidgetProvider {
         v.setTextViewText(R.id.days, bestLeft <= 0 ? "🎉" : String.valueOf(bestLeft));
         v.setTextViewText(R.id.unit, bestLeft <= 0 ? "اليوم الصرف" : (bestLeft == 1 ? "باقي يوم" : "يوم باقي"));
         v.setOnClickPendingIntent(R.id.root, PendingIntent.getActivity(c, 1, new Intent(c, MainActivity.class), PendingIntent.FLAG_IMMUTABLE));
+        v.setInt(R.id.root, "setBackgroundResource", WTheme.bg(c));
         m.updateAppWidget(ids, v);
     }
 

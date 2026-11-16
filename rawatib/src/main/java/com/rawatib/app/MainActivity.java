@@ -79,6 +79,17 @@ public class MainActivity extends Activity {
 
     class Bridge {
         @JavascriptInterface
+        public void setWidgetTheme(String t) {
+            getSharedPreferences("pay", MODE_PRIVATE).edit().putString("wtheme", t).apply();
+            SeasonWidget.updateAll(MainActivity.this);
+        }
+
+        @JavascriptInterface
+        public String getWidgetTheme() {
+            return getSharedPreferences("pay", MODE_PRIVATE).getString("wtheme", "green");
+        }
+
+        @JavascriptInterface
         public void setPrivDay(int day) {
             getSharedPreferences("pay", MODE_PRIVATE).edit().putInt("priv", day).apply();
             SeasonWidget.updateAll(MainActivity.this);

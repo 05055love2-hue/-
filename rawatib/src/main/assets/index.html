@@ -58,6 +58,18 @@ header small{display:block;font-size:13px;color:var(--soft);font-weight:700}
 .days{display:flex;gap:6px;flex-wrap:wrap}
 .days button{border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--txt);font-family:inherit;font-weight:800;font-size:14px;border-radius:12px;width:42px;height:38px;cursor:pointer}
 .days button.on{background:#8b5cf6;border-color:#8b5cf6}
+/* شكل الويدجت */
+.wbox{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:14px}
+.wprev{border-radius:22px;padding:14px;display:flex;align-items:center;gap:12px;margin-bottom:14px;position:relative;overflow:hidden;
+  background-image:linear-gradient(135deg,rgba(255,255,255,.08),rgba(0,0,0,.08));transition:.3s}
+.wprevbg{border-radius:26px;padding:16px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='160'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23f9a8d4'/%3E%3Cstop offset='.5' stop-color='%2393c5fd'/%3E%3Cstop offset='1' stop-color='%236ee7b7'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='400' height='160' fill='url(%23g)'/%3E%3Ccircle cx='320' cy='30' r='60' fill='%23fff' opacity='.35'/%3E%3Ccircle cx='60' cy='140' r='70' fill='%237c3aed' opacity='.25'/%3E%3C/svg%3E") center/cover;margin-bottom:14px}
+.wprev .e{font-size:30px}.wprev .t{flex:1}.wprev .t small{display:block;font-size:11px;opacity:.75;font-weight:700}.wprev .t b{font-size:18px;font-weight:900}
+.wprev .d{background:rgba(255,255,255,.18);border-radius:14px;padding:4px 12px;text-align:center;font-weight:900;font-size:22px;line-height:1.15}.wprev .d small{display:block;font-size:11px;font-weight:700}
+.wsw{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.wsw button{border:0;font-family:inherit;color:var(--txt);background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11.5px;font-weight:800}
+.wsw i{width:46px;height:46px;border-radius:15px;display:block;border:2px solid transparent;box-shadow:0 4px 12px rgba(0,0,0,.3)}
+.wsw button.on i{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.25),0 4px 12px rgba(0,0,0,.3)}
+.wok{font-size:12.5px;color:var(--soft);margin-top:10px;line-height:1.7}
 </style>
 </head>
 <body>
@@ -77,6 +89,13 @@ header small{display:block;font-size:13px;color:var(--soft);font-weight:700}
   <div class="priv" id="privBox" hidden>
     <label>راتبك في القطاع الخاص ينزل يوم كم؟</label>
     <div class="days" id="days"></div>
+  </div>
+
+  <div class="sec">🎨 شكل الويدجت</div>
+  <div class="wbox">
+    <div class="wprevbg"><div class="wprev" id="wprev"><div class="e">🏛️</div><div class="t"><small>أقرب صرف</small><b id="wpName">راتب الدولة</b></div><div class="d"><span id="wpDays">11</span><small>يوم</small></div></div></div>
+    <div class="wsw" id="wsw"></div>
+    <p class="wok">اختر اللون، والويدجت اللي في شاشتك يتغير على طول. ما حطيته للحين؟ اضغط مطوّل على الشاشة الرئيسية ← أدوات ← مواعيد الصرف.</p>
   </div>
 
   <div class="sec" id="schTitle">المواعيد الجاية</div>
@@ -156,6 +175,24 @@ function draw(full){
 }
 try{window.Native&&Native.setPrivDay(T[3].day)}catch(e){}
 draw(true);setInterval(()=>draw(false),1000);setInterval(()=>draw(true),60000);
+
+// ===== شكل الويدجت =====
+const WT=[['green','أخضر','linear-gradient(135deg,#065f46,#07130f)'],['blue','أزرق','linear-gradient(135deg,#1d4ed8,#0b1640)'],['purple','بنفسجي','linear-gradient(135deg,#7c3aed,#1e1048)'],
+ ['sunset','غروب','linear-gradient(135deg,#f97316,#9d174d)'],['pink','وردي','linear-gradient(135deg,#ec4899,#6d28d9)'],['gold','ذهبي','linear-gradient(135deg,#b45309,#2a1a05)'],
+ ['night','أسود','linear-gradient(135deg,#1f2937,#000)'],['glass','زجاجي','rgba(255,255,255,.25)'],['glassdark','زجاجي غامق','rgba(0,0,0,.35)']];
+(function(){
+  const box=$('wsw'),pv=$('wprev');
+  let cur='green';try{if(window.Native&&Native.getWidgetTheme)cur=Native.getWidgetTheme()}catch(e){}
+  function paint(){const t=WT.find(x=>x[0]===cur)||WT[0];pv.style.background=t[2];
+    const glass=cur.startsWith('glass');pv.style.backdropFilter=glass?'blur(12px)':'';pv.style.webkitBackdropFilter=glass?'blur(12px)':'';pv.style.border=glass?'1px solid rgba(255,255,255,.5)':'1px solid rgba(255,255,255,.15)';
+    [...box.children].forEach(b=>b.classList.toggle('on',b.dataset.k===cur))}
+  WT.forEach(t=>{const b=document.createElement('button');b.dataset.k=t[0];b.innerHTML='<i style="background:'+t[2]+(t[0].startsWith('glass')?';border:1px solid rgba(255,255,255,.5);backdrop-filter:blur(6px)':'')+'"></i>'+t[1];
+    b.onclick=()=>{cur=t[0];try{window.Native&&Native.setWidgetTheme(cur)}catch(e){}paint()};box.appendChild(b)});
+  paint();
+  // نعرض أقرب صرف الحقيقي في المعاينة
+  setTimeout(()=>{try{const n=$('hName').textContent.trim();if(n)$('wpName').textContent=n;
+    const dd=document.querySelector('#hBody .cd b');if(dd)$('wpDays').textContent=dd.textContent}catch(e){}},300);
+})();
 </script>
 <div style="position:relative;z-index:1;text-align:center;font-family:Tajawal,system-ui,sans-serif;font-size:13px;font-weight:700;opacity:.6;padding:14px 0 18px">برمجة أبو نواف</div>
 </body>
