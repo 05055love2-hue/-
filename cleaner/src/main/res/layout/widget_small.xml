@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root" android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="horizontal" android:gravity="center" android:padding="8dp"
+    android:layoutDirection="rtl" android:background="@drawable/w_bg">
+    <ImageView android:id="@+id/ring" android:layout_width="0dp" android:layout_weight="1" android:layout_height="match_parent"
+        android:scaleType="fitCenter" android:contentDescription="المساحة" />
+    <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical"
+        android:gravity="center" android:layout_marginStart="6dp">
+        <TextView android:id="@+id/free" android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="فاضي —" android:textColor="#ffffff" android:textSize="12sp" android:textStyle="bold" android:maxLines="1" />
+        <TextView android:id="@+id/btn" android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:layout_marginTop="4dp" android:background="@drawable/w_btn" android:paddingStart="10dp" android:paddingEnd="10dp"
+            android:paddingTop="4dp" android:paddingBottom="4dp" android:text="🧹 نظّف" android:textColor="#0f766e"
+            android:textSize="12sp" android:textStyle="bold" />
+    </LinearLayout>
+</LinearLayout>

@@ -66,24 +66,64 @@ public class CleanWidget extends AppWidgetProvider {
     }
 
     static void draw(Context c, AppWidgetManager m, int[] ids) {
+        for (int id : ids) {
+            try { m.updateAppWidget(id, views(c, m, id)); } catch (Exception ignored) {}
+        }
+    }
+
+    /** نختار الشكل حسب مقاس الويدجت: صغير جدًا، صغير، كبير */
+    static RemoteViews views(Context c, AppWidgetManager m, int id) {
+        if (android.os.Build.VERSION.SDK_INT >= 31) {
+            java.util.Map<android.util.SizeF, RemoteViews> map = new java.util.HashMap<>();
+            map.put(new android.util.SizeF(40f, 40f), build(c, R.layout.widget_tiny));
+            map.put(new android.util.SizeF(110f, 40f), build(c, R.layout.widget_small));
+            map.put(new android.util.SizeF(200f, 100f), build(c, R.layout.widget));
+            return new RemoteViews(map);
+        }
+        android.os.Bundle o = m.getAppWidgetOptions(id);
+        int w = o.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, 110), h = o.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, 40);
+        int lay = (w < 100) ? R.layout.widget_tiny : (w < 200 || h < 100) ? R.layout.widget_small : R.layout.widget;
+        return build(c, lay);
+    }
+
+    static RemoteViews build(Context c, int lay) {
         SharedPreferences sp = c.getSharedPreferences("nz", 0);
         StatFs st = new StatFs(Environment.getDataDirectory().getPath());
         long total = st.getTotalBytes(), free = st.getAvailableBytes();
         int pct = (int) ((total - free) * 100 / Math.max(1, total));
-        RemoteViews v = new RemoteViews(c.getPackageName(), R.layout.widget);
-        v.setImageViewBitmap(R.id.ring, ring(pct));
-        v.setTextViewText(R.id.free, "فاضي " + sz(free) + " من " + sz(total));
         boolean busy = sp.getBoolean("busy", false) && System.currentTimeMillis() - sp.getLong("busyAt", 0) < 10 * 60 * 1000L;
+        RemoteViews v = new RemoteViews(c.getPackageName(), lay);
+        v.setImageViewBitmap(R.id.ring, ring(pct));
+        Intent now = new Intent(c, AutoReceiver.class).setAction(AutoReceiver.NOW);
+        PendingIntent clean = PendingIntent.getBroadcast(c, 21, now, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent open = PendingIntent.getActivity(c, 22, new Intent(c, MainActivity.class), PendingIntent.FLAG_IMMUTABLE);
+        if (lay == R.layout.widget_tiny) {
+            // الصغير جدًا: الضغط عليه ينظّف
+            v.setOnClickPendingIntent(R.id.root, clean);
+            return v;
+        }
+        if (lay == R.layout.widget_small) {
+            v.setTextViewText(R.id.free, "فاضي " + sz(free));
+            v.setTextViewText(R.id.btn, busy ? "⏳" : "🧹 نظّف");
+            v.setOnClickPendingIntent(R.id.btn, clean);
+            v.setOnClickPendingIntent(R.id.ring, open);
+            return v;
+        }
+        v.setTextViewText(R.id.free, "فاضي " + sz(free) + " من " + sz(total));
         long last = sp.getLong("lastClean", 0), lastFreed = sp.getLong("lastFreed", -1);
         String l = last == 0 ? "ما نظّفت للحين" : "آخر تنظيف " + ago(last) + (lastFreed >= 0 ? " • " + sz(lastFreed) : "");
         if (sp.getBoolean("auto", false)) l += "\n⏰ تلقائي " + AutoClean.label(c);
         v.setTextViewText(R.id.last, l);
         v.setTextViewText(R.id.btn, busy ? "⏳ جاري التنظيف…" : "🧹 نظّف الحين");
-        Intent now = new Intent(c, AutoReceiver.class).setAction(AutoReceiver.NOW);
-        v.setOnClickPendingIntent(R.id.btn, PendingIntent.getBroadcast(c, 21, now, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT));
-        v.setOnClickPendingIntent(R.id.ring, PendingIntent.getActivity(c, 22, new Intent(c, MainActivity.class), PendingIntent.FLAG_IMMUTABLE));
-        v.setOnClickPendingIntent(R.id.title, PendingIntent.getActivity(c, 23, new Intent(c, MainActivity.class), PendingIntent.FLAG_IMMUTABLE));
-        m.updateAppWidget(ids, v);
+        v.setOnClickPendingIntent(R.id.btn, clean);
+        v.setOnClickPendingIntent(R.id.ring, open);
+        v.setOnClickPendingIntent(R.id.title, open);
+        return v;
+    }
+
+    @Override
+    public void onAppWidgetOptionsChanged(Context c, AppWidgetManager m, int id, android.os.Bundle o) {
+        try { m.updateAppWidget(id, views(c, m, id)); } catch (Exception ignored) {}
     }
 
     @Override
