@@ -379,7 +379,7 @@
     <h4>شكل الأيقونات</h4><div class="row" id="icRow"></div>
     <h4>الألوان</h4><div class="row" id="thRow"></div>
     <h4>الخلفية</h4><div class="row" id="wRow"></div>
-    <h4>🏙️ المدينة (للطقس ومواقيت الصلاة)</h4><div class="row" id="cityRow"></div>
+    <h4>🏙️ المدينة (للطقس ومواقيت الصلاة) — 📍 موقعي يعرف مكانك تلقائي</h4><div class="row" id="cityRow"></div>
     <h4>🕌 منبه الصلاة</h4><div class="row" id="adhRow"></div>
     <h4>⏰ تنبيه قبل الصلاة</h4><div class="row" id="preRow"></div>
     <h4>🔊 صوت المنبه</h4><div class="row" id="sndRow"></div>
@@ -446,6 +446,20 @@ const SCENES={
   return SVG(`<linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b0620"/><stop offset=".7" stop-color="#3b1b6b"/><stop offset="1" stop-color="#c0397d"/></linearGradient>
    <linearGradient id="wt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a1550"/><stop offset="1" stop-color="#05030f"/></linearGradient>`,
    `<rect width="1920" height="1080" fill="url(#sk)"/>${stars(r,90,400)}${b}<rect y="900" width="1920" height="180" fill="url(#wt)"/><g opacity=".22" transform="translate(0 1800) scale(1 -1)">${b}</g><rect y="900" width="1920" height="4" fill="#c084fc" opacity=".6"/>`)}},
+ 'sc-steppe':{n:'🏕️ خيام السهول',ac:'#f5a524',svg(){const r=rnd(31);
+  const tent=(x,y,k,c1,c2)=>`<g transform="translate(${x} ${y}) scale(${k})"><path d="M-130 0 L-110 -95 Q0 -190 110 -95 L130 0Z" fill="${c1}"/><path d="M-110 -95 Q0 -190 110 -95 Q0 -120 -110 -95Z" fill="${c2}"/><path d="M0 -178 L0 -225" stroke="${c2}" stroke-width="6"/><path d="M-26 0 L0 -70 L26 0Z" fill="#1a0d06"/><path d="M-118 -40 L118 -40" stroke="${c2}" stroke-width="5" opacity=".7"/></g>`;
+  const horse=(x,y,k,f)=>`<g transform="translate(${x} ${y}) scale(${k*f} ${k})" fill="#1b0f08"><path d="M-60 -60 Q-20 -75 30 -62 L55 -95 Q66 -105 78 -96 L85 -80 L70 -76 L52 -52 Q50 -30 40 -24 L44 0 L36 0 L30 -24 L-30 -26 L-38 0 L-46 0 L-44 -30 Q-70 -36 -74 -10 Q-76 -40 -60 -60Z"/><path d="M-10 -66 Q-8 -100 6 -112 Q18 -108 14 -86 L10 -64Z"/><circle cx="8" cy="-120" r="10"/><path d="M14 -110 L60 -150" stroke="#1b0f08" stroke-width="4"/></g>`;
+  let grass='';for(let i=0;i<160;i++){const x=r()*1920,y=900+r()*180,h=10+r()*26;grass+=`<path d="M${x|0} ${y|0} q${(r()*8-4)|0} ${-h/2|0} ${(r()*10-5)|0} ${-h|0}" stroke="#3a2210" stroke-width="2" fill="none"/>`}
+  return SVG(`<linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2b1a3f"/><stop offset=".45" stop-color="#b4502a"/><stop offset=".72" stop-color="#f5a524"/><stop offset="1" stop-color="#ffd98a"/></linearGradient>
+   <radialGradient id="sn"><stop offset="0" stop-color="#fff3c4"/><stop offset=".35" stop-color="#ffd27a" stop-opacity=".6"/><stop offset="1" stop-color="#ff9a3c" stop-opacity="0"/></radialGradient>
+   <linearGradient id="gd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7a4a22"/><stop offset="1" stop-color="#2a170a"/></linearGradient>`,
+   `<rect width="1920" height="1080" fill="url(#sk)"/>${stars(r,40,260)}<circle cx="1180" cy="640" r="330" fill="url(#sn)"/><circle cx="1180" cy="640" r="95" fill="#fff0c0"/>
+   ${ridge(r,640,110,80,'#6b3a3a',.55)}${ridge(r,720,70,60,'#4a2420',.8)}
+   <path d="M0 800 Q500 740 960 790 T1920 770 L1920 1080 L0 1080Z" fill="url(#gd)"/>
+   ${tent(380,830,.9,'#3a1f12','#2a150b')}${tent(640,815,.62,'#40230f','#2a150b')}${tent(820,825,.5,'#3a1f12','#2a150b')}${tent(1560,840,.75,'#3a1f12','#2a150b')}
+   <path d="M520 830 q8 -40 0 -60 q-6 20 -10 10 q-8 30 10 50z" fill="#ff8a2a" opacity=".85"/><path d="M490 800 Q520 700 560 640" stroke="#d8c4b0" stroke-width="10" fill="none" opacity=".15"/>
+   ${horse(1040,880,1.3,1)}${horse(1260,900,1.1,-1)}
+   <path d="M0 950 Q960 900 1920 950 L1920 1080 L0 1080Z" fill="#1f1108"/>${grass}`)}},
  'sc-aurora':{n:'🌌 الشفق القطبي',ac:'#34d399',svg(){const r=rnd(23);let trees='';
   for(let x=-20;x<1960;x+=38+r()*30){const h=120+r()*170,y=900+r()*40;trees+=`<path d="M${x|0} ${y|0} l${-h*.22|0} 0 l${h*.22|0} ${-h|0} l${h*.22|0} ${h|0}z" fill="#06141a"/>`}
   return SVG(`<linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#020617"/><stop offset="1" stop-color="#0b2a3a"/></linearGradient>
@@ -498,8 +512,30 @@ function tick(){
 tick(); setInterval(tick,1000);
 
 /* ===== المدينة ===== */
-const CITIES=[['الرياض',24.7136,46.6753],['جدة',21.4858,39.1925],['مكة المكرمة',21.3891,39.8579],['المدينة المنورة',24.5247,39.5692],['الدمام',26.4207,50.0888],['الخبر',26.2172,50.1971],['الأحساء',25.3833,49.5833],['الطائف',21.2703,40.4158],['أبها',18.2164,42.5053],['خميس مشيط',18.3,42.7333],['تبوك',28.3838,36.555],['بريدة',26.326,43.975],['حائل',27.5114,41.7208],['جازان',16.8892,42.5511],['نجران',17.4917,44.1322],['الجبيل',27.0046,49.646],['ينبع',24.0889,38.0618],['الجوف',29.9697,40.2064],['الباحة',20.0129,41.4677],['عرعر',30.9753,41.0381],['الكويت',29.3759,47.9774],['الدوحة',25.2854,51.531],['دبي',25.2048,55.2708],['أبوظبي',24.4539,54.3773],['المنامة',26.2285,50.586],['مسقط',23.588,58.3829]];
-let CITY=CITIES.find(c=>c[0]===store.get('city','الرياض'))||CITIES[0];
+const CITIES=[['الرياض',24.7136,46.6753],['جدة',21.4858,39.1925],['مكة المكرمة',21.3891,39.8579],['المدينة المنورة',24.5247,39.5692],['الدمام',26.4207,50.0888],['الخبر',26.2172,50.1971],['الأحساء',25.3833,49.5833],['الطائف',21.2703,40.4158],['أبها',18.2164,42.5053],['خميس مشيط',18.3,42.7333],['تبوك',28.3838,36.555],['بريدة',26.326,43.975],['حائل',27.5114,41.7208],['جازان',16.8892,42.5511],['نجران',17.4917,44.1322],['الجبيل',27.0046,49.646],['ينبع',24.0889,38.0618],['الجوف',29.9697,40.2064],['الباحة',20.0129,41.4677],['عرعر',30.9753,41.0381],['الكويت',29.3759,47.9774],['الدوحة',25.2854,51.531],['دبي',25.2048,55.2708],['أبوظبي',24.4539,54.3773],['المنامة',26.2285,50.586],['مسقط',23.588,58.3829],
+ ['القصيم - عنيزة',26.0843,43.9935],['الرس',25.8694,43.4973],['المجمعة',25.9039,45.3456],['الزلفي',26.2994,44.8156],['شقراء',25.2481,45.2533],['الدوادمي',24.5072,44.3919],['الخرج',24.1556,47.3346],['وادي الدواسر',20.4667,44.7833],['عفيف',23.9065,42.9172],['حفر الباطن',28.4328,45.9708],['القطيف',26.5196,50.0115],['رأس تنورة',26.7069,50.0611],['بقيق',25.9367,49.6685],['الخفجي',28.4392,48.4913],['النعيرية',27.4697,48.4886],['سكاكا',29.9697,40.2064],['القريات',31.3317,37.3428],['طريف',31.6725,38.6637],['رفحاء',29.6202,43.4948],['تيماء',27.6331,38.5442],['العلا',26.6085,37.9232],['الوجه',26.2441,36.4523],['ضباء',27.3511,35.6961],['أملج',25.0213,37.2685],['رابغ',22.7986,39.0349],['القنفذة',19.1264,41.0789],['الليث',20.15,40.2667],['بيشة',19.9893,42.6052],['محايل عسير',18.5376,42.0533],['النماص',19.1167,42.1333],['صبيا',17.1495,42.6254],['أبو عريش',16.9689,42.8325],['شرورة',17.4833,47.1167],
+ ['الجهراء',29.3375,47.6581],['الأحمدي',29.0769,48.0838],['الشارقة',25.3463,55.4209],['عجمان',25.4052,55.5136],['رأس الخيمة',25.8007,55.9762],['الفجيرة',25.1288,56.3265],['العين',24.2075,55.7447],['صلالة',17.0151,54.0924],['صحار',24.3459,56.7459],['المحرق',26.2572,50.6119],['الوكرة',25.1659,51.5976],
+ ['عمّان',31.9454,35.9284],['القاهرة',30.0444,31.2357],['الإسكندرية',31.2001,29.9187],['بغداد',33.3152,44.3661],['البصرة',30.5085,47.7804],['دمشق',33.5138,36.2765],['بيروت',33.8938,35.5018],['القدس',31.7683,35.2137],['صنعاء',15.3694,44.191],['عدن',12.7855,45.0187],['الخرطوم',15.5007,32.5599],['طرابلس',32.8872,13.1913],['تونس',36.8065,10.1815],['الجزائر',36.7538,3.0588],['الرباط',34.0209,-6.8416],['الدار البيضاء',33.5731,-7.5898],['إسطنبول',41.0082,28.9784],['أنقرة',39.9334,32.8597],['لندن',51.5072,-0.1276],['كوالالمبور',3.139,101.6869],['جاكرتا',-6.2088,106.8456]];
+const AUTO='📍 موقعي';
+let CITY_KEY=store.get('city2','auto');
+function autoCity(){try{const a=JSON.parse(store.get('autoLoc','null'));if(a)return [AUTO+' • '+a.n,a.lat,a.lon];}catch(e){}return [AUTO+' • الرياض',24.7136,46.6753];}
+let CITY=CITY_KEY==='auto'?autoCity():(CITIES.find(c=>c[0]===CITY_KEY)||CITIES[0]);
+function km(a,b,c,d){const R=6371,t=Math.PI/180,x=(c-a)*t,y=(d-b)*t,h=Math.sin(x/2)**2+Math.cos(a*t)*Math.cos(c*t)*Math.sin(y/2)**2;return 2*R*Math.asin(Math.sqrt(h));}
+/** يعرف مكانك تلقائيًا من الإنترنت ويختار أقرب مدينة */
+async function locate(){
+  let lat,lon,name='';
+  const tries=[async()=>{const j=await (await fetch('https://get.geojs.io/v1/ip/geo.json')).json();return [+j.latitude,+j.longitude,j.city]},
+               async()=>{const j=await (await fetch('https://ipapi.co/json/')).json();return [+j.latitude,+j.longitude,j.city]},
+               async()=>{const j=await (await fetch('https://ipwho.is/')).json();return [+j.latitude,+j.longitude,j.city]}];
+  for(const t of tries){try{[lat,lon,name]=await t();if(isFinite(lat)&&isFinite(lon)&&(lat||lon))break;}catch(e){lat=null}}
+  if(lat==null||!isFinite(lat)) return false;
+  let best=null,bd=1e9;CITIES.forEach(c=>{const d=km(lat,lon,c[1],c[2]);if(d<bd){bd=d;best=c}});
+  const n=bd<60?best[0]:(name||best[0]);
+  store.set('autoLoc',JSON.stringify({n,lat,lon}));
+  if(CITY_KEY==='auto'){const old=CITY[0];CITY=autoCity();if(old!==CITY[0]||!prayT){prayT=null;prayUpdate();}wxUpdate();if(typeof drawAdhRows==='function'&&$('cityRow').children.length)drawAdhRows();}
+  return true;
+}
+setTimeout(locate,1500); setInterval(locate,6*60*60*1000);
 /* ===== الطقس ===== */
 const WX=[[0,'صحو','☀️','🌙'],[1,'صحو غالبًا','🌤️','🌙'],[2,'غائم جزئيًا','⛅','☁️'],[3,'غائم','☁️','☁️'],[45,'ضباب','🌫️','🌫️'],[48,'ضباب','🌫️','🌫️'],
   [51,'رذاذ','🌦️','🌧️'],[53,'رذاذ','🌦️','🌧️'],[55,'رذاذ','🌦️','🌧️'],[61,'مطر خفيف','🌧️','🌧️'],[63,'مطر','🌧️','🌧️'],[65,'مطر غزير','🌧️','🌧️'],
@@ -573,7 +609,7 @@ async function idbGet(k){try{const db=await idb();return await new Promise(r=>{c
 const sndIn=document.createElement('input');sndIn.type='file';sndIn.accept='audio/*';sndIn.style.display='none';document.body.appendChild(sndIn);
 sndIn.onchange=async()=>{const f=sndIn.files[0];if(!f)return;await idbSet('adhan',f);AD.snd='mine';store.set('adhSnd','mine');drawAdhRows();sndIn.value=''};
 function drawAdhRows(){
-  optRow('cityRow',CITIES.map(c=>[c[0],c[0]]),CITY[0],v=>{CITY=CITIES.find(c=>c[0]===v);store.set('city',v);prayT=null;prayUpdate();wxUpdate();});
+  optRow('cityRow',[['auto',autoCity()[0]+' (تلقائي)'],...CITIES.map(c=>[c[0],c[0]])],CITY_KEY==='auto'?'auto':CITY[0],v=>{CITY_KEY=v;store.set('city2',v);CITY=v==='auto'?autoCity():CITIES.find(c=>c[0]===v);prayT=null;prayUpdate();wxUpdate();if(v==='auto')locate();});
   optRow('adhRow',[['1','🔔 شغّال'],['0','🔕 مطفي']],AD.on?'1':'0',v=>{AD.on=v==='1';store.set('adhOn',v);scheduleNative.k='';scheduleNative();if(!AD.on&&window.Native&&Native.schedulePrayers)Native.schedulePrayers('[]')});
   optRow('preRow',[['0','بدون'],['5','قبل 5 دقائق'],['10','قبل 10 دقائق'],['15','قبل 15 دقيقة'],['30','قبل نص ساعة']],String(AD.pre),v=>{AD.pre=+v;store.set('adhPre',v);scheduleNative.k='';scheduleNative()});
   optRow('sndRow',[['chime','🎵 نغمة هادئة'],['mine','📂 صوت أذان من جهازك'],['none','🔇 بدون صوت'],['test','▶ جرّب المنبه']],AD.snd,v=>{
