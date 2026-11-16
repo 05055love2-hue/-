@@ -2,7 +2,26 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<script>
+/* ملاءمة تلقائية لأي شاشة: يكبّر أو يصغّر الواجهة كاملة عشان تجي على قد الشاشة */
+(function(){
+  window.FIT=1;
+  window.fitScreen=function(w,h){
+    if(!(w>0&&h>0))return;
+    var s=1;
+    if(w>h*1.15){s=Math.min(w/1024,h/600);s=Math.max(.75,Math.min(2.4,s));if(Math.abs(s-1)<.06)s=1;}
+    if(s===window.FIT&&window._fitW===w)return;
+    window.FIT=s;window._fitW=w;
+    var m=document.querySelector('meta[name=viewport]');
+    m.setAttribute('content',s===1?'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no'
+      :'width='+Math.round(w/s)+', initial-scale='+s.toFixed(4)+', minimum-scale='+s.toFixed(4)+', maximum-scale='+s.toFixed(4)+', user-scalable=no');
+    setTimeout(function(){window.dispatchEvent(new Event('resize'))},60);
+  };
+  fitScreen(window.innerWidth,window.innerHeight);
+})();
+</script>
+
 <title>ثيم هادي</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&family=Cairo:wght@300;500;800&family=Almarai:wght@300;400;800&family=Reem+Kufi:wght@400;700&display=swap" rel="stylesheet">
@@ -842,7 +861,7 @@ if(window.YT && YT.show){
   const box=$('ytBox'); box.innerHTML='<div class="ytempty">جاري فتح يوتيوب…</div>';
   let last='';
   function ytSync(){
-    const r=box.getBoundingClientRect(), d=window.devicePixelRatio||1;
+    const r=box.getBoundingClientRect(), d=(window.devicePixelRatio||1)*(window.FIT||1);
     const overlay=document.querySelector('.overlay.show');
     const show=!$('ytView').hidden && !overlay && r.width>20 && r.height>20 && !document.hidden;
     const key=show?[r.left,r.top,r.width,r.height].map(v=>Math.round(v*d)).join(','):'off';

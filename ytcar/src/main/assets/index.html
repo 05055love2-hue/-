@@ -3,6 +3,25 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<script>
+/* ملاءمة تلقائية لأي شاشة: يكبّر أو يصغّر الواجهة كاملة عشان تجي على قد الشاشة */
+(function(){
+  window.FIT=1;
+  window.fitScreen=function(w,h){
+    if(!(w>0&&h>0))return;
+    var s=1;
+    if(w>h*1.15){s=Math.min(w/1024,h/600);s=Math.max(.75,Math.min(2.4,s));if(Math.abs(s-1)<.06)s=1;}
+    if(s===window.FIT&&window._fitW===w)return;
+    window.FIT=s;window._fitW=w;
+    var m=document.querySelector('meta[name=viewport]');
+    m.setAttribute('content',s===1?'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no'
+      :'width='+Math.round(w/s)+', initial-scale='+s.toFixed(4)+', minimum-scale='+s.toFixed(4)+', maximum-scale='+s.toFixed(4)+', user-scalable=no');
+    setTimeout(function(){window.dispatchEvent(new Event('resize'))},60);
+  };
+  fitScreen(window.innerWidth,window.innerHeight);
+})();
+</script>
+
 <title>مشغّلي</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@500;700;800;900&display=swap" rel="stylesheet">
 <style>
@@ -359,7 +378,7 @@ function ytApps(){return apps().filter(a=>/youtube|يوتيوب|tube|vanced|newp
 $('bVer').onclick=()=>{const L=$('verApps');L.innerHTML='';const list=NATIVE?ytApps():[];
   if(!list.length)L.innerHTML='<p class="hint">ما لقيت تطبيقات يوتيوب مثبتة</p>';
   list.forEach(a=>{const b=tileEl(a);b.onclick=()=>{$('verOv').classList.remove('show');
-    const r=$('box').getBoundingClientRect(),d=window.devicePixelRatio||1;
+    const r=$('box').getBoundingClientRect(),d=(window.devicePixelRatio||1)*(window.FIT||1);
     if(Native.openInBox&&Native.openInBox(a.pkg,Math.round(r.left*d),Math.round(r.top*d),Math.round(r.width*d),Math.round(r.height*d)))toast('يفتح '+a.n+'…');
     else if(Native.openSide&&Native.openSide(a.pkg))toast('يفتح '+a.n+'…');else openApp(a)};L.appendChild(b)});
   $('verOv').classList.add('show')};
@@ -375,7 +394,7 @@ if(HASYT){
   $('ph').innerHTML='<div class="big"></div><b>جاري فتح يوتيوب…</b>';
   if(YT.setMode)YT.setMode(VER.u,VER.ua);
   const box=$('box');let last='';
-  function sync(){const r=box.getBoundingClientRect(),d=window.devicePixelRatio||1;
+  function sync(){const r=box.getBoundingClientRect(),d=(window.devicePixelRatio||1)*(window.FIT||1);
     const show=!document.querySelector('.ov.show')&&r.width>20&&!document.hidden;
     const key=show?[r.left,r.top,r.width,r.height].map(v=>Math.round(v*d)).join(','):'off';
     if(key===last)return;last=key;if(show){const[x,y,w,h]=key.split(',').map(Number);YT.show(x,y,w,h)}else YT.hide()}

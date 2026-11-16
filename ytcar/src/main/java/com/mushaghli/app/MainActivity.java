@@ -70,6 +70,12 @@ public class MainActivity extends Activity {
         s.setAllowFileAccess(true);
         s.setLoadWithOverviewMode(true);
         s.setUseWideViewPort(true);
+        // ملاءمة تلقائية: نرسل مقاس الشاشة الحقيقي للواجهة كل ما تغيّر
+        web.addOnLayoutChangeListener((v, l, t, r, b, ol, ot, or, ob) -> {
+            if (r - l == or - ol && b - t == ob - ot) return;
+            float dn = getResources().getDisplayMetrics().density;
+            web.evaluateJavascript("window.fitScreen&&fitScreen(" + ((r - l) / dn) + "," + ((b - t) / dn) + ")", null);
+        });
 
         web.setWebViewClient(new WebViewClient() {
             @Override
