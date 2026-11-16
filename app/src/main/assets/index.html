@@ -396,6 +396,72 @@
   body.L-neon .btn.big,body.L-neon .tab.on{border-radius:0;background:#22d3ee;color:#020617}
   @media (orientation:portrait){body.L-cockpit main,body.L-split main,body.L-neon main{grid-template-columns:1fr;grid-template-rows:auto}
     body.L-cockpit main>*,body.L-split main>*,body.L-neon main>*{grid-column:1!important;grid-row:auto!important}}
+  /* ===== عداد السرعة ===== */
+  .speedo{display:none;position:relative;align-items:center;justify-content:center;min-width:0;min-height:0}
+  .sdial{position:absolute;inset:0;margin:auto;width:min(96%,96%);height:96%;direction:ltr}
+  .sread{position:relative;display:flex;flex-direction:column;align-items:center;line-height:1;z-index:1;direction:ltr}
+  .sread b{font-size:clamp(44px,8vw,120px);font-weight:800;font-variant-numeric:tabular-nums}
+  .sread small{font-size:clamp(11px,1.3vw,16px);color:var(--soft);letter-spacing:2px;margin-top:.6vh}
+  .sstat{position:absolute;bottom:6%;left:0;right:0;text-align:center;font-size:clamp(10px,1.1vw,13px);color:var(--soft)}
+  .sstat:empty{display:none}
+  .sdial .tk{stroke:var(--soft);stroke-width:2} .sdial .tk.big{stroke:var(--text);stroke-width:4}
+  .sdial text{fill:var(--soft);font-size:15px;font-family:inherit;text-anchor:middle;dominant-baseline:middle}
+  .sdial .trk{fill:none;stroke:var(--line)} .sdial .arc{fill:none;stroke:var(--accent);stroke-linecap:round}
+  .sdial .ndl{stroke:var(--accent);stroke-width:5;stroke-linecap:round} .sdial .hub{fill:var(--text)}
+  body.L-speedo .speedo,body.L-hud .speedo,body.L-twin .speedo{display:flex}
+  body.L-speedo .sread,body.L-twin .sread{transform:translateY(62%)}
+  body.L-speedo .sread b,body.L-twin .sread b{font-size:clamp(28px,4.6vw,66px)}
+  body.L-speedo .sread b,body.L-twin .sread b{background:rgba(0,0,0,.55);padding:0 .25em;border-radius:.2em}
+  body.L-speedo .bgl,body.L-hud .bgl,body.L-twin .bgl{display:none!important}
+
+  /* 5) عداد السرعة: عداد كبير كلاسيكي، أبيض على أسود وإبرة برتقالية */
+  body.L-speedo{--accent:#ff8a00;--text:#fff;--soft:#9a9a9a;--line:rgba(255,255,255,.12);--bg1:#000;background:radial-gradient(circle at 50% 45%,#1d1d1d,#000 70%)}
+  body.L-speedo main{display:grid;grid-template-columns:1fr 2fr 1fr;gap:1.4vw;align-items:center}
+  body.L-speedo .speedo{grid-column:2;grid-row:1;height:100%;background:none;border:none;backdrop-filter:none}
+  body.L-speedo .sdial{filter:drop-shadow(0 0 18px rgba(255,138,0,.15))}
+  body.L-speedo .clock{grid-column:1;grid-row:1;background:none;border:none;backdrop-filter:none}
+  body.L-speedo .time{display:block!important;font-size:clamp(30px,4.6vw,64px);font-weight:300}
+  body.L-speedo .analog,body.L-speedo .hello{display:none!important}
+  body.L-speedo .wx .wxx,body.L-speedo .wx .wxf,body.L-speedo .wx .wd small{display:none}
+  body.L-speedo .player{grid-column:3;grid-row:1;background:none;border:none;backdrop-filter:none;justify-content:center}
+  body.L-speedo .player .tabs,body.L-speedo .pick,body.L-speedo .sub,body.L-speedo .ytform,body.L-speedo .recent,body.L-speedo .ytnav{display:none}
+  body.L-speedo .disc{width:clamp(60px,12vh,110px)!important}
+  body.L-speedo .dock{background:none;border:none;border-top:1px solid #222;border-radius:0}
+  body.L-speedo .app .ic{background:#111;border-color:#2a2a2a} body.L-speedo .app svg{fill:#ff8a00}
+
+  /* 6) شاشة HUD: أرقام خضراء ضخمة مثل الزجاج الأمامي */
+  body.L-hud{--accent:#39ff88;--text:#c9ffe0;--soft:#2fbf6a;--line:rgba(57,255,136,.18);--bg1:#000;background:#000}
+  body.L-hud main{display:grid;grid-template-columns:1fr;grid-template-rows:1fr;position:relative}
+  body.L-hud .speedo{grid-column:1;grid-row:1;background:none;border:none;backdrop-filter:none}
+  body.L-hud .sdial .tk,body.L-hud .sdial text,body.L-hud .sdial .ndl,body.L-hud .sdial .hub{display:none}
+  body.L-hud .sdial .arc{filter:drop-shadow(0 0 12px #39ff88)}
+  body.L-hud .sread b{font-size:clamp(70px,13vw,190px);font-weight:200;color:#39ff88;text-shadow:0 0 24px rgba(57,255,136,.7)}
+  body.L-hud .sread small{color:#39ff88}
+  body.L-hud .clock{position:absolute;top:0;inset-inline-end:0;flex-direction:row;gap:1.2vw;background:none;border:none;backdrop-filter:none;padding:0;z-index:2}
+  body.L-hud .time{display:block!important;font-size:clamp(24px,3.4vw,46px);color:#39ff88;font-family:ui-monospace,monospace}
+  body.L-hud .date,body.L-hud .analog,body.L-hud .hello,body.L-hud .wx .wd,body.L-hud .wx .wxx,body.L-hud .wx .wxf{display:none!important}
+  body.L-hud .wx{margin:0;background:none;border:1px solid var(--line)}
+  body.L-hud .player{display:none}
+  body.L-hud .dock{background:none;border:none;gap:4vw}
+  body.L-hud .app .ic{background:none;border:none} body.L-hud .app svg{fill:#39ff88} body.L-hud .app .lbl{display:none}
+
+  /* 7) عدادين فخم: عداد للسرعة وعداد للساعة، أزرق وفضي */
+  body.L-twin{--accent:#4da3ff;--text:#eaf2ff;--soft:#8aa0bd;--line:rgba(160,190,230,.18);--bg1:#05080f;background:radial-gradient(ellipse at 50% 100%,#0d2140,#05080f 65%)}
+  body.L-twin main{display:grid;grid-template-columns:1fr .8fr 1fr;gap:1vw;align-items:center}
+  body.L-twin .card{background:none;border:none;backdrop-filter:none}
+  body.L-twin .speedo{grid-column:1;grid-row:1;height:100%}
+  body.L-twin .sdial{filter:drop-shadow(0 0 14px rgba(77,163,255,.35))}
+  body.L-twin .clock{grid-column:3;grid-row:1;height:100%;position:relative}
+  body.L-twin .analog{display:block!important;width:min(84%,52vh)} body.L-twin .time,body.L-twin .hello,body.L-twin .date{display:none!important}
+  body.L-twin .analog .face{fill:rgba(77,163,255,.05);stroke:#9fb8d9;stroke-width:3}
+  body.L-twin .wx{position:absolute;bottom:-1%;margin:0;background:none;border:none} body.L-twin .wx .wd small,body.L-twin .wx .wxx,body.L-twin .wx .wxf{display:none}
+  body.L-twin .player{grid-column:2;grid-row:1;justify-content:center;border-inline:1px solid var(--line)}
+  body.L-twin .player .tabs,body.L-twin .pick,body.L-twin .ytform,body.L-twin .recent,body.L-twin .ytnav,body.L-twin .bar{display:none}
+  body.L-twin .disc{width:clamp(60px,12vh,110px)!important}
+  body.L-twin .dock{background:linear-gradient(90deg,transparent,rgba(77,163,255,.12),transparent);border:none;border-radius:0}
+  body.L-twin .app .ic{border-radius:50%;background:none;border-color:#4a6286} body.L-twin .app svg{fill:#cfe0ff}
+  @media (orientation:portrait){body.L-speedo main,body.L-twin main{grid-template-columns:1fr;grid-template-rows:auto}
+    body.L-speedo main>*,body.L-twin main>*{grid-column:1!important;grid-row:auto!important}}
   .lgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
   .lgrid .opt{display:flex;flex-direction:column;align-items:center;gap:4px}
   .lgrid .opt b{font-size:22px;font-weight:400}
@@ -439,6 +505,12 @@
     <div class="date" id="d"></div>
     <div class="hello" id="h"></div>
     <div class="wx" id="wx"><span class="wi" id="wxI">⛅</span><span class="wt" id="wxT">--°</span><span class="wd"><b id="wxC">الطقس</b><small id="wxD">جاري التحميل…</small></span><div class="wxx" id="wxX"></div><div class="wxf" id="wxF"></div></div>
+  </section>
+
+  <section class="card speedo" id="speedo">
+    <svg class="sdial" id="sdial" viewBox="0 0 300 300"></svg>
+    <div class="sread"><b id="spd">0</b><small>كم/س</small></div>
+    <div class="sstat" id="sstat">📡 جاري تحديد الموقع…</div>
   </section>
 
   <section class="card cal">
@@ -619,10 +691,41 @@ if(!THEMES[S.theme]) S.theme='sea';
 function save(k,v){S[k]=v;store.set(k,v);}
 const FONTS={tajawal:["'Tajawal'",'تجوال'],cairo:["'Cairo'",'القاهرة'],almarai:["'Almarai'",'المراعي'],kufi:["'Reem Kufi'",'كوفي']};
 
+/* ===== عداد السرعة من GPS ===== */
+const SPD={max:240,cur:0,target:0,watch:null,last:null,on:false};
+function sdialBuild(){
+  const g=$('sdial'),cx=150,cy=150,R=128,A0=-225,A1=45;const rad=a=>a*Math.PI/180;
+  const pt=(a,r)=>[cx+r*Math.cos(rad(a)),cy+r*Math.sin(rad(a))];
+  const arc=(r,a,b)=>{const [x0,y0]=pt(a,r),[x1,y1]=pt(b,r);return `M${x0.toFixed(1)} ${y0.toFixed(1)} A${r} ${r} 0 ${b-a>180?1:0} 1 ${x1.toFixed(1)} ${y1.toFixed(1)}`};
+  let h=`<path class="trk" d="${arc(R,A0,A1)}" stroke-width="10"/><path class="arc" id="sArc" d="${arc(R,A0,A1)}" stroke-width="10"/>`;
+  for(let v=0;v<=SPD.max;v+=10){const a=A0+(A1-A0)*v/SPD.max,big=v%20===0,[x0,y0]=pt(a,R-14),[x1,y1]=pt(a,R-(big?34:24));
+    h+=`<line class="tk${big?' big':''}" x1="${x0.toFixed(1)}" y1="${y0.toFixed(1)}" x2="${x1.toFixed(1)}" y2="${y1.toFixed(1)}"/>`;
+    if(big){const [tx,ty]=pt(a,R-52);h+=`<text x="${tx.toFixed(1)}" y="${ty.toFixed(1)}">${v}</text>`}}
+  h+=`<line class="ndl" id="sNdl" x1="${cx}" y1="${cy}" x2="${cx}" y2="${cy-R+30}"/><circle class="hub" cx="${cx}" cy="${cy}" r="9"/>`;
+  g.innerHTML=h;
+  const p=$('sArc'),L=p.getTotalLength();p.style.strokeDasharray=L;p.dataset.l=L;sdialSet(SPD.cur);
+}
+function sdialSet(v){const p=$('sArc'),n=$('sNdl');if(!p||!n)return;const f=Math.min(v,SPD.max)/SPD.max,L=+p.dataset.l;
+  p.style.strokeDashoffset=L*(1-f);n.setAttribute('transform','rotate('+(-135+270*f)+' 150 150)');$('spd').textContent=Math.round(v);}
+function dist(a,b){const R=6371000,t=Math.PI/180,x=(b.latitude-a.latitude)*t,y=(b.longitude-a.longitude)*t,h=Math.sin(x/2)**2+Math.cos(a.latitude*t)*Math.cos(b.latitude*t)*Math.sin(y/2)**2;return 2*R*Math.asin(Math.sqrt(h))}
+function speedOn(){
+  if(SPD.watch!==null||!navigator.geolocation)return;
+  SPD.watch=navigator.geolocation.watchPosition(p=>{
+    let v=p.coords.speed;
+    if((v==null||isNaN(v))&&SPD.last){const dt=(p.timestamp-SPD.last.t)/1000;v=dt>0?dist(SPD.last.c,p.coords)/dt:0}
+    SPD.last={c:p.coords,t:p.timestamp};
+    v=Math.max(0,(v||0)*3.6);if(v<2)v=0;SPD.target=v;$('sstat').textContent='';
+  },e=>{$('sstat').textContent=e.code===1?'⚠️ اسمح للتطبيق يوصل للموقع':'📡 جاري تحديد الموقع…'},{enableHighAccuracy:true,maximumAge:1000,timeout:15000});
+}
+function speedOff(){if(SPD.watch!==null){navigator.geolocation.clearWatch(SPD.watch);SPD.watch=null}}
+(function anim(){SPD.cur+=(SPD.target-SPD.cur)*.12;if(Math.abs(SPD.target-SPD.cur)<.05)SPD.cur=SPD.target;if(SPD.on)sdialSet(SPD.cur);requestAnimationFrame(anim)})();
+function speedSync(){const on=['speedo','hud','twin'].includes(S.layout);SPD.on=on;if(on){if(!$('sNdl'))sdialBuild();speedOn()}else speedOff()}
+
 function applyAll(){
   const t=THEMES[S.theme], r=document.documentElement.style;
   ['bg1','bg2','accent','soft','g1','g2'].forEach(k=>r.setProperty('--'+k,t[k]));
   document.body.className='L-'+S.layout+' C-'+S.clock+' K-'+S.cards+' I-'+S.icons;
+  try{speedSync()}catch(e){}
   document.body.style.fontFamily=(FONTS[S.font]||FONTS.tajawal)[0]+',sans-serif';
   document.body.dataset.bg=S.bg;
   document.querySelectorAll('.th').forEach(b=>b.classList.toggle('on',b.dataset.k===S.theme));
@@ -638,7 +741,8 @@ Object.entries(THEMES).forEach(([k,t])=>{
 });
 const LAYOUTS=[['classic','🪟','كلاسيكي'],['sport','🏁','رياضي'],['ring','⭕','دائري'],['stack','🔢','أرقام كبيرة'],['dash','🗓️','لوحة وتقويم'],
   ['cinema','🎬','سينمائي'],['player','🎵','المشغل أكبر'],['minimal','✨','بسيط'],['clock','🕰️','ساعة بس'],['side','📱','جانبي'],
-  ['cockpit','🎛️','لوحة العدادات'],['drive','🚗','وضع السواقة'],['split','🪟','الشاشة المقسومة'],['neon','🛸','الكوكبي']];
+  ['cockpit','🎛️','لوحة العدادات'],['drive','🚗','وضع السواقة'],['split','🪟','الشاشة المقسومة'],['neon','🛸','الكوكبي'],
+  ['speedo','🏎️','عداد السرعة'],['hud','🟢','شاشة HUD'],['twin','⏱️','عدادين فخم']];
 (function(){const r=$('layoutRow');LAYOUTS.forEach(([k,ic,n])=>{const b=document.createElement('button');b.className='opt'+(k===S.layout?' on':'');
   b.innerHTML='<b>'+ic+'</b>'+n;b.onclick=()=>{r.querySelectorAll('.opt').forEach(x=>x.classList.toggle('on',x===b));save('layout',k);applyAll();tick();};r.appendChild(b);});})();
 makeOpts('iconRow',[['round','مربع ناعم'],['circle','دائري'],['glow','مضيء'],['bare','بدون خلفية']],S.icons,v=>{save('icons',v);applyAll();});
