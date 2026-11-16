@@ -46,6 +46,14 @@ body.T-day .card{box-shadow:0 6px 24px rgba(15,23,42,.08)}
 .phead .sp{flex:1}
 .chip{border:0;font-family:inherit;font-size:15px;font-weight:700;color:var(--txt);background:var(--btn);border:1px solid var(--line);border-radius:14px;padding:8px 14px;cursor:pointer;display:flex;align-items:center;gap:6px}
 .chip:active{transform:scale(.95)}
+.stage{flex:1;min-height:0;display:flex;gap:10px;position:relative}
+.stage .box{flex:1;min-width:0}
+.stage.swap{flex-direction:row-reverse}
+.mbox .ph{background:linear-gradient(135deg,#0f2a1f,#123a52 60%,#0b1f33)}
+.mbox .ph .big{background:linear-gradient(135deg,#22c55e,#3b82f6)}.mbox .ph .big:after{display:none}
+.handle{display:flex;align-items:center;justify-content:center;gap:8px;margin:-4px auto 0;padding:4px 18px;border-radius:14px;font-size:13px;font-weight:800;color:var(--soft);cursor:pointer;touch-action:none}
+.handle i{display:block;width:44px;height:5px;border-radius:5px;background:var(--soft);opacity:.6}
+.splitOnly{display:none!important}body.split .splitOnly{display:flex!important}
 .box{flex:1;min-height:0;border-radius:20px;overflow:hidden;position:relative;background:#000;box-shadow:0 0 0 3px color-mix(in srgb,var(--ac) 70%,transparent),0 0 40px color-mix(in srgb,var(--ac) 35%,transparent)}
 .ph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;color:#fff;background:linear-gradient(135deg,#1a1a2e,#3a0d1f 60%,#160b2e)}
 .ph .big{width:96px;height:96px;border-radius:50%;background:linear-gradient(135deg,var(--ac),var(--ac2));display:grid;place-items:center;box-shadow:0 10px 40px color-mix(in srgb,var(--ac) 45%,transparent)}
@@ -157,12 +165,21 @@ body.full .app{grid-template-columns:1fr!important}
       <button class="chip ver" id="bVer">🔄 <span id="verTxt">يوتيوب</span></button>
       <button class="chip" id="bHome">🏠<span class="lb"> الرئيسية</span></button>
       <button class="chip" id="bFull">⛶<span class="lb"> <span id="fullTxt">تكبير</span></span></button>
+      <button class="chip splitOnly" id="bSwap" aria-label="بدّل الأماكن">⇄</button>
+      <button class="chip splitOnly" id="bMapApp">📲<span class="lb"> تطبيق الخرائط</span></button>
+      <button class="chip" id="bSplit">🗺️<span class="lb"> <span id="splitTxt">شاشتين</span></span></button>
       <button class="chip" id="bAll">▦<span class="lb"> التطبيقات</span></button>
       <button class="chip ico" id="bSet" aria-label="الإعدادات">⚙️</button>
     </div>
-    <div class="box" id="box">
-      <div class="ph" id="ph"><div class="big"></div><b>الفيديو يظهر هنا</b><span>ابحث وشغّل أي مقطع وأنت في الشاشة الرئيسية</span></div>
+    <div class="stage" id="stage">
+      <div class="box" id="box">
+        <div class="ph" id="ph"><div class="big"></div><b>الفيديو يظهر هنا</b><span>ابحث وشغّل أي مقطع وأنت في الشاشة الرئيسية</span></div>
+      </div>
+      <div class="box mbox" id="mbox" hidden>
+        <div class="ph"><div class="big" style="font-size:44px">🗺️</div><b>الخرائط تظهر هنا</b><span>قوقل ماب داخل المشغّل</span></div>
+      </div>
     </div>
+    <div class="handle" id="handle"><i></i><span id="handleTxt">اسحب لفوق للخرائط 🗺️</span></div>
     <div class="ctrl">
       <button class="cb" id="cPrev" aria-label="رجوع للصفحة السابقة"><svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg></button>
       <button class="cb" id="cBack" aria-label="رجوع 10 ثواني"><svg viewBox="0 0 24 24"><path d="M11 18V6l-8.5 6 8.5 6zm.5-6 8.5 6V6l-8.5 6z"/></svg><small>10</small></button>
@@ -386,6 +403,33 @@ $('verTxt').textContent=VER.n;
 $('howBox').onclick=()=>{$('howTxt').hidden=!$('howTxt').hidden};
 $('devSet').onclick=()=>{if(!(NATIVE&&Native.openAction&&Native.openAction('android.settings.APPLICATION_DEVELOPMENT_SETTINGS')))toast('افتح الإعدادات ← خيارات المطوّر')};
 [...$('verList').children].forEach((b,i)=>b.classList.toggle('on',VERS[i]===VER));
+
+
+/* ===== وضع الشاشتين: يوتيوب + خرائط ===== */
+let SPLIT=localStorage.getItem('split')==='1',SWAP=localStorage.getItem('swap')==='1';
+const HASMP=!!(window.MP&&MP.show);
+function setSplit(on){SPLIT=on;localStorage.setItem('split',on?'1':'0');document.body.classList.toggle('split',on);$('mbox').hidden=!on;
+  $('splitTxt').textContent=on?'شاشة وحدة':'شاشتين';$('handleTxt').textContent=on?'اسحب لتحت لشاشة وحدة':'اسحب لفوق للخرائط 🗺️';
+  if(on&&!HASMP&&NATIVE)toast('حدّث التطبيق عشان تشتغل الخرائط');mpSync()}
+$('bSplit').onclick=()=>setSplit(!SPLIT);
+$('bSwap').onclick=()=>{SWAP=!SWAP;localStorage.setItem('swap',SWAP?'1':'0');$('stage').classList.toggle('swap',SWAP)};
+$('stage').classList.toggle('swap',SWAP);
+(function(){const h=$('handle');let y0=null;
+  h.addEventListener('pointerdown',e=>{y0=e.clientY;h.setPointerCapture(e.pointerId)});
+  h.addEventListener('pointerup',e=>{if(y0===null)return;const dy=e.clientY-y0;y0=null;
+    if(dy<-25)setSplit(true);else if(dy>25)setSplit(false);else setSplit(!SPLIT)});})();
+function mapPkgs(){return apps().filter(a=>/com\.google\.android\.apps\.maps|com\.waze|here\.app|sygic|osmand|maps\.me|yandex.*navi/i.test(a.pkg))}
+$('bMapApp').onclick=()=>{const list=NATIVE?mapPkgs():[];if(!list.length){toast('ما لقيت تطبيق خرائط مثبت');return}
+  const a=list[0],r=$('mbox').getBoundingClientRect(),d=(window.devicePixelRatio||1)*(window.FIT||1);
+  if(Native.openInBox&&Native.openInBox(a.pkg,Math.round(r.left*d),Math.round(r.top*d),Math.round(r.width*d),Math.round(r.height*d)))toast('يفتح '+a.n+'… (لو طلع كامل الشاشة، فعّل النوافذ الحرة من خيارات المطوّر)');else openApp(a)};
+let mpLast='';
+function mpSync(){if(!HASMP)return;const r=$('mbox').getBoundingClientRect(),d=(window.devicePixelRatio||1)*(window.FIT||1);
+  const show=SPLIT&&!document.querySelector('.ov.show')&&r.width>20&&!document.hidden;
+  const key=show?[r.left,r.top,r.width,r.height].map(v=>Math.round(v*d)).join(','):'off';
+  if(key===mpLast)return;mpLast=key;if(show){const[x,y,w,h]=key.split(',').map(Number);MP.show(x,y,w,h)}else MP.hide()}
+if(HASMP){new ResizeObserver(mpSync).observe($('mbox'));new MutationObserver(mpSync).observe(document.body,{attributes:true,subtree:true,attributeFilter:['class','hidden']});
+  addEventListener('resize',mpSync);document.addEventListener('visibilitychange',mpSync);setInterval(mpSync,700)}
+setSplit(SPLIT);
 
 /* ===== يوتيوب ===== */
 let FULL=false;
