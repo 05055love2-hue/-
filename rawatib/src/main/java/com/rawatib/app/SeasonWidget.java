@@ -21,29 +21,12 @@ public class SeasonWidget extends AppWidgetProvider {
     }
 
     static void draw(Context c, AppWidgetManager m, int[] ids) {
-        long now = System.currentTimeMillis();
-        int[] base = Pay.baseDays(c);
-        int[] left = new int[3];
-        Calendar[] dates = new Calendar[3];
-        int best = 0;
-        for (int i = 0; i < 3; i++) {
-            dates[i] = Pay.next(base[i], now);
-            left[i] = Pay.daysLeft(dates[i], now);
-            if (left[i] < left[best]) best = i;
-        }
-        RemoteViews v = new RemoteViews(c.getPackageName(), R.layout.widget);
-        v.setTextViewText(R.id.icon, Pay.ICON[best]);
-        v.setTextViewText(R.id.title, Pay.NAME[best]);
-        v.setTextViewText(R.id.star, Pay.fmt(dates[best]));
-        v.setTextViewText(R.id.days, left[best] <= 0 ? "🎉" : String.valueOf(left[best]));
-        v.setTextViewText(R.id.unit, left[best] <= 0 ? "اليوم" : "يوم");
-        int[] rows = {R.id.r0, R.id.r1, R.id.r2};
-        for (int i = 0; i < 3; i++) {
-            v.setTextViewText(rows[i], Pay.ICON[i] + " " + Pay.NAME[i] + ": " + Pay.left(left[i]));
-        }
-        v.setOnClickPendingIntent(R.id.root, PendingIntent.getActivity(c, 0, new Intent(c, MainActivity.class), PendingIntent.FLAG_IMMUTABLE));
-        v.setInt(R.id.root, "setBackgroundResource", WTheme.bg(c));
-        m.updateAppWidget(ids, v);
+        Wv.update(c, m, ids);
+    }
+
+    @Override
+    public void onAppWidgetOptionsChanged(Context c, AppWidgetManager m, int id, android.os.Bundle o) {
+        Wv.update(c, m, new int[]{id});
     }
 
     @Override

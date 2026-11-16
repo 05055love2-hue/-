@@ -69,6 +69,8 @@ header small{display:block;font-size:13px;color:var(--soft);font-weight:700}
 .wsw button{border:0;font-family:inherit;color:var(--txt);background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11.5px;font-weight:800}
 .wsw i{width:46px;height:46px;border-radius:15px;display:block;border:2px solid transparent;box-shadow:0 4px 12px rgba(0,0,0,.3)}
 .wsw button.on i{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.25),0 4px 12px rgba(0,0,0,.3)}
+.wopt{margin-top:14px}.wopt b{font-size:13.5px;display:block;margin-bottom:6px}
+.wseg{display:flex;flex-wrap:wrap;gap:6px}.wseg button{border:1px solid var(--line);background:rgba(255,255,255,.06);color:var(--txt);font-family:inherit;font-weight:800;font-size:12.5px;border-radius:12px;padding:7px 11px;cursor:pointer}.wseg button.on{background:#10b981;border-color:#10b981;color:#fff}
 .wok{font-size:12.5px;color:var(--soft);margin-top:10px;line-height:1.7}
 </style>
 </head>
@@ -95,7 +97,9 @@ header small{display:block;font-size:13px;color:var(--soft);font-weight:700}
   <div class="wbox">
     <div class="wprevbg"><div class="wprev" id="wprev"><div class="e">🏛️</div><div class="t"><small>أقرب صرف</small><b id="wpName">راتب الدولة</b></div><div class="d"><span id="wpDays">11</span><small>يوم</small></div></div></div>
     <div class="wsw" id="wsw"></div>
-    <p class="wok">اختر اللون، والويدجت اللي في شاشتك يتغير على طول. ما حطيته للحين؟ اضغط مطوّل على الشاشة الرئيسية ← أدوات ← مواعيد الصرف.</p>
+    <div class="wopt"><b>المربع الصغير يعرض</b><div class="wseg" id="wsPick"></div></div>
+    <div class="wopt"><b>حجم الخط</b><div class="wseg" id="wsFont"></div></div>
+    <p class="wok">📐 تقدر تكبّر وتصغّر أي ويدجت: اضغط عليه مطوّل واسحب أطرافه. إذا صغّرته يصير مربع، وإذا عرّضته يصير شريط، وإذا كبّرته يطلع كامل.<br>اختر اللون، والويدجت اللي في شاشتك يتغير على طول. ما حطيته للحين؟ اضغط مطوّل على الشاشة الرئيسية ← أدوات ← مواعيد الصرف.</p>
   </div>
 
   <div class="sec" id="schTitle">المواعيد الجاية</div>
@@ -192,6 +196,15 @@ const WT=[['green','أخضر','linear-gradient(135deg,#065f46,#07130f)'],['blue'
   // نعرض أقرب صرف الحقيقي في المعاينة
   setTimeout(()=>{try{const n=$('hName').textContent.trim();if(n)$('wpName').textContent=n;
     const dd=document.querySelector('#hBody .cd b');if(dd)$('wpDays').textContent=dd.textContent}catch(e){}},300);
+})();
+
+// ===== خيارات الويدجت =====
+(function(){
+  let o={wsmall:-1,wfont:'m'};try{if(window.Native&&Native.getWidgetOpt)o=JSON.parse(Native.getWidgetOpt())}catch(e){}
+  const seg=(id,items,key,cur,num)=>{const el=$(id);el.innerHTML=items.map(x=>'<button data-v="'+x[0]+'" class="'+(String(x[0])===String(cur)?'on':'')+'">'+x[1]+'</button>').join('');
+    el.onclick=e=>{const b=e.target.closest('button');if(!b)return;[...el.children].forEach(x=>x.classList.toggle('on',x===b));try{window.Native&&Native.setWidgetOpt(key,b.dataset.v)}catch(err){}}};
+  seg('wsPick',[[-1,'⏳ الأقرب'],[0,'🏛️ الراتب'],[1,'🏠 المواطن'],[2,'🤝 الضمان'],[3,'💼 راتبي']],'wsmall',o.wsmall);
+  seg('wsFont',[['s','صغير'],['m','وسط'],['l','كبير'],['xl','كبير جدًا']],'wfont',o.wfont);
 })();
 </script>
 <div style="position:relative;z-index:1;text-align:center;font-family:Tajawal,system-ui,sans-serif;font-size:13px;font-weight:700;opacity:.6;padding:14px 0 18px">برمجة أبو نواف</div>

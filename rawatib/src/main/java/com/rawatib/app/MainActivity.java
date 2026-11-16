@@ -85,6 +85,20 @@ public class MainActivity extends Activity {
         }
 
         @JavascriptInterface
+        public void setWidgetOpt(String k, String v) {
+            android.content.SharedPreferences.Editor e = getSharedPreferences("pay", MODE_PRIVATE).edit();
+            if (k.equals("wsmall")) e.putInt("wsmall", Integer.parseInt(v)); else e.putString(k, v);
+            e.apply();
+            SeasonWidget.updateAll(MainActivity.this);
+        }
+
+        @JavascriptInterface
+        public String getWidgetOpt() {
+            android.content.SharedPreferences p = getSharedPreferences("pay", MODE_PRIVATE);
+            return "{\"wsmall\":" + p.getInt("wsmall", -1) + ",\"wfont\":\"" + p.getString("wfont", "m") + "\"}";
+        }
+
+        @JavascriptInterface
         public String getWidgetTheme() {
             return getSharedPreferences("pay", MODE_PRIVATE).getString("wtheme", "green");
         }
