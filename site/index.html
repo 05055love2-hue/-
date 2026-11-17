@@ -57,6 +57,10 @@
   .qr div.code{background:#fff;padding:8px;border-radius:12px;width:136px;height:136px}
   .qr div.code img,.qr div.code canvas{width:120px!important;height:120px!important}
   .copy{font-family:inherit;font-size:14px;border:1px solid var(--line);color:var(--text);background:none;border-radius:12px;padding:6px 14px;cursor:pointer}
+  .ttbtn{display:inline-flex;align-items:center;gap:10px;margin-top:18px;padding:12px 20px;border-radius:999px;background:#000;color:#fff!important;font-weight:800;font-size:16px;text-decoration:none;border:1px solid #333}
+  .ttbtn small{opacity:.7;font-weight:700;direction:ltr}
+  .ttbtn:active{transform:scale(.97)}
+  .ttfoot{display:inline-flex;align-items:center;gap:6px;margin-top:12px;color:var(--text);font-weight:800;text-decoration:none}
   footer{margin-top:70px;color:var(--soft);font-size:13px;text-align:center}
   .zoom{position:fixed;inset:0;background:rgba(0,0,0,.88);display:none;place-items:center;padding:16px;z-index:9}
   .zoom.show{display:grid} .zoom img{max-width:100%;max-height:100%;border-radius:12px}
@@ -295,7 +299,7 @@ footer .fmark{display:block;margin:0 auto 8px}
 <div class="sheetbar" id="sheetbar"><button id="sheetBack">→ رجوع</button><b id="sheetTitle"></b></div>
 <div class="wrap">
   <header class="abar"><svg class="mark" width="34" height="34" viewBox="0 0 200 200" aria-label="شعار أبو نواف"><defs><linearGradient id="mkH" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0a84ff"/><stop offset="1" stop-color="#8e44ff"/></linearGradient></defs><rect x="44" y="44" width="112" height="112" rx="26" transform="rotate(45 100 100)" fill="url(#mkH)"/><path d="M66 100 A34 34 0 0 0 134 100" fill="none" stroke="#fff" stroke-width="16" stroke-linecap="round"/><circle cx="100" cy="74" r="10" fill="#fff"/></svg><b>تطبيقاتي</b>
-    <nav><a href="#apps">التطبيقات</a><a href="#support">ادعم</a><a href="#about">عني</a></nav></header>
+    <nav><a href="#apps">التطبيقات</a><a href="#support">ادعم</a><a href="#about">عني</a><a href="https://www.tiktok.com/@azoozz1407" target="_blank" rel="noopener">تيك توك</a></nav></header>
 
   <div class="mainapp">
     <div class="mtag">التطبيق الأساسي</div>
@@ -742,6 +746,7 @@ footer .fmark{display:block;margin:0 auto 8px}
       <div><h2>المبرمج أبو نواف</h2><div class="role">مطوّر أنظمة وتطبيقات أندرويد</div></div>
     </div>
     <p class="bio">مطوّر أنظمة، أحب أبني تطبيقات عربية بسيطة وواضحة تحل مشاكل يومية. أركز على الأجهزة اللي نستخدمها كل يوم: شاشة السيارة، التلفزيون، والجوال. أبدأ كل تطبيق بأبسط نسخة تشتغل فعلًا، وبعدها أطوره خطوة خطوة حسب ملاحظات اللي يستخدمونه. وكل تطبيقاتي مجانية، وما تجمع بيانات المستخدمين.</p>
+    <a class="ttbtn" href="https://www.tiktok.com/@azoozz1407" target="_blank" rel="noopener"><svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true"><path fill="#25F4EE" d="M33.5 6h-6v24.3a5.4 5.4 0 1 1-5.4-5.4c.6 0 1.1.1 1.6.2v-6.2a11.5 11.5 0 1 0 9.8 11.4V18.1a14 14 0 0 0 8.2 2.6v-6A8.3 8.3 0 0 1 33.5 6z" transform="translate(-1.2 -1.2)"/><path fill="#FE2C55" d="M33.5 6h-6v24.3a5.4 5.4 0 1 1-5.4-5.4c.6 0 1.1.1 1.6.2v-6.2a11.5 11.5 0 1 0 9.8 11.4V18.1a14 14 0 0 0 8.2 2.6v-6A8.3 8.3 0 0 1 33.5 6z" transform="translate(1.2 1.2)"/><path fill="#fff" d="M33.5 6h-6v24.3a5.4 5.4 0 1 1-5.4-5.4c.6 0 1.1.1 1.6.2v-6.2a11.5 11.5 0 1 0 9.8 11.4V18.1a14 14 0 0 0 8.2 2.6v-6A8.3 8.3 0 0 1 33.5 6z"/></svg>تابعني على تيك توك <small>@azoozz1407</small></a>
     <h3>التقنيات اللي أشتغل عليها</h3>
     <div class="chips">
       <span>📱 تطبيقات أندرويد (Java)</span>
@@ -763,6 +768,7 @@ footer .fmark{display:block;margin:0 auto 8px}
 
   <footer><svg class="mark fmark" width="40" height="40" viewBox="0 0 200 200" aria-label="شعار أبو نواف"><defs><linearGradient id="mkF" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0a84ff"/><stop offset="1" stop-color="#8e44ff"/></linearGradient></defs><rect x="44" y="44" width="112" height="112" rx="26" transform="rotate(45 100 100)" fill="url(#mkF)"/><path d="M66 100 A34 34 0 0 0 134 100" fill="none" stroke="#fff" stroke-width="16" stroke-linecap="round"/><circle cx="100" cy="74" r="10" fill="#fff"/></svg>تطبيقاتي • ثيم هادي وشاشتي ومشغّلي وفصول السنة ومواعيد الصرف وحمّل • مجانية 💚
     <p style="margin:10px auto 0;max-width:640px;line-height:1.8">كل التطبيقات هنا من تطوير المبرمج أبو نواف، وهي مستقلة وغير تابعة لأي جهة حكومية أو شركة. ما تطلب كلمات مرور ولا بيانات بنكية، وما ترسل بياناتك لأي مكان. أسماء الخدمات المذكورة ملك لأصحابها.</p>
+    <a class="ttfoot" href="https://www.tiktok.com/@azoozz1407" target="_blank" rel="noopener"><svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true"><path fill="#25F4EE" d="M33.5 6h-6v24.3a5.4 5.4 0 1 1-5.4-5.4c.6 0 1.1.1 1.6.2v-6.2a11.5 11.5 0 1 0 9.8 11.4V18.1a14 14 0 0 0 8.2 2.6v-6A8.3 8.3 0 0 1 33.5 6z" transform="translate(-1.2 -1.2)"/><path fill="#FE2C55" d="M33.5 6h-6v24.3a5.4 5.4 0 1 1-5.4-5.4c.6 0 1.1.1 1.6.2v-6.2a11.5 11.5 0 1 0 9.8 11.4V18.1a14 14 0 0 0 8.2 2.6v-6A8.3 8.3 0 0 1 33.5 6z" transform="translate(1.2 1.2)"/><path fill="#fff" d="M33.5 6h-6v24.3a5.4 5.4 0 1 1-5.4-5.4c.6 0 1.1.1 1.6.2v-6.2a11.5 11.5 0 1 0 9.8 11.4V18.1a14 14 0 0 0 8.2 2.6v-6A8.3 8.3 0 0 1 33.5 6z"/></svg>@azoozz1407</a>
     <p style="margin:12px 0 0;font-weight:800;color:var(--text)">© 2026 جميع الحقوق محفوظة — المبرمج أبو نواف</p></footer>
 </div>
 <div class="zoom" id="zoom"><img id="zimg" alt=""></div>
