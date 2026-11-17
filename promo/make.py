@@ -11,6 +11,12 @@ CF={
    imgs=['img/s1.png','img/s2.png','img/s3.png'],feats=[['⏳','عداد لسهيل والوسم والمربعانية'],['🔔','ويدجت وتنبيه بدخول الموسم'],['🌱','وش تزرع في كل موسم']],cta='المواسم والفصول بعدّ تنازلي'),
  'rawatib':dict(name='مواعيد الصرف',emoji='💰',a='#10b981',b='#2563eb',orient='port',hook='كم باقي<br>على الراتب؟',
    imgs=['img/r1.png','img/r2.png','img/r3.png'],feats=[['🏛️','الراتب وحساب المواطن والضمان'],['⏳','عدّ تنازلي بالثواني'],['📱','ويدجت وتنبيه يوم الصرف']],cta='كل مواعيد الصرف في مكان واحد'),
+ 'salati':dict(name='صلاتي',emoji='🕌',a='#22c55e',b='#0e7490',orient='port',hook='لا تفوتك<br>صلاة بعد اليوم',
+   imgs=['img/sl1.jpg','img/sl2.jpg','img/sl3.jpg'],feats=[['📢','الأذان بالصوت اللي تختاره'],['🧭','القبلة والأذكار والمسبحة'],['🧩','6 ويدجتات لشاشتك']],cta='الأذان وأوقات الصلاة بدقة'),
+ 'cleaner':dict(name='منظّف',emoji='🧹',a='#06b6d4',b='#6366f1',orient='port',hook='جوالك ثقيل؟<br>والمساحة خلصت؟',
+   imgs=['img/cl1.jpg','img/cl2.jpg','img/cl3.jpg'],feats=[['🔍','يلقى الملفات الزايدة لحاله'],['💬','ينظّف الواتساب والمكرر'],['🚀','يسرّع جوالك بضغطة']],cta='نظّف جوالك وسرّعه'),
+ 'sayarati':dict(name='سيارتي',emoji='🚘',a='#a855f7',b='#0ea5e9',orient='land',hook='يوتيوب والخرائط<br>في واجهة سيارتك',
+   imgs=['img/sy1.jpg','img/sy2.jpg','img/sy3.jpg'],feats=[['▶️','يوتيوب بأزرار تحكم كبيرة'],['🗺️','البيت والعمل والوقود بضغطة'],['🌍','5 أشكال وخلفيات متحركة']],cta='لانشر لشاشة السيارة الأندرويد'),
 }
 FPS=24;DUR=15
 keys=sys.argv[1:] or list(CF)
@@ -21,7 +27,7 @@ with sync_playwright() as p:
     for k in keys:
         pg=b.new_page(viewport={'width':540,'height':960},device_scale_factor=2)
         pg.add_init_script('window.CFG='+json.dumps(CF[k],ensure_ascii=False))
-        pg.goto('file:///home/claude/promo/promo.html');pg.wait_for_timeout(800)
+        pg.goto(''+'file://'+os.path.abspath('promo.html')+'');pg.wait_for_timeout(800)
         if preview:
             for t in [1.6,7,13.5]:
                 pg.evaluate(f'render({t})');pg.screenshot(path=f'/tmp/pv_{k}_{t}.png')
@@ -29,5 +35,5 @@ with sync_playwright() as p:
         d=f'/tmp/fr_{k}';shutil.rmtree(d,ignore_errors=True);os.makedirs(d)
         for i in range(FPS*DUR):
             pg.evaluate(f'render({i/FPS})');pg.screenshot(path=f'{d}/{i:04d}.jpg',type='jpeg',quality=92)
-        subprocess.run(['ffmpeg','-y','-loglevel','error','-framerate',str(FPS),'-i',f'{d}/%04d.jpg','-f','lavfi','-i','anullsrc=r=44100:cl=stereo','-shortest','-c:v','libx264','-preset','veryfast','-crf','20','-pix_fmt','yuv420p','-c:a','aac','-movflags','+faststart',f'/home/claude/promo/{k}.mp4'],check=True)
+        subprocess.run(['ffmpeg','-y','-loglevel','error','-framerate',str(FPS),'-i',f'{d}/%04d.jpg','-f','lavfi','-i','anullsrc=r=44100:cl=stereo','-shortest','-c:v','libx264','-preset','veryfast','-crf','20','-pix_fmt','yuv420p','-c:a','aac','-movflags','+faststart',f'src/{k}.mp4'],check=True)
         shutil.rmtree(d);print('done',k)
