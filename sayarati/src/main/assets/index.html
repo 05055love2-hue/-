@@ -160,7 +160,7 @@ button:active{transform:scale(.94)}
 
 /* ═════════ أشكال الواجهة ═════════ */
 .lay{display:none;height:100%}
-body[data-layout=classic] .l-classic,body[data-layout=youtube] .l-youtube,body[data-layout=minimal] .l-minimal,body[data-layout=dash] .l-dash,body[data-layout=maps] .l-maps,body[data-layout=car] .l-car{display:grid}
+body[data-layout=classic] .l-classic,body[data-layout=youtube] .l-youtube,body[data-layout=minimal] .l-minimal,body[data-layout=dash] .l-dash,body[data-layout=maps] .l-maps{display:grid}
 .col{display:flex;flex-direction:column;gap:14px;min-height:0;min-width:0}
 .col>.grow{flex:1;min-height:0}
 .l-classic{grid-template-columns:1fr 1.15fr 1fr;gap:14px}
@@ -273,7 +273,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;heigh
 .card.wide{grid-column:1/-1}
 .card h3 .ico{width:34px;height:34px;font-size:18px;border-radius:10px}
 .opts{display:grid;gap:10px}
-.opts.c4{grid-template-columns:repeat(4,1fr)}.opts.c5{grid-template-columns:repeat(6,1fr)}.opts.c8{grid-template-columns:repeat(8,1fr)}
+.opts.c4{grid-template-columns:repeat(4,1fr)}.opts.c5{grid-template-columns:repeat(5,1fr)}.opts.c8{grid-template-columns:repeat(8,1fr)}
 .opt{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12.5px;color:var(--txt2)}
 .opt .pv{width:100%;aspect-ratio:16/9;border-radius:12px;border:2px solid transparent;overflow:hidden;position:relative;background:#0d1220}
 .opt.sel .pv{border-color:var(--accent);box-shadow:0 0 14px var(--glow)}
@@ -349,31 +349,6 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;heigh
 .rd-g button .ico{width:40px;height:40px;font-size:19px;border-radius:12px}
 .rd-g button.on{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 18%,var(--glass));box-shadow:0 0 0 1px var(--accent)}
 .dk-b{width:calc(88px * var(--dk,1))}
-/* ═════════ واجهة سيارتي ═════════ */
-.l-car{grid-template-columns:1fr 1.55fr 1fr;gap:14px}
-.carh{display:flex;flex-direction:column;align-items:center;padding:18px 20px;position:relative;overflow:hidden;min-height:0}
-.carh .top{display:flex;align-items:center;gap:12px;width:100%}
-.carh .bdg{width:50px;height:50px;border-radius:50%;display:grid;place-items:center;font-size:20px;font-weight:900;color:#fff;background:radial-gradient(circle at 35% 30%,color-mix(in srgb,var(--accent) 80%,#fff),var(--accent) 45%,color-mix(in srgb,var(--accent),#000 55%));box-shadow:0 0 0 3px rgba(255,255,255,.15),0 6px 18px var(--glow)}
-.carh .nm{font-size:24px;font-weight:800;line-height:1.2}.carh .nm small{display:block;font-size:13px;font-weight:400;color:var(--txt2)}
-.carh .ed{margin-right:auto;width:38px;height:38px;border-radius:12px;background:var(--glass2);display:grid;place-items:center;font-size:18px}
-.carh .stage{flex:1;width:100%;display:flex;align-items:center;justify-content:center;position:relative;min-height:0}
-.carh .stage::before{content:'';position:absolute;left:8%;right:8%;bottom:14%;height:38%;border-radius:50%;background:radial-gradient(ellipse at center,var(--glow),transparent 70%);filter:blur(6px)}
-.carh .stage::after{content:'';position:absolute;left:4%;right:4%;bottom:19%;height:2px;background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--accent) 70%,#fff),transparent);opacity:.6}
-.carh svg.car{position:relative;width:100%;max-width:600px;max-height:100%;filter:drop-shadow(0 16px 22px rgba(0,0,0,.55));animation:carIn 1.1s cubic-bezier(.2,.8,.2,1)}
-@keyframes carIn{from{transform:translateX(-60px);opacity:0}to{transform:none;opacity:1}}
-.carh .st3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%}
-.carh .st3 div{padding:10px;border-radius:14px;background:rgba(255,255,255,.06);text-align:center;font-size:12.5px;color:var(--txt2)}
-.carh .st3 b{display:block;font-size:22px;color:var(--txt);font-variant-numeric:tabular-nums}
-.ctype{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
-.ctype button{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 6px;border-radius:14px;background:rgba(255,255,255,.05);border:2px solid transparent;font-size:13px;color:var(--txt2)}
-.ctype button svg{width:100%;height:auto}
-.ctype button.sel{border-color:var(--accent);color:#fff;font-weight:700;box-shadow:0 0 14px var(--glow)}
-.paints{display:flex;flex-wrap:wrap;gap:10px}
-.paints button{width:42px;height:42px;border-radius:50%;border:3px solid rgba(255,255,255,.15)}
-.paints button.sel{border-color:#fff;box-shadow:0 0 12px rgba(255,255,255,.5)}
-.cin{flex:1;background:var(--glass2);border:0;border-radius:12px;padding:11px 14px;color:var(--txt);font-size:15px;outline:none}
-body.port .carh{min-height:440px}
-
 /* ═════════ تخصيص الشريط ═════════ */
 .dkl{display:flex;flex-direction:column;gap:6px}
 .dkl .it{display:flex;align-items:center;gap:12px;padding:8px 10px;border-radius:14px;background:rgba(255,255,255,.05)}
@@ -498,18 +473,6 @@ body.port .tb{padding:0 12px}body.port .credit{display:none}
         <div class="col">
           <div class="g mu grow x-mu"></div>
           <div class="g trip x-trip"></div>
-        </div>
-      </div>
-      <!-- سيارتي -->
-      <div class="lay l-car">
-        <div class="col">
-          <div class="g clk grow"><div class="t x-time"></div><div class="d x-date"></div><div class="h x-hij"></div></div>
-          <div class="g pr tap x-pr" onclick="go('prayer')"></div>
-        </div>
-        <div class="g carh x-car"></div>
-        <div class="col">
-          <div class="g wx tap x-wx"></div>
-          <div class="g mu grow x-mu"></div>
         </div>
       </div>
       <!-- يوتيوب أولاً -->
@@ -676,16 +639,6 @@ body.port .tb{padding:0 12px}body.port .credit{display:none}
             <div class="card g"><h3>السطوع</h3>
               <div class="row" style="direction:ltr"><i data-ic="sun" style="opacity:.45;font-size:16px"></i><input type="range" id="briR" min="30" max="100" value="100"><i data-ic="sun" style="font-size:24px"></i></div></div>
           </div>
-          <!-- سيارتي -->
-          <div class="sec" data-s="car">
-            <div class="sh"><span class="ico c-ac"><i data-ic="car"></i></span><div><b>سيارتي</b><small>شكل سيارتك ولونها واسمها في الواجهة</small></div></div>
-            <div class="card g"><h3>نوع السيارة</h3><div class="ctype" id="cType"></div></div>
-            <div class="card g"><h3>اللون</h3><div class="paints" id="cPaint"></div></div>
-            <div class="card g"><h3>الاسم</h3>
-              <div class="row"><span style="flex:none;width:110px">اسم سيارتك</span><input class="cin" id="cN" maxlength="24" placeholder="مثال: لكزس LX"></div>
-              <div class="row"><span style="flex:none;width:110px">الموديل</span><input class="cin" id="cM" maxlength="24" placeholder="مثال: ٢٠٢٤"></div></div>
-            <div class="card g"><div class="row"><span>اعرض سيارتك في نص الواجهة</span><button class="btn" onclick="setOpt('layout','car');go('home')">اعرضها</button></div></div>
-          </div>
           <!-- الشريط السفلي -->
           <div class="sec" data-s="dock">
             <div class="sh"><span class="ico c-ap"><i data-ic="apps"></i></span><div><b>الشريط اللي تحت</b><small>أضف اللي تبي، رتّبه، وكبّره أو صغّره</small></div></div>
@@ -754,7 +707,7 @@ body.port .tb{padding:0 12px}body.port .credit{display:none}
 
 <script>
 /* داخل تطبيق أندرويد: الروابط تفتح في تطبيقاتها */
-const VER='v3.6';
+const VER='v3.7';
 const $=id=>document.getElementById(id);
 const $$=s=>[...document.querySelectorAll(s)];
 const NAT=!!(window.Native&&Native.openUrl);
@@ -824,12 +777,12 @@ const p2=n=>String(n).padStart(2,'0');
 let tT;function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(tT);tT=setTimeout(()=>t.classList.remove('show'),2300)}
 
 /* ══════ الإعدادات المحفوظة ══════ */
-const DEF={layout:'classic',bg:'earth',col:0,h24:true,sec:true,bri:100,ytDesk:false,adhan:true,rAuto:false,spdOn:false,spdMax:120,cardA:1,clkS:1,dkS:1,zoom:1,dock:null,carT:'suv',carP:'#f4f5f7',carN:'سيارتي',carM:'',carIntro:false,city:'auto',stSec:'look'};
+const DEF={layout:'classic',bg:'earth',col:0,h24:true,sec:true,bri:100,ytDesk:false,adhan:true,rAuto:false,spdOn:false,spdMax:120,cardA:1,clkS:1,dkS:1,zoom:1,dock:null,city:'auto',stSec:'look'};
 let S=Object.assign({},DEF);
 try{S=Object.assign(S,JSON.parse(localStorage.getItem('sayarati')||'{}'))}catch(e){}
 function save(){try{localStorage.setItem('sayarati',JSON.stringify(S))}catch(e){}}
 const COLS=['#00b4d8','#00e676','#b388ff','#ff6d00','#ffd600','#ff4f81'];
-const LAYS=[['car','سيارتي'],['classic','كلاسيك'],['youtube','يوتيوب أولاً'],['maps','خرائط'],['minimal','بسيط'],['dash','لوحة القيادة']];
+const LAYS=[['classic','كلاسيك'],['youtube','يوتيوب أولاً'],['maps','خرائط'],['minimal','بسيط'],['dash','لوحة القيادة']];
 const BGS=[['earth','🌍 الأرض'],['earthc','🌏 الأرض كاملة'],['earthn','🌃 الأرض بالليل'],['stars','✨ النجوم'],['aurora','🌌 الشفق'],['road','🛣️ طريق ليلي'],['flow','🎨 تدرّج'],['plain','⬛ هادئ']];
 
 function applyAll(){
@@ -847,7 +800,7 @@ function applyAll(){
   if(CA[0]){document.documentElement.style.setProperty('--glass',CA[0]);document.documentElement.style.setProperty('--glass2',CA[1])}
   document.documentElement.style.setProperty('--clk',S.clkS);
   document.documentElement.style.setProperty('--dk',S.dkS);
-  scaleUI();renderDockSet();renderCar();
+  scaleUI();renderDockSet();
   setTimeout(syncYT,60);
   [['swAdh','adhan'],['swRA','rAuto'],['swSpd','spdOn']].forEach(x=>{const e=$(x[0]);if(e)e.classList.toggle('on',!!S[x[1]])});
   $$('.seg button,.chips button').forEach(b=>b.classList.toggle('sel',String(S[b.dataset.k])===b.dataset.v));
@@ -863,63 +816,6 @@ function setOpt(k,v){
 
 const CITY={'الرياض':[24.7136,46.6753],'جدة':[21.4858,39.1925],'مكة المكرمة':[21.3891,39.8579],'المدينة المنورة':[24.5247,39.5692],'الدمام':[26.4207,50.0888],'الخبر':[26.2172,50.1971],'الأحساء':[25.383,49.586],'الجبيل':[27.0046,49.646],'الطائف':[21.2703,40.4158],'تبوك':[28.3838,36.555],'أبها':[18.2164,42.5053],'خميس مشيط':[18.3,42.7333],'حائل':[27.5114,41.7208],'بريدة':[26.326,43.975],'جازان':[16.8892,42.5511],'نجران':[17.5656,44.2289],'الباحة':[20.0129,41.4677],'سكاكا':[29.9697,40.2064],'عرعر':[30.9753,41.0381],'ينبع':[24.0895,38.0618],'حفر الباطن':[28.4328,45.9708],'الكويت':[29.3759,47.9774],'الدوحة':[25.2854,51.531],'المنامة':[26.2285,50.586],'دبي':[25.2048,55.2708],'أبوظبي':[24.4539,54.3773],'مسقط':[23.588,58.3829]};
 function setCity(c){S.city=c;save();if(c!=='auto'){setLoc(CITY[c][0],CITY[c][1],c)}getWeather();applyAll();toast(c==='auto'?'المدينة تتحدد من موقعك':'صارت المدينة: '+c)}
-/* ══════ سيارتي: رسمة السيارة ══════ */
-const CARS={
- sedan:{b:'M18 112 Q18 93 40 89 L108 81 Q140 53 176 49 L250 49 Q286 51 312 79 L362 87 Q386 92 386 109 L386 118 Q386 125 378 125 L24 125 Q16 125 16 118 Z',w:'M122 81 Q148 59 178 56 L246 56 Q272 58 294 80 Z',p:[[210,56,206,81]],wh:[95,305],hl:[372,96],tl:[26,98]},
- suv:{b:'M16 114 Q16 86 36 82 L94 77 L126 39 Q131 33 141 33 L302 33 Q313 33 319 41 L348 74 L370 79 Q388 83 388 104 L388 119 Q388 126 380 126 L22 126 Q16 126 16 119 Z',w:'M134 42 L300 42 L334 75 L106 78 Z',p:[[215,42,213,77],[270,42,272,76]],wh:[92,310],hl:[376,92],tl:[24,94]},
- pickup:{b:'M390 114 Q390 88 372 84 L306 79 L274 41 Q270 35 260 35 L172 35 Q164 35 161 43 L155 79 L24 80 Q14 80 14 90 L14 119 Q14 126 22 126 L384 126 Q390 126 390 119 Z',w:'M264 44 L172 44 L167 77 L294 79 Z',p:[[218,44,220,78]],wh:[84,312],hl:[380,95],tl:[20,92]},
- sport:{b:'M14 113 Q18 98 48 93 L128 85 Q170 61 212 59 L262 61 Q302 66 334 88 L374 94 Q390 99 390 111 L390 118 Q390 124 382 124 L20 124 Q14 124 14 118 Z',w:'M150 85 Q182 67 214 65 L258 67 Q286 71 308 87 Z',p:[[232,66,230,86]],wh:[96,312],hl:[378,102],tl:[22,104]},
- hatch:{b:'M30 113 Q30 92 50 88 L116 80 Q146 50 180 46 L282 46 Q298 46 304 58 L320 90 Q352 93 364 100 Q372 106 372 116 L372 119 Q372 125 364 125 L36 125 Q28 125 28 119 Z',w:'M130 80 Q154 55 182 53 L280 53 Q290 53 294 62 L304 82 Z',p:[[215,53,213,81]],wh:[100,300],hl:[364,103],tl:[36,98]}
-};
-function carSVG(t,paint,id){
- const c=CARS[t];id=id||t;
- const wheel=x=>`<g transform="translate(${x} 125)"><circle r="27" fill="#0b0d12"/><circle r="25" fill="#16191f"/><circle r="17" fill="url(#rim${id})"/><g stroke="#2b3038" stroke-width="3">${[0,60,120].map(a=>`<line x1="0" y1="-15" x2="0" y2="15" transform="rotate(${a})"/>`).join('')}</g><circle r="5" fill="#3a4049"/></g>`;
- const arch=x=>`<circle cx="${x}" cy="125" r="31" fill="#05070c"/>`;
- return `<svg class="car" viewBox="0 0 404 160" xmlns="http://www.w3.org/2000/svg">
- <defs>
-  <linearGradient id="pt${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".35" stop-color="#fff" stop-opacity=".08"/><stop offset=".6" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".45"/></linearGradient>
-  <linearGradient id="gl${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9fb6d8"/><stop offset=".5" stop-color="#1b2433"/><stop offset="1" stop-color="#0c1018"/></linearGradient>
-  <radialGradient id="rim${id}"><stop offset="0" stop-color="#d9dee6"/><stop offset=".8" stop-color="#7d8794"/><stop offset="1" stop-color="#4a525d"/></radialGradient>
-  <radialGradient id="sh${id}"><stop offset="0" stop-color="#000" stop-opacity=".7"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
-  <clipPath id="cl${id}"><path d="${c.b}"/></clipPath>
- </defs>
- <ellipse cx="202" cy="150" rx="190" ry="9" fill="url(#sh${id})"/>
- <path d="${c.b}" fill="${paint}"/>
- <g clip-path="url(#cl${id})">${c.wh.map(arch).join('')}<path d="${c.b}" fill="url(#pt${id})"/>
-  <path d="M0 101 L404 99" stroke="#fff" stroke-opacity=".18" stroke-width="2"/></g>
- <path d="${c.w}" fill="url(#gl${id})"/>
- ${c.p.map(p=>`<line x1="${p[0]}" y1="${p[1]}" x2="${p[2]}" y2="${p[3]}" stroke="${paint}" stroke-width="6"/>`).join('')}
- <path d="${c.w}" fill="none" stroke="#000" stroke-opacity=".35" stroke-width="2"/>
- <ellipse cx="${c.hl[0]}" cy="${c.hl[1]}" rx="10" ry="4" fill="#eaf6ff"/><ellipse cx="${c.hl[0]+8}" cy="${c.hl[1]}" rx="30" ry="9" fill="#bfe6ff" opacity=".18"/>
- <rect x="${c.tl[0]-4}" y="${c.tl[1]-4}" width="10" height="8" rx="3" fill="#ff3043"/>
- ${c.wh.map(wheel).join('')}
- </svg>`;
-}
-const PAINTS=['#f4f5f7','#16181d','#a7adb5','#5b616b','#e03131','#8d1c24','#1c3f8f','#0f2a4a','#2f6f4f','#c9b28a','#7a4b2a','#f2c94c'];
-const CTN={sedan:'سيدان',suv:'جيب',pickup:'ونيت',sport:'رياضية',hatch:'هاتشباك'};
-function renderCar(){
-  const nm=escH(S.carN||'سيارتي'),md=escH(S.carM||'');
-  const bd=(S.carN||'س').trim().charAt(0);
-  const svgc=carSVG(S.carT,S.carP,'h');
-  $$('.x-car').forEach(e=>{
-    const k=S.carT+S.carP+nm+md;if(e.dataset.k===k)return;e.dataset.k=k;
-    e.innerHTML='<div class="top"><span class="bdg">'+escH(bd)+'</span><div class="nm">'+nm+(md?'<small>'+md+'</small>':'<small>'+CTN[S.carT]+'</small>')+'</div><button class="ed" onclick="S.stSec=\'car\';save();go(\'settings\');applyAll()">'+svg('brush')+'</button></div>'+
-      '<div class="stage">'+svgc+'</div>'+
-      '<div class="st3"><div>السرعة<b class="x-spd">--</b>كم/س</div><div>مدة المشوار<b class="x-tripv">--</b></div><div>الصلاة القادمة<b class="x-prn">--</b></div></div>';
-  });
-  if($('cType')&&!$('cType').dataset.b){
-    $('cType').dataset.b=1;
-    $('cType').innerHTML=Object.keys(CARS).map(t=>'<button data-t="'+t+'" onclick="setOpt(\'carT\',\''+t+'\')">'+carSVG(t,'#cfd5dd','p'+t)+CTN[t]+'</button>').join('');
-    $('cPaint').innerHTML=PAINTS.map(p=>'<button data-p="'+p+'" style="background:'+p+'" onclick="setOpt(\'carP\',\''+p+'\')"></button>').join('');
-    $('cN').value=S.carN||'';$('cM').value=S.carM||'';
-    $('cN').addEventListener('input',e=>{S.carN=e.target.value;save();renderCar()});
-    $('cM').addEventListener('input',e=>{S.carM=e.target.value;save();renderCar()});
-  }
-  $$('#cType button').forEach(b=>b.classList.toggle('sel',b.dataset.t===S.carT));
-  $$('#cPaint button').forEach(b=>b.classList.toggle('sel',b.dataset.p===S.carP));
-  updTrip();
-}
-
 /* ══════ الشريط السفلي القابل للتخصيص ══════ */
 const PGS={home:['home','الرئيسية'],yt:['play','يوتيوب'],music:['music','الموسيقى'],radio:['radio','الراديو'],prayer:['mosque','الصلاة'],nav:['nav','الملاحة'],phone:['phone','الهاتف'],apps:['apps','التطبيقات'],settings:['gear','الإعدادات']};
 const FIXED=['home','settings'];
@@ -1008,7 +904,6 @@ function buildUI(){
   $('keys').innerHTML=['1','2','3','4','5','6','7','8','9','*','0','#'].map(k=>'<button onclick="dial(\''+k+'\')">'+k+'</button>').join('');
   // معاينات أشكال الواجهة
   const PV={
-    car:'<i style="right:5%;top:10%;width:26%;height:52%"></i><i style="right:5%;top:68%;width:26%;height:22%"></i><i style="right:35%;top:10%;width:34%;height:80%"></i><i style="right:40%;top:42%;width:24%;height:14%;border-radius:8px 14px 3px 3px;background:var(--accent)"></i><i style="right:73%;top:10%;width:22%;height:22%"></i><i style="right:73%;top:38%;width:22%;height:52%"></i>',
     classic:'<i style="right:6%;top:10%;width:26%;height:52%"></i><i style="right:6%;top:68%;width:26%;height:22%"></i><i style="right:37%;top:10%;width:28%;height:22%"></i><i style="right:37%;top:38%;width:28%;height:52%;background:rgba(255,0,0,.5)"></i><i style="right:70%;top:10%;width:24%;height:80%"></i>',
     youtube:'<i style="right:5%;top:10%;width:28%;height:25%"></i><i style="right:5%;top:40%;width:28%;height:18%"></i><i style="right:5%;top:63%;width:28%;height:27%"></i><i style="right:37%;top:10%;width:58%;height:80%;background:rgba(255,0,0,.5)"></i>',
     maps:'<i style="right:5%;top:10%;width:28%;height:25%"></i><i style="right:5%;top:40%;width:28%;height:18%"></i><i style="right:5%;top:63%;width:28%;height:27%"></i><i style="right:37%;top:10%;width:58%;height:60%;background:rgba(52,168,83,.6)"></i><i style="right:37%;top:75%;width:58%;height:15%"></i>',
@@ -1025,7 +920,7 @@ function buildUI(){
   $('optCol').innerHTML=COLS.map((c,i)=>'<button style="background:'+c+'" onclick="setOpt(\'col\','+i+')"></button>').join('');
   // اختصارات إعدادات الجهاز
   // قائمة الإعدادات الجانبية
-  const SN=[['look','c-ac','brush','الواجهة والمظهر','الشكل، الخلفية، الألوان، ومقاس الشاشة'],['car','c-ac','car','سيارتي','نوعها ولونها واسمها'],['dock','c-ap','apps','الشريط اللي تحت','أضف تطبيقاتك ورتّبها وغيّر حجمه'],['time','c-wf','clock','الساعة والطقس والصلاة','التوقيت، المدينة، والأذان'],['media','c-mu','music','الصوت والوسائط','الراديو، يوتيوب، والموسيقى'],['drive','c-snd','bell','القيادة والتنبيهات','تنبيه السرعة'],['dev','c-bt','bt','الجهاز والاتصال','بلوتوث، واي فاي، والشاشة'],['about','c-st','info','حول التطبيق','الإصدار والحقوق']];
+  const SN=[['look','c-ac','brush','الواجهة والمظهر','الشكل، الخلفية، الألوان، ومقاس الشاشة'],['dock','c-ap','apps','الشريط اللي تحت','أضف تطبيقاتك ورتّبها وغيّر حجمه'],['time','c-wf','clock','الساعة والطقس والصلاة','التوقيت، المدينة، والأذان'],['media','c-mu','music','الصوت والوسائط','الراديو، يوتيوب، والموسيقى'],['drive','c-snd','bell','القيادة والتنبيهات','تنبيه السرعة'],['dev','c-bt','bt','الجهاز والاتصال','بلوتوث، واي فاي، والشاشة'],['about','c-st','info','حول التطبيق','الإصدار والحقوق']];
   $('stNav').innerHTML=SN.map(s=>'<button data-s="'+s[0]+'" onclick="setOpt(\'stSec\',\''+s[0]+'\')"><span class="ico '+s[1]+'">'+svg(s[2])+'</span><div><b>'+s[3]+'</b><small>'+s[4]+'</small></div>'+svg('chev','chev')+'</button>').join('');
   const seg=(id,k,L)=>{$(id).innerHTML=L.map(o=>'<button data-k="'+k+'" data-v="'+o[0]+'" onclick="setOpt(\''+k+'\','+(typeof o[0]==='number'?o[0]:'\''+o[0]+'\'')+')">'+o[1]+'</button>').join('')};
   seg('segCard','cardA',[[0,'شفاف'],[1,'عادي'],[2,'واضح'],[3,'غامق']]);
@@ -1445,7 +1340,8 @@ window.addEventListener('orientationchange',()=>setTimeout(scaleUI,250));
 window.addEventListener('resize',scaleUI);
 
 /* ══════ البداية ══════ */
-if(!S.carIntro){S.carIntro=true;S.layout='car';save()}
+if(S.layout==='car'||!LAYS.some(l=>l[0]===S.layout)){S.layout='classic';save()}
+if(S.stSec==='car'){S.stSec='look';save()}
 buildUI();buildRad();scaleUI();applyAll();if(S.rAuto&&RS.i>=0)setTimeout(()=>radPlay(RS.i),1500);go('home');renderPL();renderCalls();updMeta();updTrip();devStatus();getWeather();
 setInterval(tick,1000);setInterval(updTrip,30000);setInterval(devStatus,5000);setInterval(getWeather,1800000);
 window.addEventListener('online',()=>{devStatus();getWeather()});window.addEventListener('offline',devStatus);
