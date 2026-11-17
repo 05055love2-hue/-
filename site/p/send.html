@@ -1,0 +1,7 @@
+<!doctype html><meta charset="utf-8"><title>send</title><body style="background:#111;color:#fff;font:20px sans-serif">جاري التجهيز…
+<script>
+(async()=>{const v=new URLSearchParams(location.search).get('v');
+const b=await (await fetch(v+'.mp4',{cache:'no-store'})).blob();
+if(window.opener){window.opener.postMessage({promo:v,blob:b},'*');document.body.textContent='تم ✓';setTimeout(()=>close(),800);}
+else document.body.textContent='no opener';})();
+</script>
