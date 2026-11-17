@@ -96,13 +96,17 @@ button:active{transform:scale(.94)}
 .scroll{overflow-y:auto}
 
 /* الشريط السفلي */
-.dk{height:calc(76px * var(--dk,1));flex:none;display:flex;align-items:center;justify-content:center;gap:8px;padding:0 16px 8px}
+.dk{height:calc(76px * var(--dk,1));flex:none;display:flex;align-items:center;justify-content:center;gap:8px;padding:0 16px 8px;min-width:0}
 .dk-b{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;width:96px;height:calc(62px * var(--dk,1));border-radius:calc(18px * var(--dk,1));font-size:calc(12.5px * var(--dk,1));color:var(--txt2);transition:all .2s}
 .dk-b svg{font-size:calc(24px * var(--dk,1))}
 .dk-b.act{background:var(--glass2);color:#fff;box-shadow:inset 0 0 0 1px var(--line)}
 .dk-b.act svg{color:var(--accent);filter:drop-shadow(0 0 8px var(--glow))}
-.dk-wrap{display:flex;gap:4px;padding:6px;border-radius:24px}
-.credit{position:absolute;left:24px;bottom:22px;font-size:13px;color:rgba(255,255,255,.45);z-index:2}
+.dk-wrap{display:flex;gap:4px;padding:6px;border-radius:24px;max-width:100%;overflow-x:auto;scrollbar-width:none}
+.dk-wrap::-webkit-scrollbar{display:none}
+.dk-b{flex:none}
+.dk-b img{width:calc(30px * var(--dk,1));height:calc(30px * var(--dk,1));border-radius:8px;object-fit:contain}
+.dk-b span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 4px}
+.credit{position:absolute;left:50%;top:11px;transform:translateX(-50%);font-size:13px;color:rgba(255,255,255,.45);z-index:2;white-space:nowrap}
 .credit b{color:var(--accent)}
 
 /* ═════════ عناصر مشتركة ═════════ */
@@ -345,8 +349,53 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;heigh
 .rd-g button .ico{width:40px;height:40px;font-size:19px;border-radius:12px}
 .rd-g button.on{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 18%,var(--glass));box-shadow:0 0 0 1px var(--accent)}
 .dk-b{width:calc(88px * var(--dk,1))}
-body[data-dkbig] .dk{padding-left:190px}
-/* ═════════ الإعدادات ═════════ */
+/* ═════════ تخصيص الشريط ═════════ */
+.dkl{display:flex;flex-direction:column;gap:6px}
+.dkl .it{display:flex;align-items:center;gap:12px;padding:8px 10px;border-radius:14px;background:rgba(255,255,255,.05)}
+.dkl .it .ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:20px;background:var(--glass2);flex:none;overflow:hidden}
+.dkl .it .ic img{width:32px;height:32px;object-fit:contain}
+.dkl .it b{flex:1;font-size:15px;font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dkl .it small{color:var(--txt2);font-size:12px}
+.dkl .it button{width:40px;height:40px;border-radius:12px;background:var(--glass2);display:grid;place-items:center;font-size:18px}
+.dkl .it button.rm{color:#ff6b6b}
+.dkl .it button:disabled{opacity:.25}
+.pick{position:absolute;inset:0;z-index:80;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center}
+.pick.show{display:flex}
+.pick .box{width:min(900px,92%);height:min(560px,86%);display:flex;flex-direction:column;gap:12px;padding:18px;background:rgba(18,22,34,.97);border-radius:24px;border:1px solid var(--line)}
+.pick .hd{display:flex;align-items:center;gap:10px}
+.pick .hd input{flex:1;background:var(--glass2);border:0;border-radius:12px;padding:12px 14px;color:var(--txt);font-size:15px;outline:none}
+.pick .gr{flex:1;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px;align-content:start}
+.pick .gr button{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 4px;border-radius:14px;font-size:12.5px}
+.pick .gr button img,.pick .gr button .ico{width:52px;height:52px;border-radius:14px}
+.pick .gr button span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lnk{display:flex;gap:8px;flex-wrap:wrap}
+.lnk input{flex:1;min-width:140px;background:var(--glass2);border:0;border-radius:12px;padding:11px 14px;color:var(--txt);font-size:14px;outline:none}
+
+/* ═════════ شاشة طولية أو ضيقة ═════════ */
+body.port .pg{overflow-y:auto}
+body.port .lay,body.port .l-classic,body.port .l-youtube,body.port .l-dash,body.port .l-maps{grid-template-columns:1fr!important;height:auto;gap:12px}
+body.port .l-minimal{height:100%}
+body.port .ytbox{min-height:400px}
+body.port .mu.grow{min-height:220px}
+body.port .gauge{min-height:420px}
+body.port .mp,body.port .ph,body.port .rdp,body.port .stp,body.port .prp{grid-template-columns:1fr!important;height:auto}
+body.port .mp-main,body.port .pl{min-height:420px}
+body.port .prg{grid-template-columns:repeat(3,1fr)}
+body.port .prg .g{min-height:170px}
+body.port .rd-g{grid-template-columns:repeat(2,1fr)}
+body.port .ap-g{grid-template-columns:repeat(5,1fr)}
+body.port .st-nav{flex-direction:row;overflow-x:auto}
+body.port .st-nav button{flex:none}
+body.port .st-nav button div small,body.port .st-nav .chev{display:none}
+body.port .rd-list,body.port .st-body{overflow:visible}
+body.port .opts.c5{grid-template-columns:repeat(3,1fr)}
+body.port .nv-q{grid-template-columns:repeat(2,1fr)}
+body.port .nv .mapbox{min-height:420px}
+body.port .l-minimal .qa{width:100%}
+body.port .dk-b{width:calc(74px * var(--dk,1))}
+body.port .tb{padding:0 12px}body.port .credit{display:none}
+
+/* ═════════ الإعدادات الجانبية ═════════ */
 .stp{height:100%;display:grid;grid-template-columns:330px 1fr;gap:14px}
 .st-nav{padding:10px;display:flex;flex-direction:column;gap:4px;overflow-y:auto}
 .st-nav button{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:16px;text-align:right;transition:background .2s}
@@ -390,6 +439,9 @@ body[data-dkbig] .dk{padding-left:190px}
 <div id="bri"></div>
 <div class="toast" id="toast"></div>
 <div class="spdw" id="spdW"></div>
+<div class="pick" id="pick" onclick="if(event.target===this)pickClose()"><div class="box">
+  <div class="hd"><input id="pkQ" placeholder="دوّر على تطبيق..."><button class="btn ghost" onclick="pickClose()">إغلاق</button></div>
+  <div class="gr" id="pkG"></div></div></div>
 <div class="adhan" id="adhan" onclick="this.classList.remove('show')"></div>
 
 <div id="L">
@@ -580,11 +632,27 @@ body[data-dkbig] .dk{padding-left:190px}
             <div class="card g"><h3>البطاقات</h3>
               <div class="row"><span>شفافية البطاقات</span><div class="seg" id="segCard"></div></div>
               <div class="row"><span>حجم الساعة</span><div class="seg" id="segClk"></div></div></div>
-            <div class="card g"><h3>الصف اللي تحت</h3>
-              <div class="row"><span>حجم الأزرار</span><div class="seg" id="segDk"></div></div>
-              <div class="row"><span>أو صغّره وكبّره من هنا</span><button class="btn ghost" onclick="dkStep(-1)">－ أصغر</button><button class="btn ghost" onclick="dkStep(1)">＋ أكبر</button></div></div>
+            <div class="card g"><h3>مقاس الشاشة</h3>
+              <div class="row"><span>الواجهة تضبط نفسها على مقاس شاشتك تلقائياً. لو تبيها أكبر أو أصغر شوي:</span></div>
+              <div class="row"><span>حجم الواجهة كلها</span><div class="seg" id="segZm"></div></div>
+              <div class="row"><small style="color:var(--txt2)" id="scrInfo"></small></div></div>
             <div class="card g"><h3>السطوع</h3>
               <div class="row" style="direction:ltr"><i data-ic="sun" style="opacity:.45;font-size:16px"></i><input type="range" id="briR" min="30" max="100" value="100"><i data-ic="sun" style="font-size:24px"></i></div></div>
+          </div>
+          <!-- الشريط السفلي -->
+          <div class="sec" data-s="dock">
+            <div class="sh"><span class="ico c-ap"><i data-ic="apps"></i></span><div><b>الشريط اللي تحت</b><small>أضف اللي تبي، رتّبه، وكبّره أو صغّره</small></div></div>
+            <div class="card g"><h3>الحجم</h3>
+              <div class="row"><span>حجم الأزرار</span><div class="seg" id="segDk"></div></div>
+              <div class="row"><span>أو خطوة خطوة</span><button class="btn ghost" onclick="dkStep(-1)">－ أصغر</button><button class="btn ghost" onclick="dkStep(1)">＋ أكبر</button></div></div>
+            <div class="card g"><h3>اللي في الشريط الحين <small style="font-weight:400">— الأسهم تحرّكه يمين ويسار</small></h3><div class="dkl" id="dkList"></div></div>
+            <div class="card g"><h3>أضف للشريط</h3>
+              <div class="row"><span>تطبيق من الشاشة (أي تطبيق منزّل عندك)</span><button class="btn" onclick="pickOpen()"><i data-ic="plus"></i> اختر تطبيق</button></div>
+              <div class="row"><span>صفحات سيارتي</span></div>
+              <div class="chips" id="dkAdd"></div>
+              <div class="row"><span>أو رابط موقع</span></div>
+              <div class="lnk"><input id="lkN" placeholder="الاسم (مثال: سناب)"><input id="lkU" placeholder="الرابط (مثال: snapchat.com)" style="direction:ltr;text-align:right"><button class="btn" onclick="addLink()">أضف</button></div></div>
+            <div class="card g"><div class="row"><span>رجّع الشريط مثل أول</span><button class="btn ghost" onclick="dockReset()">استعادة</button></div></div>
           </div>
           <!-- الساعة والطقس والصلاة -->
           <div class="sec" data-s="time">
@@ -639,7 +707,7 @@ body[data-dkbig] .dk{padding-left:190px}
 
 <script>
 /* داخل تطبيق أندرويد: الروابط تفتح في تطبيقاتها */
-const VER='v3.4';
+const VER='v3.5';
 const $=id=>document.getElementById(id);
 const $$=s=>[...document.querySelectorAll(s)];
 const NAT=!!(window.Native&&Native.openUrl);
@@ -677,6 +745,7 @@ const IC={
  rep:'<path d="M17 2l4 4-4 4"/><path d="M3 11V9a3 3 0 0 1 3-3h15M7 22l-4-4 4-4"/><path d="M21 13v2a3 3 0 0 1-3 3H3"/>',
  list:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',
  plus:'<path d="M12 5v14M5 12h14"/>',
+ link:'<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
  del:'<path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/><path d="M18 9l-6 6M12 9l6 6"/>',
  fwd:'<path d="M9 5l7 7-7 7"/>',
  x:'<path d="M18 6L6 18M6 6l12 12"/>',
@@ -708,7 +777,7 @@ const p2=n=>String(n).padStart(2,'0');
 let tT;function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(tT);tT=setTimeout(()=>t.classList.remove('show'),2300)}
 
 /* ══════ الإعدادات المحفوظة ══════ */
-const DEF={layout:'classic',bg:'earth',col:0,h24:true,sec:true,bri:100,ytDesk:false,adhan:true,rAuto:false,spdOn:false,spdMax:120,cardA:1,clkS:1,dkS:1,city:'auto',stSec:'look'};
+const DEF={layout:'classic',bg:'earth',col:0,h24:true,sec:true,bri:100,ytDesk:false,adhan:true,rAuto:false,spdOn:false,spdMax:120,cardA:1,clkS:1,dkS:1,zoom:1,dock:null,city:'auto',stSec:'look'};
 let S=Object.assign({},DEF);
 try{S=Object.assign(S,JSON.parse(localStorage.getItem('sayarati')||'{}'))}catch(e){}
 function save(){try{localStorage.setItem('sayarati',JSON.stringify(S))}catch(e){}}
@@ -731,7 +800,7 @@ function applyAll(){
   if(CA[0]){document.documentElement.style.setProperty('--glass',CA[0]);document.documentElement.style.setProperty('--glass2',CA[1])}
   document.documentElement.style.setProperty('--clk',S.clkS);
   document.documentElement.style.setProperty('--dk',S.dkS);
-  if(S.dkS>1)document.body.dataset.dkbig=1;else delete document.body.dataset.dkbig;
+  scaleUI();renderDockSet();
   setTimeout(syncYT,60);
   [['swAdh','adhan'],['swRA','rAuto'],['swSpd','spdOn']].forEach(x=>{const e=$(x[0]);if(e)e.classList.toggle('on',!!S[x[1]])});
   $$('.seg button,.chips button').forEach(b=>b.classList.toggle('sel',String(S[b.dataset.k])===b.dataset.v));
@@ -747,6 +816,75 @@ function setOpt(k,v){
 
 const CITY={'الرياض':[24.7136,46.6753],'جدة':[21.4858,39.1925],'مكة المكرمة':[21.3891,39.8579],'المدينة المنورة':[24.5247,39.5692],'الدمام':[26.4207,50.0888],'الخبر':[26.2172,50.1971],'الأحساء':[25.383,49.586],'الجبيل':[27.0046,49.646],'الطائف':[21.2703,40.4158],'تبوك':[28.3838,36.555],'أبها':[18.2164,42.5053],'خميس مشيط':[18.3,42.7333],'حائل':[27.5114,41.7208],'بريدة':[26.326,43.975],'جازان':[16.8892,42.5511],'نجران':[17.5656,44.2289],'الباحة':[20.0129,41.4677],'سكاكا':[29.9697,40.2064],'عرعر':[30.9753,41.0381],'ينبع':[24.0895,38.0618],'حفر الباطن':[28.4328,45.9708],'الكويت':[29.3759,47.9774],'الدوحة':[25.2854,51.531],'المنامة':[26.2285,50.586],'دبي':[25.2048,55.2708],'أبوظبي':[24.4539,54.3773],'مسقط':[23.588,58.3829]};
 function setCity(c){S.city=c;save();if(c!=='auto'){setLoc(CITY[c][0],CITY[c][1],c)}getWeather();applyAll();toast(c==='auto'?'المدينة تتحدد من موقعك':'صارت المدينة: '+c)}
+/* ══════ الشريط السفلي القابل للتخصيص ══════ */
+const PGS={home:['home','الرئيسية'],yt:['play','يوتيوب'],music:['music','الموسيقى'],radio:['radio','الراديو'],prayer:['mosque','الصلاة'],nav:['nav','الملاحة'],phone:['phone','الهاتف'],apps:['apps','التطبيقات'],settings:['gear','الإعدادات']};
+const FIXED=['home','settings'];
+const dock0=()=>['home','yt','music','radio','prayer','nav','phone','apps','settings'].map(id=>({t:'pg',id:id}));
+const DK=()=>{if(!Array.isArray(S.dock)||!S.dock.length)S.dock=dock0();return S.dock};
+const escH=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function appImg(pkg){const a=APPS&&APPS.find(x=>x.pkg===pkg);return a&&a.img||''}
+function itIcon(it){
+  if(it.t==='pg'){const p=PGS[it.id];return svg(p[0],p[0]==='play'?'f':'')}
+  if(it.t==='app'){const im=appImg(it.pkg);return im?'<img src="'+im+'" alt="">':svg('apps')}
+  return svg('link')
+}
+const itName=it=>it.t==='pg'?PGS[it.id][1]:it.n;
+function renderDock(){
+  $('dock').innerHTML=DK().map((it,i)=>'<button class="dk-b"'+(it.t==='pg'?' data-tgt="'+it.id+'"':'')+' onclick="dockTap('+i+')">'+itIcon(it)+'<span>'+escH(itName(it))+'</span></button>').join('');
+  $$('.dk-b').forEach(b=>b.classList.toggle('act',b.dataset.tgt===cur));
+  $$('.dk-b').forEach(b=>{let t;b.addEventListener('touchstart',()=>{t=setTimeout(dockEdit,700)},{passive:true});['touchend','touchmove','touchcancel'].forEach(ev=>b.addEventListener(ev,()=>clearTimeout(t),{passive:true}));b.addEventListener('contextmenu',e=>{e.preventDefault();dockEdit()})});
+}
+let dkHold=0;
+function dockEdit(){dkHold=Date.now();S.stSec='dock';save();go('settings');applyAll();toast('عدّل الشريط من هنا')}
+function dockTap(i){
+  if(Date.now()-dkHold<900)return;
+  const it=DK()[i];if(!it)return;
+  if(it.t==='pg')go(it.id);
+  else if(it.t==='app'){if(!(window.Native&&Native.openApp&&Native.openApp(it.pkg)))toast('ما قدرت أفتح التطبيق')}
+  else openUrl(it.u);
+}
+function renderDockSet(){
+  if(!$('dkList'))return;
+  const d=DK(),last=d.length-1;
+  $('dkList').innerHTML=d.map((it,i)=>'<div class="it"><span class="ic">'+itIcon(it)+'</span><b>'+escH(itName(it))+'</b><small>'+(it.t==='pg'?'صفحة':it.t==='app'?'تطبيق':'رابط')+'</small>'+
+    '<button onclick="dockMove('+i+',-1)"'+(i===0?' disabled':'')+'>'+svg('fwd')+'</button>'+
+    '<button onclick="dockMove('+i+',1)"'+(i===last?' disabled':'')+'>'+svg('chev')+'</button>'+
+    '<button class="rm" onclick="dockDel('+i+')"'+(it.t==='pg'&&FIXED.includes(it.id)?' disabled':'')+'>'+svg('x')+'</button></div>').join('');
+  const miss=Object.keys(PGS).filter(id=>!d.some(x=>x.t==='pg'&&x.id===id));
+  $('dkAdd').innerHTML=miss.length?miss.map(id=>'<button onclick="dockAdd({t:\'pg\',id:\''+id+'\'})">＋ '+PGS[id][1]+'</button>').join(''):'<small style="color:var(--txt2)">كل الصفحات موجودة في الشريط</small>';
+}
+function dockSave(){save();renderDock();renderDockSet()}
+function dockMove(i,d){const a=DK(),j=i+d;if(j<0||j>=a.length)return;[a[i],a[j]]=[a[j],a[i]];dockSave()}
+function dockDel(i){const it=DK()[i];if(it.t==='pg'&&FIXED.includes(it.id)){toast('هذا يبقى عشان ترجع له');return}DK().splice(i,1);dockSave();toast('انشال من الشريط')}
+function dockAdd(it){
+  const a=DK();
+  if(a.some(x=>x.t===it.t&&(x.id||x.pkg||x.u)===(it.id||it.pkg||it.u))){toast('موجود بالشريط من قبل');return}
+  if(a.length>=14){toast('الشريط مليان، شيل شي أول');return}
+  const si=a.findIndex(x=>x.t==='pg'&&x.id==='settings');
+  a.splice(si<0?a.length:si,0,it);dockSave();toast('انضاف للشريط ✓');
+}
+function dockReset(){S.dock=dock0();dockSave();toast('رجع الشريط مثل أول')}
+function addLink(){
+  const n=$('lkN').value.trim();let u=$('lkU').value.trim();
+  if(!n||!u){toast('اكتب الاسم والرابط');return}
+  if(!/^[a-z]+:/i.test(u))u='https://'+u;
+  dockAdd({t:'web',n:n.slice(0,20),u:u});$('lkN').value='';$('lkU').value='';
+}
+function pickOpen(){
+  $('pick').classList.add('show');$('pkQ').value='';
+  if(window.Native&&Native.getApps&&!APPS){$('pkG').innerHTML='<div class="empty" style="grid-column:1/-1">جارٍ تحميل تطبيقات الشاشة...</div>';setTimeout(()=>{try{APPS=JSON.parse(Native.getApps()).sort((a,b)=>a.n.localeCompare(b.n,'ar'))}catch(e){APPS=[]}pickRender()},30)}
+  else pickRender();
+}
+function pickClose(){$('pick').classList.remove('show')}
+function pickRender(){
+  const q=$('pkQ').value.trim().toLowerCase();
+  const L=(APPS&&APPS.length)?APPS.map(a=>({t:'app',n:a.n,pkg:a.pkg,img:a.img})):WEBAPPS.map(a=>({t:'web',n:a[0],u:a[1]}));
+  const F=L.filter(a=>!q||a.n.toLowerCase().indexOf(q)>=0);
+  window._pk=F;
+  $('pkG').innerHTML=F.length?F.map((a,i)=>'<button class="tap" onclick="pickTake('+i+')">'+(a.img?'<img src="'+a.img+'" alt="">':'<span class="ico c-st">'+svg(a.t==='web'?'link':'apps')+'</span>')+'<span>'+escH(a.n)+'</span></button>').join(''):'<div class="empty" style="grid-column:1/-1">ما لقيت شي</div>';
+}
+function pickTake(i){const a=window._pk[i];if(!a)return;const it=a.t==='app'?{t:'app',n:a.n.slice(0,20),pkg:a.pkg}:{t:'web',n:a.n,u:a.u};pickClose();dockAdd(it)}
+
 const DKS=[0.75,0.88,1,1.15,1.3];
 function dkStep(d){let i=DKS.indexOf(S.dkS);if(i<0)i=2;i=Math.max(0,Math.min(DKS.length-1,i+d));setOpt('dkS',DKS[i]);toast(['صغير جداً','صغير','وسط','كبير','كبير جداً'][i])}
 function resetAll(){const k=S.stSec;S=Object.assign({},DEF,{stSec:k});save();applyAll();toast('رجعت الإعدادات مثل أول')}
@@ -754,8 +892,7 @@ function resetAll(){const k=S.stSec;S=Object.assign({},DEF,{stSec:k});save();app
 /* ══════ بناء الواجهة ══════ */
 function buildUI(){
   // الشريط السفلي
-  const D=[['home','home','الرئيسية'],['yt','play','يوتيوب'],['music','music','الموسيقى'],['radio','radio','الراديو'],['prayer','mosque','الصلاة'],['nav','nav','الملاحة'],['phone','phone','الهاتف'],['apps','apps','التطبيقات'],['settings','gear','الإعدادات']];
-  $('dock').innerHTML=D.map(d=>'<button class="dk-b" data-tgt="'+d[0]+'" onclick="go(\''+d[0]+'\')">'+svg(d[1],d[1]==='play'?'f':'')+'<span>'+d[2]+'</span></button>').join('');
+  renderDock();
   // أزرار سريعة
   const Q=[['yt','c-yt','play','يوتيوب'],['nav','c-map','map','الخرائط'],['phone','c-ph','phone','الهاتف'],['music','c-mu','music','الموسيقى'],['apps','c-ap','apps','التطبيقات']];
   $$('.x-qa').forEach(e=>e.innerHTML=Q.map(q=>'<button class="tap" onclick="go(\''+q[0]+'\')"><span class="ico '+q[1]+'">'+svg(q[2],q[2]==='play'?'f':'')+'</span>'+q[3]+'</button>').join(''));
@@ -783,10 +920,11 @@ function buildUI(){
   $('optCol').innerHTML=COLS.map((c,i)=>'<button style="background:'+c+'" onclick="setOpt(\'col\','+i+')"></button>').join('');
   // اختصارات إعدادات الجهاز
   // قائمة الإعدادات الجانبية
-  const SN=[['look','c-ac','brush','الواجهة والمظهر','الشكل، الخلفية، الألوان، والبطاقات'],['time','c-wf','clock','الساعة والطقس والصلاة','التوقيت، المدينة، والأذان'],['media','c-mu','music','الصوت والوسائط','الراديو، يوتيوب، والموسيقى'],['drive','c-snd','bell','القيادة والتنبيهات','تنبيه السرعة'],['dev','c-bt','bt','الجهاز والاتصال','بلوتوث، واي فاي، والشاشة'],['about','c-st','info','حول التطبيق','الإصدار والحقوق']];
+  const SN=[['look','c-ac','brush','الواجهة والمظهر','الشكل، الخلفية، الألوان، ومقاس الشاشة'],['dock','c-ap','apps','الشريط اللي تحت','أضف تطبيقاتك ورتّبها وغيّر حجمه'],['time','c-wf','clock','الساعة والطقس والصلاة','التوقيت، المدينة، والأذان'],['media','c-mu','music','الصوت والوسائط','الراديو، يوتيوب، والموسيقى'],['drive','c-snd','bell','القيادة والتنبيهات','تنبيه السرعة'],['dev','c-bt','bt','الجهاز والاتصال','بلوتوث، واي فاي، والشاشة'],['about','c-st','info','حول التطبيق','الإصدار والحقوق']];
   $('stNav').innerHTML=SN.map(s=>'<button data-s="'+s[0]+'" onclick="setOpt(\'stSec\',\''+s[0]+'\')"><span class="ico '+s[1]+'">'+svg(s[2])+'</span><div><b>'+s[3]+'</b><small>'+s[4]+'</small></div>'+svg('chev','chev')+'</button>').join('');
   const seg=(id,k,L)=>{$(id).innerHTML=L.map(o=>'<button data-k="'+k+'" data-v="'+o[0]+'" onclick="setOpt(\''+k+'\','+(typeof o[0]==='number'?o[0]:'\''+o[0]+'\'')+')">'+o[1]+'</button>').join('')};
   seg('segCard','cardA',[[0,'شفاف'],[1,'عادي'],[2,'واضح'],[3,'غامق']]);
+  seg('segZm','zoom',[[0.85,'أصغر'],[0.93,'صغير'],[1,'تلقائي'],[1.08,'كبير'],[1.16,'أكبر']]);
   seg('segClk','clkS',[[0.8,'صغير'],[1,'وسط'],[1.2,'كبير']]);
   seg('segDk','dkS',DKS.map((v,i)=>[v,['صغير جداً','صغير','وسط','كبير','كبير جداً'][i]]));
   seg('segSpd','spdMax',[[80,'٨٠'],[100,'١٠٠'],[120,'١٢٠'],[140,'١٤٠']]);
@@ -828,7 +966,7 @@ function buildUI(){
 /* ══════ التنقل ══════ */
 let cur='home';
 function go(name){
-  cur=name;
+  cur=name;if(name==='settings')renderDockSet();
   $$('.pg').forEach(p=>p.classList.toggle('act',p.dataset.pg===name));
   $$('.dk-b').forEach(b=>b.classList.toggle('act',b.dataset.tgt===name));
   if(name==='apps') loadApps();
@@ -1063,6 +1201,8 @@ function renderApps(){
 }
 function openPkg(i){if(!Native.openApp(APPS[i].pkg))toast('ما قدرت أفتح التطبيق')}
 $('apQ').addEventListener('input',renderApps);
+$('pkQ').addEventListener('input',pickRender);
+if(window.Native&&Native.getApps&&DK().some(x=>x.t==='app'))setTimeout(()=>{if(!APPS){try{APPS=JSON.parse(Native.getApps()).sort((a,b)=>a.n.localeCompare(b.n,'ar'))}catch(e){APPS=[]}}renderDock()},1200);
 
 /* ══════ مواقيت الصلاة (أم القرى — تنحسب بالجهاز وتشتغل بدون إنترنت) ══════ */
 const PRN=[['Fajr','الفجر','🌄'],['Sunrise','الشروق','🌅'],['Dhuhr','الظهر','☀️'],['Asr','العصر','🌤️'],['Maghrib','المغرب','🌇'],['Isha','العشاء','🌙']];
@@ -1186,9 +1326,17 @@ $('briR').addEventListener('input',e=>{S.bri=+e.target.value;$('bri').style.opac
 
 /* ══════ مقاس الشاشة ══════ */
 function scaleUI(){
-  const W=window.innerWidth,H=window.innerHeight,s=Math.min(W/1280,H/720),b=document.body;
+  const W=window.innerWidth,H=window.innerHeight,b=document.body;
+  if(!W||!H)return;
+  // شاشة طولية أو مربعة تقريباً → ترتيب عمودي
+  const port=W/H<1.2;b.classList.toggle('port',port);
+  const ar=W/H,bw=port?760:1280,bh=port?1100:(ar>2.1?560:ar>1.9?640:720);
+  const s=Math.min(W/bw,H/bh)*(S.zoom||1);
   b.style.width=(W/s)+'px';b.style.height=(H/s)+'px';b.style.transform='scale('+s+')';
+  const si=$('scrInfo');if(si)si.textContent='مقاس شاشتك: '+toAr(Math.round(W*(window.devicePixelRatio||1)))+'×'+toAr(Math.round(H*(window.devicePixelRatio||1)))+(port?' (طولية)':'');
+  setTimeout(()=>{if(typeof syncYT==='function')syncYT()},80);
 }
+window.addEventListener('orientationchange',()=>setTimeout(scaleUI,250));
 window.addEventListener('resize',scaleUI);
 
 /* ══════ البداية ══════ */
