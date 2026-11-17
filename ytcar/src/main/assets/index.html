@@ -141,8 +141,22 @@ body.full .player{grid-column:1}
 .toast.show{opacity:1}
 
 /* ===== التحكم بالحجم ===== */
-body.dk-s .dock .tile{height:clamp(48px,9vh,60px);font-size:12px}body.dk-s .dock .tile .ti{width:26px;height:26px;font-size:20px}
-body.dk-l .dock .tile{height:clamp(84px,17vh,112px);font-size:16px}body.dk-l .dock .tile .ti{width:clamp(44px,9vh,58px);height:clamp(44px,9vh,58px);font-size:34px}
+body{--dk:2}
+.dock .tile{height:calc(58px + var(--dk) * 14px);font-size:calc(12px + var(--dk) * 1px);gap:calc(3px + var(--dk) * 1px)}
+.dock .tile .ti{width:calc(28px + var(--dk) * 8px);height:calc(28px + var(--dk) * 8px);font-size:calc(20px + var(--dk) * 5px);border-radius:calc(9px + var(--dk) * 1.5px)}
+.dock .tile.pick{outline:3px solid var(--ac);outline-offset:-3px}
+.szrow{display:flex;align-items:center;gap:10px}
+.szrow b{min-width:90px;text-align:center;font-size:17px}
+.szrow .opt{font-size:22px;padding:6px 18px}
+.menu{width:min(460px,100%)}
+.menu .mhead{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.menu .mhead .ti{width:56px;height:56px;border-radius:16px;display:grid;place-items:center;font-size:32px;overflow:hidden;background:var(--btn)}
+.menu .mhead .ti img{width:100%;height:100%}
+.menu .mhead b{flex:1;font-size:22px}
+.mbtn{width:100%;display:flex;align-items:center;gap:10px;border:1px solid var(--line);background:var(--btn);color:var(--txt);font-family:inherit;font-size:18px;font-weight:800;border-radius:16px;padding:13px 16px;margin-bottom:8px;cursor:pointer}
+.mbtn i{font-style:normal;font-size:22px}
+.mbtn.red{color:#ff6b6b}
+.mrow{display:flex;gap:8px}.mrow .mbtn{flex:1;justify-content:center}
 body.sd-s .app{grid-template-columns:clamp(210px,21vw,270px) minmax(0,1fr)}
 body.sd-l .app{grid-template-columns:clamp(320px,36vw,470px) minmax(0,1fr)}
 body.full .app{grid-template-columns:1fr!important}
@@ -246,7 +260,7 @@ body.noSt{--stH:0px} body.noSt .stbar{display:none}
   <h4>الألوان</h4>
   <div class="themes" id="themes"></div>
   <h4>حجم الأيقونات اللي تحت</h4>
-  <div class="row" id="dkRow"></div>
+  <div class="szrow"><button class="opt" id="dkMinus">➖</button><b id="dkTxt"></b><button class="opt" id="dkPlus">➕</button></div>
   <h4>عرض الساعة والأزرار الملونة</h4>
   <div class="row" id="sdRow"></div>
   <h4>شكل الساعة</h4>
@@ -289,6 +303,15 @@ body.noSt{--stH:0px} body.noSt .stbar{display:none}
   <div class="applist big" id="allList"></div>
 </div></div>
 
+<div class="ov" id="tileOv"><div class="panel menu">
+  <div class="mhead"><span class="ti" id="mIc"></span><b id="mName"></b><button class="x" data-close>✕</button></div>
+  <button class="mbtn" id="mOpen"><i>▶️</i>افتح التطبيق</button>
+  <button class="mbtn" id="mSwap"><i>🔄</i>بدّل بتطبيق ثاني</button>
+  <div class="mrow"><button class="mbtn" id="mRight"><i>➡️</i>يمين</button><button class="mbtn" id="mLeft">يسار<i>⬅️</i></button></div>
+  <div class="mrow"><button class="mbtn" id="mSmall"><i>➖</i>صغّر</button><button class="mbtn" id="mBig"><i>➕</i>كبّر</button></div>
+  <button class="mbtn red" id="mDel"><i>🗑️</i>شيله من الشريط</button>
+</div></div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -311,10 +334,14 @@ function opts(row,list,cur,fn){const r=$(row);list.forEach(([v,n])=>{const b=doc
 
 /* ===== الساعة ===== */
 let FMT=store.get('fmt','12');
-let DK=store.get('dk','m'),SD=store.get('sd','m');
-function applySize(){document.body.classList.remove('dk-s','dk-l','sd-s','sd-l');if(DK!=='m')document.body.classList.add('dk-'+DK);if(SD!=='m')document.body.classList.add('sd-'+SD)}
+let DK=store.get('dk2',null),SD=store.get('sd','m');
+if(DK===null){const o=store.get('dk','m');DK=o==='s'?1:o==='l'?4:2}DK=+DK;
+const DKN=['صغير جداً','صغير','وسط','كبير','كبير جداً','ضخم'];
+function applySize(){document.body.classList.remove('sd-s','sd-l');if(SD!=='m')document.body.classList.add('sd-'+SD);
+  document.body.style.setProperty('--dk',DK);$('dkTxt').textContent=DKN[DK]}
+function setDk(v){DK=Math.max(0,Math.min(5,v));store.set('dk2',DK);applySize();toast('حجم الأيقونات: '+DKN[DK]);setTimeout(()=>dispatchEvent(new Event('resize')),60)}
 applySize();
-opts('dkRow',[['s','صغير'],['m','وسط'],['l','كبير']],DK,v=>{DK=v;store.set('dk',v);applySize()});
+$('dkMinus').onclick=()=>setDk(DK-1);$('dkPlus').onclick=()=>setDk(DK+1);
 opts('sdRow',[['s','ضيّق'],['m','وسط'],['l','عريض']],SD,v=>{SD=v;store.set('sd',v);applySize()});
 opts('fmtRow',[['12','12 ساعة'],['24','24 ساعة']],FMT,v=>{FMT=v;store.set('fmt',v);tick()});
 const days=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
@@ -384,18 +411,35 @@ function tileEl(a,cls){const b=document.createElement('button');b.className='til
 function openApp(a){if(NATIVE){if(Native.open(a.pkg))toast('يفتح '+a.n+'…');else toast('التطبيق مو موجود في الشاشة، شيله واختر غيره');return}toast('يفتح '+a.n+' داخل التطبيق')}
 function drawDock(){const d=$('dock');d.innerHTML='';
   const al=tileEl({n:'كل التطبيقات',e:'<svg viewBox="0 0 24 24"><path d="M4 4h4v4H4zm6 0h4v4h-4zm6 0h4v4h-4zM4 10h4v4H4zm6 0h4v4h-4zm6 0h4v4h-4zM4 16h4v4H4zm6 0h4v4h-4zm6 0h4v4h-4z"/></svg>'},'all');al.onclick=()=>openAll();d.appendChild(al);
-  DOCK.forEach((a,i)=>{const b=tileEl(a);let t;b.onclick=()=>{if(b.classList.contains('shake')){DOCK.splice(i,1);saveDock();toast('انشال '+a.n);return}openApp(a)};
-    b.onpointerdown=()=>{t=setTimeout(()=>{d.querySelectorAll('.tile').forEach(x=>x.classList.add('shake'));toast('اضغط على التطبيق اللي تبي تشيله')},700)};
-    b.onpointerup=b.onpointerleave=()=>clearTimeout(t);d.appendChild(b)});
+  DOCK.forEach((a,i)=>{const b=tileEl(a);let t,long=false;if(i===MI&&$('tileOv').classList.contains('show'))b.classList.add('pick');
+    b.onclick=()=>{if(long){long=false;return}openApp(a)};
+    b.onpointerdown=()=>{long=false;t=setTimeout(()=>{long=true;openMenu(i)},600)};
+    b.onpointerup=b.onpointerleave=b.onpointercancel=()=>clearTimeout(t);
+    b.oncontextmenu=e=>e.preventDefault();d.appendChild(b)});
   for(let k=DOCK.length;k<MAXD;k++){const add=tileEl({n:'أضف',e:'+'},'add');add.onclick=()=>openAdd();d.appendChild(add)}}
 function saveDock(){store.set('dock',JSON.stringify(DOCK));drawDock()}
-document.addEventListener('pointerdown',e=>{if(!e.target.closest('#dock'))$('dock').querySelectorAll('.shake').forEach(x=>x.classList.remove('shake'))});
+/* ===== قائمة خيارات التطبيق (ضغطة طويلة) ===== */
+let MI=-1;
+function openMenu(i){MI=i;const a=DOCK[i];if(!a)return;
+  $('mIc').innerHTML=a.img?'<img src="'+a.img+'" alt="">':(a.e||'📱');$('mName').textContent=a.n;
+  $('tileOv').classList.add('show');drawDock()}
+function moveTo(j){if(j<0||j>=DOCK.length){toast('هذا آخر مكان');return}
+  [DOCK[MI],DOCK[j]]=[DOCK[j],DOCK[MI]];MI=j;saveDock()}
+$('mOpen').onclick=()=>{$('tileOv').classList.remove('show');openApp(DOCK[MI])};
+$('mSwap').onclick=()=>{$('tileOv').classList.remove('show');openAdd('swap:'+MI)};
+$('mRight').onclick=()=>moveTo(MI-1);
+$('mLeft').onclick=()=>moveTo(MI+1);
+$('mSmall').onclick=()=>setDk(DK-1);
+$('mBig').onclick=()=>setDk(DK+1);
+$('mDel').onclick=()=>{const a=DOCK[MI];DOCK.splice(MI,1);MI=-1;$('tileOv').classList.remove('show');saveDock();toast('انشال '+a.n)};
+new MutationObserver(()=>{if(!$('tileOv').classList.contains('show'))$('dock').querySelectorAll('.pick').forEach(x=>x.classList.remove('pick'))}).observe($('tileOv'),{attributes:true,attributeFilter:['class']});
 let ALL=null,PICK=null;
-function openAdd(k){PICK=typeof k==='string'?k:null;if(!ALL){ALL=(NATIVE?apps():DEF).slice();ALL.sort((a,b)=>a.n.localeCompare(b.n,'ar'))}
-  $('addOv').querySelector('h3').firstChild.textContent=PICK?'اختر تطبيق '+QN[PICK]+' ':'أضف تطبيق ';
+let SWAPI=-1;
+function openAdd(k){SWAPI=-1;if(typeof k==='string'&&k.startsWith('swap:')){SWAPI=+k.slice(5);k=null}PICK=typeof k==='string'?k:null;if(!ALL){ALL=(NATIVE?apps():DEF).slice();ALL.sort((a,b)=>a.n.localeCompare(b.n,'ar'))}
+  $('addOv').querySelector('h3').firstChild.textContent=PICK?'اختر تطبيق '+QN[PICK]+' ':SWAPI>=0?'بدّل '+DOCK[SWAPI].n+' بـ… ':'أضف تطبيق ';
   $('q').value='';drawList();$('addOv').classList.add('show')}
 function drawList(){const q=$('q').value.trim().toLowerCase(),L=$('appList');L.innerHTML='';
-  ALL.filter(a=>!q||a.n.toLowerCase().includes(q)).forEach(a=>{const b=tileEl(a);b.onclick=()=>{$('addOv').classList.remove('show');if(PICK){store.set('q_'+PICK,JSON.stringify({n:a.n,pkg:a.pkg}));toast('زر '+QN[PICK]+' صار يفتح '+a.n);return}if(DOCK.some(x=>x.pkg===a.pkg)){toast(a.n+' موجود');return}if(DOCK.length>=MAXD){toast('الشريط فيه 6 تطبيقات بس، اضغط مطوّل على واحد وشيله أول');return}DOCK.push(a);saveDock();toast('انضاف '+a.n)};L.appendChild(b)})}
+  ALL.filter(a=>!q||a.n.toLowerCase().includes(q)).forEach(a=>{const b=tileEl(a);b.onclick=()=>{$('addOv').classList.remove('show');if(SWAPI>=0){const old=DOCK[SWAPI].n;if(DOCK.some((x,k)=>k!==SWAPI&&x.pkg===a.pkg)){toast(a.n+' موجود في الشريط');return}DOCK[SWAPI]=a;SWAPI=-1;saveDock();toast('تبدّل '+old+' بـ '+a.n);return}if(PICK){store.set('q_'+PICK,JSON.stringify({n:a.n,pkg:a.pkg}));toast('زر '+QN[PICK]+' صار يفتح '+a.n);return}if(DOCK.some(x=>x.pkg===a.pkg)){toast(a.n+' موجود');return}if(DOCK.length>=MAXD){toast('الشريط فيه 6 تطبيقات بس، اضغط مطوّل على واحد وشيله أول');return}DOCK.push(a);saveDock();toast('انضاف '+a.n)};L.appendChild(b)})}
 $('q').oninput=drawList;
 function openAll(){if(!ALL){ALL=(NATIVE?apps():DEF).slice();ALL.sort((a,b)=>a.n.localeCompare(b.n,'ar'))}$('aq').value='';drawAll();$('allOv').classList.add('show')}
 function drawAll(){const q=$('aq').value.trim().toLowerCase(),L=$('allList');L.innerHTML='';
