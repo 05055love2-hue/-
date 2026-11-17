@@ -156,7 +156,7 @@ button:active{transform:scale(.94)}
 
 /* ═════════ أشكال الواجهة ═════════ */
 .lay{display:none;height:100%}
-body[data-layout=classic] .l-classic,body[data-layout=youtube] .l-youtube,body[data-layout=minimal] .l-minimal,body[data-layout=dash] .l-dash{display:grid}
+body[data-layout=classic] .l-classic,body[data-layout=youtube] .l-youtube,body[data-layout=minimal] .l-minimal,body[data-layout=dash] .l-dash,body[data-layout=maps] .l-maps{display:grid}
 .col{display:flex;flex-direction:column;gap:14px;min-height:0;min-width:0}
 .col>.grow{flex:1;min-height:0}
 .l-classic{grid-template-columns:1fr 1.15fr 1fr;gap:14px}
@@ -179,6 +179,23 @@ body[data-layout=classic] .l-classic,body[data-layout=youtube] .l-youtube,body[d
 .gauge .gt{margin-top:-24px;color:var(--txt2);font-size:15px}
 .gauge .gt b{color:var(--txt)}
 
+/* أزرار تحت يوتيوب */
+.ytc{direction:ltr;display:flex;align-items:center;justify-content:center;gap:10px;padding:0 10px 10px;flex:none}
+.ytc button{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:62px;padding:6px 8px;border-radius:14px;background:var(--glass2);font-size:11px;color:var(--txt2)}
+.ytc button svg{font-size:22px;color:var(--txt)}
+.ytc button.pp{background:#ff0000;color:#fff;min-width:74px}
+.ytc button.pp svg{color:#fff}
+.ytc .lb{direction:rtl}
+.mapbox .ytarea{background:#0e1a24}
+.mapbox .ytarea iframe{position:absolute;inset:0;width:100%;height:100%;border:0;border-radius:14px}
+.mapbox .ylogo.m{background:linear-gradient(135deg,#34a853,#1a73e8)!important}
+.l-maps{grid-template-columns:330px 1fr;gap:14px}
+.l-maps .clk .t{font-size:62px}
+.l-maps .mu .art{width:56px;height:56px}
+.nvq2{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;flex:none}
+.nvq2 button{display:flex;align-items:center;justify-content:center;gap:8px;height:58px;font-size:15px;font-weight:700}
+.nvq2 .ico{width:36px;height:36px;font-size:18px;border-radius:11px}
+.nvq2 .go{background:var(--accent);border-color:transparent;color:#fff}
 /* ═════════ صفحة يوتيوب ═════════ */
 .yt-pg{display:flex;flex-direction:column;height:100%}
 .yt-pg .ytbox{flex:1}
@@ -252,7 +269,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;heigh
 .card.wide{grid-column:1/-1}
 .card h3 .ico{width:34px;height:34px;font-size:18px;border-radius:10px}
 .opts{display:grid;gap:10px}
-.opts.c4{grid-template-columns:repeat(4,1fr)}.opts.c8{grid-template-columns:repeat(8,1fr)}
+.opts.c4{grid-template-columns:repeat(4,1fr)}.opts.c5{grid-template-columns:repeat(5,1fr)}.opts.c8{grid-template-columns:repeat(8,1fr)}
 .opt{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12.5px;color:var(--txt2)}
 .opt .pv{width:100%;aspect-ratio:16/9;border-radius:12px;border:2px solid transparent;overflow:hidden;position:relative;background:#0d1220}
 .opt.sel .pv{border-color:var(--accent);box-shadow:0 0 14px var(--glow)}
@@ -274,7 +291,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;heigh
 .about b{font-size:20px}.about small{display:block;color:var(--txt2);font-size:14px}
 
 /* ═════════ تنبيه ═════════ */
-.toast{position:absolute;left:50%;bottom:96px;z-index:50;transform:translate(-50%,20px);background:rgba(15,18,28,.95);border:1px solid var(--accent);color:#fff;padding:12px 26px;border-radius:16px;font-size:16px;opacity:0;pointer-events:none;transition:all .3s;box-shadow:0 0 20px var(--glow)}
+.toast{position:absolute;left:50%;top:50px;z-index:50;transform:translate(-50%,-20px);background:rgba(15,18,28,.95);border:1px solid var(--accent);color:#fff;padding:12px 26px;border-radius:16px;font-size:16px;opacity:0;pointer-events:none;transition:all .3s;box-shadow:0 0 20px var(--glow)}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 #bri{position:absolute;inset:0;background:#000;pointer-events:none;z-index:60;opacity:0}
 </style>
@@ -314,10 +331,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;heigh
         </div>
         <div class="col">
           <div class="g wx tap x-wx"></div>
-          <div class="g ytbox grow tap" onclick="go('yt')">
-            <div class="yth"><span class="ylogo">▶</span>يوتيوب<span class="sp"></span><small style="color:var(--txt2);font-weight:400">اضغط للدخول</small></div>
-            <div class="ytarea"><div class="big"><i data-ic="play" class="f"></i></div><b>يوتيوب</b><span>شاهد وابحث بدون ما تطلع من الشاشة</span></div>
-          </div>
+          <div class="g ytbox ytlive grow x-yt"></div>
         </div>
         <div class="col">
           <div class="g mu grow x-mu"></div>
@@ -331,13 +345,18 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;heigh
           <div class="g wx tap x-wx"></div>
           <div class="g mu grow x-mu"></div>
         </div>
-        <div class="g ytbox ytlive">
-          <div class="yth"><span class="ylogo">▶</span>يوتيوب<span class="sp"></span>
-            <button onclick="ytCmd('back')" title="رجوع"><i data-ic="fwd"></i></button>
-            <button onclick="ytCmd('home')" title="الرئيسية"><i data-ic="home"></i></button>
-            <button onclick="go('yt')" title="تكبير"><i data-ic="max"></i></button>
-          </div>
-          <div class="ytarea"><div class="big"><i data-ic="play" class="f"></i></div><b>يوتيوب</b><span class="x-ytmsg">يشتغل هنا داخل التطبيق على شاشة السيارة</span><button class="btn x-ytweb" onclick="openUrl('https://m.youtube.com')">افتح يوتيوب</button></div>
+        <div class="g ytbox ytlive x-yt"></div>
+      </div>
+      <!-- خرائط -->
+      <div class="lay l-maps">
+        <div class="col">
+          <div class="g clk"><div class="t x-time"></div><div class="d x-date"></div><div class="h x-hij"></div></div>
+          <div class="g wx tap x-wx"></div>
+          <div class="g mu grow x-mu"></div>
+        </div>
+        <div class="col">
+          <div class="g ytbox mapbox mplive grow x-map"></div>
+          <div class="nvq2 x-nvq"></div>
         </div>
       </div>
       <!-- بسيط -->
@@ -367,14 +386,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;heigh
     <!-- ══════ يوتيوب ══════ -->
     <div class="pg" data-pg="yt">
       <div class="yt-pg">
-        <div class="g ytbox ytlive">
-          <div class="yth"><span class="ylogo">▶</span>يوتيوب<span class="sp"></span>
-            <button onclick="ytCmd('back')" title="رجوع"><i data-ic="fwd"></i></button>
-            <button onclick="ytCmd('home')" title="الرئيسية"><i data-ic="home"></i></button>
-            <button onclick="go('home')" title="سكّر"><i data-ic="x"></i></button>
-          </div>
-          <div class="ytarea"><div class="big"><i data-ic="play" class="f"></i></div><b>يوتيوب</b><span class="x-ytmsg">يشتغل هنا داخل التطبيق على شاشة السيارة</span><button class="btn x-ytweb" onclick="openUrl('https://m.youtube.com')">افتح يوتيوب</button></div>
-        </div>
+        <div class="g ytbox ytlive x-yt" data-full="1"></div>
       </div>
     </div>
 
@@ -407,8 +419,8 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;heigh
     <!-- ══════ الملاحة ══════ -->
     <div class="pg" data-pg="nav">
       <div class="nv">
-        <div class="g nv-s"><input id="nvInp" placeholder="وين رايح؟ اكتب الوجهة..."><button class="btn" onclick="navSearch()"><i data-ic="nav"></i> ابدأ</button></div>
-        <div class="g nv-map tap" onclick="openUrl('https://www.google.com/maps')"><i data-ic="pin" class="pin"></i><b>خرائط قوقل</b><span style="color:var(--txt2)">اضغط لفتح الخريطة</span></div>
+        <div class="g nv-s"><input id="nvInp" placeholder="وين رايح؟ اكتب الوجهة..."><button class="btn ghost" onclick="navSearch()"><i data-ic="search"></i> ابحث</button><button class="btn" onclick="startNav()"><i data-ic="nav"></i> ابدأ الملاحة</button></div>
+        <div class="g ytbox mapbox mplive x-map" style="flex:1"></div>
         <div class="nv-q">
           <button class="g tap" onclick="navTo('home')"><span class="ico c-hm"><i data-ic="home"></i></span>المنزل</button>
           <button class="g tap" onclick="navTo('work')"><span class="ico c-ap"><i data-ic="brief"></i></span>العمل</button>
@@ -441,7 +453,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;heigh
     <!-- ══════ الإعدادات ══════ -->
     <div class="pg" data-pg="settings">
       <div class="st">
-        <div class="card g wide"><h3><span class="ico c-ac"><i data-ic="layout"></i></span>شكل الواجهة</h3><div class="opts c4" id="optLay"></div></div>
+        <div class="card g wide"><h3><span class="ico c-ac"><i data-ic="layout"></i></span>شكل الواجهة</h3><div class="opts c5" id="optLay"></div></div>
         <div class="card g wide"><h3><span class="ico c-hm"><i data-ic="image"></i></span>الخلفية المتحركة</h3><div class="opts c8" id="optBg"></div></div>
         <div class="card g"><h3><span class="ico c-mu"><i data-ic="palette"></i></span>لون التمييز</h3><div class="cols" id="optCol"></div></div>
         <div class="card g"><h3><span class="ico c-dsp"><i data-ic="sun"></i></span>السطوع</h3>
@@ -450,7 +462,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;heigh
           <div class="row"><span>نظام ٢٤ ساعة</span><button class="sw" id="sw24" onclick="setOpt('h24',!S.h24)"></button></div>
           <div class="row"><span>إظهار الثواني</span><button class="sw" id="swSec" onclick="setOpt('sec',!S.sec)"></button></div></div>
         <div class="card g"><h3><span class="ico c-yt"><i data-ic="play" class="f"></i></span>يوتيوب</h3>
-          <div class="row"><span>يشتغل الفيديو في الواجهة (شكل يوتيوب)</span><button class="btn ghost" onclick="setOpt('layout','youtube');toast('صار يوتيوب في الواجهة')">فعّل</button></div>
+          <div class="row"><span>شاشة يوتيوب كبيرة في الواجهة</span><button class="btn ghost" onclick="setOpt('layout','youtube');toast('صار يوتيوب في الواجهة')">فعّل</button></div>
           <div class="row"><span>نسخة الكمبيوتر من يوتيوب</span><button class="sw" id="swYtD" onclick="setOpt('ytDesk',!S.ytDesk)"></button></div></div>
         <div class="card g wide"><h3><span class="ico c-st"><i data-ic="gear"></i></span>إعدادات الجهاز</h3><div class="sys" id="sys"></div></div>
         <div class="card g wide"><div class="about"><span class="ico lg c-ac"><i data-ic="car"></i></span><div><b>سيارتي</b><small>برمجة أبو نواف • الإصدار <span class="x-ver"></span></small><small>جميع الحقوق محفوظة © ٢٠٢٦ المبرمج أبو نواف</small></div></div></div>
@@ -465,7 +477,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;heigh
 
 <script>
 /* داخل تطبيق أندرويد: الروابط تفتح في تطبيقاتها */
-const VER='v3.0';
+const VER='v3.1';
 const $=id=>document.getElementById(id);
 const $$=s=>[...document.querySelectorAll(s)];
 const NAT=!!(window.Native&&Native.openUrl);
@@ -512,6 +524,10 @@ const IC={
  mosque:'<path d="M12 3c-3 2.5-5 4-5 6.5h10C17 7 15 5.5 12 3zM5 21v-9h14v9M10 21v-4a2 2 0 0 1 4 0v4M3 21h18M3 21V9M3 6v.01"/>',
  car:'<path d="M5 13l2-5a2 2 0 0 1 2-1.5h6A2 2 0 0 1 17 8l2 5"/><rect x="3" y="13" width="18" height="5" rx="2"/><circle cx="7.5" cy="18.5" r="1.5"/><circle cx="16.5" cy="18.5" r="1.5"/>',
  info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/>',
+ undo:'<path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/>',
+ rw:'<path d="M11 6v12L3 12zM21 6v12l-8-6z"/>',
+ ff:'<path d="M13 6v12l8-6zM3 6v12l8-6z"/>',
+ pp:'<path d="M3 5v14l9-7zM14 5h3v14h-3zM19 5h3v14h-3z"/>',
  lock:'<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>'
 };
 function svg(n,cls){return '<svg class="i'+(cls?' '+cls:'')+'" viewBox="0 0 24 24">'+(IC[n]||'')+'</svg>'}
@@ -531,7 +547,7 @@ let S=Object.assign({},DEF);
 try{S=Object.assign(S,JSON.parse(localStorage.getItem('sayarati')||'{}'))}catch(e){}
 function save(){try{localStorage.setItem('sayarati',JSON.stringify(S))}catch(e){}}
 const COLS=['#00b4d8','#00e676','#b388ff','#ff6d00','#ffd600','#ff4f81'];
-const LAYS=[['classic','كلاسيك'],['youtube','يوتيوب أولاً'],['minimal','بسيط'],['dash','لوحة القيادة']];
+const LAYS=[['classic','كلاسيك'],['youtube','يوتيوب أولاً'],['maps','خرائط'],['minimal','بسيط'],['dash','لوحة القيادة']];
 const BGS=[['earth','🌍 الأرض'],['earthc','🌏 الأرض كاملة'],['earthn','🌃 الأرض بالليل'],['stars','✨ النجوم'],['aurora','🌌 الشفق'],['road','🛣️ طريق ليلي'],['flow','🎨 تدرّج'],['plain','⬛ هادئ']];
 
 function applyAll(){
@@ -571,6 +587,7 @@ function buildUI(){
   const PV={
     classic:'<i style="right:6%;top:10%;width:26%;height:52%"></i><i style="right:6%;top:68%;width:26%;height:22%"></i><i style="right:37%;top:10%;width:28%;height:22%"></i><i style="right:37%;top:38%;width:28%;height:52%;background:rgba(255,0,0,.5)"></i><i style="right:70%;top:10%;width:24%;height:80%"></i>',
     youtube:'<i style="right:5%;top:10%;width:28%;height:25%"></i><i style="right:5%;top:40%;width:28%;height:18%"></i><i style="right:5%;top:63%;width:28%;height:27%"></i><i style="right:37%;top:10%;width:58%;height:80%;background:rgba(255,0,0,.5)"></i>',
+    maps:'<i style="right:5%;top:10%;width:28%;height:25%"></i><i style="right:5%;top:40%;width:28%;height:18%"></i><i style="right:5%;top:63%;width:28%;height:27%"></i><i style="right:37%;top:10%;width:58%;height:60%;background:rgba(52,168,83,.6)"></i><i style="right:37%;top:75%;width:58%;height:15%"></i>',
     minimal:'<i style="right:25%;top:18%;width:50%;height:30%;background:rgba(255,255,255,.35)"></i><i style="right:35%;top:52%;width:30%;height:8%"></i><i style="right:22%;top:72%;width:56%;height:16%"></i>',
     dash:'<i style="right:5%;top:10%;width:26%;height:52%"></i><i style="right:5%;top:68%;width:26%;height:22%"></i><i style="right:36%;top:14%;width:28%;height:72%;border-radius:50%;background:none;box-shadow:inset 0 0 0 5px var(--accent)"></i><i style="right:69%;top:10%;width:26%;height:52%"></i><i style="right:69%;top:68%;width:26%;height:22%"></i>'
   };
@@ -585,6 +602,29 @@ function buildUI(){
   // اختصارات إعدادات الجهاز
   const SY=[['bt','c-bt','bt','بلوتوث'],['wifi','c-wf','wifi','واي فاي'],['sound','c-snd','snd','الصوت'],['display','c-dsp','sun','الشاشة'],['loc','c-loc','loc','الموقع'],['apps','c-ap','apps','التطبيقات'],['home','c-hm','home','الشاشة الرئيسية'],['all','c-st','gear','كل الإعدادات']];
   $('sys').innerHTML=SY.map(s=>'<button class="tap" onclick="sysOpen(\''+s[0]+'\')"><span class="ico '+s[1]+'">'+svg(s[2])+'</span>'+s[3]+'</button>').join('');
+  // صندوق يوتيوب مع أزرار التحكم
+  $$('.x-yt').forEach(e=>{const full=e.dataset.full;e.innerHTML='<div class="yth"><span class="ylogo">▶</span>يوتيوب<span class="sp"></span>'+
+    '<button onclick="ytCmd(\'home\')" title="صفحة يوتيوب الرئيسية">'+svg('home')+'</button>'+
+    (full?'<button onclick="go(\'home\')" title="سكّر">'+svg('x')+'</button>':'<button onclick="go(\'yt\')" title="تكبير">'+svg('max')+'</button>')+'</div>'+
+    '<div class="ytarea"><div class="big">'+svg('play','f')+'</div><b>يوتيوب</b><span class="x-ytmsg">يشتغل هنا داخل التطبيق على شاشة السيارة</span><button class="btn x-ytweb" onclick="openUrl(\'https://m.youtube.com\')">افتح يوتيوب</button></div>'+
+    '<div class="ytc">'+
+      '<button onclick="ytCmd(\'back\')">'+svg('undo')+'<span class="lb">رجوع</span></button>'+
+      '<button onclick="ytCmd(\'rw\')">'+svg('rw','f')+'<span class="lb">ترجيع ١٠</span></button>'+
+      '<button class="pp" onclick="ytCmd(\'pp\')">'+svg('pp','f')+'<span class="lb">تشغيل/إيقاف</span></button>'+
+      '<button onclick="ytCmd(\'ff\')">'+svg('ff','f')+'<span class="lb">تقديم ١٠</span></button>'+
+      '<button onclick="ytCmd(\'next\')">'+svg('next','f')+'<span class="lb">التالي</span></button>'+
+    '</div>'});
+  // صندوق الخرائط
+  $$('.x-map').forEach(e=>{e.innerHTML='<div class="yth"><span class="ylogo m">'+svg('pin')+'</span>الخرائط<span class="sp"></span>'+
+    '<button onclick="mapMe()" title="مكاني">'+svg('loc')+'</button>'+
+    '<button onclick="mapCmd(\'back\')" title="رجوع">'+svg('fwd')+'</button>'+
+    (e.closest('[data-pg=nav]')?'':'<button onclick="go(\'nav\')" title="تكبير">'+svg('max')+'</button>')+'</div>'+
+    '<div class="ytarea">'+(NAT?'<div class="big" style="background:#1a73e8">'+svg('pin')+'</div><b>الخرائط</b><span>تشتغل هنا داخل التطبيق</span>':'<iframe class="x-mapframe" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>')+'</div>'});
+  $$('.x-nvq').forEach(e=>e.innerHTML='<button class="g tap" onclick="navTo(\'home\')"><span class="ico c-hm">'+svg('home')+'</span>المنزل</button>'+
+    '<button class="g tap" onclick="navTo(\'work\')"><span class="ico c-ap">'+svg('brief')+'</span>العمل</button>'+
+    '<button class="g tap" onclick="navTo(\'fuel\')"><span class="ico c-snd">'+svg('fuel')+'</span>وقود</button>'+
+    '<button class="g tap" onclick="navTo(\'mosque\')"><span class="ico c-loc">'+svg('mosque')+'</span>مسجد</button>'+
+    '<button class="g tap go" onclick="startNav()">'+svg('nav')+'ابدأ الملاحة</button>');
   $$('.x-ver').forEach(e=>e.textContent=VER);
   paintIcons();
   // النجوم
@@ -690,18 +730,50 @@ function sysOpen(k){
 }
 
 /* ══════ يوتيوب ══════ */
-function ytBox(){
+function liveBox(cls){
   const pg=document.querySelector('.pg.act');if(!pg)return null;
-  return [...pg.querySelectorAll('.ytlive')].find(b=>b.offsetParent!==null)||null;
+  return [...pg.querySelectorAll(cls)].find(b=>b.offsetParent!==null)||null;
+}
+function place(br,b){
+  if(!br) return;
+  if(!b){br.hide();return}
+  const a=b.querySelector('.ytarea').getBoundingClientRect(),r=window.devicePixelRatio||1;
+  br.show(Math.round(a.left*r),Math.round(a.top*r),Math.round(a.width*r),Math.round(a.height*r));
 }
 function syncYT(){
-  if(!window.YTN) return;
-  const b=ytBox();
-  if(!b){YTN.hide();return}
-  const a=b.querySelector('.ytarea').getBoundingClientRect(),r=window.devicePixelRatio||1;
-  YTN.show(Math.round(a.left*r),Math.round(a.top*r),Math.round(a.width*r),Math.round(a.height*r));
+  place(window.YTN,liveBox('.ytlive'));
+  place(window.MPN,liveBox('.mplive'));
+  if(!NAT&&liveBox('.mplive')) mapFrame();
 }
-function ytCmd(c){ if(window.YTN){c==='back'?YTN.back():YTN.home()} else openUrl('https://m.youtube.com') }
+/* أوامر يوتيوب: تُنفَّذ داخل صفحة يوتيوب */
+const YJS={
+  rw:"(function(){var v=document.querySelector('video');if(v)v.currentTime=Math.max(0,v.currentTime-10)})()",
+  ff:"(function(){var v=document.querySelector('video');if(v)v.currentTime=Math.min(v.duration||1e9,v.currentTime+10)})()",
+  pp:"(function(){var v=document.querySelector('video');if(v){v.paused?v.play():v.pause()}})()",
+  next:"(function(){var b=document.querySelector('.ytp-next-button,.player-control-next-button,button[aria-label*=\"Next\"],button[aria-label*=\"التالي\"]');if(b){b.click();return}var v=document.querySelector('video');if(v&&v.duration)v.currentTime=v.duration-0.3})()"
+};
+const YMSG={rw:'رجّعت ١٠ ثواني',ff:'قدّمت ١٠ ثواني',next:'الفيديو التالي'};
+function ytCmd(c){
+  if(!window.YTN){openUrl('https://m.youtube.com');return}
+  if(c==='back')YTN.back();else if(c==='home')YTN.home();else{YTN.run(YJS[c]);if(YMSG[c])toast(YMSG[c])}
+}
+
+/* ══════ الخرائط ══════ */
+let mapQ='',lastDest='';
+function mapFrame(){
+  const src='https://maps.google.com/maps?q='+encodeURIComponent(mapQ||'الرياض')+'&z='+(mapQ?14:11)+'&output=embed';
+  $$('.x-mapframe').forEach(f=>{if(f.dataset.q!==src){f.dataset.q=src;f.src=src}});
+}
+function mapGo(q){
+  mapQ=q;
+  if(window.MPN) MPN.go('https://www.google.com/maps/search/'+encodeURIComponent(q));
+  else mapFrame();
+}
+function mapMe(){
+  if(window.MPN){MPN.home();toast('رجعت لمكانك');return}
+  if(navigator.geolocation) navigator.geolocation.getCurrentPosition(p=>{mapGo(p.coords.latitude+','+p.coords.longitude)},()=>toast('ما قدرت أحدد مكانك'));
+}
+function mapCmd(c){ if(window.MPN) MPN.back(); else {mapQ='';mapFrame()} }
 window.addEventListener('resize',()=>setTimeout(syncYT,50));
 
 /* ══════ الموسيقى ══════ */
@@ -751,11 +823,16 @@ function renderCalls(){
 }
 
 /* ══════ الملاحة ══════ */
-function navSearch(){const q=$('nvInp').value.trim();if(!q){toast('اكتب الوجهة أولاً');$('nvInp').focus();return}openUrl('https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(q))}
+function navSearch(){const q=$('nvInp').value.trim();if(!q){toast('اكتب الوجهة أولاً');$('nvInp').focus();return}lastDest=q;mapGo(q);toast('اضغط «ابدأ الملاحة» عشان يوديك')}
+function startNav(){
+  const q=$('nvInp').value.trim()||lastDest;
+  if(!q){toast('اختر وجهة أولاً');go('nav');setTimeout(()=>$('nvInp').focus(),300);return}
+  openUrl('https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(q)+'&travelmode=driving');
+}
 $('nvInp').addEventListener('keydown',e=>{if(e.key==='Enter')navSearch()});
 function navTo(k){
-  const M={home:['المنزل','https://www.google.com/maps/dir/?api=1&destination=Home'],work:['العمل','https://www.google.com/maps/dir/?api=1&destination=Work'],fuel:['محطة وقود','https://www.google.com/maps/search/'+encodeURIComponent('محطة وقود قريبة')],mosque:['مسجد','https://www.google.com/maps/search/'+encodeURIComponent('مسجد قريب')]};
-  toast('جارٍ فتح الطريق إلى: '+M[k][0]);openUrl(M[k][1]);
+  const M={home:['المنزل','Home'],work:['العمل','Work'],fuel:['محطة وقود','محطة وقود قريبة'],mosque:['مسجد','مسجد قريب']};
+  lastDest=M[k][1];mapGo(M[k][1]);toast(M[k][0]+' — اضغط «ابدأ الملاحة» عشان يوديك');
 }
 
 /* ══════ التطبيقات ══════ */

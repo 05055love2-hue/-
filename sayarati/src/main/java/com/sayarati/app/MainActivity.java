@@ -47,6 +47,8 @@ public class MainActivity extends Activity {
 
     private WebView web;
     private WebView yt;
+    private WebView mp;
+    private static final String MAP_HOME = "https://www.google.com/maps";
     private FrameLayout root;
     private View fullView;
     private WebChromeClient.CustomViewCallback fullCb;
@@ -66,6 +68,7 @@ public class MainActivity extends Activity {
         root.addView(web, new FrameLayout.LayoutParams(-1, -1));
         setContentView(root);
         setupYouTube();
+        setupMaps();
         goFullScreen();
 
         WebSettings s = web.getSettings();
@@ -139,6 +142,7 @@ public class MainActivity extends Activity {
 
         web.addJavascriptInterface(new Bridge(), "Native");
         web.addJavascriptInterface(new YtBridge(), "YTN");
+        web.addJavascriptInterface(new MapBridge(), "MPN");
         web.loadUrl(BASE + "index.html");
     }
 
@@ -319,6 +323,12 @@ public class MainActivity extends Activity {
             runOnUiThread(() -> yt.loadUrl(YT_HOME));
         }
 
+        /** أوامر داخل صفحة يوتيوب: تقديم، ترجيع، تشغيل وإيقاف، التالي */
+        @JavascriptInterface
+        public void run(final String js) {
+            runOnUiThread(() -> yt.evaluateJavascript(js, null));
+        }
+
         @JavascriptInterface
         public void setDesktop(final boolean desk) {
             runOnUiThread(() -> {
@@ -326,6 +336,68 @@ public class MainActivity extends Activity {
                 yt.getSettings().setUserAgentString(desk ? DESK_UA : ytDefaultUA);
                 yt.loadUrl(desk ? "https://www.youtube.com/" : YT_HOME);
             });
+        }
+    }
+
+    /** الخرائط داخل المربع في الواجهة */
+    private void setupMaps() {
+        mp = new WebView(this);
+        WebSettings s = mp.getSettings();
+        s.setJavaScriptEnabled(true);
+        s.setDomStorageEnabled(true);
+        s.setDatabaseEnabled(true);
+        s.setGeolocationEnabled(true);
+        s.setTextZoom(100);
+        CookieManager.getInstance().setAcceptThirdPartyCookies(mp, true);
+        mp.setBackgroundColor(0xFF1c2733);
+        mp.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                String u = request.getUrl().toString();
+                return !(u.startsWith("http://") || u.startsWith("https://"));
+            }
+        });
+        mp.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public void onGeolocationPermissionsShowPrompt(String origin, GeolocationPermissions.Callback cb) {
+                cb.invoke(origin, true, true);
+            }
+        });
+        mp.setVisibility(View.GONE);
+        root.addView(mp, new FrameLayout.LayoutParams(1, 1));
+    }
+
+    private class MapBridge {
+        @JavascriptInterface
+        public void show(final int x, final int y, final int w, final int h) {
+            runOnUiThread(() -> {
+                if (mp.getUrl() == null) mp.loadUrl(MAP_HOME);
+                FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(w, h);
+                lp.leftMargin = x;
+                lp.topMargin = y;
+                mp.setLayoutParams(lp);
+                mp.setVisibility(View.VISIBLE);
+            });
+        }
+
+        @JavascriptInterface
+        public void hide() {
+            runOnUiThread(() -> mp.setVisibility(View.GONE));
+        }
+
+        @JavascriptInterface
+        public void go(final String url) {
+            runOnUiThread(() -> mp.loadUrl(url));
+        }
+
+        @JavascriptInterface
+        public void home() {
+            runOnUiThread(() -> mp.loadUrl(MAP_HOME));
+        }
+
+        @JavascriptInterface
+        public void back() {
+            runOnUiThread(() -> { if (mp.canGoBack()) mp.goBack(); });
         }
     }
 
@@ -420,6 +492,7 @@ public class MainActivity extends Activity {
     public void onBackPressed() {
         if (fullView != null) { exitVideoFull(); return; }
         if (yt != null && yt.getVisibility() == View.VISIBLE && yt.canGoBack()) { yt.goBack(); return; }
+        if (mp != null && mp.getVisibility() == View.VISIBLE && mp.canGoBack()) { mp.goBack(); return; }
         // شاشة رئيسية: زر الرجوع يرجّعك للرئيسية بدل ما يطلع من التطبيق
         web.evaluateJavascript("typeof switchPage==='function'&&switchPage('home')", null);
     }
