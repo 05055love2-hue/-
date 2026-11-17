@@ -28,7 +28,7 @@
 
     <application
         android:label="سيارتي"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true"
         android:hardwareAccelerated="true"
         android:theme="@style/AppTheme">
