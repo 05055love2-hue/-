@@ -361,6 +361,36 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;heigh
 .rd-g button .ico{width:40px;height:40px;font-size:calc(19px * var(--fs,1));border-radius:12px}
 .rd-g button.on{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 18%,var(--glass));box-shadow:0 0 0 1px var(--accent)}
 .dk-b{width:calc(88px * var(--dk,1))}
+/* ═════════ الوضع النهاري ═════════ */
+.b-day{background:linear-gradient(180deg,#6cc4ff 0%,#b9e3ff 45%,#eef6fd 100%)}
+.b-day .dsun{position:absolute;top:-80px;right:120px;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,#fffbe6 0 22%,rgba(255,236,170,.55) 35%,rgba(255,236,170,0) 70%)}
+.b-day .cl{position:absolute;background:#fff;border-radius:999px;filter:blur(18px);opacity:.85;animation:cloud linear infinite}
+.b-day .cl.c1{width:360px;height:90px;top:90px;left:-400px;animation-duration:90s}
+.b-day .cl.c2{width:260px;height:70px;top:200px;left:-300px;animation-duration:120s;animation-delay:-50s;opacity:.7}
+.b-day .cl.c3{width:420px;height:100px;top:40px;left:-450px;animation-duration:150s;animation-delay:-100s;opacity:.6}
+@keyframes cloud{to{transform:translateX(2200px)}}
+.b-day .hill{position:absolute;left:-10%;right:-10%;bottom:-160px;height:320px;border-radius:50%;background:linear-gradient(180deg,#d7ecfa,#eef6fd)}
+body.day{--bg:#e9eef5;--glass:rgba(255,255,255,.66);--glass2:rgba(15,25,40,.07);--line:rgba(15,25,40,.10);--txt:#0f1722;--txt2:rgba(15,23,34,.62)}
+body.day #bgx .bgl{display:none!important}
+body.day #bgx .b-day{display:block!important}
+body.day .g{box-shadow:0 8px 24px rgba(30,60,100,.13)}
+body.day .clk .t{background:linear-gradient(135deg,#0f1722 30%,var(--accent));-webkit-background-clip:text;background-clip:text}
+body.day .dk-b.act{color:var(--txt)}
+body.day .credit{color:rgba(15,23,34,.5)}
+body.day .bar,body.day input[type=range],body.day .sw{background:rgba(15,25,40,.14)}
+body.day .seg,body.day .rec .it,body.day .pl .tr,body.day .dkl .it,body.day .icg button,body.day .fonts button,body.day .sec .card,body.day .ctype button,body.day .rd-now .vol{background-color:rgba(15,25,40,.05)}
+body.day .sw.on{background:var(--accent)}
+body.day .ytarea{color:rgba(255,255,255,.65)}
+body.day .opt.sel,body.day .l-minimal .mwx b{color:var(--txt)}
+body.day .cols button.sel{border-color:#0f1722}
+body.day .gauge .ring circle:first-child{stroke:rgba(15,25,40,.12)}
+body.day .l-minimal .clk .t{text-shadow:none}
+body.day .toast{background:rgba(255,255,255,.97);color:var(--txt)}
+body.day .pick .box{background:rgba(245,248,252,.98)}
+body.day .st-nav button.act,body.day .rd-g button{background:rgba(15,25,40,.05)}
+body.day .rd-g button.on{background:color-mix(in srgb,var(--accent) 18%,#fff)}
+body.day .lnk input,body.day .cin,body.day .pick .hd input,body.day .nv-s input,body.day .ap-s input{color:var(--txt)}
+
 /* ═════════ تخصيص الشريط ═════════ */
 .dkl{display:flex;flex-direction:column;gap:6px}
 .dkl .it{display:flex;align-items:center;gap:12px;padding:8px 10px;border-radius:14px;background:rgba(255,255,255,.05)}
@@ -454,6 +484,7 @@ body.port .fonts{grid-template-columns:repeat(3,1fr)}
 <body data-layout="classic" data-bg="earth">
 <div id="bgx">
   <div class="bgl b-plain"></div>
+  <div class="bgl b-day"><div class="dsun"></div><div class="cl c1"></div><div class="cl c2"></div><div class="cl c3"></div><div class="hill"></div></div>
   <div class="bgl b-earth"><i class="stars tw1 st1"></i><i class="stars tw2 st2"></i><div class="globe"><div class="tex day"></div><div class="tex lights"></div></div></div>
   <div class="bgl b-stars"><i class="stars tw1 st1"></i><i class="stars tw2 st2"></i><i class="stars tw3 st3"></i><div class="moon"></div><div class="shoot s1"></div><div class="shoot s2"></div></div>
   <div class="bgl b-aurora"><i class="stars tw2 st2"></i><div class="au a1"></div><div class="au a2"></div><div class="au a3"></div></div>
@@ -651,6 +682,9 @@ body.port .fonts{grid-template-columns:repeat(3,1fr)}
           <!-- الواجهة والمظهر -->
           <div class="sec" data-s="look">
             <div class="sh"><span class="ico c-ac"><i data-ic="brush"></i></span><div><b>الواجهة والمظهر</b><small>شكل الواجهة، الخلفية، الألوان، والبطاقات</small></div></div>
+            <div class="card g"><h3>وضع الشاشة</h3>
+              <div class="row"><span>نهاري وليلي</span><div class="seg" id="segTh"></div></div>
+              <div class="row"><small style="color:var(--txt2)" id="thInfo">تلقائي: نهاري من الشروق إلى المغرب حسب مدينتك، وليلي بعدها</small></div></div>
             <div class="card g"><h3>أيقونة التطبيق <small style="font-weight:400">— الشكل اللي يطلع في الشاشة عشان تفتح سيارتي</small></h3><div class="icg" id="icG"></div>
               <div class="row"><small style="color:var(--txt2)">بعد ما تختار، ممكن تاخذ الشاشة كم ثانية لين تتغيّر الأيقونة</small></div></div>
             <div class="card g"><h3>شكل الواجهة</h3><div class="opts c5" id="optLay"></div></div>
@@ -737,7 +771,7 @@ body.port .fonts{grid-template-columns:repeat(3,1fr)}
 
 <script>
 /* داخل تطبيق أندرويد: الروابط تفتح في تطبيقاتها */
-const VER='v3.11';
+const VER='v3.12';
 const $=id=>document.getElementById(id);
 const $$=s=>[...document.querySelectorAll(s)];
 const NAT=!!(window.Native&&Native.openUrl);
@@ -808,7 +842,7 @@ const p2=n=>String(n).padStart(2,'0');
 let tT;function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(tT);tT=setTimeout(()=>t.classList.remove('show'),2300)}
 
 /* ══════ الإعدادات المحفوظة ══════ */
-const DEF={layout:'classic',bg:'earth',col:0,h24:true,sec:true,bri:100,ytDesk:false,adhan:true,rAuto:false,spdOn:false,spdMax:120,cardA:1,clkS:1,dkS:1,zoom:1,dock:null,font:'tajawal',fs:1,city:'auto',stSec:'look'};
+const DEF={layout:'classic',bg:'earth',col:0,h24:true,sec:true,bri:100,ytDesk:false,adhan:true,rAuto:false,spdOn:false,spdMax:120,cardA:1,clkS:1,dkS:1,zoom:1,dock:null,font:'tajawal',fs:1,theme:'auto',city:'auto',stSec:'look'};
 let S=Object.assign({},DEF);
 try{S=Object.assign(S,JSON.parse(localStorage.getItem('sayarati')||'{}'))}catch(e){}
 function save(){try{localStorage.setItem('sayarati',JSON.stringify(S))}catch(e){}}
@@ -831,6 +865,7 @@ function applyAll(){
   if(CA[0]){document.documentElement.style.setProperty('--glass',CA[0]);document.documentElement.style.setProperty('--glass2',CA[1])}
   document.documentElement.style.setProperty('--clk',S.clkS);
   document.documentElement.style.setProperty('--fs',S.fs);
+  applyTheme(true);
   document.documentElement.style.setProperty('--font',S.font==='system'?'system-ui':"'F_"+S.font+"'");
   {const ci=curIcon();$$('#icG button').forEach(b=>b.classList.toggle('sel',+b.dataset.n===ci))}
   $$('#fontG button').forEach(b=>b.classList.toggle('sel',b.dataset.f===S.font));
@@ -930,6 +965,20 @@ function setAppIcon(n){
   S.appIcon=n;save();$$('#icG button').forEach(b=>b.classList.toggle('sel',+b.dataset.n===n));
   toast(window.AppIcon?'تغيّرت الأيقونة ✓':'تتغيّر الأيقونة في شاشة السيارة');
 }
+/* ══════ النهار والليل ══════ */
+let lastDay=null;
+function isDayNow(){
+  if(S.theme==='day')return true;if(S.theme==='night')return false;
+  const n=new Date();let P;try{P=calcP(n,PLOC.lat,PLOC.lon)}catch(e){P={Sunrise:360,Maghrib:1080}}
+  const m=n.getHours()*60+n.getMinutes();return m>=P.Sunrise&&m<P.Maghrib;
+}
+function applyTheme(force){
+  const d=isDayNow();
+  if(d!==lastDay||force){lastDay=d;document.body.classList.toggle('day',d)}
+  const ti=$('thInfo');if(ti&&S.theme==='auto'){try{const P=calcP(new Date(),PLOC.lat,PLOC.lon);ti.textContent='تلقائي: نهاري من الشروق ('+fmtM(P.Sunrise)+') إلى المغرب ('+fmtM(P.Maghrib)+') حسب مدينتك، والحين '+(d?'نهاري ☀️':'ليلي 🌙')}catch(e){}}
+  else if(ti)ti.textContent=S.theme==='day'?'الشاشة نهارية دايم':'الشاشة ليلية دايم';
+}
+setInterval(()=>applyTheme(false),30000);
 function fsStep(d){let i=FSZ.indexOf(S.fs);if(i<0)i=2;i=Math.max(0,Math.min(FSZ.length-1,i+d));setOpt('fs',FSZ[i]);toast('حجم الخط: '+FSN[i])}
 function dkStep(d){let i=DKS.indexOf(S.dkS);if(i<0)i=2;i=Math.max(0,Math.min(DKS.length-1,i+d));setOpt('dkS',DKS[i]);toast(['صغير جداً','صغير','وسط','كبير','كبير جداً'][i])}
 function resetAll(){const k=S.stSec;S=Object.assign({},DEF,{stSec:k});save();applyAll();toast('رجعت الإعدادات مثل أول')}
@@ -971,6 +1020,7 @@ function buildUI(){
   seg('segCard','cardA',[[0,'شفاف'],[1,'عادي'],[2,'واضح'],[3,'غامق']]);
   $('icG').innerHTML=Array.from({length:12},(_,i)=>'<button data-n="'+(i+1)+'" onclick="setAppIcon('+(i+1)+')"><img src="icons/'+(i+1)+'.png" alt=""></button>').join('');
   $('fontG').innerHTML=FONTL.map(f=>'<button data-f="'+f[0]+'" onclick="setOpt(\'font\',\''+f[0]+'\')" style="font-family:'+(f[0]==='system'?'system-ui':'F_'+f[0])+'"><b>سيارتي ١٢:٣٠</b><small>'+f[1]+'</small></button>').join('');
+  seg('segTh','theme',[['auto','🌗 تلقائي'],['day','☀️ نهاري'],['night','🌙 ليلي']]);
   seg('segFs','fs',FSZ.map((v,i)=>[v,FSN[i]]));
   seg('segZm','zoom',[[0.85,'أصغر'],[0.93,'صغير'],[1,'تلقائي'],[1.08,'كبير'],[1.16,'أكبر']]);
   seg('segClk','clkS',[[0.8,'صغير'],[1,'وسط'],[1.2,'كبير']]);

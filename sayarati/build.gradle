@@ -10,8 +10,8 @@ android {
         applicationId "com.sayarati.app"
         minSdk 21
         targetSdk 34
-        versionCode 13
-        versionName "3.11"
+        versionCode 14
+        versionName "3.12"
     }
 
     signingConfigs {
