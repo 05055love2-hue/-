@@ -512,4 +512,11 @@ public class MainActivity extends Activity {
         web.evaluateJavascript(
                 "document.querySelectorAll('.overlay.show').forEach(o=>o.classList.remove('show'))", null);
     }
+
+    /** الشاشة الرئيسية ما تنقفل، فنشيّك على التحديث كل ما ترجع لها */
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Updater.check(this, "car-theme");
+    }
 }
