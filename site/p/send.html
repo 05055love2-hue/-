@@ -1,7 +1,7 @@
-<!doctype html><meta charset="utf-8"><title>send</title><body style="background:#111;color:#fff;font:20px sans-serif">جاري التجهيز…
+<!doctype html><meta charset="utf-8"><title>تجهيز المقاطع</title><body style="background:#111;color:#fff;font:22px sans-serif;padding:30px;direction:rtl">جاري تجهيز المقاطع…
 <script>
-(async()=>{const v=new URLSearchParams(location.search).get('v');
-const b=await (await fetch(v+'.mp4',{cache:'no-store'})).blob();
-if(window.opener){window.opener.postMessage({promo:v,blob:b},'*');document.body.textContent='تم ✓';setTimeout(()=>close(),800);}
-else document.body.textContent='no opener';})();
+(async()=>{const vs=(new URLSearchParams(location.search).get('v')||'').split(',').filter(Boolean);
+if(!window.opener){document.body.textContent='افتحها من زر التيك توك';return}
+for(const v of vs){const b=await (await fetch(v+'.mp4',{cache:'no-store'})).blob();window.opener.postMessage({promo:v,blob:b},'*');document.body.textContent='تم تجهيز '+v;}
+window.opener.postMessage({promoDone:vs.length},'*');document.body.textContent='تم ✓ تقدر تسكّر هذي الصفحة';setTimeout(()=>close(),1500);})();
 </script>
