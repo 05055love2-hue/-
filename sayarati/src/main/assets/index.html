@@ -429,6 +429,12 @@ body.port .tb{padding:0 12px}body.port .credit{display:none}
 .seg{display:flex;gap:4px;padding:4px;border-radius:14px;background:rgba(255,255,255,.07)}
 .seg button{padding:8px 14px;border-radius:10px;font-size:calc(13.5px * var(--fs,1));color:var(--txt2)}
 .seg button.sel{background:var(--accent);color:#fff;font-weight:700}
+.icg{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
+.icg button{padding:8px;border-radius:22px;border:3px solid transparent;background:rgba(255,255,255,.04);position:relative}
+.icg button img{width:100%;display:block;border-radius:18px}
+.icg button.sel{border-color:var(--accent);box-shadow:0 0 16px var(--glow)}
+.icg button.sel::after{content:'✓';position:absolute;top:-8px;left:-8px;width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:800;font-size:15px}
+body.port .icg{grid-template-columns:repeat(4,1fr)}
 .fonts{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
 .fonts button{display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 6px;border-radius:14px;background:rgba(255,255,255,.05);border:2px solid transparent}
 .fonts button b{font-size:calc(20px * var(--fs,1));font-weight:700;line-height:1.3;white-space:nowrap}
@@ -645,6 +651,8 @@ body.port .fonts{grid-template-columns:repeat(3,1fr)}
           <!-- الواجهة والمظهر -->
           <div class="sec" data-s="look">
             <div class="sh"><span class="ico c-ac"><i data-ic="brush"></i></span><div><b>الواجهة والمظهر</b><small>شكل الواجهة، الخلفية، الألوان، والبطاقات</small></div></div>
+            <div class="card g"><h3>أيقونة التطبيق <small style="font-weight:400">— الشكل اللي يطلع في الشاشة عشان تفتح سيارتي</small></h3><div class="icg" id="icG"></div>
+              <div class="row"><small style="color:var(--txt2)">بعد ما تختار، ممكن تاخذ الشاشة كم ثانية لين تتغيّر الأيقونة</small></div></div>
             <div class="card g"><h3>شكل الواجهة</h3><div class="opts c5" id="optLay"></div></div>
             <div class="card g"><h3>الخلفية المتحركة</h3><div class="opts c4" id="optBg"></div></div>
             <div class="card g"><h3>لون التمييز</h3><div class="cols" id="optCol"></div></div>
@@ -729,7 +737,7 @@ body.port .fonts{grid-template-columns:repeat(3,1fr)}
 
 <script>
 /* داخل تطبيق أندرويد: الروابط تفتح في تطبيقاتها */
-const VER='v3.10';
+const VER='v3.11';
 const $=id=>document.getElementById(id);
 const $$=s=>[...document.querySelectorAll(s)];
 const NAT=!!(window.Native&&Native.openUrl);
@@ -824,6 +832,7 @@ function applyAll(){
   document.documentElement.style.setProperty('--clk',S.clkS);
   document.documentElement.style.setProperty('--fs',S.fs);
   document.documentElement.style.setProperty('--font',S.font==='system'?'system-ui':"'F_"+S.font+"'");
+  {const ci=curIcon();$$('#icG button').forEach(b=>b.classList.toggle('sel',+b.dataset.n===ci))}
   $$('#fontG button').forEach(b=>b.classList.toggle('sel',b.dataset.f===S.font));
   document.documentElement.style.setProperty('--dk',S.dkS);
   scaleUI();renderDockSet();
@@ -914,6 +923,13 @@ function pickTake(i){const a=window._pk[i];if(!a)return;const it=a.t==='app'?{t:
 const DKS=[0.75,0.88,1,1.15,1.3];
 const FONTL=[["tajawal", "تجوال", "Tajawal"], ["cairo", "القاهرة", "Cairo"], ["almarai", "المراعي", "Almarai"], ["plex", "بلكس", "IBM Plex Arabic"], ["readex", "ريدكس", "Readex Pro"], ["notokufi", "نوتو كوفي", "Noto Kufi"], ["changa", "تشانجا", "Changa"], ["messiri", "المسيري", "El Messiri"], ["reemkufi", "ريم كوفي", "Reem Kufi"], ["system", "الجهاز", "System"]];
 const FSZ=[0.85,0.93,1,1.1,1.2,1.3],FSN=['صغير جداً','صغير','وسط','كبير','كبير جداً','ضخم'];
+function curIcon(){try{if(window.AppIcon&&AppIcon.get)return AppIcon.get()}catch(e){}return S.appIcon||1}
+function setAppIcon(n){
+  let ok=true;try{if(window.AppIcon&&AppIcon.set)ok=AppIcon.set(n)}catch(e){ok=false}
+  if(!ok){toast('ما قدرت أغيّر الأيقونة');return}
+  S.appIcon=n;save();$$('#icG button').forEach(b=>b.classList.toggle('sel',+b.dataset.n===n));
+  toast(window.AppIcon?'تغيّرت الأيقونة ✓':'تتغيّر الأيقونة في شاشة السيارة');
+}
 function fsStep(d){let i=FSZ.indexOf(S.fs);if(i<0)i=2;i=Math.max(0,Math.min(FSZ.length-1,i+d));setOpt('fs',FSZ[i]);toast('حجم الخط: '+FSN[i])}
 function dkStep(d){let i=DKS.indexOf(S.dkS);if(i<0)i=2;i=Math.max(0,Math.min(DKS.length-1,i+d));setOpt('dkS',DKS[i]);toast(['صغير جداً','صغير','وسط','كبير','كبير جداً'][i])}
 function resetAll(){const k=S.stSec;S=Object.assign({},DEF,{stSec:k});save();applyAll();toast('رجعت الإعدادات مثل أول')}
@@ -953,6 +969,7 @@ function buildUI(){
   $('stNav').innerHTML=SN.map(s=>'<button data-s="'+s[0]+'" onclick="setOpt(\'stSec\',\''+s[0]+'\')"><span class="ico '+s[1]+'">'+svg(s[2])+'</span><div><b>'+s[3]+'</b><small>'+s[4]+'</small></div>'+svg('chev','chev')+'</button>').join('');
   const seg=(id,k,L)=>{$(id).innerHTML=L.map(o=>'<button data-k="'+k+'" data-v="'+o[0]+'" onclick="setOpt(\''+k+'\','+(typeof o[0]==='number'?o[0]:'\''+o[0]+'\'')+')">'+o[1]+'</button>').join('')};
   seg('segCard','cardA',[[0,'شفاف'],[1,'عادي'],[2,'واضح'],[3,'غامق']]);
+  $('icG').innerHTML=Array.from({length:12},(_,i)=>'<button data-n="'+(i+1)+'" onclick="setAppIcon('+(i+1)+')"><img src="icons/'+(i+1)+'.png" alt=""></button>').join('');
   $('fontG').innerHTML=FONTL.map(f=>'<button data-f="'+f[0]+'" onclick="setOpt(\'font\',\''+f[0]+'\')" style="font-family:'+(f[0]==='system'?'system-ui':'F_'+f[0])+'"><b>سيارتي ١٢:٣٠</b><small>'+f[1]+'</small></button>').join('');
   seg('segFs','fs',FSZ.map((v,i)=>[v,FSN[i]]));
   seg('segZm','zoom',[[0.85,'أصغر'],[0.93,'صغير'],[1,'تلقائي'],[1.08,'كبير'],[1.16,'أكبر']]);

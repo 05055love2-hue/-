@@ -142,6 +142,7 @@ public class MainActivity extends Activity {
 
         web.addJavascriptInterface(new Bridge(), "Native");
         web.addJavascriptInterface(new BlackScreen.JS(this), "BlackScr");
+        web.addJavascriptInterface(new IconSwitch(this), "AppIcon");
         web.addJavascriptInterface(new YtBridge(), "YTN");
         web.addJavascriptInterface(new MapBridge(), "MPN");
         web.loadUrl(BASE + "index.html");
