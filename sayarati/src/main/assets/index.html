@@ -107,7 +107,7 @@ button:active{transform:scale(.94)}
 
 /* ═════════ عناصر مشتركة ═════════ */
 .clk{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px}
-.clk .t{font-size:84px;font-weight:800;line-height:1;letter-spacing:1px;background:linear-gradient(135deg,#fff 30%,var(--accent));-webkit-background-clip:text;background-clip:text;color:transparent}
+.clk .t{font-size:calc(84px * var(--clk,1));font-weight:800;line-height:1;letter-spacing:1px;background:linear-gradient(135deg,#fff 30%,var(--accent));-webkit-background-clip:text;background-clip:text;color:transparent}
 .clk .t sup{font-size:.32em;color:var(--accent);-webkit-text-fill-color:var(--accent);margin-right:6px;vertical-align:top;position:relative;top:.4em}
 .clk .ap{font-size:.3em;-webkit-text-fill-color:var(--txt2);margin-right:4px}
 .clk .d{margin-top:10px;font-size:15px;color:var(--txt2)}
@@ -345,6 +345,36 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;heigh
 .rd-g button .ico{width:40px;height:40px;font-size:19px;border-radius:12px}
 .rd-g button.on{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 18%,var(--glass));box-shadow:0 0 0 1px var(--accent)}
 .dk-b{width:88px}
+/* ═════════ الإعدادات ═════════ */
+.stp{height:100%;display:grid;grid-template-columns:330px 1fr;gap:14px}
+.st-nav{padding:10px;display:flex;flex-direction:column;gap:4px;overflow-y:auto}
+.st-nav button{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:16px;text-align:right;transition:background .2s}
+.st-nav button .ico{width:42px;height:42px;font-size:21px;border-radius:13px}
+.st-nav button div{flex:1;min-width:0}
+.st-nav button b{display:block;font-size:15px}
+.st-nav button small{display:block;font-size:11.5px;color:var(--txt2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.st-nav button .chev{color:var(--txt2);font-size:18px}
+.st-nav button.act{background:var(--glass2);box-shadow:inset 0 0 0 1px var(--accent)}
+.st-nav button.act .chev{color:var(--accent)}
+.st-body{overflow-y:auto;padding:16px 18px}
+.sec{display:none;flex-direction:column;gap:12px}
+.sec.act{display:flex}
+.sh{display:flex;align-items:center;gap:14px;margin-bottom:4px}
+.sh .ico{width:52px;height:52px;font-size:26px}
+.sh b{display:block;font-size:22px}.sh small{font-size:13px;color:var(--txt2)}
+.sec .card{background:rgba(255,255,255,.04);backdrop-filter:none}
+.sec .card h3{font-size:15px;color:var(--txt2);font-weight:600}
+.seg{display:flex;gap:4px;padding:4px;border-radius:14px;background:rgba(255,255,255,.07)}
+.seg button{padding:8px 14px;border-radius:10px;font-size:13.5px;color:var(--txt2)}
+.seg button.sel{background:var(--accent);color:#fff;font-weight:700}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips button{padding:9px 14px;border-radius:999px;background:var(--glass2);font-size:13.5px}
+.chips button.sel{background:var(--accent);color:#fff;font-weight:700}
+.sys{grid-template-columns:repeat(4,1fr)!important}
+.spdw{position:absolute;left:50%;top:50%;z-index:70;transform:translate(-50%,-50%) scale(.8);width:220px;height:220px;border-radius:50%;display:grid;place-items:center;text-align:center;
+  background:#fff;border:16px solid #e03131;color:#111;font-size:66px;font-weight:900;opacity:0;pointer-events:none;transition:all .3s;box-shadow:0 0 60px rgba(224,49,49,.7)}
+.spdw small{display:block;font-size:16px;font-weight:700;margin-top:-6px}
+.spdw.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
 </style>
 </head>
 <body data-layout="classic" data-bg="earth">
@@ -358,6 +388,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;heigh
 </div>
 <div id="bri"></div>
 <div class="toast" id="toast"></div>
+<div class="spdw" id="spdW"></div>
 <div class="adhan" id="adhan" onclick="this.classList.remove('show')"></div>
 
 <div id="L">
@@ -536,20 +567,63 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;heigh
 
     <!-- ══════ الإعدادات ══════ -->
     <div class="pg" data-pg="settings">
-      <div class="st">
-        <div class="card g wide"><h3><span class="ico c-ac"><i data-ic="layout"></i></span>شكل الواجهة</h3><div class="opts c5" id="optLay"></div></div>
-        <div class="card g wide"><h3><span class="ico c-hm"><i data-ic="image"></i></span>الخلفية المتحركة</h3><div class="opts c8" id="optBg"></div></div>
-        <div class="card g"><h3><span class="ico c-mu"><i data-ic="palette"></i></span>لون التمييز</h3><div class="cols" id="optCol"></div></div>
-        <div class="card g"><h3><span class="ico c-dsp"><i data-ic="sun"></i></span>السطوع</h3>
-          <div class="row" style="direction:ltr"><i data-ic="sun" style="opacity:.45;font-size:16px"></i><input type="range" id="briR" min="30" max="100" value="100"><i data-ic="sun" style="font-size:24px"></i></div></div>
-        <div class="card g"><h3><span class="ico c-wf"><i data-ic="clock"></i></span>الساعة</h3>
-          <div class="row"><span>نظام ٢٤ ساعة</span><button class="sw" id="sw24" onclick="setOpt('h24',!S.h24)"></button></div>
-          <div class="row"><span>إظهار الثواني</span><button class="sw" id="swSec" onclick="setOpt('sec',!S.sec)"></button></div></div>
-        <div class="card g"><h3><span class="ico c-yt"><i data-ic="play" class="f"></i></span>يوتيوب</h3>
-          <div class="row"><span>شاشة يوتيوب كبيرة في الواجهة</span><button class="btn ghost" onclick="setOpt('layout','youtube');toast('صار يوتيوب في الواجهة')">فعّل</button></div>
-          <div class="row"><span>نسخة الكمبيوتر من يوتيوب</span><button class="sw" id="swYtD" onclick="setOpt('ytDesk',!S.ytDesk)"></button></div></div>
-        <div class="card g wide"><h3><span class="ico c-st"><i data-ic="gear"></i></span>إعدادات الجهاز</h3><div class="sys" id="sys"></div></div>
-        <div class="card g wide"><div class="about"><span class="ico lg c-ac"><i data-ic="car"></i></span><div><b>سيارتي</b><small>برمجة أبو نواف • الإصدار <span class="x-ver"></span></small><small>جميع الحقوق محفوظة © ٢٠٢٦ المبرمج أبو نواف</small></div></div></div>
+      <div class="stp">
+        <div class="g st-nav" id="stNav"></div>
+        <div class="g st-body">
+          <!-- الواجهة والمظهر -->
+          <div class="sec" data-s="look">
+            <div class="sh"><span class="ico c-ac"><i data-ic="brush"></i></span><div><b>الواجهة والمظهر</b><small>شكل الواجهة، الخلفية، الألوان، والبطاقات</small></div></div>
+            <div class="card g"><h3>شكل الواجهة</h3><div class="opts c5" id="optLay"></div></div>
+            <div class="card g"><h3>الخلفية المتحركة</h3><div class="opts c4" id="optBg"></div></div>
+            <div class="card g"><h3>لون التمييز</h3><div class="cols" id="optCol"></div></div>
+            <div class="card g"><h3>البطاقات</h3>
+              <div class="row"><span>شفافية البطاقات</span><div class="seg" id="segCard"></div></div>
+              <div class="row"><span>حجم الساعة</span><div class="seg" id="segClk"></div></div></div>
+            <div class="card g"><h3>السطوع</h3>
+              <div class="row" style="direction:ltr"><i data-ic="sun" style="opacity:.45;font-size:16px"></i><input type="range" id="briR" min="30" max="100" value="100"><i data-ic="sun" style="font-size:24px"></i></div></div>
+          </div>
+          <!-- الساعة والطقس والصلاة -->
+          <div class="sec" data-s="time">
+            <div class="sh"><span class="ico c-wf"><i data-ic="clock"></i></span><div><b>الساعة والطقس والصلاة</b><small>توقيت الساعة، المدينة، ومواقيت الصلاة</small></div></div>
+            <div class="card g"><h3>الساعة</h3>
+              <div class="row"><span>نظام ٢٤ ساعة</span><button class="sw" id="sw24" onclick="setOpt('h24',!S.h24)"></button></div>
+              <div class="row"><span>إظهار الثواني</span><button class="sw" id="swSec" onclick="setOpt('sec',!S.sec)"></button></div></div>
+            <div class="card g"><h3>المدينة</h3>
+              <div class="row"><span>المدينة تحدد الطقس ومواقيت الصلاة. «تلقائي» ياخذ موقعك من الجهاز</span></div>
+              <div class="chips" id="cityG"></div></div>
+            <div class="card g"><h3>الصلاة</h3>
+              <div class="row"><span>تنبيه على الشاشة وقت الأذان</span><button class="sw" id="swAdh" onclick="setOpt('adhan',!S.adhan)"></button></div>
+              <div class="row"><span>طريقة الحساب</span><small style="color:var(--txt2)">تقويم أم القرى</small></div></div>
+          </div>
+          <!-- الصوت والوسائط -->
+          <div class="sec" data-s="media">
+            <div class="sh"><span class="ico c-mu"><i data-ic="music"></i></span><div><b>الصوت والوسائط</b><small>الراديو، يوتيوب، والموسيقى</small></div></div>
+            <div class="card g"><h3>الراديو</h3>
+              <div class="row"><span>شغّل آخر إذاعة أول ما تشتغل السيارة</span><button class="sw" id="swRA" onclick="setOpt('rAuto',!S.rAuto)"></button></div></div>
+            <div class="card g"><h3>يوتيوب</h3>
+              <div class="row"><span>شاشة يوتيوب كبيرة في الواجهة</span><button class="btn ghost" onclick="setOpt('layout','youtube');toast('صار يوتيوب في الواجهة')">فعّل</button></div>
+              <div class="row"><span>نسخة الكمبيوتر من يوتيوب</span><button class="sw" id="swYtD" onclick="setOpt('ytDesk',!S.ytDesk)"></button></div></div>
+          </div>
+          <!-- القيادة والتنبيهات -->
+          <div class="sec" data-s="drive">
+            <div class="sh"><span class="ico c-snd"><i data-ic="bell"></i></span><div><b>القيادة والتنبيهات</b><small>تنبيه السرعة على الطريق</small></div></div>
+            <div class="card g"><h3>تنبيه السرعة</h3>
+              <div class="row"><span>نبّهني إذا تعديت السرعة</span><button class="sw" id="swSpd" onclick="setOpt('spdOn',!S.spdOn)"></button></div>
+              <div class="row"><span>الحد</span><div class="seg" id="segSpd"></div></div>
+              <div class="row"><small style="color:var(--txt2)">السرعة تنقرأ من موقع الجهاز (GPS)، والتنبيه يطلع على الشاشة مع صوت خفيف</small></div></div>
+          </div>
+          <!-- الجهاز والاتصال -->
+          <div class="sec" data-s="dev">
+            <div class="sh"><span class="ico c-bt"><i data-ic="bt"></i></span><div><b>الجهاز والاتصال</b><small>بلوتوث، واي فاي، الصوت، والشاشة</small></div></div>
+            <div class="card g"><h3>اختصارات إعدادات الجهاز</h3><div class="sys" id="sys"></div></div>
+          </div>
+          <!-- حول التطبيق -->
+          <div class="sec" data-s="about">
+            <div class="sh"><span class="ico c-st"><i data-ic="info"></i></span><div><b>حول التطبيق</b><small>الإصدار والحقوق</small></div></div>
+            <div class="card g"><div class="about"><span class="ico lg c-ac"><i data-ic="car"></i></span><div><b>سيارتي</b><small>برمجة أبو نواف • الإصدار <span class="x-ver"></span></small><small>جميع الحقوق محفوظة © ٢٠٢٦ المبرمج أبو نواف</small></div></div></div>
+            <div class="card g"><div class="row"><span>رجّع كل الإعدادات مثل أول</span><button class="btn ghost" onclick="resetAll()">استعادة</button></div></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -561,7 +635,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;heigh
 
 <script>
 /* داخل تطبيق أندرويد: الروابط تفتح في تطبيقاتها */
-const VER='v3.2';
+const VER='v3.3';
 const $=id=>document.getElementById(id);
 const $$=s=>[...document.querySelectorAll(s)];
 const NAT=!!(window.Native&&Native.openUrl);
@@ -613,6 +687,9 @@ const IC={
  ff:'<path d="M13 6v12l8-6zM3 6v12l8-6z"/>',
  pp:'<path d="M3 5v14l9-7zM14 5h3v14h-3zM19 5h3v14h-3z"/>',
  radio:'<rect x="2" y="8" width="20" height="13" rx="2"/><path d="M6 8l12-5"/><circle cx="15.5" cy="14.5" r="3"/><path d="M5.5 12.5h4M5.5 16.5h4"/>',
+ brush:'<path d="M18.4 2.6a2 2 0 0 1 3 3L12 15l-3-3z"/><path d="M9 12c-2.5 0-4 1.6-4 4 0 1.5-.8 2.6-2 3 4 1.5 9 .5 9-4"/>',
+ bell:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/>',
+ chev:'<path d="M15 6l-6 6 6 6"/>',
  lock:'<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>'
 };
 function svg(n,cls){return '<svg class="i'+(cls?' '+cls:'')+'" viewBox="0 0 24 24">'+(IC[n]||'')+'</svg>'}
@@ -627,7 +704,7 @@ const p2=n=>String(n).padStart(2,'0');
 let tT;function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(tT);tT=setTimeout(()=>t.classList.remove('show'),2300)}
 
 /* ══════ الإعدادات المحفوظة ══════ */
-const DEF={layout:'classic',bg:'earth',col:0,h24:true,sec:true,bri:100,ytDesk:false};
+const DEF={layout:'classic',bg:'earth',col:0,h24:true,sec:true,bri:100,ytDesk:false,adhan:true,rAuto:false,spdOn:false,spdMax:120,cardA:1,clkS:1,city:'auto',stSec:'look'};
 let S=Object.assign({},DEF);
 try{S=Object.assign(S,JSON.parse(localStorage.getItem('sayarati')||'{}'))}catch(e){}
 function save(){try{localStorage.setItem('sayarati',JSON.stringify(S))}catch(e){}}
@@ -646,6 +723,13 @@ function applyAll(){
   $$('#optLay .opt').forEach(o=>o.classList.toggle('sel',o.dataset.v===S.layout));
   $$('#optBg .opt').forEach(o=>o.classList.toggle('sel',o.dataset.v===S.bg));
   $$('#optCol button').forEach((b,i)=>b.classList.toggle('sel',i===S.col));
+  const CA=[['rgba(255,255,255,.04)','rgba(255,255,255,.08)'],['rgba(255,255,255,.07)','rgba(255,255,255,.12)'],['rgba(255,255,255,.13)','rgba(255,255,255,.19)'],['rgba(10,14,24,.72)','rgba(30,36,50,.8)']][S.cardA]||[];
+  if(CA[0]){document.documentElement.style.setProperty('--glass',CA[0]);document.documentElement.style.setProperty('--glass2',CA[1])}
+  document.documentElement.style.setProperty('--clk',S.clkS);
+  [['swAdh','adhan'],['swRA','rAuto'],['swSpd','spdOn']].forEach(x=>{const e=$(x[0]);if(e)e.classList.toggle('on',!!S[x[1]])});
+  $$('.seg button,.chips button').forEach(b=>b.classList.toggle('sel',String(S[b.dataset.k])===b.dataset.v));
+  $$('.st-nav button').forEach(b=>b.classList.toggle('act',b.dataset.s===S.stSec));
+  $$('.sec').forEach(x=>x.classList.toggle('act',x.dataset.s===S.stSec));
   tick();syncYT();
 }
 function setOpt(k,v){
@@ -653,6 +737,10 @@ function setOpt(k,v){
   if(k==='ytDesk'&&window.YTN) YTN.setDesktop(!!v);
   applyAll();
 }
+
+const CITY={'الرياض':[24.7136,46.6753],'جدة':[21.4858,39.1925],'مكة المكرمة':[21.3891,39.8579],'المدينة المنورة':[24.5247,39.5692],'الدمام':[26.4207,50.0888],'الخبر':[26.2172,50.1971],'الأحساء':[25.383,49.586],'الجبيل':[27.0046,49.646],'الطائف':[21.2703,40.4158],'تبوك':[28.3838,36.555],'أبها':[18.2164,42.5053],'خميس مشيط':[18.3,42.7333],'حائل':[27.5114,41.7208],'بريدة':[26.326,43.975],'جازان':[16.8892,42.5511],'نجران':[17.5656,44.2289],'الباحة':[20.0129,41.4677],'سكاكا':[29.9697,40.2064],'عرعر':[30.9753,41.0381],'ينبع':[24.0895,38.0618],'حفر الباطن':[28.4328,45.9708],'الكويت':[29.3759,47.9774],'الدوحة':[25.2854,51.531],'المنامة':[26.2285,50.586],'دبي':[25.2048,55.2708],'أبوظبي':[24.4539,54.3773],'مسقط':[23.588,58.3829]};
+function setCity(c){S.city=c;save();if(c!=='auto'){setLoc(CITY[c][0],CITY[c][1],c)}getWeather();applyAll();toast(c==='auto'?'المدينة تتحدد من موقعك':'صارت المدينة: '+c)}
+function resetAll(){const k=S.stSec;S=Object.assign({},DEF,{stSec:k});save();applyAll();toast('رجعت الإعدادات مثل أول')}
 
 /* ══════ بناء الواجهة ══════ */
 function buildUI(){
@@ -685,6 +773,14 @@ function buildUI(){
   $('optBg').innerHTML=BGS.map(b=>'<button class="opt" data-v="'+b[0]+'" onclick="setOpt(\'bg\',\''+b[0]+'\')"><div class="pv" style="background:'+(b[0]==='road'?'radial-gradient(circle at 50% 42%,#ff5f8f 0 16%,transparent 17%),linear-gradient(180deg,#14112b 0 52%,#07070c 52%)':BPV[b[0]])+'"></div>'+b[1]+'</button>').join('');
   $('optCol').innerHTML=COLS.map((c,i)=>'<button style="background:'+c+'" onclick="setOpt(\'col\','+i+')"></button>').join('');
   // اختصارات إعدادات الجهاز
+  // قائمة الإعدادات الجانبية
+  const SN=[['look','c-ac','brush','الواجهة والمظهر','الشكل، الخلفية، الألوان، والبطاقات'],['time','c-wf','clock','الساعة والطقس والصلاة','التوقيت، المدينة، والأذان'],['media','c-mu','music','الصوت والوسائط','الراديو، يوتيوب، والموسيقى'],['drive','c-snd','bell','القيادة والتنبيهات','تنبيه السرعة'],['dev','c-bt','bt','الجهاز والاتصال','بلوتوث، واي فاي، والشاشة'],['about','c-st','info','حول التطبيق','الإصدار والحقوق']];
+  $('stNav').innerHTML=SN.map(s=>'<button data-s="'+s[0]+'" onclick="setOpt(\'stSec\',\''+s[0]+'\')"><span class="ico '+s[1]+'">'+svg(s[2])+'</span><div><b>'+s[3]+'</b><small>'+s[4]+'</small></div>'+svg('chev','chev')+'</button>').join('');
+  const seg=(id,k,L)=>{$(id).innerHTML=L.map(o=>'<button data-k="'+k+'" data-v="'+o[0]+'" onclick="setOpt(\''+k+'\','+(typeof o[0]==='number'?o[0]:'\''+o[0]+'\'')+')">'+o[1]+'</button>').join('')};
+  seg('segCard','cardA',[[0,'شفاف'],[1,'عادي'],[2,'واضح'],[3,'غامق']]);
+  seg('segClk','clkS',[[0.8,'صغير'],[1,'وسط'],[1.2,'كبير']]);
+  seg('segSpd','spdMax',[[80,'٨٠'],[100,'١٠٠'],[120,'١٢٠'],[140,'١٤٠']]);
+  $('cityG').innerHTML='<button data-k="city" data-v="auto" onclick="setCity(\'auto\')">📍 تلقائي</button>'+Object.keys(CITY).map(c=>'<button data-k="city" data-v="'+c+'" onclick="setCity(\''+c+'\')">'+c+'</button>').join('');
   const SY=[['bt','c-bt','bt','بلوتوث'],['wifi','c-wf','wifi','واي فاي'],['sound','c-snd','snd','الصوت'],['display','c-dsp','sun','الشاشة'],['loc','c-loc','loc','الموقع'],['apps','c-ap','apps','التطبيقات'],['home','c-hm','home','الشاشة الرئيسية'],['all','c-st','gear','كل الإعدادات']];
   $('sys').innerHTML=SY.map(s=>'<button class="tap" onclick="sysOpen(\''+s[0]+'\')"><span class="ico '+s[1]+'">'+svg(s[2])+'</span>'+s[3]+'</button>').join('');
   // صندوق يوتيوب مع أزرار التحكم
@@ -773,6 +869,7 @@ async function fetchW(lat,lon){
 }
 function getWeather(){
   const fb=()=>{wLoc=PLOC.n||'الرياض';fetchW(PLOC.lat,PLOC.lon)};
+  if(S.city&&S.city!=='auto'&&CITY[S.city]){wLoc=S.city;fetchW(CITY[S.city][0],CITY[S.city][1]);return}
   if(navigator.geolocation) navigator.geolocation.getCurrentPosition(p=>{wLoc='موقعك الحالي';setLoc(p.coords.latitude,p.coords.longitude,'موقعك الحالي');fetchW(p.coords.latitude,p.coords.longitude)},fb,{timeout:8000,maximumAge:600000});
   else fb();
 }
@@ -780,7 +877,15 @@ function getWeather(){
 /* ══════ السرعة والمشوار ══════ */
 const t0=Date.now();
 function updTrip(){const m=Math.floor((Date.now()-t0)/60000);$$('.x-tripv').forEach(e=>e.textContent=m<60?toAr(m)+' د':toAr(Math.floor(m/60))+' س '+toAr(m%60)+' د')}
+let spdT=0;
+function beep(){try{const c=new (window.AudioContext||window.webkitAudioContext)(),o=c.createOscillator(),g=c.createGain();o.frequency.value=880;o.connect(g);g.connect(c.destination);g.gain.setValueAtTime(.25,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.5);o.start();o.stop(c.currentTime+.5)}catch(e){}}
+function speedCheck(v){
+  const w=$('spdW');
+  if(S.spdOn&&v!=null&&v>S.spdMax){w.innerHTML=toAr(S.spdMax)+'<small>خفّف السرعة</small>';w.classList.add('show');if(Date.now()-spdT>8000){spdT=Date.now();beep()}}
+  else w.classList.remove('show');
+}
 function setSpeed(v){
+  speedCheck(v);
   $$('.x-spd').forEach(e=>e.textContent=v==null?'--':toAr(v));
   const f=Math.min((v||0)/200,1);$('gArc').setAttribute('stroke-dasharray',(405*f).toFixed(1)+' 541');
 }
@@ -987,6 +1092,7 @@ function prayerNow(){
   return {nx,left,nowS};
 }
 function adhanAlert(name){
+  if(!S.adhan) return;
   const a=$('adhan');a.innerHTML=svg('mosque')+' حان الآن وقت صلاة '+name;a.classList.add('show');
   setTimeout(()=>a.classList.remove('show'),20000);
 }
@@ -1076,7 +1182,7 @@ function scaleUI(){
 window.addEventListener('resize',scaleUI);
 
 /* ══════ البداية ══════ */
-buildUI();buildRad();scaleUI();applyAll();go('home');renderPL();renderCalls();updMeta();updTrip();devStatus();getWeather();
+buildUI();buildRad();scaleUI();applyAll();if(S.rAuto&&RS.i>=0)setTimeout(()=>radPlay(RS.i),1500);go('home');renderPL();renderCalls();updMeta();updTrip();devStatus();getWeather();
 setInterval(tick,1000);setInterval(updTrip,30000);setInterval(devStatus,5000);setInterval(getWeather,1800000);
 window.addEventListener('online',()=>{devStatus();getWeather()});window.addEventListener('offline',devStatus);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden){devStatus();syncYT()}});
