@@ -1,5 +1,5 @@
 // تعليقات وتقييمات موقع تطبيقاتي — برمجة أبو نواف
-const APPS = ['car', 'tv', 'ytcar', 'seasons', 'pay', 'obd', 'hammil', 'store', 'cleaner', 'salati'];
+const APPS = ['car', 'tv', 'ytcar', 'seasons', 'pay', 'obd', 'hammil', 'store', 'cleaner', 'salati', 'sayarati'];
 const CORS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET,POST,DELETE,OPTIONS',
