@@ -2,1128 +2,801 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=1280,height=720">
-<title>مشغّل السيارة v2.1</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>سيارتي</title>
 <style>
-/* ═══════════════ RESET & VARIABLES ═══════════════ */
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --accent:#00b4d8;
-  --accent-glow:rgba(0,180,216,.35);
-  --glass:rgba(255,255,255,.07);
-  --glass-b:rgba(255,255,255,.12);
-  --txt:#f0f0f0;
-  --txt2:rgba(255,255,255,.55);
-  --bg:#0b0f1a;
-  --rad:16px;
+  --accent:#00b4d8;--glow:rgba(0,180,216,.35);
+  --bg:#05070d;--glass:rgba(255,255,255,.07);--glass2:rgba(255,255,255,.12);--line:rgba(255,255,255,.12);
+  --txt:#f1f4f8;--txt2:rgba(241,244,248,.6);--rad:20px;
 }
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{background:var(--bg);overflow:hidden;height:100%}
-body{
-  width:1280px;height:720px;overflow:hidden;
-  font-family:system-ui,-apple-system,'Segoe UI',Tahoma,sans-serif;
-  background:var(--bg);color:var(--txt);direction:rtl;
-  position:relative;user-select:none;
-}
-body::before{
-  content:'';position:absolute;inset:0;z-index:0;
-  background:radial-gradient(ellipse 60% 50% at 20% 30%,rgba(0,180,216,.10) 0%,transparent 70%),
-             radial-gradient(ellipse 50% 50% at 80% 70%,rgba(123,44,191,.08) 0%,transparent 70%);
-  animation:bgP 8s ease-in-out infinite alternate;
-}
-@keyframes bgP{0%{opacity:.6}100%{opacity:1}}
+body{width:1280px;height:720px;overflow:hidden;position:fixed;left:0;top:0;transform-origin:0 0;
+  font-family:system-ui,-apple-system,'Segoe UI',Tahoma,sans-serif;background:var(--bg);color:var(--txt);direction:rtl;user-select:none}
+button{font-family:inherit;color:inherit;border:0;background:none;cursor:pointer}
+input{font-family:inherit}
+svg.i{width:1em;height:1em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+svg.f{fill:currentColor;stroke:none}
 
-/* ═══════════════ SCALING ═══════════════ */
-/* JS applies transform:scale() for other screen sizes */
+/* ═════════ الخلفيات المتحركة ═════════ */
+#bgx{position:absolute;inset:0;z-index:0;overflow:hidden}
+.bgl{position:absolute;inset:0;display:none;overflow:hidden}
+body[data-bg=plain] .b-plain,body[data-bg=earth] .b-earth,body[data-bg=earthc] .b-earth,body[data-bg=earthn] .b-earth,
+body[data-bg=stars] .b-stars,body[data-bg=aurora] .b-aurora,body[data-bg=flow] .b-flow,body[data-bg=road] .b-road{display:block}
+.b-plain{background:radial-gradient(ellipse 60% 50% at 20% 30%,color-mix(in srgb,var(--accent) 16%,transparent),transparent 70%),radial-gradient(ellipse 50% 50% at 80% 75%,rgba(123,44,191,.12),transparent 70%),var(--bg)}
+.stars{position:absolute;top:0;left:0;width:2px;height:2px;border-radius:50%}
+.tw1{animation:tw 4s ease-in-out infinite}.tw2{animation:tw 6s ease-in-out 1s infinite}.tw3{animation:tw 9s ease-in-out 2s infinite}
+@keyframes tw{0%,100%{opacity:1}50%{opacity:.35}}
+/* الكرة الأرضية */
+.b-earth{background:radial-gradient(ellipse at 70% 40%,#0c1838 0%,#03060f 65%,#000 100%)}
+.globe{--gs:880px;position:absolute;width:var(--gs);height:var(--gs);left:-120px;bottom:-380px;border-radius:50%;overflow:hidden;background:#123e78;
+  box-shadow:0 0 60px 10px rgba(90,170,255,.35),0 0 140px 40px rgba(60,130,255,.15)}
+.globe .tex{position:absolute;top:0;left:0;height:100%;width:calc(var(--gs) * 4);background-image:url(earth.jpg);background-repeat:repeat-x;background-size:auto 100%;
+  animation:spinE 120s linear infinite;will-change:transform}
+.globe .lights{display:none;background-image:url(lights.png);mix-blend-mode:screen;opacity:.95}
+@keyframes spinE{from{transform:translateX(0)}to{transform:translateX(calc(var(--gs) * -2))}}
+.globe::after{content:'';position:absolute;inset:0;border-radius:50%;
+  background:radial-gradient(circle at 32% 30%,rgba(255,255,255,.18) 0%,transparent 35%,rgba(0,0,0,.25) 55%,rgba(0,0,0,.88) 78%);
+  box-shadow:inset 0 0 40px 10px rgba(120,190,255,.35)}
+body[data-bg=earthc] .globe{--gs:560px;left:50%;top:50%;bottom:auto;margin:-280px 0 0 -280px}
+body[data-bg=earthn] .globe{--gs:820px;left:auto;right:-140px;bottom:-330px;background:#020611;box-shadow:0 0 60px 8px rgba(255,180,90,.18)}
+body[data-bg=earthn] .globe .tex.day{filter:brightness(.22) saturate(.6)}
+body[data-bg=earthn] .globe .lights{display:block}
+body[data-bg=earthn] .globe::after{background:radial-gradient(circle at 65% 30%,rgba(255,255,255,.05) 0%,transparent 40%,rgba(0,0,0,.6) 80%);box-shadow:inset 0 0 30px 6px rgba(255,170,90,.2)}
+/* النجوم والشهب */
+.b-stars{background:radial-gradient(ellipse at 50% 120%,#1b1440 0%,#070512 55%,#000 100%)}
+.shoot{position:absolute;width:160px;height:2px;background:linear-gradient(90deg,#fff,transparent);border-radius:2px;opacity:0;transform:rotate(-25deg)}
+.shoot.s1{top:12%;left:70%;animation:shoot 7s linear 1s infinite}
+.shoot.s2{top:30%;left:40%;animation:shoot 11s linear 4s infinite}
+@keyframes shoot{0%{opacity:0;transform:rotate(-25deg) translateX(0)}2%{opacity:1}10%{opacity:0;transform:rotate(-25deg) translateX(-600px)}100%{opacity:0;transform:rotate(-25deg) translateX(-600px)}}
+.moon{position:absolute;top:60px;left:90px;width:110px;height:110px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fffbe8,#e9dfb8 55%,#b9ad86);box-shadow:0 0 60px 15px rgba(255,248,220,.18)}
+/* الشفق */
+.b-aurora{background:linear-gradient(180deg,#020814,#04122a 60%,#020a12)}
+.au{position:absolute;width:140%;height:60%;left:-20%;top:-5%;filter:blur(60px);opacity:.55;border-radius:50%;mix-blend-mode:screen}
+.au.a1{background:radial-gradient(ellipse at center,#00ffa3 0%,transparent 60%);animation:au1 18s ease-in-out infinite alternate}
+.au.a2{background:radial-gradient(ellipse at center,#00b4ff 0%,transparent 60%);animation:au2 23s ease-in-out infinite alternate}
+.au.a3{background:radial-gradient(ellipse at center,#b05cff 0%,transparent 60%);animation:au3 27s ease-in-out infinite alternate}
+@keyframes au1{from{transform:translate(-15%,0) scaleY(.6) rotate(-8deg)}to{transform:translate(15%,10%) scaleY(1) rotate(6deg)}}
+@keyframes au2{from{transform:translate(20%,15%) scaleY(.8) rotate(10deg)}to{transform:translate(-20%,0) scaleY(.5) rotate(-6deg)}}
+@keyframes au3{from{transform:translate(0,30%) scaleY(.5)}to{transform:translate(10%,5%) scaleY(.9)}}
+/* تدرّج متحرك */
+.b-flow{background:linear-gradient(125deg,#0b0f2a,color-mix(in srgb,var(--accent) 45%,#05070d),#2a0b3a,#05070d);background-size:400% 400%;animation:flow 25s ease-in-out infinite}
+@keyframes flow{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+/* طريق ليلي */
+.b-road{background:linear-gradient(180deg,#05060f 0%,#14112b 45%,#2a1636 52%,#07070c 52.2%,#0b0b12 100%)}
+.b-road .sun{position:absolute;left:50%;top:22%;width:300px;height:300px;margin-left:-150px;border-radius:50%;
+  background:linear-gradient(180deg,#ffd36b,#ff5f8f 60%,#a23bff);-webkit-mask:repeating-linear-gradient(180deg,#000 0 18px,transparent 18px 24px);mask:repeating-linear-gradient(180deg,#000 0 18px,transparent 18px 24px);opacity:.85}
+.b-road .grid{position:absolute;left:-50%;right:-50%;top:52%;bottom:-40%;
+  background:linear-gradient(transparent 0 94%,color-mix(in srgb,var(--accent) 80%,#fff) 94% 100%) 0 0/100% 60px,
+             linear-gradient(90deg,transparent 0 97%,color-mix(in srgb,var(--accent) 70%,#fff) 97% 100%) 0 0/80px 100%;
+  transform:perspective(320px) rotateX(70deg);transform-origin:top;animation:road 1.2s linear infinite;opacity:.55}
+@keyframes road{to{background-position:0 60px,0 0}}
 
-/* ═══════════════ SCROLLBAR ═══════════════ */
-::-webkit-scrollbar{width:4px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:2px}
-
-/* ═══════════════ GLASS CARD ═══════════════ */
-.g{
-  background:var(--glass);border:1px solid var(--glass-b);
-  border-radius:var(--rad);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
-  box-shadow:0 4px 24px rgba(0,0,0,.2);transition:transform .2s,box-shadow .2s;
-}
-.g:hover{box-shadow:0 6px 32px rgba(0,0,0,.3)}
-.g-click:active{transform:scale(.97)!important;opacity:.85}
-
-/* ═══════════════ LAUNCHER SHELL ═══════════════ */
+/* ═════════ الهيكل ═════════ */
 #L{position:relative;z-index:1;width:100%;height:100%;display:flex;flex-direction:column}
+.g{background:var(--glass);border:1px solid var(--line);border-radius:var(--rad);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 6px 24px rgba(0,0,0,.25)}
+.tap{cursor:pointer;transition:transform .15s,background .2s}
+.tap:active{transform:scale(.96)}
+button:active{transform:scale(.94)}
 
-/* ── Top Bar ── */
-.tb{
-  height:34px;display:flex;align-items:center;justify-content:space-between;
-  padding:0 24px;font-size:12px;color:var(--txt2);flex-shrink:0;
-  border-bottom:1px solid rgba(255,255,255,.05);
-}
-.tb-g{display:flex;align-items:center;gap:12px}
-.tb .on{color:#00e676} .tb .off{color:#ef5350}
+/* الشريط العلوي */
+.tb{height:40px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 22px;font-size:14px;color:var(--txt2)}
+.tb-g{display:flex;align-items:center;gap:6px}
+.sb{display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:999px;font-size:13px;color:var(--txt2)}
+.sb svg{font-size:17px}
+.sb.on{color:var(--txt)} .sb.on svg{color:var(--accent)}
+.sb.off{opacity:.45}
+.sb.bt.conn svg{color:#4dabff;filter:drop-shadow(0 0 6px #4dabff)}
 
-/* ── Content ── */
+/* المحتوى */
 .ct{flex:1;position:relative;overflow:hidden}
-.pg{
-  position:absolute;inset:0;padding:16px 24px;
-  opacity:0;visibility:hidden;transition:opacity .3s ease,visibility 0s .3s;
-  overflow-y:auto;overflow-x:hidden;
-}
-.pg.act{opacity:1;visibility:visible;transition:opacity .3s ease,visibility 0s 0s}
+.pg{position:absolute;inset:0;padding:6px 22px 12px;opacity:0;visibility:hidden;transition:opacity .3s,visibility 0s .3s}
+.pg.act{opacity:1;visibility:visible;transition:opacity .3s,visibility 0s}
+.scroll{overflow-y:auto}
 
-/* ── Dock ── */
-.dk{
-  height:64px;display:flex;align-items:center;justify-content:center;
-  gap:6px;padding:0 16px;flex-shrink:0;
-  border-top:1px solid rgba(255,255,255,.05);
-}
-.dk-b{
-  display:flex;align-items:center;justify-content:center;gap:7px;
-  padding:8px 18px;border:1px solid var(--glass-b);border-radius:14px;
-  background:var(--glass);color:var(--txt);font-family:inherit;font-size:13px;
-  cursor:pointer;backdrop-filter:blur(10px);transition:all .2s;
-}
-.dk-b:hover{background:rgba(255,255,255,.12);transform:translateY(-2px)}
-.dk-b:active{transform:scale(.95)}
-.dk-b .di{font-size:18px}
-.dk-b.act{
-  background:linear-gradient(135deg,var(--accent),color-mix(in srgb,var(--accent),#000 30%));
-  border-color:var(--accent);box-shadow:0 4px 16px var(--accent-glow);color:#fff;
-}
+/* الشريط السفلي */
+.dk{height:76px;flex:none;display:flex;align-items:center;justify-content:center;gap:8px;padding:0 16px 8px}
+.dk-b{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;width:96px;height:62px;border-radius:18px;font-size:12.5px;color:var(--txt2);transition:all .2s}
+.dk-b svg{font-size:24px}
+.dk-b.act{background:var(--glass2);color:#fff;box-shadow:inset 0 0 0 1px var(--line)}
+.dk-b.act svg{color:var(--accent);filter:drop-shadow(0 0 8px var(--glow))}
+.dk-wrap{display:flex;gap:4px;padding:6px;border-radius:24px}
+.credit{position:absolute;left:24px;bottom:22px;font-size:13px;color:rgba(255,255,255,.45);z-index:2}
+.credit b{color:var(--accent)}
 
-/* ═══════════════ HOME SCREEN ═══════════════ */
-.hg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;height:100%}
-.hc{display:flex;flex-direction:column;gap:12px;justify-content:space-between}
+/* ═════════ عناصر مشتركة ═════════ */
+.clk{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px}
+.clk .t{font-size:84px;font-weight:800;line-height:1;letter-spacing:1px;background:linear-gradient(135deg,#fff 30%,var(--accent));-webkit-background-clip:text;background-clip:text;color:transparent}
+.clk .t sup{font-size:.32em;color:var(--accent);-webkit-text-fill-color:var(--accent);margin-right:6px;vertical-align:top;position:relative;top:.4em}
+.clk .ap{font-size:.3em;-webkit-text-fill-color:var(--txt2);margin-right:4px}
+.clk .d{margin-top:10px;font-size:15px;color:var(--txt2)}
+.clk .h{margin-top:4px;font-size:15px;color:var(--accent);font-weight:700}
+.wx{display:flex;align-items:center;gap:14px;padding:16px 20px}
+.wx .wi{font-size:50px;line-height:1}
+.wx .wt{font-size:38px;font-weight:800}
+.wx .wd{font-size:14px;color:var(--txt2)}
+.wx .wl{font-size:12.5px;color:var(--accent);margin-top:2px}
+.qa{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;padding:14px 10px}
+.qa button{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px;color:var(--txt2)}
+.ico{width:54px;height:54px;border-radius:16px;display:grid;place-items:center;font-size:26px;color:#fff;box-shadow:0 6px 16px rgba(0,0,0,.3)}
+.c-yt{background:linear-gradient(135deg,#ff2d2d,#c4001a)}.c-map{background:linear-gradient(135deg,#34a853,#1a73e8)}
+.c-ph{background:linear-gradient(135deg,#2ee66b,#0a9d43)}.c-mu{background:linear-gradient(135deg,#ff4f9a,#a020f0)}
+.c-st{background:linear-gradient(135deg,#8a9bb0,#4a5868)}.c-ap{background:linear-gradient(135deg,#ffb020,#ff6a00)}
+.c-bt{background:linear-gradient(135deg,#3d8bff,#1747c9)}.c-wf{background:linear-gradient(135deg,#29c5f6,#0a7fd1)}
+.c-snd{background:linear-gradient(135deg,#ff6b6b,#d63031)}.c-dsp{background:linear-gradient(135deg,#ffd43b,#f08c00)}
+.c-loc{background:linear-gradient(135deg,#51cf66,#2b8a3e)}.c-hm{background:linear-gradient(135deg,#9775fa,#5f3dc4)}
+.c-ac{background:linear-gradient(135deg,var(--accent),color-mix(in srgb,var(--accent),#000 40%))}
+/* بطاقة الموسيقى */
+.mu{display:flex;flex-direction:column;justify-content:center;gap:14px;padding:18px 20px}
+.mu .top{display:flex;align-items:center;gap:14px}
+.art{width:72px;height:72px;border-radius:16px;flex:none;display:grid;place-items:center;font-size:32px;color:#fff;background:linear-gradient(135deg,var(--accent),#7b2cbf);box-shadow:0 8px 20px var(--glow)}
+.art.spin{animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(1.05)}}
+.mu .ti{font-size:17px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mu .sub{font-size:13px;color:var(--txt2)}
+.bar{height:5px;border-radius:5px;background:rgba(255,255,255,.12);overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--accent);border-radius:5px}
+.ctl{direction:ltr;display:flex;align-items:center;justify-content:center;gap:14px}
+.cb{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;font-size:20px;background:var(--glass2)}
+.cb.pp{width:62px;height:62px;font-size:26px;background:var(--accent);color:#fff;box-shadow:0 6px 20px var(--glow)}
+.cb.on{color:var(--accent);box-shadow:inset 0 0 0 2px var(--accent)}
+/* صندوق يوتيوب */
+.ytbox{position:relative;overflow:hidden;display:flex;flex-direction:column}
+.ytbox .yth{display:flex;align-items:center;gap:8px;padding:10px 14px;font-weight:700;font-size:14px;flex:none}
+.ytbox .yth .ylogo{width:30px;height:21px;border-radius:6px;background:#ff0000;display:grid;place-items:center;font-size:11px;color:#fff}
+.ytbox .yth .sp{flex:1}
+.ytbox .yth button{width:34px;height:34px;border-radius:10px;background:var(--glass2);display:grid;place-items:center;font-size:17px}
+.ytarea{flex:1;margin:0 10px 10px;border-radius:14px;background:#000 radial-gradient(circle at 50% 45%,rgba(255,0,0,.25),transparent 60%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--txt2);font-size:14px;position:relative}
+.ytarea .big{width:86px;height:60px;border-radius:16px;background:#ff0000;display:grid;place-items:center;font-size:30px;color:#fff;box-shadow:0 10px 30px rgba(255,0,0,.35)}
+.ytarea b{color:#fff;font-size:17px}
+/* السرعة */
+.trip{display:flex;align-items:center;justify-content:center;gap:22px;padding:14px;font-size:14px;color:var(--txt2)}
+.trip b{color:var(--txt);font-size:16px}
 
-/* Clock */
-.clk-card{padding:24px 20px 18px;text-align:center;flex:1;display:flex;flex-direction:column;justify-content:center}
-.clk-t{
-  font-size:68px;font-weight:700;line-height:1;
-  background:linear-gradient(135deg,#fff,var(--accent));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-}
-.clk-s{font-size:26px;-webkit-text-fill-color:var(--accent);background:none;vertical-align:super;margin-right:4px}
-.clk-d{margin-top:8px;display:flex;justify-content:center;gap:14px;font-size:13px;color:var(--txt2);flex-wrap:wrap}
-.clk-d .hij{color:var(--accent);font-weight:700}
+/* ═════════ أشكال الواجهة ═════════ */
+.lay{display:none;height:100%}
+body[data-layout=classic] .l-classic,body[data-layout=youtube] .l-youtube,body[data-layout=minimal] .l-minimal,body[data-layout=dash] .l-dash{display:grid}
+.col{display:flex;flex-direction:column;gap:14px;min-height:0;min-width:0}
+.col>.grow{flex:1;min-height:0}
+.l-classic{grid-template-columns:1fr 1.15fr 1fr;gap:14px}
+.l-youtube{grid-template-columns:330px 1fr;gap:14px}
+.l-youtube .clk .t{font-size:62px}
+.l-youtube .mu .art{width:56px;height:56px}
+.l-minimal{grid-template-rows:1fr auto;justify-items:center;gap:10px}
+.l-minimal .clk{background:none;border:0;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}
+.l-minimal .clk .t{font-size:170px;text-shadow:0 10px 50px rgba(0,0,0,.35)}
+.l-minimal .clk .d,.l-minimal .clk .h{font-size:22px}
+.l-minimal .mwx{margin-top:14px;display:flex;align-items:center;gap:10px;font-size:22px;color:var(--txt2)}
+.l-minimal .mwx b{color:#fff;font-size:26px}
+.l-minimal .qa{width:640px;border-radius:26px}
+.l-dash{grid-template-columns:1fr 1.25fr 1fr;gap:14px}
+.gauge{display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative}
+.gauge svg.ring{width:330px;height:330px;transform:rotate(135deg)}
+.gauge .gv{position:absolute;top:50%;left:50%;transform:translate(-50%,-58%);text-align:center}
+.gauge .gv b{display:block;font-size:92px;font-weight:800;line-height:1}
+.gauge .gv span{color:var(--txt2);font-size:16px}
+.gauge .gt{margin-top:-24px;color:var(--txt2);font-size:15px}
+.gauge .gt b{color:var(--txt)}
 
-/* Quick Apps */
-.qa{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:12px 8px;align-content:center}
-.qa-b{
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
-  padding:10px 2px 8px;cursor:pointer;border:none;background:transparent;
-  color:var(--txt);font-family:inherit;font-size:11px;border-radius:12px;transition:all .15s;
-}
-.qa-b:hover{background:rgba(255,255,255,.06)}
-.qa-b:active{transform:scale(.9)}
-.qa-b .qi{
-  width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;
-  font-size:22px;transition:transform .15s;
-}
-.qa-b span{color:var(--txt2);font-size:11px;margin-top:1px}
+/* ═════════ صفحة يوتيوب ═════════ */
+.yt-pg{display:flex;flex-direction:column;height:100%}
+.yt-pg .ytbox{flex:1}
 
-/* Weather */
-.wc{padding:18px 20px;display:flex;align-items:center;gap:14px}
-.wc-i{font-size:48px;filter:drop-shadow(0 2px 8px rgba(0,180,216,.25))}
-.wc-t{font-size:34px;font-weight:700;background:linear-gradient(135deg,#fff,var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.wc-ds{font-size:13px;color:var(--txt2);margin-top:2px}
-.wc-loc{font-size:12px;color:var(--accent);margin-top:3px}
+/* ═════════ الهاتف ═════════ */
+.ph{display:grid;grid-template-columns:1fr 1fr;gap:14px;height:100%}
+.ph-l{display:flex;flex-direction:column;gap:10px;padding:16px}
+.ph-disp{height:64px;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:700;letter-spacing:3px;direction:ltr;border-radius:16px;background:rgba(0,0,0,.25)}
+.keys{flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.keys button{border-radius:16px;background:var(--glass2);font-size:28px;font-weight:600}
+.ph-act{display:flex;gap:10px}
+.ph-act .call{flex:1;height:60px;border-radius:18px;background:linear-gradient(135deg,#2ee66b,#0a9d43);font-size:20px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px}
+.ph-act .del{width:80px;height:60px;border-radius:18px;background:var(--glass2);font-size:24px;display:grid;place-items:center}
+.ph-r{padding:16px;display:flex;flex-direction:column;gap:10px;min-height:0}
+.ph-r h3,.card h3{font-size:16px;display:flex;align-items:center;gap:8px}
+.rec{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px}
+.rec .it{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.05)}
+.rec .it b{direction:ltr;font-size:18px}.rec .it small{color:var(--txt2)}
+.empty{color:var(--txt2);text-align:center;margin:auto;font-size:14px}
 
-/* Map shortcut */
-.mc{
-  flex:1;min-height:140px;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:8px;cursor:pointer;position:relative;overflow:hidden;
-}
-.mc::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(26,115,232,.12),rgba(52,168,83,.08));border-radius:var(--rad)}
-.mc *{position:relative}
-.mc .mi{font-size:48px;filter:drop-shadow(0 2px 10px rgba(26,115,232,.35))}
-.mc .ml{font-size:15px;font-weight:700}
-.mc .ms{font-size:11px;color:var(--txt2)}
+/* ═════════ الموسيقى ═════════ */
+.mp{display:grid;grid-template-columns:1.1fr 1fr;gap:14px;height:100%}
+.mp-main{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:20px}
+.mp-main .art{width:170px;height:170px;border-radius:32px;font-size:70px}
+.mp-main .ti{font-size:22px;font-weight:700;max-width:90%;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.seek{direction:ltr;width:85%;display:flex;flex-direction:column;gap:6px}
+.seek .tm{display:flex;justify-content:space-between;font-size:12px;color:var(--txt2);direction:ltr}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:6px;background:rgba(255,255,255,.15);outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--glow)}
+.vol{direction:ltr;width:70%;display:flex;align-items:center;gap:10px;color:var(--txt2);font-size:18px}
+.pl{padding:16px;display:flex;flex-direction:column;gap:10px;min-height:0}
+.pl .hd{display:flex;align-items:center;justify-content:space-between}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 16px;border-radius:14px;background:var(--accent);color:#fff;font-size:14px;font-weight:700}
+.btn.ghost{background:var(--glass2);color:var(--txt)}
+.pl .list{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:6px}
+.pl .tr{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.05);font-size:15px;cursor:pointer}
+.pl .tr.cur{background:color-mix(in srgb,var(--accent) 25%,transparent);box-shadow:inset 0 0 0 1px var(--accent)}
+.pl .tr span{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
-/* Mini Player */
-.mp{padding:18px;display:flex;flex-direction:column;gap:12px;flex:1;justify-content:center}
-.mp-h{display:flex;align-items:center;gap:14px}
-.mp-art{
-  width:70px;height:70px;border-radius:14px;flex-shrink:0;
-  background:linear-gradient(135deg,#1db954,#191414);
-  display:flex;align-items:center;justify-content:center;font-size:28px;
-  box-shadow:0 4px 16px rgba(29,185,84,.2);
-}
-.mp-inf{flex:1;min-width:0}
-.mp-tt{font-size:15px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mp-ar{font-size:12px;color:var(--txt2);margin-top:2px}
-.mp-ct{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:4px}
-.mp-btn{
-  width:38px;height:38px;border-radius:50%;border:none;
-  background:rgba(255,255,255,.08);color:var(--txt);font-size:16px;
-  cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;
-}
-.mp-btn:hover{background:rgba(255,255,255,.15)}
-.mp-btn:active{transform:scale(.9)}
-.mp-btn.pp{width:46px;height:46px;background:var(--accent);font-size:20px;box-shadow:0 3px 14px var(--accent-glow)}
-.mp-btn.pp:hover{transform:scale(1.08)}
+/* ═════════ الملاحة ═════════ */
+.nv{display:flex;flex-direction:column;gap:14px;height:100%}
+.nv-s{display:flex;gap:10px;padding:10px}
+.nv-s input{flex:1;height:54px;border-radius:16px;border:1px solid var(--line);background:rgba(0,0,0,.25);color:var(--txt);font-size:18px;padding:0 18px;outline:none}
+.nv-s input:focus{border-color:var(--accent)}
+.nv-s .btn{height:54px;padding:0 26px;font-size:17px}
+.nv-map{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;position:relative;overflow:hidden}
+.nv-map::before{content:'';position:absolute;inset:0;opacity:.35;background:
+  linear-gradient(90deg,transparent 0 48%,rgba(255,255,255,.18) 48% 52%,transparent 52%) 0 0/120px 120px,
+  linear-gradient(0deg,transparent 0 48%,rgba(255,255,255,.12) 48% 52%,transparent 52%) 0 0/120px 120px,
+  radial-gradient(circle at 30% 40%,rgba(52,168,83,.4),transparent 30%),radial-gradient(circle at 70% 70%,rgba(26,115,232,.4),transparent 30%)}
+.nv-map>*{position:relative}
+.nv-map .pin{font-size:64px;color:#ff4757;filter:drop-shadow(0 8px 16px rgba(0,0,0,.5))}
+.nv-map b{font-size:20px}
+.nv-q{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.nv-q button{display:flex;align-items:center;justify-content:center;gap:10px;height:76px;font-size:17px;font-weight:700}
+.nv-q .ico{width:44px;height:44px;font-size:22px;border-radius:13px}
 
-/* Status cards */
-.sc{padding:12px 16px;display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--txt2)}
-.sc-g{display:flex;gap:14px;align-items:center}
-.sc-dot{width:6px;height:6px;border-radius:50%;background:#00e676;box-shadow:0 0 5px #00e676}
-.sc-dot.bt{background:#42a5f5;box-shadow:0 0 5px #42a5f5}
+/* ═════════ التطبيقات ═════════ */
+.ap{display:flex;flex-direction:column;gap:12px;height:100%}
+.ap-s{display:flex;align-items:center;gap:10px;padding:0 16px;height:54px;flex:none}
+.ap-s input{flex:1;background:none;border:0;outline:none;color:var(--txt);font-size:17px}
+.ap-g{flex:1;overflow-y:auto;display:grid;grid-template-columns:repeat(8,1fr);gap:10px;align-content:start;padding:4px}
+.ap-g button{display:flex;flex-direction:column;align-items:center;gap:7px;padding:12px 4px;border-radius:18px;font-size:12.5px;color:var(--txt2)}
+.ap-g button:hover{background:rgba(255,255,255,.05)}
+.ap-g img{width:58px;height:58px;border-radius:16px}
+.ap-g span{max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
-/* ═══════════════ PHONE SCREEN ═══════════════ */
-.ph-l{display:grid;grid-template-columns:1.1fr 1fr;gap:18px;height:100%}
-.ph-pad{display:flex;flex-direction:column;gap:12px}
-.ph-disp{
-  padding:16px 20px;text-align:center;min-height:64px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:32px;font-weight:700;letter-spacing:2px;direction:ltr;
-  color:var(--txt);word-break:break-all;
-}
-.dpad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.dk-y{
-  height:54px;border-radius:14px;border:none;
-  background:var(--glass);border:1px solid var(--glass-b);
-  color:var(--txt);font-size:22px;font-family:inherit;font-weight:600;
-  cursor:pointer;transition:all .12s;display:flex;align-items:center;justify-content:center;
-}
-.dk-y:hover{background:rgba(255,255,255,.12)}
-.dk-y:active{background:var(--accent);transform:scale(.93);color:#fff}
-.ph-actions{display:flex;gap:10px}
-.ph-call{
-  flex:1;height:50px;border-radius:14px;border:none;
-  background:linear-gradient(135deg,#00c853,#009624);color:#fff;
-  font-size:22px;cursor:pointer;transition:all .15s;
-  display:flex;align-items:center;justify-content:center;gap:8px;font-family:inherit;
-}
-.ph-call:active{transform:scale(.95)}
-.ph-del{
-  width:60px;height:50px;border-radius:14px;border:none;
-  background:rgba(255,255,255,.08);color:var(--txt);font-size:20px;
-  cursor:pointer;transition:all .15s;
-}
-.ph-del:active{transform:scale(.92);background:rgba(239,83,80,.3)}
-.ph-rec{display:flex;flex-direction:column;gap:8px;overflow-y:auto;max-height:100%}
-.ph-rec-t{font-size:15px;font-weight:700;margin-bottom:4px;color:var(--txt)}
-.ph-ri{
-  padding:12px 14px;display:flex;align-items:center;justify-content:space-between;
-  cursor:pointer;border-radius:12px;transition:background .15s;
-}
-.ph-ri:hover{background:rgba(255,255,255,.06)}
-.ph-ri:active{background:rgba(255,255,255,.1)}
-.ph-ri-n{font-size:16px;font-weight:600;direction:ltr}
-.ph-ri-t{font-size:11px;color:var(--txt2)}
-.ph-ri-ic{font-size:18px;color:#00c853}
-.ph-empty{text-align:center;padding:40px 0;color:var(--txt2);font-size:14px}
+/* ═════════ الإعدادات ═════════ */
+.st{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-content:start;height:100%;overflow-y:auto;padding-bottom:6px}
+.card{padding:16px 18px;display:flex;flex-direction:column;gap:12px}
+.card.wide{grid-column:1/-1}
+.card h3 .ico{width:34px;height:34px;font-size:18px;border-radius:10px}
+.opts{display:grid;gap:10px}
+.opts.c4{grid-template-columns:repeat(4,1fr)}.opts.c8{grid-template-columns:repeat(8,1fr)}
+.opt{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12.5px;color:var(--txt2)}
+.opt .pv{width:100%;aspect-ratio:16/9;border-radius:12px;border:2px solid transparent;overflow:hidden;position:relative;background:#0d1220}
+.opt.sel .pv{border-color:var(--accent);box-shadow:0 0 14px var(--glow)}
+.opt.sel{color:#fff;font-weight:700}
+.pv i{position:absolute;background:rgba(255,255,255,.22);border-radius:3px}
+.cols{display:flex;gap:12px}
+.cols button{width:42px;height:42px;border-radius:50%;border:3px solid transparent}
+.cols button.sel{border-color:#fff;box-shadow:0 0 12px rgba(255,255,255,.4)}
+.row{display:flex;align-items:center;gap:12px;font-size:15px}
+.row .ico{width:34px;height:34px;font-size:18px;border-radius:10px}
+.row span{flex:1}
+.sw{width:56px;height:32px;border-radius:999px;background:rgba(255,255,255,.18);position:relative;transition:background .2s;flex:none}
+.sw::after{content:'';position:absolute;top:3px;right:3px;width:26px;height:26px;border-radius:50%;background:#fff;transition:right .2s}
+.sw.on{background:var(--accent)}.sw.on::after{right:27px}
+.sys{display:grid;grid-template-columns:repeat(8,1fr);gap:10px}
+.sys button{display:flex;flex-direction:column;align-items:center;gap:7px;font-size:12.5px;color:var(--txt2);padding:6px 0;border-radius:14px}
+.about{display:flex;align-items:center;gap:16px}
+.about .lg{width:64px;height:64px;border-radius:18px;font-size:32px}
+.about b{font-size:20px}.about small{display:block;color:var(--txt2);font-size:14px}
 
-/* ═══════════════ MUSIC SCREEN ═══════════════ */
-.mu-l{display:grid;grid-template-columns:1fr 1fr;gap:18px;height:100%}
-.mu-player{display:flex;flex-direction:column;align-items:center;gap:14px;justify-content:center}
-.mu-art{
-  width:160px;height:160px;border-radius:24px;
-  background:linear-gradient(135deg,var(--accent),#191414);
-  display:flex;align-items:center;justify-content:center;font-size:56px;
-  box-shadow:0 8px 32px rgba(0,0,0,.4);
-}
-.mu-art.playing{animation:artSpin 8s linear infinite}
-@keyframes artSpin{0%{border-radius:24px}50%{border-radius:50%}100%{border-radius:24px}}
-.mu-tit{font-size:20px;font-weight:700;text-align:center;max-width:90%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mu-art-name{font-size:13px;color:var(--txt2);text-align:center}
-.mu-seek{width:90%;display:flex;flex-direction:column;gap:4px}
-.mu-seek input[type=range]{
-  -webkit-appearance:none;appearance:none;width:100%;height:5px;
-  border-radius:3px;background:rgba(255,255,255,.1);outline:none;cursor:pointer;
-}
-.mu-seek input[type=range]::-webkit-slider-thumb{
-  -webkit-appearance:none;width:14px;height:14px;border-radius:50%;
-  background:var(--accent);box-shadow:0 0 6px var(--accent-glow);cursor:pointer;
-}
-.mu-times{display:flex;justify-content:space-between;font-size:11px;color:var(--txt2)}
-.mu-ctrls{display:flex;align-items:center;gap:18px}
-.mu-cb{
-  width:42px;height:42px;border-radius:50%;border:none;
-  background:rgba(255,255,255,.08);color:var(--txt);font-size:17px;
-  cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;
-}
-.mu-cb:hover{background:rgba(255,255,255,.15)}
-.mu-cb:active{transform:scale(.9)}
-.mu-cb.pp{width:54px;height:54px;background:var(--accent);font-size:22px;box-shadow:0 4px 18px var(--accent-glow)}
-.mu-cb.pp:hover{transform:scale(1.08)}
-.mu-cb.on{color:var(--accent)}
-.mu-vol{width:90%;display:flex;align-items:center;gap:10px;font-size:16px;color:var(--txt2)}
-.mu-vol input[type=range]{flex:1;-webkit-appearance:none;appearance:none;height:5px;border-radius:3px;background:rgba(255,255,255,.1);outline:none;cursor:pointer}
-.mu-vol input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;border-radius:50%;background:var(--accent);cursor:pointer}
-.mu-pl{display:flex;flex-direction:column;gap:8px;height:100%;overflow:hidden}
-.mu-pl-t{font-size:16px;font-weight:700;display:flex;align-items:center;justify-content:space-between}
-.mu-add{
-  padding:8px 16px;border-radius:10px;border:1px dashed var(--glass-b);
-  background:transparent;color:var(--accent);font-family:inherit;font-size:13px;
-  cursor:pointer;transition:all .15s;
-}
-.mu-add:hover{background:rgba(0,180,216,.1);border-color:var(--accent)}
-.mu-add:active{transform:scale(.95)}
-.mu-list{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:4px}
-.mu-item{
-  padding:10px 14px;border-radius:10px;display:flex;align-items:center;gap:10px;
-  cursor:pointer;transition:all .15s;font-size:13px;
-}
-.mu-item:hover{background:rgba(255,255,255,.06)}
-.mu-item:active{background:rgba(255,255,255,.1)}
-.mu-item.cur{background:rgba(0,180,216,.12);color:var(--accent)}
-.mu-item .mu-idx{font-size:11px;color:var(--txt2);min-width:20px}
-.mu-item .mu-fn{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mu-empty{text-align:center;padding:60px 0;color:var(--txt2);font-size:14px}
-
-/* ═══════════════ NAV SCREEN ═══════════════ */
-.nv-l{display:flex;flex-direction:column;align-items:center;gap:16px;height:100%;max-width:800px;margin:0 auto}
-.nv-search{width:100%;display:flex;gap:10px}
-.nv-inp{
-  flex:1;padding:14px 20px;border-radius:14px;border:1px solid var(--glass-b);
-  background:var(--glass);color:var(--txt);font-family:inherit;font-size:16px;
-  outline:none;direction:rtl;
-}
-.nv-inp::placeholder{color:var(--txt2)}
-.nv-inp:focus{border-color:var(--accent);box-shadow:0 0 12px var(--accent-glow)}
-.nv-go{
-  padding:14px 28px;border-radius:14px;border:none;
-  background:linear-gradient(135deg,var(--accent),color-mix(in srgb,var(--accent),#000 25%));
-  color:#fff;font-family:inherit;font-size:16px;font-weight:700;cursor:pointer;transition:all .15s;
-}
-.nv-go:hover{transform:scale(1.04)}
-.nv-go:active{transform:scale(.95)}
-.nv-map{
-  flex:1;width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:12px;position:relative;overflow:hidden;cursor:pointer;
-}
-.nv-map::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(26,115,232,.1),rgba(52,168,83,.06));border-radius:var(--rad)}
-.nv-map *{position:relative}
-.nv-map .nm-i{font-size:72px;filter:drop-shadow(0 4px 16px rgba(26,115,232,.3))}
-.nv-map .nm-t{font-size:18px;font-weight:700}
-.nv-map .nm-s{font-size:12px;color:var(--txt2)}
-.nv-short{width:100%;display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-.nv-sb{
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
-  padding:14px 8px;cursor:pointer;font-size:12px;color:var(--txt);font-family:inherit;border:none;
-}
-.nv-sb:active{transform:scale(.93)}
-.nv-sb .ns-i{font-size:28px}
-
-/* ═══════════════ APPS SCREEN ═══════════════ */
-.ap-g{
-  display:grid;grid-template-columns:repeat(4,1fr);gap:14px;
-  max-width:900px;margin:20px auto;
-}
-.ap-t{
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
-  padding:24px 12px;cursor:pointer;text-decoration:none;color:var(--txt);
-  font-family:inherit;font-size:13px;border:none;
-}
-.ap-t:active{transform:scale(.92)}
-.ap-t .at-i{
-  width:60px;height:60px;border-radius:18px;display:flex;align-items:center;justify-content:center;
-  font-size:28px;transition:transform .15s;
-}
-.ap-t:hover .at-i{transform:scale(1.1)}
-.ap-t span{color:var(--txt2);font-size:12px}
-
-/* ═══════════════ SETTINGS SCREEN ═══════════════ */
-.st-l{display:flex;flex-direction:column;gap:14px;max-width:700px;margin:0 auto;padding-bottom:20px}
-.st-card{padding:20px 24px}
-.st-title{font-size:15px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px}
-.st-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.st-label{font-size:14px;color:var(--txt2)}
-.st-colors{display:flex;gap:12px}
-.st-co{
-  width:40px;height:40px;border-radius:50%;border:3px solid transparent;
-  cursor:pointer;transition:all .2s;
-}
-.st-co:hover{transform:scale(1.15)}
-.st-co.sel{border-color:#fff;box-shadow:0 0 10px var(--accent-glow)}
-.tog{
-  width:50px;height:26px;border-radius:13px;background:rgba(255,255,255,.15);
-  cursor:pointer;position:relative;transition:background .3s;border:none;
-}
-.tog.on{background:var(--accent)}
-.tog::after{
-  content:'';position:absolute;width:20px;height:20px;border-radius:50%;
-  background:#fff;top:3px;left:3px;transition:transform .3s;
-}
-.tog.on::after{transform:translateX(24px)}
-.st-slider{
-  -webkit-appearance:none;appearance:none;width:200px;height:5px;border-radius:3px;
-  background:rgba(255,255,255,.1);outline:none;cursor:pointer;
-}
-.st-slider::-webkit-slider-thumb{
-  -webkit-appearance:none;width:16px;height:16px;border-radius:50%;
-  background:var(--accent);cursor:pointer;box-shadow:0 0 6px var(--accent-glow);
-}
-.st-about{text-align:center;padding:16px;font-size:13px;color:var(--txt2);line-height:1.8}
-.st-about .cr-name{color:var(--accent);font-weight:700;font-size:16px}
-.st-about .cr-ver{color:var(--txt2);font-size:12px}
-
-/* ═══════════════ CREDIT ═══════════════ */
-.credit{
-  position:fixed;bottom:22px;left:24px;font-size:14px;
-  color:rgba(255,255,255,.4);z-index:10;letter-spacing:.3px;
-}
-.credit b{color:var(--accent);font-weight:700}
-
-/* ═══════════════ BRIGHTNESS OVERLAY ═══════════════ */
-#bri{position:fixed;inset:0;background:#000;opacity:0;pointer-events:none;z-index:999}
-
-/* ═══════════════ ANIMATIONS ═══════════════ */
-@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-.g{animation:fadeUp .4s ease-out backwards}
-.toast{position:fixed;left:50%;bottom:110px;transform:translateX(-50%) translateY(20px);background:rgba(20,24,34,.95);color:#fff;border:1px solid var(--accent);padding:12px 26px;border-radius:14px;font-size:16px;opacity:0;pointer-events:none;transition:all .3s;z-index:9999;box-shadow:0 0 20px var(--accent-glow)}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-button,.g-click,.st-co{cursor:pointer;-webkit-tap-highlight-color:transparent}
-button:active,.st-co:active{transform:scale(.94)}
+/* ═════════ تنبيه ═════════ */
+.toast{position:absolute;left:50%;bottom:96px;z-index:50;transform:translate(-50%,20px);background:rgba(15,18,28,.95);border:1px solid var(--accent);color:#fff;padding:12px 26px;border-radius:16px;font-size:16px;opacity:0;pointer-events:none;transition:all .3s;box-shadow:0 0 20px var(--glow)}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+#bri{position:absolute;inset:0;background:#000;pointer-events:none;z-index:60;opacity:0}
 </style>
 </head>
-<body>
-<div class="toast" id="toast"></div>
-<div id="L">
-
-<!-- ═══ TOP BAR ═══ -->
-<div class="tb">
-  <div class="tb-g">
-    <span id="tbClk">١٢:٠٠</span>
-    <span style="opacity:.3">|</span>
-    <span id="tbDate">...</span>
-  </div>
-  <div class="tb-g">
-    <span id="tbNet" class="on">● متصل</span>
-    <span style="opacity:.3">|</span>
-    <span id="tbBat">🔋 --٪</span>
-  </div>
+<body data-layout="classic" data-bg="earth">
+<div id="bgx">
+  <div class="bgl b-plain"></div>
+  <div class="bgl b-earth"><i class="stars tw1 st1"></i><i class="stars tw2 st2"></i><div class="globe"><div class="tex day"></div><div class="tex lights"></div></div></div>
+  <div class="bgl b-stars"><i class="stars tw1 st1"></i><i class="stars tw2 st2"></i><i class="stars tw3 st3"></i><div class="moon"></div><div class="shoot s1"></div><div class="shoot s2"></div></div>
+  <div class="bgl b-aurora"><i class="stars tw2 st2"></i><div class="au a1"></div><div class="au a2"></div><div class="au a3"></div></div>
+  <div class="bgl b-flow"></div>
+  <div class="bgl b-road"><i class="stars tw1 st1"></i><div class="sun"></div><div class="grid"></div></div>
 </div>
+<div id="bri"></div>
+<div class="toast" id="toast"></div>
 
-<!-- ═══ CONTENT ═══ -->
-<div class="ct">
+<div id="L">
+  <!-- الشريط العلوي -->
+  <div class="tb">
+    <div class="tb-g"><b class="x-time-s" style="color:var(--txt);font-size:15px"></b><span class="x-date-s"></span></div>
+    <div class="tb-g">
+      <button class="sb bt tap" id="sbBt" onclick="sysOpen('bt')"><i data-ic="bt"></i><span>بلوتوث</span></button>
+      <button class="sb wf tap" id="sbWf" onclick="sysOpen('wifi')"><i data-ic="wifi"></i><span id="sbWfT">واي فاي</span></button>
+      <span class="sb" id="sbNet"><span id="sbNetT">متصل</span></span>
+      <span class="sb" id="sbBat"><i data-ic="bat"></i><span id="sbBatT">--</span></span>
+    </div>
+  </div>
 
-<!-- ── HOME ── -->
-<div class="pg act" data-pg="home">
-  <div class="hg">
-    <!-- Col 1: Clock + Quick Apps -->
-    <div class="hc">
-      <div class="clk-card g">
-        <div class="clk-t" id="clk"><span class="clk-s">٠٠</span>١٢:٠٠</div>
-        <div class="clk-d">
-          <span id="dGreg">...</span>
-          <span style="opacity:.4">•</span>
-          <span class="hij" id="dHij">...</span>
+  <div class="ct">
+    <!-- ══════ الرئيسية ══════ -->
+    <div class="pg act" data-pg="home">
+      <!-- كلاسيك -->
+      <div class="lay l-classic">
+        <div class="col">
+          <div class="g clk grow"><div class="t x-time"></div><div class="d x-date"></div><div class="h x-hij"></div></div>
+          <div class="g qa x-qa"></div>
         </div>
-      </div>
-      <div class="qa g">
-        <button class="qa-b" onclick="openApp('https://youtube.com')">
-          <div class="qi" style="background:linear-gradient(135deg,#ff0000,#cc0000)">▶</div>
-          <span>يوتيوب</span>
-        </button>
-        <button class="qa-b" onclick="openApp('https://maps.google.com')">
-          <div class="qi" style="background:linear-gradient(135deg,#34a853,#1a73e8)">📍</div>
-          <span>خرائط</span>
-        </button>
-        <button class="qa-b" onclick="switchPage('phone')">
-          <div class="qi" style="background:linear-gradient(135deg,#00c853,#009624)">📞</div>
-          <span>الهاتف</span>
-        </button>
-        <button class="qa-b" onclick="switchPage('settings')">
-          <div class="qi" style="background:linear-gradient(135deg,#78909c,#455a64)">⚙</div>
-          <span>الإعدادات</span>
-        </button>
-        <button class="qa-b" onclick="switchPage('music')">
-          <div class="qi" style="background:linear-gradient(135deg,#e91e63,#9c27b0)">🎵</div>
-          <span>موسيقى</span>
-        </button>
-      </div>
-    </div>
-    <!-- Col 2: Weather + Map + Status -->
-    <div class="hc">
-      <div class="wc g g-click" onclick="getWeather();showToast('جارٍ تحديث الطقس...')">
-        <div class="wc-i" id="wIco">⛅</div>
-        <div>
-          <div class="wc-t" id="wTemp">--°</div>
-          <div class="wc-ds" id="wDesc">جارٍ التحميل...</div>
-          <div class="wc-loc" id="wLoc">📍 تحديد الموقع...</div>
-        </div>
-      </div>
-      <div class="mc g g-click" onclick="switchPage('nav')">
-        <div class="mi">🗺️</div>
-        <div class="ml">خرائط جوجل</div>
-        <div class="ms">اضغط لبدء الملاحة</div>
-      </div>
-      <div class="sc g">
-        <div class="sc-g">
-          <div style="display:flex;align-items:center;gap:4px"><div class="sc-dot bt"></div> بلوتوث</div>
-          <div style="display:flex;align-items:center;gap:4px"><div class="sc-dot" id="wifiDot"></div> <span id="wifiTxt">واي فاي</span></div>
-        </div>
-        <div id="scBat">🔋 --٪</div>
-      </div>
-    </div>
-    <!-- Col 3: Mini Player + Vehicle -->
-    <div class="hc">
-      <div class="mp g">
-        <div class="mp-h">
-          <div class="mp-art" id="mpArt">🎶</div>
-          <div class="mp-inf">
-            <div class="mp-tt" id="mpTitle">لا توجد أغنية</div>
-            <div class="mp-ar" id="mpArtist">أضف ملفات من شاشة الموسيقى</div>
+        <div class="col">
+          <div class="g wx tap x-wx"></div>
+          <div class="g ytbox grow tap" onclick="go('yt')">
+            <div class="yth"><span class="ylogo">▶</span>يوتيوب<span class="sp"></span><small style="color:var(--txt2);font-weight:400">اضغط للدخول</small></div>
+            <div class="ytarea"><div class="big"><i data-ic="play" class="f"></i></div><b>يوتيوب</b><span>شاهد وابحث بدون ما تطلع من الشاشة</span></div>
           </div>
         </div>
-        <div class="mp-ct">
-          <button class="mp-btn" onclick="musicPrev()">⏮</button>
-          <button class="mp-btn pp" id="mpPlay" onclick="musicToggle()">▶</button>
-          <button class="mp-btn" onclick="musicNext()">⏭</button>
+        <div class="col">
+          <div class="g mu grow x-mu"></div>
+          <div class="g trip x-trip"></div>
         </div>
       </div>
-      <div class="sc g" style="justify-content:center;gap:14px">
-        <span>🚗</span>
-        <span>السرعة: <b id="spd">--</b> كم/س</span>
-        <span style="opacity:.3">•</span>
-        <span>⏱️ مدة المشوار: <b id="trip">٠ د</b></span>
+      <!-- يوتيوب أولاً -->
+      <div class="lay l-youtube">
+        <div class="col">
+          <div class="g clk"><div class="t x-time"></div><div class="d x-date"></div><div class="h x-hij"></div></div>
+          <div class="g wx tap x-wx"></div>
+          <div class="g mu grow x-mu"></div>
+        </div>
+        <div class="g ytbox ytlive">
+          <div class="yth"><span class="ylogo">▶</span>يوتيوب<span class="sp"></span>
+            <button onclick="ytCmd('back')" title="رجوع"><i data-ic="fwd"></i></button>
+            <button onclick="ytCmd('home')" title="الرئيسية"><i data-ic="home"></i></button>
+            <button onclick="go('yt')" title="تكبير"><i data-ic="max"></i></button>
+          </div>
+          <div class="ytarea"><div class="big"><i data-ic="play" class="f"></i></div><b>يوتيوب</b><span class="x-ytmsg">يشتغل هنا داخل التطبيق على شاشة السيارة</span><button class="btn x-ytweb" onclick="openUrl('https://m.youtube.com')">افتح يوتيوب</button></div>
+        </div>
+      </div>
+      <!-- بسيط -->
+      <div class="lay l-minimal">
+        <div class="clk g"><div class="t x-time"></div><div class="d x-date"></div><div class="h x-hij"></div><div class="mwx x-mwx"></div></div>
+        <div class="g qa x-qa"></div>
+      </div>
+      <!-- لوحة القيادة -->
+      <div class="lay l-dash">
+        <div class="col">
+          <div class="g clk grow"><div class="t x-time"></div><div class="d x-date"></div><div class="h x-hij"></div></div>
+          <div class="g wx tap x-wx"></div>
+        </div>
+        <div class="g gauge">
+          <svg class="ring" viewBox="0 0 200 200"><circle cx="100" cy="100" r="86" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="14" stroke-dasharray="405 541" stroke-linecap="round"/>
+            <circle id="gArc" cx="100" cy="100" r="86" fill="none" stroke="var(--accent)" stroke-width="14" stroke-dasharray="0 541" stroke-linecap="round" style="filter:drop-shadow(0 0 8px var(--glow));transition:stroke-dasharray .6s"/></svg>
+          <div class="gv"><b class="x-spd">--</b><span>كم/س</span></div>
+          <div class="gt">⏱️ مدة المشوار: <b class="x-tripv"></b></div>
+        </div>
+        <div class="col">
+          <div class="g mu grow x-mu"></div>
+          <div class="g qa x-qa" style="grid-template-columns:repeat(5,1fr)"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════ يوتيوب ══════ -->
+    <div class="pg" data-pg="yt">
+      <div class="yt-pg">
+        <div class="g ytbox ytlive">
+          <div class="yth"><span class="ylogo">▶</span>يوتيوب<span class="sp"></span>
+            <button onclick="ytCmd('back')" title="رجوع"><i data-ic="fwd"></i></button>
+            <button onclick="ytCmd('home')" title="الرئيسية"><i data-ic="home"></i></button>
+            <button onclick="go('home')" title="سكّر"><i data-ic="x"></i></button>
+          </div>
+          <div class="ytarea"><div class="big"><i data-ic="play" class="f"></i></div><b>يوتيوب</b><span class="x-ytmsg">يشتغل هنا داخل التطبيق على شاشة السيارة</span><button class="btn x-ytweb" onclick="openUrl('https://m.youtube.com')">افتح يوتيوب</button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════ الموسيقى ══════ -->
+    <div class="pg" data-pg="music">
+      <div class="mp">
+        <div class="g mp-main">
+          <div class="art" id="mArt"><i data-ic="music"></i></div>
+          <div class="ti" id="mTitle">لا توجد أغنية</div>
+          <div class="sub" id="mSub" style="color:var(--txt2)">أضف أغاني من جهازك</div>
+          <div class="seek"><input type="range" id="mSeek" min="0" max="1000" value="0"><div class="tm"><span id="mCur">0:00</span><span id="mDur">0:00</span></div></div>
+          <div class="ctl">
+            <button class="cb" id="mShuf" onclick="toggleShuffle()" title="عشوائي"><i data-ic="shuf"></i></button>
+            <button class="cb" onclick="musicPrev()"><i data-ic="prev" class="f"></i></button>
+            <button class="cb pp x-play" onclick="musicToggle()"><i data-ic="play" class="f"></i></button>
+            <button class="cb" onclick="musicNext()"><i data-ic="next" class="f"></i></button>
+            <button class="cb" id="mRep" onclick="toggleRepeat()" title="تكرار"><i data-ic="rep"></i></button>
+          </div>
+          <div class="vol"><i data-ic="vol0"></i><input type="range" id="mVol" min="0" max="100" value="80"><i data-ic="vol"></i></div>
+        </div>
+        <div class="g pl">
+          <div class="hd"><h3><i data-ic="list"></i> قائمة التشغيل</h3><button class="btn" onclick="$('fInp').click()"><i data-ic="plus"></i> أضف أغاني</button></div>
+          <div class="list" id="mList"></div>
+        </div>
+      </div>
+      <input type="file" id="fInp" accept="audio/*" multiple hidden>
+      <audio id="aud"></audio>
+    </div>
+
+    <!-- ══════ الملاحة ══════ -->
+    <div class="pg" data-pg="nav">
+      <div class="nv">
+        <div class="g nv-s"><input id="nvInp" placeholder="وين رايح؟ اكتب الوجهة..."><button class="btn" onclick="navSearch()"><i data-ic="nav"></i> ابدأ</button></div>
+        <div class="g nv-map tap" onclick="openUrl('https://www.google.com/maps')"><i data-ic="pin" class="pin"></i><b>خرائط قوقل</b><span style="color:var(--txt2)">اضغط لفتح الخريطة</span></div>
+        <div class="nv-q">
+          <button class="g tap" onclick="navTo('home')"><span class="ico c-hm"><i data-ic="home"></i></span>المنزل</button>
+          <button class="g tap" onclick="navTo('work')"><span class="ico c-ap"><i data-ic="brief"></i></span>العمل</button>
+          <button class="g tap" onclick="navTo('fuel')"><span class="ico c-snd"><i data-ic="fuel"></i></span>محطة وقود</button>
+          <button class="g tap" onclick="navTo('mosque')"><span class="ico c-loc"><i data-ic="mosque"></i></span>مسجد</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════ الهاتف ══════ -->
+    <div class="pg" data-pg="phone">
+      <div class="ph">
+        <div class="g ph-l">
+          <div class="ph-disp" id="phD"></div>
+          <div class="keys" id="keys"></div>
+          <div class="ph-act"><button class="call" onclick="makeCall()"><i data-ic="phone"></i> اتصال</button><button class="del" onclick="dialDel()"><i data-ic="del"></i></button></div>
+        </div>
+        <div class="g ph-r"><h3><i data-ic="clock"></i> آخر المكالمات</h3><div class="rec" id="rec"></div></div>
+      </div>
+    </div>
+
+    <!-- ══════ التطبيقات ══════ -->
+    <div class="pg" data-pg="apps">
+      <div class="ap">
+        <div class="g ap-s"><i data-ic="search" style="font-size:20px;color:var(--txt2)"></i><input id="apQ" placeholder="دوّر على تطبيق..."></div>
+        <div class="ap-g" id="apG"></div>
+      </div>
+    </div>
+
+    <!-- ══════ الإعدادات ══════ -->
+    <div class="pg" data-pg="settings">
+      <div class="st">
+        <div class="card g wide"><h3><span class="ico c-ac"><i data-ic="layout"></i></span>شكل الواجهة</h3><div class="opts c4" id="optLay"></div></div>
+        <div class="card g wide"><h3><span class="ico c-hm"><i data-ic="image"></i></span>الخلفية المتحركة</h3><div class="opts c8" id="optBg"></div></div>
+        <div class="card g"><h3><span class="ico c-mu"><i data-ic="palette"></i></span>لون التمييز</h3><div class="cols" id="optCol"></div></div>
+        <div class="card g"><h3><span class="ico c-dsp"><i data-ic="sun"></i></span>السطوع</h3>
+          <div class="row" style="direction:ltr"><i data-ic="sun" style="opacity:.45;font-size:16px"></i><input type="range" id="briR" min="30" max="100" value="100"><i data-ic="sun" style="font-size:24px"></i></div></div>
+        <div class="card g"><h3><span class="ico c-wf"><i data-ic="clock"></i></span>الساعة</h3>
+          <div class="row"><span>نظام ٢٤ ساعة</span><button class="sw" id="sw24" onclick="setOpt('h24',!S.h24)"></button></div>
+          <div class="row"><span>إظهار الثواني</span><button class="sw" id="swSec" onclick="setOpt('sec',!S.sec)"></button></div></div>
+        <div class="card g"><h3><span class="ico c-yt"><i data-ic="play" class="f"></i></span>يوتيوب</h3>
+          <div class="row"><span>يشتغل الفيديو في الواجهة (شكل يوتيوب)</span><button class="btn ghost" onclick="setOpt('layout','youtube');toast('صار يوتيوب في الواجهة')">فعّل</button></div>
+          <div class="row"><span>نسخة الكمبيوتر من يوتيوب</span><button class="sw" id="swYtD" onclick="setOpt('ytDesk',!S.ytDesk)"></button></div></div>
+        <div class="card g wide"><h3><span class="ico c-st"><i data-ic="gear"></i></span>إعدادات الجهاز</h3><div class="sys" id="sys"></div></div>
+        <div class="card g wide"><div class="about"><span class="ico lg c-ac"><i data-ic="car"></i></span><div><b>سيارتي</b><small>برمجة أبو نواف • الإصدار <span class="x-ver"></span></small><small>جميع الحقوق محفوظة © ٢٠٢٦ المبرمج أبو نواف</small></div></div></div>
       </div>
     </div>
   </div>
+
+  <!-- الشريط السفلي -->
+  <div class="dk"><div class="dk-wrap g" id="dock"></div></div>
+  <div class="credit">برمجة <b>أبو نواف</b> • <span class="x-ver"></span></div>
 </div>
-
-<!-- ── PHONE ── -->
-<div class="pg" data-pg="phone">
-  <div class="ph-l">
-    <div class="ph-pad">
-      <div class="ph-disp g" id="phDisp"></div>
-      <div class="dpad">
-        <button class="dk-y" onclick="dialKey('1')">1</button>
-        <button class="dk-y" onclick="dialKey('2')">2</button>
-        <button class="dk-y" onclick="dialKey('3')">3</button>
-        <button class="dk-y" onclick="dialKey('4')">4</button>
-        <button class="dk-y" onclick="dialKey('5')">5</button>
-        <button class="dk-y" onclick="dialKey('6')">6</button>
-        <button class="dk-y" onclick="dialKey('7')">7</button>
-        <button class="dk-y" onclick="dialKey('8')">8</button>
-        <button class="dk-y" onclick="dialKey('9')">9</button>
-        <button class="dk-y" onclick="dialKey('*')">*</button>
-        <button class="dk-y" onclick="dialKey('0')">0</button>
-        <button class="dk-y" onclick="dialKey('#')">#</button>
-      </div>
-      <div class="ph-actions">
-        <button class="ph-call" onclick="makeCall()">📞 اتصال</button>
-        <button class="ph-del" onclick="dialDel()">⌫</button>
-      </div>
-    </div>
-    <div class="ph-rec g" style="padding:16px" id="phRec">
-      <div class="ph-rec-t">📋 المكالمات الأخيرة</div>
-      <div id="phRecList"></div>
-    </div>
-  </div>
-</div>
-
-<!-- ── MUSIC ── -->
-<div class="pg" data-pg="music">
-  <div class="mu-l">
-    <div class="mu-player">
-      <div class="mu-art g" id="muArt">🎵</div>
-      <div class="mu-tit" id="muTitle">لا توجد أغنية</div>
-      <div class="mu-art-name" id="muArtist">أضف ملفات صوتية للتشغيل</div>
-      <div class="mu-seek">
-        <input type="range" id="muSeek" min="0" max="100" value="0">
-        <div class="mu-times"><span id="muCur">٠:٠٠</span><span id="muDur">٠:٠٠</span></div>
-      </div>
-      <div class="mu-ctrls">
-        <button class="mu-cb" id="muShuf" onclick="toggleShuffle()" title="عشوائي">🔀</button>
-        <button class="mu-cb" onclick="musicPrev()" title="السابق">⏮</button>
-        <button class="mu-cb pp" id="muPlay" onclick="musicToggle()" title="تشغيل">▶</button>
-        <button class="mu-cb" onclick="musicNext()" title="التالي">⏭</button>
-        <button class="mu-cb" id="muRep" onclick="toggleRepeat()" title="تكرار">🔁</button>
-      </div>
-      <div class="mu-vol">
-        <span>🔈</span>
-        <input type="range" id="muVol" min="0" max="100" value="80">
-        <span>🔊</span>
-      </div>
-    </div>
-    <div class="mu-pl g" style="padding:16px">
-      <div class="mu-pl-t">
-        <span>🎶 قائمة التشغيل</span>
-        <button class="mu-add" onclick="document.getElementById('fInp').click()">+ إضافة ملفات</button>
-      </div>
-      <div class="mu-list" id="muList">
-        <div class="mu-empty">لا توجد ملفات صوتية<br>اضغط "إضافة ملفات" لاختيار أغانيك</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ── NAV ── -->
-<div class="pg" data-pg="nav">
-  <div class="nv-l">
-    <div class="nv-search">
-      <input class="nv-inp" id="nvInp" type="text" placeholder="🔍 ابحث عن وجهة...">
-      <button class="nv-go" onclick="navSearch()">🧭 ابدأ</button>
-    </div>
-    <div class="nv-map g g-click" onclick="openApp('https://maps.google.com')">
-      <div class="nm-i">🗺️</div>
-      <div class="nm-t">خرائط جوجل</div>
-      <div class="nm-s">اضغط لفتح الخرائط</div>
-    </div>
-    <div class="nv-short">
-      <button class="nv-sb g g-click" onclick="navTo('المنزل')">
-        <div class="ns-i">🏠</div><span>المنزل</span>
-      </button>
-      <button class="nv-sb g g-click" onclick="navTo('العمل')">
-        <div class="ns-i">💼</div><span>العمل</span>
-      </button>
-      <button class="nv-sb g g-click" onclick="navTo('محطة وقود')">
-        <div class="ns-i">⛽</div><span>محطة وقود</span>
-      </button>
-      <button class="nv-sb g g-click" onclick="navTo('مسجد')">
-        <div class="ns-i">🕌</div><span>مسجد</span>
-      </button>
-    </div>
-  </div>
-</div>
-
-<!-- ── APPS ── -->
-<div class="pg" data-pg="apps">
-  <div class="ap-g">
-    <a class="ap-t g g-click" href="https://youtube.com" target="_blank">
-      <div class="at-i" style="background:linear-gradient(135deg,#ff0000,#cc0000)">▶</div>
-      <span>يوتيوب</span>
-    </a>
-    <a class="ap-t g g-click" href="https://maps.google.com" target="_blank">
-      <div class="at-i" style="background:linear-gradient(135deg,#34a853,#1a73e8)">🗺️</div>
-      <span>خرائط جوجل</span>
-    </a>
-    <a class="ap-t g g-click" href="https://wa.me/" target="_blank">
-      <div class="at-i" style="background:linear-gradient(135deg,#25d366,#128c7e)">💬</div>
-      <span>واتساب</span>
-    </a>
-    <a class="ap-t g g-click" href="https://open.spotify.com" target="_blank">
-      <div class="at-i" style="background:linear-gradient(135deg,#1db954,#191414)">🎵</div>
-      <span>سبوتيفاي</span>
-    </a>
-    <a class="ap-t g g-click" href="https://www.waze.com/live-map" target="_blank">
-      <div class="at-i" style="background:linear-gradient(135deg,#33ccff,#00aaff)">🚗</div>
-      <span>ويز</span>
-    </a>
-    <a class="ap-t g g-click" href="https://google.com" target="_blank">
-      <div class="at-i" style="background:linear-gradient(135deg,#4285f4,#1a73e8)">🌐</div>
-      <span>كروم</span>
-    </a>
-    <button class="ap-t g g-click" onclick="switchPage('phone')">
-      <div class="at-i" style="background:linear-gradient(135deg,#00c853,#009624)">📞</div>
-      <span>الهاتف</span>
-    </button>
-    <button class="ap-t g g-click" onclick="switchPage('settings')">
-      <div class="at-i" style="background:linear-gradient(135deg,#78909c,#455a64)">⚙</div>
-      <span>الإعدادات</span>
-    </button>
-  </div>
-</div>
-
-<!-- ── SETTINGS ── -->
-<div class="pg" data-pg="settings">
-  <div class="st-l">
-    <div class="st-card g">
-      <div class="st-title">🎨 لون التمييز</div>
-      <div class="st-colors" id="stColors">
-        <div class="st-co sel" style="background:#00b4d8" data-ci="0" onclick="setTheme(0)"></div>
-        <div class="st-co" style="background:#00e676" data-ci="1" onclick="setTheme(1)"></div>
-        <div class="st-co" style="background:#bb86fc" data-ci="2" onclick="setTheme(2)"></div>
-        <div class="st-co" style="background:#ff6d00" data-ci="3" onclick="setTheme(3)"></div>
-        <div class="st-co" style="background:#ffd600" data-ci="4" onclick="setTheme(4)"></div>
-      </div>
-    </div>
-    <div class="st-card g">
-      <div class="st-title">🕐 تنسيق الساعة</div>
-      <div class="st-row">
-        <span class="st-label">استخدام نظام ٢٤ ساعة</span>
-        <button class="tog on" id="togClk" onclick="toggle24()"></button>
-      </div>
-    </div>
-    <div class="st-card g">
-      <div class="st-title">🔆 السطوع</div>
-      <div class="st-row">
-        <span class="st-label">🌑</span>
-        <input type="range" class="st-slider" id="brSlider" min="0" max="70" value="0" oninput="setBrightness(this.value)">
-        <span class="st-label">☀️</span>
-      </div>
-    </div>
-    <div class="st-card g">
-      <div class="st-title">ℹ️ حول</div>
-      <div class="st-about">
-        <div>مشغّل السيارة الذكي</div>
-        <div class="cr-name">برمجة أبو نواف</div>
-        <div class="cr-ver">الإصدار v2.1</div>
-        <div style="margin-top:8px;font-size:11px">جميع الحقوق محفوظة © ٢٠٢٦</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-</div><!-- /ct -->
-
-<!-- ═══ DOCK ═══ -->
-<div class="dk">
-  <button class="dk-b act" data-tgt="home"><span class="di">🏠</span> الرئيسية</button>
-  <button class="dk-b" data-tgt="phone"><span class="di">📞</span> الهاتف</button>
-  <button class="dk-b" data-tgt="music"><span class="di">🎵</span> الموسيقى</button>
-  <button class="dk-b" data-tgt="nav"><span class="di">🗺️</span> الملاحة</button>
-  <button class="dk-b" data-tgt="apps"><span class="di">📱</span> التطبيقات</button>
-  <button class="dk-b" data-tgt="settings"><span class="di">⚙</span> الإعدادات</button>
-</div>
-
-</div><!-- /L -->
-
-<!-- Brightness overlay -->
-<div id="bri"></div>
-
-<!-- Credit -->
-<div class="credit">برمجة <b>أبو نواف</b> • v2.1</div>
-
-<!-- Audio -->
-<audio id="aud" preload="auto"></audio>
-<input type="file" id="fInp" accept="audio/*" multiple style="display:none">
 
 <script>
 /* داخل تطبيق أندرويد: الروابط تفتح في تطبيقاتها */
-if(window.Native&&Native.openUrl){window.open=function(u){Native.openUrl(String(u));return null};document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a[href]');if(a&&/^(https?:|tel:|intent:)/.test(a.getAttribute('href'))){e.preventDefault();Native.openUrl(a.href)}},true);}
-</script>
-<script>
-/* ═══════════════════════════════════════════════════
-   CAR LAUNCHER v2.1 — برمجة أبو نواف
-   ═══════════════════════════════════════════════════ */
+const VER='v3.0';
+const $=id=>document.getElementById(id);
+const $$=s=>[...document.querySelectorAll(s)];
+const NAT=!!(window.Native&&Native.openUrl);
+function openUrl(u){ if(NAT) Native.openUrl(String(u)); else window.open(u,'_blank'); }
+window.addEventListener('click',e=>{const a=e.target.closest&&e.target.closest('a[href]');if(a&&NAT){e.preventDefault();Native.openUrl(a.href)}},true);
 
-const $=s=>document.getElementById(s);
-const $$=s=>document.querySelectorAll(s);
-const toAr=n=>String(n).replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);
-
-/* ── Themes ── */
-const themes=[
-  {accent:'#00b4d8',glow:'rgba(0,180,216,.35)'},
-  {accent:'#00e676',glow:'rgba(0,230,118,.35)'},
-  {accent:'#bb86fc',glow:'rgba(187,134,252,.35)'},
-  {accent:'#ff6d00',glow:'rgba(255,109,0,.35)'},
-  {accent:'#ffd600',glow:'rgba(255,214,0,.35)'},
-];
-let curTheme=parseInt(localStorage.getItem('carTheme'))||0;
-
-function setTheme(i){
-  curTheme=i;
-  const t=themes[i];
-  document.documentElement.style.setProperty('--accent',t.accent);
-  document.documentElement.style.setProperty('--accent-glow',t.glow);
-  $$('.st-co').forEach(c=>c.classList.toggle('sel',+c.dataset.ci===i));
-  localStorage.setItem('carTheme',i);
-  if(typeof showToast==='function'&&window._ready) showToast('تم تغيير اللون');
-}
-setTheme(curTheme);
-
-/* ── 12/24 hour ── */
-let use24=localStorage.getItem('car24')!=='false';
-function toggle24(){
-  use24=!use24;
-  $('togClk').classList.toggle('on',use24);
-  localStorage.setItem('car24',use24);
-  tick();
-}
-$('togClk').classList.toggle('on',use24);
-
-/* ── Brightness ── */
-const savedBri=localStorage.getItem('carBri')||'0';
-$('brSlider').value=savedBri;
-setBrightness(savedBri);
-function setBrightness(v){
-  $('bri').style.opacity=v/100;
-  localStorage.setItem('carBri',v);
-}
-
-/* ══════ SCALING ══════ */
-function scaleUI(){
-  const W=window.innerWidth,H=window.innerHeight;
-  const s=Math.min(W/1280,H/720);
-  const b=document.body;
-  b.style.width=(W/s)+'px';
-  b.style.height=(H/s)+'px';
-  b.style.position='fixed';b.style.left='0';b.style.top='0';
-  b.style.transformOrigin='0 0';
-  b.style.transform='scale('+s+')';
-}
-window.addEventListener('resize',scaleUI);
-scaleUI();
-
-/* ══════ PAGE NAVIGATION ══════ */
-function switchPage(name){
-  $$('.pg').forEach(p=>p.classList.remove('act'));
-  const pg=document.querySelector('[data-pg="'+name+'"]');
-  if(pg) pg.classList.add('act');
-  $$('.dk-b').forEach(b=>b.classList.toggle('act',b.dataset.tgt===name));
-}
-$$('.dk-b').forEach(b=>b.addEventListener('click',()=>switchPage(b.dataset.tgt)));
-
-/* ══════ CLOCK & DATE ══════ */
-const arDays=['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
-const arMonths=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
-
-function tick(){
-  const now=new Date();
-  let h=now.getHours(), m=now.getMinutes(), s=now.getSeconds();
-  let suffix='';
-  if(!use24){
-    suffix=h>=12?' م':' ص';
-    h=h%12||12;
-  }
-  const hh=toAr(use24?String(h).padStart(2,'0'):String(h));
-  const mm=toAr(String(m).padStart(2,'0'));
-  const ss=toAr(String(s).padStart(2,'0'));
-
-  // Big clock
-  $('clk').innerHTML='<span class="clk-s">'+ss+'</span>'+hh+':'+mm+(suffix?'<span style="font-size:22px;-webkit-text-fill-color:var(--txt2)"> '+suffix+'</span>':'');
-
-  // Top bar clock
-  $('tbClk').textContent=hh+':'+mm+suffix;
-
-  // Gregorian date
-  const greg=arDays[now.getDay()]+' '+toAr(now.getDate())+' '+arMonths[now.getMonth()]+' '+toAr(now.getFullYear());
-  $('dGreg').textContent=greg;
-  $('tbDate').textContent=toAr(now.getDate())+' '+arMonths[now.getMonth()];
-
-  // Hijri date (Intl islamic-umalqura)
-  try{
-    const hijri=new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura',{day:'numeric',month:'long',year:'numeric'}).format(now);
-    $('dHij').textContent=hijri;
-  }catch(e){
-    $('dHij').textContent='';
-  }
-}
-tick();
-setInterval(tick,1000);
-
-/* ══════ WEATHER ══════ */
-const wmoAr={
-  0:{t:'صافي',i:'☀️'},1:{t:'صافي غالباً',i:'🌤️'},2:{t:'غائم جزئياً',i:'⛅'},3:{t:'غائم',i:'☁️'},
-  45:{t:'ضباب',i:'🌫️'},48:{t:'ضباب متجمد',i:'🌫️'},
-  51:{t:'رذاذ خفيف',i:'🌦️'},53:{t:'رذاذ',i:'🌦️'},55:{t:'رذاذ كثيف',i:'🌦️'},
-  56:{t:'رذاذ متجمد',i:'🌦️'},57:{t:'رذاذ متجمد كثيف',i:'🌦️'},
-  61:{t:'مطر خفيف',i:'🌧️'},63:{t:'مطر',i:'🌧️'},65:{t:'مطر غزير',i:'🌧️'},
-  66:{t:'مطر متجمد',i:'🌧️'},67:{t:'مطر متجمد غزير',i:'🌧️'},
-  71:{t:'ثلج خفيف',i:'🌨️'},73:{t:'ثلج',i:'🌨️'},75:{t:'ثلج كثيف',i:'🌨️'},77:{t:'حبيبات ثلج',i:'🌨️'},
-  80:{t:'زخات مطر خفيفة',i:'🌧️'},81:{t:'زخات مطر',i:'🌧️'},82:{t:'زخات مطر غزيرة',i:'🌧️'},
-  85:{t:'زخات ثلج',i:'🌨️'},86:{t:'زخات ثلج كثيفة',i:'🌨️'},
-  95:{t:'عاصفة رعدية',i:'⛈️'},96:{t:'عاصفة مع برد',i:'⛈️'},99:{t:'عاصفة شديدة',i:'⛈️'},
+/* ══════ الأيقونات ══════ */
+const IC={
+ bt:'<path d="M7 7l10 10-5 5V2l5 5L7 17"/>',
+ wifi:'<path d="M2 8.8a15 15 0 0 1 20 0M5 12.4a10 10 0 0 1 14 0M8.5 15.9a5 5 0 0 1 7 0"/><circle cx="12" cy="19.5" r=".8"/>',
+ bat:'<rect x="2.5" y="7" width="17" height="10" rx="2"/><path d="M22 10.5v3"/><rect class="batf" x="4.5" y="9" width="13" height="6" rx="1" fill="currentColor" stroke="none"/>',
+ snd:'<path d="M11 5L6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/>',
+ vol:'<path d="M11 5L6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/>',
+ vol0:'<path d="M11 5L6 9H2v6h4l5 4z"/>',
+ sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+ loc:'<path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/>',
+ pin:'<path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/>',
+ apps:'<rect x="4" y="4" width="6" height="6" rx="1.5"/><rect x="14" y="4" width="6" height="6" rx="1.5"/><rect x="4" y="14" width="6" height="6" rx="1.5"/><rect x="14" y="14" width="6" height="6" rx="1.5"/>',
+ home:'<path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/>',
+ gear:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',
+ palette:'<path d="M12 3a9 9 0 1 0 0 18c1 0 1.6-.7 1.6-1.5 0-1-.8-1.3-.8-2.2 0-.9.7-1.4 1.6-1.4H17a4 4 0 0 0 4-4C21 6.7 17 3 12 3z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10.5" cy="7" r="1"/><circle cx="15" cy="7.5" r="1"/>',
+ layout:'<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M10 4v16M10 11h11"/>',
+ image:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 16l5-5 4 4 3-3 6 6"/><circle cx="15.5" cy="9" r="1.2"/>',
+ clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+ phone:'<path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2z"/>',
+ music:'<path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/>',
+ map:'<path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14M15 6v14"/>',
+ nav:'<path d="M3 11l18-8-8 18-2-8z"/>',
+ search:'<circle cx="11" cy="11" r="7"/><path d="M21 21l-5-5"/>',
+ play:'<path d="M7 4.5v15l13-7.5z"/>',
+ pause:'<rect x="6" y="4.5" width="4" height="15" rx="1"/><rect x="14" y="4.5" width="4" height="15" rx="1"/>',
+ next:'<path d="M5 5v14l10-7zM17 5h2.5v14H17z"/>',
+ prev:'<path d="M19 5v14L9 12zM4.5 5H7v14H4.5z"/>',
+ shuf:'<path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/>',
+ rep:'<path d="M17 2l4 4-4 4"/><path d="M3 11V9a3 3 0 0 1 3-3h15M7 22l-4-4 4-4"/><path d="M21 13v2a3 3 0 0 1-3 3H3"/>',
+ list:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',
+ plus:'<path d="M12 5v14M5 12h14"/>',
+ del:'<path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/><path d="M18 9l-6 6M12 9l6 6"/>',
+ fwd:'<path d="M9 5l7 7-7 7"/>',
+ x:'<path d="M18 6L6 18M6 6l12 12"/>',
+ max:'<path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>',
+ brief:'<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>',
+ fuel:'<path d="M4 21V5a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v16M3 21h13M4 10h11"/><path d="M15 8l3 2v8a1.5 1.5 0 0 0 3 0V9l-3-3"/>',
+ mosque:'<path d="M12 3c-3 2.5-5 4-5 6.5h10C17 7 15 5.5 12 3zM5 21v-9h14v9M10 21v-4a2 2 0 0 1 4 0v4M3 21h18M3 21V9M3 6v.01"/>',
+ car:'<path d="M5 13l2-5a2 2 0 0 1 2-1.5h6A2 2 0 0 1 17 8l2 5"/><rect x="3" y="13" width="18" height="5" rx="2"/><circle cx="7.5" cy="18.5" r="1.5"/><circle cx="16.5" cy="18.5" r="1.5"/>',
+ info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/>',
+ lock:'<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>'
 };
+function svg(n,cls){return '<svg class="i'+(cls?' '+cls:'')+'" viewBox="0 0 24 24">'+(IC[n]||'')+'</svg>'}
+function paintIcons(root){(root||document).querySelectorAll('i[data-ic]').forEach(e=>{e.outerHTML=svg(e.dataset.ic,e.className)})}
 
-async function fetchWeather(lat,lon){
+/* ══════ الأرقام العربية ══════ */
+const AD='٠١٢٣٤٥٦٧٨٩';
+const toAr=v=>String(v).replace(/[0-9]/g,d=>AD[d]);
+const p2=n=>String(n).padStart(2,'0');
+
+/* ══════ التنبيه ══════ */
+let tT;function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(tT);tT=setTimeout(()=>t.classList.remove('show'),2300)}
+
+/* ══════ الإعدادات المحفوظة ══════ */
+const DEF={layout:'classic',bg:'earth',col:0,h24:true,sec:true,bri:100,ytDesk:false};
+let S=Object.assign({},DEF);
+try{S=Object.assign(S,JSON.parse(localStorage.getItem('sayarati')||'{}'))}catch(e){}
+function save(){try{localStorage.setItem('sayarati',JSON.stringify(S))}catch(e){}}
+const COLS=['#00b4d8','#00e676','#b388ff','#ff6d00','#ffd600','#ff4f81'];
+const LAYS=[['classic','كلاسيك'],['youtube','يوتيوب أولاً'],['minimal','بسيط'],['dash','لوحة القيادة']];
+const BGS=[['earth','🌍 الأرض'],['earthc','🌏 الأرض كاملة'],['earthn','🌃 الأرض بالليل'],['stars','✨ النجوم'],['aurora','🌌 الشفق'],['road','🛣️ طريق ليلي'],['flow','🎨 تدرّج'],['plain','⬛ هادئ']];
+
+function applyAll(){
+  document.body.dataset.layout=S.layout;
+  document.body.dataset.bg=S.bg;
+  const c=COLS[S.col]||COLS[0];
+  document.documentElement.style.setProperty('--accent',c);
+  document.documentElement.style.setProperty('--glow',c+'59');
+  $('bri').style.opacity=(100-S.bri)/100;$('briR').value=S.bri;
+  $('sw24').classList.toggle('on',S.h24);$('swSec').classList.toggle('on',S.sec);$('swYtD').classList.toggle('on',S.ytDesk);
+  $$('#optLay .opt').forEach(o=>o.classList.toggle('sel',o.dataset.v===S.layout));
+  $$('#optBg .opt').forEach(o=>o.classList.toggle('sel',o.dataset.v===S.bg));
+  $$('#optCol button').forEach((b,i)=>b.classList.toggle('sel',i===S.col));
+  tick();syncYT();
+}
+function setOpt(k,v){
+  S[k]=v;save();
+  if(k==='ytDesk'&&window.YTN) YTN.setDesktop(!!v);
+  applyAll();
+}
+
+/* ══════ بناء الواجهة ══════ */
+function buildUI(){
+  // الشريط السفلي
+  const D=[['home','home','الرئيسية'],['yt','play','يوتيوب'],['music','music','الموسيقى'],['nav','nav','الملاحة'],['phone','phone','الهاتف'],['apps','apps','التطبيقات'],['settings','gear','الإعدادات']];
+  $('dock').innerHTML=D.map(d=>'<button class="dk-b" data-tgt="'+d[0]+'" onclick="go(\''+d[0]+'\')">'+svg(d[1],d[1]==='play'?'f':'')+'<span>'+d[2]+'</span></button>').join('');
+  // أزرار سريعة
+  const Q=[['yt','c-yt','play','يوتيوب'],['nav','c-map','map','الخرائط'],['phone','c-ph','phone','الهاتف'],['music','c-mu','music','الموسيقى'],['apps','c-ap','apps','التطبيقات']];
+  $$('.x-qa').forEach(e=>e.innerHTML=Q.map(q=>'<button class="tap" onclick="go(\''+q[0]+'\')"><span class="ico '+q[1]+'">'+svg(q[2],q[2]==='play'?'f':'')+'</span>'+q[3]+'</button>').join(''));
+  // بطاقة الموسيقى
+  $$('.x-mu').forEach(e=>e.innerHTML='<div class="top tap" onclick="go(\'music\')"><div class="art x-art">'+svg('music')+'</div><div style="min-width:0"><div class="ti x-mt">لا توجد أغنية</div><div class="sub x-ms">اضغط وأضف أغانيك</div></div></div><div class="bar"><i class="x-mbar"></i></div><div class="ctl"><button class="cb" onclick="musicPrev()">'+svg('prev','f')+'</button><button class="cb pp x-play" onclick="musicToggle()">'+svg('play','f')+'</button><button class="cb" onclick="musicNext()">'+svg('next','f')+'</button></div>');
+  $$('.x-trip').forEach(e=>e.innerHTML='<span>🚗 السرعة: <b class="x-spd">--</b> كم/س</span><span>⏱️ المشوار: <b class="x-tripv"></b></span>');
+  $$('.x-wx').forEach(e=>{e.onclick=()=>{getWeather();toast('جارٍ تحديث الطقس...')};e.innerHTML='<div class="wi x-wi">⛅</div><div><div class="wt x-wt">--°</div><div class="wd x-wd">جارٍ التحميل...</div><div class="wl x-wl">📍 تحديد الموقع...</div></div>'});
+  // لوحة الأرقام
+  $('keys').innerHTML=['1','2','3','4','5','6','7','8','9','*','0','#'].map(k=>'<button onclick="dial(\''+k+'\')">'+k+'</button>').join('');
+  // معاينات أشكال الواجهة
+  const PV={
+    classic:'<i style="right:6%;top:10%;width:26%;height:52%"></i><i style="right:6%;top:68%;width:26%;height:22%"></i><i style="right:37%;top:10%;width:28%;height:22%"></i><i style="right:37%;top:38%;width:28%;height:52%;background:rgba(255,0,0,.5)"></i><i style="right:70%;top:10%;width:24%;height:80%"></i>',
+    youtube:'<i style="right:5%;top:10%;width:28%;height:25%"></i><i style="right:5%;top:40%;width:28%;height:18%"></i><i style="right:5%;top:63%;width:28%;height:27%"></i><i style="right:37%;top:10%;width:58%;height:80%;background:rgba(255,0,0,.5)"></i>',
+    minimal:'<i style="right:25%;top:18%;width:50%;height:30%;background:rgba(255,255,255,.35)"></i><i style="right:35%;top:52%;width:30%;height:8%"></i><i style="right:22%;top:72%;width:56%;height:16%"></i>',
+    dash:'<i style="right:5%;top:10%;width:26%;height:52%"></i><i style="right:5%;top:68%;width:26%;height:22%"></i><i style="right:36%;top:14%;width:28%;height:72%;border-radius:50%;background:none;box-shadow:inset 0 0 0 5px var(--accent)"></i><i style="right:69%;top:10%;width:26%;height:52%"></i><i style="right:69%;top:68%;width:26%;height:22%"></i>'
+  };
+  $('optLay').innerHTML=LAYS.map(l=>'<button class="opt" data-v="'+l[0]+'" onclick="setOpt(\'layout\',\''+l[0]+'\')"><div class="pv">'+PV[l[0]]+'</div>'+l[1]+'</button>').join('');
+  const BPV={earth:'radial-gradient(circle at 15% 120%,#2d6fb8 0 45%,#7cc0ff 47%,#03060f 52%)',earthc:'radial-gradient(circle at 50% 50%,#2d6fb8 0 30%,#7cc0ff 32%,#03060f 37%)',earthn:'radial-gradient(circle at 85% 120%,#1a1405 0 45%,#ffb85a 46%,#020409 51%)',
+    stars:'radial-gradient(circle at 20% 25%,#fffbe8 0 9%,transparent 10%),radial-gradient(circle at 70% 40%,#fff 0 1%,transparent 2%),radial-gradient(circle at 40% 70%,#fff 0 1%,transparent 2%),#0b0820',
+    aurora:'radial-gradient(ellipse at 30% 30%,#00ffa3aa,transparent 50%),radial-gradient(ellipse at 70% 40%,#b05cffaa,transparent 50%),#04122a',
+    road:'linear-gradient(180deg,#14112b 0 50%,#07070c 50%),radial-gradient(circle at 50% 45%,#ff5f8f 0 18%,transparent 19%)',
+    flow:'linear-gradient(125deg,#0b0f2a,#0a6d84,#2a0b3a)',plain:'radial-gradient(circle at 25% 30%,#0a4b5a,#05070d 60%)'};
+  $('optBg').innerHTML=BGS.map(b=>'<button class="opt" data-v="'+b[0]+'" onclick="setOpt(\'bg\',\''+b[0]+'\')"><div class="pv" style="background:'+(b[0]==='road'?'radial-gradient(circle at 50% 42%,#ff5f8f 0 16%,transparent 17%),linear-gradient(180deg,#14112b 0 52%,#07070c 52%)':BPV[b[0]])+'"></div>'+b[1]+'</button>').join('');
+  $('optCol').innerHTML=COLS.map((c,i)=>'<button style="background:'+c+'" onclick="setOpt(\'col\','+i+')"></button>').join('');
+  // اختصارات إعدادات الجهاز
+  const SY=[['bt','c-bt','bt','بلوتوث'],['wifi','c-wf','wifi','واي فاي'],['sound','c-snd','snd','الصوت'],['display','c-dsp','sun','الشاشة'],['loc','c-loc','loc','الموقع'],['apps','c-ap','apps','التطبيقات'],['home','c-hm','home','الشاشة الرئيسية'],['all','c-st','gear','كل الإعدادات']];
+  $('sys').innerHTML=SY.map(s=>'<button class="tap" onclick="sysOpen(\''+s[0]+'\')"><span class="ico '+s[1]+'">'+svg(s[2])+'</span>'+s[3]+'</button>').join('');
+  $$('.x-ver').forEach(e=>e.textContent=VER);
+  paintIcons();
+  // النجوم
+  const stars=(n,c)=>{let s=[];for(let i=0;i<n;i++)s.push(Math.round(Math.random()*1600)+'px '+Math.round(Math.random()*900)+'px 0 '+(Math.random()<.15?'1px ':'0 ')+(c||'rgba(255,255,255,'+(.4+Math.random()*.6).toFixed(2)+')'));return s.join(',')};
+  $$('.st1').forEach(e=>e.style.boxShadow=stars(120));$$('.st2').forEach(e=>e.style.boxShadow=stars(90));$$('.st3').forEach(e=>e.style.boxShadow=stars(60,'#bcd4ff'));
+  if(!NAT) $$('.x-ytmsg').forEach(e=>e.textContent='في المتصفح يفتح يوتيوب في صفحة جديدة');
+  else $$('.x-ytweb').forEach(e=>e.style.display='none');
+}
+
+/* ══════ التنقل ══════ */
+let cur='home';
+function go(name){
+  cur=name;
+  $$('.pg').forEach(p=>p.classList.toggle('act',p.dataset.pg===name));
+  $$('.dk-b').forEach(b=>b.classList.toggle('act',b.dataset.tgt===name));
+  if(name==='apps') loadApps();
+  syncYT();setTimeout(syncYT,350);
+}
+
+/* ══════ الساعة والتاريخ ══════ */
+const DAYS=['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+const MONS=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+let hijF=null;try{hijF=new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura-nu-arab',{day:'numeric',month:'long',year:'numeric'})}catch(e){}
+function tick(){
+  const n=new Date();let h=n.getHours(),ap='';
+  if(!S.h24){ap=h<12?'ص':'م';h=h%12||12}
+  const hh=S.h24?p2(h):String(h);
+  const t=toAr(hh+':'+p2(n.getMinutes()));
+  const html=t+(S.sec?'<sup>'+toAr(p2(n.getSeconds()))+'</sup>':'')+(ap?'<span class="ap">'+ap+'</span>':'');
+  $$('.x-time').forEach(e=>e.innerHTML=html);
+  $$('.x-time-s').forEach(e=>e.textContent=t+(ap?' '+ap:''));
+  const d=DAYS[n.getDay()]+' '+toAr(n.getDate())+' '+MONS[n.getMonth()]+' '+toAr(n.getFullYear());
+  $$('.x-date').forEach(e=>e.textContent=d);
+  $$('.x-date-s').forEach(e=>e.textContent=DAYS[n.getDay()]+' '+toAr(n.getDate())+' '+MONS[n.getMonth()]);
+  let hj='';try{hj=hijF?hijF.format(n):''}catch(e){}
+  $$('.x-hij').forEach(e=>e.textContent=hj);
+}
+
+/* ══════ الطقس ══════ */
+const WMO={0:['صافي','☀️','🌙'],1:['صافي غالباً','🌤️','🌙'],2:['غائم جزئياً','⛅','☁️'],3:['غائم','☁️','☁️'],45:['ضباب','🌫️'],48:['ضباب','🌫️'],51:['رذاذ خفيف','🌦️'],53:['رذاذ','🌦️'],55:['رذاذ كثيف','🌧️'],61:['مطر خفيف','🌦️'],63:['مطر','🌧️'],65:['مطر غزير','🌧️'],71:['ثلج خفيف','🌨️'],73:['ثلج','🌨️'],75:['ثلج كثيف','❄️'],80:['زخات مطر','🌦️'],81:['زخات مطر','🌧️'],82:['زخات غزيرة','⛈️'],95:['عاصفة رعدية','⛈️'],96:['عاصفة مع برد','⛈️'],99:['عاصفة شديدة','⛈️']};
+let wLoc='الرياض';
+function showW(temp,code,day,cached){
+  const w=WMO[code]||['—','🌡️'];const ic=(day===0&&w[2])?w[2]:w[1];
+  $$('.x-wi').forEach(e=>e.textContent=ic);$$('.x-wt').forEach(e=>e.textContent=toAr(Math.round(temp))+'°');
+  $$('.x-wd').forEach(e=>e.textContent=w[0]+(cached?' (آخر تحديث)':''));$$('.x-wl').forEach(e=>e.textContent='📍 '+wLoc);
+  $$('.x-mwx').forEach(e=>e.innerHTML='<span>'+ic+'</span><b>'+toAr(Math.round(temp))+'°</b><span>'+w[0]+'</span>');
+}
+async function fetchW(lat,lon){
   try{
     const r=await fetch('https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&current=temperature_2m,weather_code,is_day&timezone=auto');
-    if(!r.ok) throw new Error('API');
-    const d=await r.json();
-    const c=d.current;
-    const w=wmoAr[c.weather_code]||{t:'غير معروف',i:'🌡️'};
-    $('wIco').textContent=(c.is_day===0&&c.weather_code<=2)?'🌙':w.i;
-    $('wTemp').textContent=toAr(Math.round(c.temperature_2m))+'°';
-    $('wDesc').textContent=w.t;
-    localStorage.setItem('carWeather',JSON.stringify({temp:Math.round(c.temperature_2m),code:c.weather_code,time:Date.now()}));
+    if(!r.ok) throw 0;
+    const c=(await r.json()).current;
+    showW(c.temperature_2m,c.weather_code,c.is_day);
+    try{localStorage.setItem('sayaratiW',JSON.stringify({t:c.temperature_2m,c:c.weather_code,d:c.is_day,l:wLoc}))}catch(e){}
   }catch(e){
-    // Try cached
-    const cached=localStorage.getItem('carWeather');
-    if(cached){
-      const d=JSON.parse(cached);
-      const w=wmoAr[d.code]||{t:'غير معروف',i:'🌡️'};
-      $('wIco').textContent=w.i;
-      $('wTemp').textContent=toAr(d.temp)+'°';
-      $('wDesc').textContent=w.t+' (مخزّن)';
-    }else{
-      $('wDesc').textContent='غير متصل بالإنترنت';
-      $('wIco').textContent='📡';
-    }
+    let k=null;try{k=JSON.parse(localStorage.getItem('sayaratiW')||'null')}catch(_){}
+    if(k){wLoc=k.l||wLoc;showW(k.t,k.c,k.d,true)}
+    else{$$('.x-wi').forEach(e=>e.textContent='📡');$$('.x-wd').forEach(e=>e.textContent='ما فيه إنترنت');$$('.x-wl').forEach(e=>e.textContent='اضغط للمحاولة مرة ثانية')}
   }
 }
-
 function getWeather(){
-  if(navigator.geolocation){
-    navigator.geolocation.getCurrentPosition(
-      p=>{
-        fetchWeather(p.coords.latitude,p.coords.longitude);
-        $('wLoc').textContent='📍 موقعك الحالي';
-      },
-      ()=>{
-        fetchWeather(24.7136,46.6753);
-        $('wLoc').textContent='📍 الرياض (افتراضي)';
-      },
-      {timeout:8000}
-    );
-  }else{
-    fetchWeather(24.7136,46.6753);
-    $('wLoc').textContent='📍 الرياض (افتراضي)';
-  }
-}
-getWeather();
-setInterval(getWeather,1800000); // 30 min
-
-/* ══════ BATTERY ══════ */
-function updateBat(b){
-  const pct=Math.round(b.level*100);
-  const icon=b.charging?'🔌':(pct>20?'🔋':'🪫');
-  const txt=icon+' '+toAr(pct)+'٪';
-  $('tbBat').textContent=txt;
-  $('scBat').textContent=txt;
-}
-if(navigator.getBattery){
-  navigator.getBattery().then(b=>{
-    updateBat(b);
-    b.addEventListener('levelchange',()=>updateBat(b));
-    b.addEventListener('chargingchange',()=>updateBat(b));
-  }).catch(()=>{});
+  const fb=()=>{wLoc='الرياض';fetchW(24.7136,46.6753)};
+  if(navigator.geolocation) navigator.geolocation.getCurrentPosition(p=>{wLoc='موقعك الحالي';fetchW(p.coords.latitude,p.coords.longitude)},fb,{timeout:8000,maximumAge:600000});
+  else fb();
 }
 
-/* ══════ ONLINE / OFFLINE ══════ */
-function updateNet(){
-  const on=navigator.onLine;
-  $('tbNet').className=on?'on':'off';
-  $('tbNet').textContent=on?'● متصل':'○ غير متصل';
-  const dot=$('wifiDot');
-  if(dot){dot.style.background=on?'#00e676':'#ef5350';dot.style.boxShadow='0 0 5px '+(on?'#00e676':'#ef5350');}
-  $('wifiTxt').textContent=on?'متصل':'غير متصل';
+/* ══════ السرعة والمشوار ══════ */
+const t0=Date.now();
+function updTrip(){const m=Math.floor((Date.now()-t0)/60000);$$('.x-tripv').forEach(e=>e.textContent=m<60?toAr(m)+' د':toAr(Math.floor(m/60))+' س '+toAr(m%60)+' د')}
+function setSpeed(v){
+  $$('.x-spd').forEach(e=>e.textContent=v==null?'--':toAr(v));
+  const f=Math.min((v||0)/200,1);$('gArc').setAttribute('stroke-dasharray',(405*f).toFixed(1)+' 541');
 }
-updateNet();
-window.addEventListener('online',()=>{updateNet();getWeather();});
-window.addEventListener('offline',updateNet);
-
-/* ══════ PHONE DIALER ══════ */
-let dialNum='';
-let recentCalls=JSON.parse(localStorage.getItem('carCalls')||'[]');
-
-function dialKey(k){
-  dialNum+=k;
-  $('phDisp').textContent=dialNum;
-}
-function dialDel(){
-  dialNum=dialNum.slice(0,-1);
-  $('phDisp').textContent=dialNum||'';
-}
-function makeCall(){
-  if(!dialNum){showToast('اكتب الرقم أولاً');return;}
-  // Save to recent
-  recentCalls.unshift({num:dialNum,time:new Date().toISOString()});
-  if(recentCalls.length>20) recentCalls.pop();
-  localStorage.setItem('carCalls',JSON.stringify(recentCalls));
-  renderRecent();
-  // Open tel: link
-  window.open('tel:'+dialNum);
-  dialNum='';
-  $('phDisp').textContent='';
-}
-function renderRecent(){
-  const el=$('phRecList');
-  if(recentCalls.length===0){
-    el.innerHTML='<div class="ph-empty">لا توجد مكالمات سابقة</div>';
-    return;
-  }
-  el.innerHTML=recentCalls.map(c=>{
-    const d=new Date(c.time);
-    const t=toAr(String(d.getHours()).padStart(2,'0'))+':'+toAr(String(d.getMinutes()).padStart(2,'0'));
-    const day=toAr(d.getDate())+'/'+toAr(d.getMonth()+1);
-    return '<div class="ph-ri g-click" onclick="dialNum=\''+c.num+'\';$(\'phDisp\').textContent=dialNum">'+
-      '<div><div class="ph-ri-n">'+c.num+'</div><div class="ph-ri-t">'+day+' '+t+'</div></div>'+
-      '<div class="ph-ri-ic">📞</div></div>';
-  }).join('');
-}
-renderRecent();
-
-/* ══════ MUSIC PLAYER ══════ */
-const audio=$('aud');
-let playlist=[];
-let curTrack=-1;
-let shuffleOn=false;
-let repeatMode=0; // 0=off, 1=all, 2=one
-let isPlaying=false;
-
-$('fInp').addEventListener('change',e=>{
-  const files=Array.from(e.target.files);
-  files.forEach(f=>{
-    playlist.push({name:f.name.replace(/\.[^.]+$/,''),url:URL.createObjectURL(f),file:f});
-  });
-  if(curTrack===-1&&playlist.length>0){
-    curTrack=0;
-    loadTrack(0);
-  }
-  renderPlaylist();
-  e.target.value='';
-});
-
-function loadTrack(i){
-  if(i<0||i>=playlist.length) return;
-  curTrack=i;
-  const t=playlist[i];
-  audio.src=t.url;
-  // Update displays
-  $('muTitle').textContent=t.name;
-  $('muArtist').textContent='ملف '+(i+1)+' من '+playlist.length;
-  $('mpTitle').textContent=t.name;
-  $('mpArtist').textContent='جارٍ التشغيل...';
-  renderPlaylist();
-}
-
-function musicToggle(){
-  if(playlist.length===0){
-    switchPage('music');
-    showToast('أضف أغاني من جهازك أولاً');
-    setTimeout(()=>document.getElementById('fInp').click(),400);
-    return;
-  }
-  if(audio.paused){
-    audio.play().then(()=>{
-      isPlaying=true;
-      updatePlayBtns();
-    }).catch(()=>{});
-  }else{
-    audio.pause();
-    isPlaying=false;
-    updatePlayBtns();
-  }
-}
-
-function updatePlayBtns(){
-  const icon=isPlaying?'⏸':'▶';
-  $('muPlay').textContent=icon;
-  $('mpPlay').textContent=icon;
-  const art=$('muArt');
-  if(isPlaying) art.classList.add('playing'); else art.classList.remove('playing');
-}
-
-function musicNext(){
-  if(playlist.length===0){showToast('لا توجد أغاني بعد');return;}
-  if(playlist.length===0) return;
-  let next;
-  if(shuffleOn){
-    next=Math.floor(Math.random()*playlist.length);
-  }else{
-    next=(curTrack+1)%playlist.length;
-  }
-  loadTrack(next);
-  if(isPlaying) audio.play().catch(()=>{});
-}
-
-function musicPrev(){
-  if(playlist.length===0){showToast('لا توجد أغاني بعد');return;}
-  if(playlist.length===0) return;
-  if(audio.currentTime>3){
-    audio.currentTime=0; return;
-  }
-  let prev=shuffleOn?Math.floor(Math.random()*playlist.length):(curTrack-1+playlist.length)%playlist.length;
-  loadTrack(prev);
-  if(isPlaying) audio.play().catch(()=>{});
-}
-
-function toggleShuffle(){
-  shuffleOn=!shuffleOn;
-  $('muShuf').classList.toggle('on',shuffleOn);
-}
-
-function toggleRepeat(){
-  repeatMode=(repeatMode+1)%3;
-  const btn=$('muRep');
-  btn.classList.toggle('on',repeatMode>0);
-  btn.textContent=repeatMode===2?'🔂':'🔁';
-}
-
-// Seek bar
-$('muSeek').addEventListener('input',e=>{
-  if(audio.duration) audio.currentTime=(e.target.value/100)*audio.duration;
-});
-
-// Volume
-$('muVol').addEventListener('input',e=>{
-  audio.volume=e.target.value/100;
-});
-audio.volume=0.8;
-
-// Time update
-audio.addEventListener('timeupdate',()=>{
-  if(!audio.duration) return;
-  const pct=(audio.currentTime/audio.duration)*100;
-  $('muSeek').value=pct;
-  $('muCur').textContent=fmtTime(audio.currentTime);
-  $('muDur').textContent=fmtTime(audio.duration);
-});
-
-// Track ended
-audio.addEventListener('ended',()=>{
-  if(repeatMode===2){
-    audio.currentTime=0; audio.play().catch(()=>{}); return;
-  }
-  if(repeatMode===1||curTrack<playlist.length-1){
-    musicNext();
-  }else{
-    isPlaying=false;
-    updatePlayBtns();
-  }
-});
-
-function fmtTime(s){
-  const m=Math.floor(s/60);
-  const sec=Math.floor(s%60);
-  return toAr(m)+':'+toAr(String(sec).padStart(2,'0'));
-}
-
-function renderPlaylist(){
-  const el=$('muList');
-  if(playlist.length===0){
-    el.innerHTML='<div class="mu-empty">لا توجد ملفات صوتية<br>اضغط "إضافة ملفات" لاختيار أغانيك</div>';
-    return;
-  }
-  el.innerHTML=playlist.map((t,i)=>
-    '<div class="mu-item'+(i===curTrack?' cur':'')+'" onclick="loadTrack('+i+');if(isPlaying)audio.play().catch(()=>{})">'+
-    '<span class="mu-idx">'+toAr(i+1)+'</span>'+
-    '<span class="mu-fn">'+t.name+'</span>'+
-    (i===curTrack?'<span>🎵</span>':'')+
-    '</div>'
-  ).join('');
-}
-
-/* ══════ NAVIGATION ══════ */
-function navSearch(){
-  const q=$('nvInp').value.trim();
-  if(!q){showToast('اكتب الوجهة أولاً');$('nvInp').focus();return;}
-  window.open('https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(q),'_blank');
-}
-function navTo(dest){
-  const map={'المنزل':'Home','العمل':'Work','محطة وقود':'محطة وقود قريبة','مسجد':'مسجد قريب'};
-  const q=map[dest]||dest;
-  const url=(q==='Home'||q==='Work')?'https://www.google.com/maps/dir/?api=1&destination='+q:'https://www.google.com/maps/search/'+encodeURIComponent(q);
-  showToast('جارٍ فتح الملاحة إلى: '+dest);
-  window.open(url,'_blank');
-}
-$('nvInp').addEventListener('keydown',e=>{if(e.key==='Enter')navSearch()});
-
-
-
-/* ══════ SPEED & TRIP (real GPS) ══════ */
-const tripStart=Date.now();
-function updTrip(){
-  const m=Math.floor((Date.now()-tripStart)/60000);
-  $('trip').textContent=m<60?toAr(m)+' د':toAr(Math.floor(m/60))+' س '+toAr(m%60)+' د';
-}
-setInterval(updTrip,30000);updTrip();
 if(navigator.geolocation&&navigator.geolocation.watchPosition){
-  navigator.geolocation.watchPosition(p=>{
-    const v=p.coords.speed;
-    $('spd').textContent=(v==null||isNaN(v))?'--':toAr(Math.round(v*3.6));
-  },()=>{},{enableHighAccuracy:true,maximumAge:2000});
-}
-/* ══════ TOAST ══════ */
-let toastT;
-function showToast(msg){
-  const t=document.getElementById('toast'); if(!t) return;
-  t.textContent=msg; t.classList.add('show');
-  clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),2200);
-}
-/* ══════ APP OPENER ══════ */
-function openApp(url){
-  window.open(url,'_blank');
+  navigator.geolocation.watchPosition(p=>{const v=p.coords.speed;setSpeed(v==null||isNaN(v)?null:Math.round(v*3.6))},()=>{},{enableHighAccuracy:true,maximumAge:2000});
 }
 
-/* ══════ ERROR CATCHER (for testing) ══════ */
-window.addEventListener('error',e=>{
-  console.error('Launcher error:',e.message,e.filename,e.lineno);
+/* ══════ حالة الجهاز: بلوتوث، واي فاي، بطارية ══════ */
+function setBat(pct,chg){
+  if(pct==null||pct<0){$('sbBatT').textContent='--';return}
+  $('sbBatT').textContent=toAr(pct)+'٪'+(chg?' ⚡':'');
+  const f=document.querySelector('#sbBat .batf');if(f)f.setAttribute('width',(13*pct/100).toFixed(1));
+}
+function devStatus(){
+  const on=navigator.onLine;$('sbNetT').textContent=on?'متصل':'بدون إنترنت';$('sbNet').className='sb '+(on?'on':'off');
+  if(window.Native&&Native.status){
+    try{
+      const s=JSON.parse(Native.status());
+      const bt=$('sbBt');bt.className='sb bt tap '+(s.bOn?'on':'off')+(s.bConn?' conn':'');
+      bt.querySelector('span').textContent=s.bConn?'متصل':(s.bOn?'بلوتوث':'مطفي');
+      $('sbWf').className='sb wf tap '+(s.wConn?'on':'off');$('sbWfT').textContent=s.wConn?'واي فاي':(s.wOn?'غير متصل':'مطفي');
+      setBat(s.bat,s.chg);
+    }catch(e){}
+  }else{
+    $('sbBt').className='sb bt tap';$('sbWf').className='sb wf tap '+(on?'on':'');
+  }
+}
+if(navigator.getBattery&&!(window.Native&&Native.status)){navigator.getBattery().then(b=>{const u=()=>setBat(Math.round(b.level*100),b.charging);u();b.addEventListener('levelchange',u);b.addEventListener('chargingchange',u)}).catch(()=>{})}
+const SYS={bt:'android.settings.BLUETOOTH_SETTINGS',wifi:'android.settings.WIFI_SETTINGS',sound:'android.settings.SOUND_SETTINGS',display:'android.settings.DISPLAY_SETTINGS',loc:'android.settings.LOCATION_SOURCE_SETTINGS',apps:'android.settings.APPLICATION_SETTINGS',home:'android.settings.HOME_SETTINGS',all:'android.settings.SETTINGS'};
+function sysOpen(k){
+  if(window.Native&&Native.openAction){ if(!Native.openAction(SYS[k])&&!Native.openAction(SYS.all)) toast('الشاشة ما تدعم هذا الاختصار'); }
+  else toast('هذا الاختصار يشتغل داخل التطبيق على الشاشة');
+}
+
+/* ══════ يوتيوب ══════ */
+function ytBox(){
+  const pg=document.querySelector('.pg.act');if(!pg)return null;
+  return [...pg.querySelectorAll('.ytlive')].find(b=>b.offsetParent!==null)||null;
+}
+function syncYT(){
+  if(!window.YTN) return;
+  const b=ytBox();
+  if(!b){YTN.hide();return}
+  const a=b.querySelector('.ytarea').getBoundingClientRect(),r=window.devicePixelRatio||1;
+  YTN.show(Math.round(a.left*r),Math.round(a.top*r),Math.round(a.width*r),Math.round(a.height*r));
+}
+function ytCmd(c){ if(window.YTN){c==='back'?YTN.back():YTN.home()} else openUrl('https://m.youtube.com') }
+window.addEventListener('resize',()=>setTimeout(syncYT,50));
+
+/* ══════ الموسيقى ══════ */
+const au=$('aud');let PL=[],ci=-1,shuf=false,rep=0;
+$('fInp').addEventListener('change',e=>{
+  [...e.target.files].forEach(f=>PL.push({n:f.name.replace(/\.[^.]+$/,''),u:URL.createObjectURL(f)}));
+  if(ci<0&&PL.length){load(0);musicPlay()}
+  renderPL();e.target.value='';if(PL.length)toast('انضافت الأغاني 🎵');
 });
-window._ready=true;
+function load(i){if(i<0||i>=PL.length)return;ci=i;au.src=PL[i].u;updMeta();renderPL()}
+function updMeta(){
+  const t=ci>=0?PL[ci].n:'لا توجد أغنية',s=ci>=0?'أغنية '+toAr(ci+1)+' من '+toAr(PL.length):'أضف أغاني من جهازك';
+  $('mTitle').textContent=t;$('mSub').textContent=s;$$('.x-mt').forEach(e=>e.textContent=t);$$('.x-ms').forEach(e=>e.textContent=ci>=0?(au.paused?'متوقف':'يشتغل الحين'):'اضغط وأضف أغانيك');
+}
+function musicPlay(){au.play().catch(()=>{})}
+function musicToggle(){
+  if(!PL.length){go('music');toast('أضف أغاني من جهازك أولاً');setTimeout(()=>$('fInp').click(),400);return}
+  au.paused?musicPlay():au.pause();
+}
+function musicNext(){if(!PL.length){toast('ما فيه أغاني للحين');return}load(shuf?Math.floor(Math.random()*PL.length):(ci+1)%PL.length);musicPlay()}
+function musicPrev(){if(!PL.length){toast('ما فيه أغاني للحين');return}if(au.currentTime>3){au.currentTime=0;return}load((ci-1+PL.length)%PL.length);musicPlay()}
+function toggleShuffle(){shuf=!shuf;$('mShuf').classList.toggle('on',shuf);toast(shuf?'التشغيل العشوائي شغّال':'التشغيل العشوائي طافي')}
+function toggleRepeat(){rep=(rep+1)%3;$('mRep').classList.toggle('on',rep>0);toast(['التكرار طافي','تكرار القائمة','تكرار الأغنية'][rep])}
+function fmt(s){if(!isFinite(s))return '0:00';s=Math.floor(s);return Math.floor(s/60)+':'+p2(s%60)}
+function playIcons(){const pl=!au.paused;$$('.x-play').forEach(b=>b.innerHTML=svg(pl?'pause':'play','f'));$$('.art,.x-art').forEach(a=>a.classList.toggle('spin',pl));updMeta()}
+au.addEventListener('play',playIcons);au.addEventListener('pause',playIcons);
+au.addEventListener('timeupdate',()=>{const f=au.duration?au.currentTime/au.duration:0;$('mSeek').value=Math.round(f*1000);$('mCur').textContent=fmt(au.currentTime);$('mDur').textContent=fmt(au.duration);$$('.x-mbar').forEach(e=>e.style.width=(f*100)+'%')});
+au.addEventListener('ended',()=>{if(rep===2){au.currentTime=0;musicPlay()}else if(rep===1||shuf||ci<PL.length-1)musicNext()});
+$('mSeek').addEventListener('input',e=>{if(au.duration)au.currentTime=e.target.value/1000*au.duration});
+$('mVol').addEventListener('input',e=>au.volume=e.target.value/100);au.volume=.8;
+function renderPL(){
+  $('mList').innerHTML=PL.length?PL.map((t,i)=>'<div class="tr'+(i===ci?' cur':'')+'" onclick="load('+i+');musicPlay()"><b style="color:var(--txt2)">'+toAr(i+1)+'</b><span></span>'+(i===ci?svg('music'):'')+'</div>').join(''):'<div class="empty">ما فيه أغاني للحين<br>اضغط «أضف أغاني» واختر من جهازك</div>';
+  $$('#mList .tr span').forEach((s,i)=>s.textContent=PL[i].n);
+}
+
+/* ══════ الهاتف ══════ */
+let num='',calls=[];try{calls=JSON.parse(localStorage.getItem('sayaratiCalls')||'[]')}catch(e){}
+function dial(k){if(num.length<15){num+=k;$('phD').textContent=num}}
+function dialDel(){num=num.slice(0,-1);$('phD').textContent=num}
+function makeCall(){
+  if(!num){toast('اكتب الرقم أولاً');return}
+  calls.unshift({n:num,t:Date.now()});calls=calls.slice(0,20);try{localStorage.setItem('sayaratiCalls',JSON.stringify(calls))}catch(e){}
+  openUrl('tel:'+num);num='';$('phD').textContent='';renderCalls();
+}
+function renderCalls(){
+  $('rec').innerHTML=calls.length?calls.map((c,i)=>{const d=new Date(c.t);return '<div class="it tap" onclick="num=calls['+i+'].n;$(\'phD\').textContent=num"><div><b>'+c.n.replace(/[^0-9*#+]/g,'')+'</b><br><small>'+toAr(d.getDate()+'/'+(d.getMonth()+1)+' '+p2(d.getHours())+':'+p2(d.getMinutes()))+'</small></div>'+svg('phone')+'</div>'}).join(''):'<div class="empty">ما فيه مكالمات سابقة</div>';
+}
+
+/* ══════ الملاحة ══════ */
+function navSearch(){const q=$('nvInp').value.trim();if(!q){toast('اكتب الوجهة أولاً');$('nvInp').focus();return}openUrl('https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(q))}
+$('nvInp').addEventListener('keydown',e=>{if(e.key==='Enter')navSearch()});
+function navTo(k){
+  const M={home:['المنزل','https://www.google.com/maps/dir/?api=1&destination=Home'],work:['العمل','https://www.google.com/maps/dir/?api=1&destination=Work'],fuel:['محطة وقود','https://www.google.com/maps/search/'+encodeURIComponent('محطة وقود قريبة')],mosque:['مسجد','https://www.google.com/maps/search/'+encodeURIComponent('مسجد قريب')]};
+  toast('جارٍ فتح الطريق إلى: '+M[k][0]);openUrl(M[k][1]);
+}
+
+/* ══════ التطبيقات ══════ */
+let APPS=null;
+const WEBAPPS=[['يوتيوب','https://m.youtube.com','c-yt','play'],['خرائط قوقل','https://www.google.com/maps','c-map','map'],['واتساب','https://wa.me/','c-ph','phone'],['سبوتيفاي','https://open.spotify.com','c-mu','music'],['ويز','https://www.waze.com/live-map','c-wf','nav'],['قوقل','https://www.google.com','c-ac','search']];
+function loadApps(){
+  if(APPS) return;
+  if(window.Native&&Native.getApps){
+    $('apG').innerHTML='<div class="empty" style="grid-column:1/-1">جارٍ تحميل تطبيقات الشاشة...</div>';
+    setTimeout(()=>{try{APPS=JSON.parse(Native.getApps()).sort((a,b)=>a.n.localeCompare(b.n,'ar'))}catch(e){APPS=[]}renderApps()},30);
+  }else{APPS=[];renderApps()}
+}
+function renderApps(){
+  const q=$('apQ').value.trim().toLowerCase();
+  let h='';
+  if(APPS&&APPS.length){
+    APPS.forEach((a,i)=>{if(q&&a.n.toLowerCase().indexOf(q)<0)return;h+='<button class="tap" onclick="openPkg('+i+')">'+(a.img?'<img src="'+a.img+'" alt="">':'<span class="ico c-st">'+svg('apps')+'</span>')+'<span></span></button>'});
+  }else{
+    WEBAPPS.forEach((a,i)=>{if(q&&a[0].indexOf(q)<0)return;h+='<button class="tap" onclick="openUrl(WEBAPPS['+i+'][1])"><span class="ico '+a[2]+'" style="width:58px;height:58px">'+svg(a[3],a[3]==='play'?'f':'')+'</span><span>'+a[0]+'</span></button>'});
+  }
+  $('apG').innerHTML=h||'<div class="empty" style="grid-column:1/-1">ما لقيت تطبيق بهالاسم</div>';
+  if(APPS&&APPS.length){const list=APPS.filter(a=>!q||a.n.toLowerCase().indexOf(q)>=0);$$('#apG button > span:last-child').forEach((s,i)=>s.textContent=list[i]?list[i].n:'')}
+}
+function openPkg(i){if(!Native.openApp(APPS[i].pkg))toast('ما قدرت أفتح التطبيق')}
+$('apQ').addEventListener('input',renderApps);
+
+/* ══════ السطوع ══════ */
+$('briR').addEventListener('input',e=>{S.bri=+e.target.value;$('bri').style.opacity=(100-S.bri)/100;save()});
+
+/* ══════ مقاس الشاشة ══════ */
+function scaleUI(){
+  const W=window.innerWidth,H=window.innerHeight,s=Math.min(W/1280,H/720),b=document.body;
+  b.style.width=(W/s)+'px';b.style.height=(H/s)+'px';b.style.transform='scale('+s+')';
+}
+window.addEventListener('resize',scaleUI);
+
+/* ══════ البداية ══════ */
+buildUI();scaleUI();applyAll();go('home');renderPL();renderCalls();updMeta();updTrip();devStatus();getWeather();
+setInterval(tick,1000);setInterval(updTrip,30000);setInterval(devStatus,5000);setInterval(getWeather,1800000);
+window.addEventListener('online',()=>{devStatus();getWeather()});window.addEventListener('offline',devStatus);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){devStatus();syncYT()}});
 </script>
 </body>
 </html>
