@@ -154,9 +154,43 @@ body.full .app{grid-template-columns:1fr!important}
 .phead .ytlogo{flex:0 1 auto;min-width:0;white-space:nowrap}
 @media (max-width:1180px){.phead .chip .lb{display:none}.phead .chip{font-size:18px}}
 @media (max-width:900px){.phead .ytlogo{font-size:0}.phead .ytlogo i{font-size:initial}}
+
+/* ===== الشريط اللي فوق (واي فاي، بلوتوث…) ===== */
+:root{--stH:clamp(28px,5vh,42px)}
+body.noSt{--stH:0px} body.noSt .stbar{display:none}
+.app{height:calc(100% - var(--stH));margin-top:var(--stH);padding-top:clamp(4px,1vh,8px)}
+.stbar{position:fixed;top:0;left:0;right:0;height:var(--stH);z-index:4;display:flex;align-items:center;justify-content:space-between;padding:0 2vw;direction:rtl}
+.stg{display:flex;align-items:center;gap:clamp(6px,1.4vw,22px)}
+.st{display:flex;align-items:center;gap:5px;background:none;border:none;color:var(--txt);cursor:pointer;padding:4px 2px;font-family:inherit;font-size:clamp(12px,1.5vw,18px);font-weight:800;transition:opacity .3s}
+.st svg{width:clamp(18px,2.3vw,27px);height:clamp(18px,2.3vw,27px);flex:none}
+.st .ln{fill:none;stroke:currentColor;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round}
+.st .dim{opacity:.28} .st.off{opacity:.42} .st .x{display:none} .st.off .x{display:inline}
+.st.on{color:var(--ac)}
+.st[hidden]{display:none}
+.bat{position:relative;width:clamp(26px,3vw,34px);height:clamp(13px,1.5vw,17px);border:2px solid currentColor;border-radius:4px;padding:1.5px}
+.bat::after{content:"";position:absolute;left:-5px;top:28%;height:44%;width:3px;border-radius:2px 0 0 2px;background:currentColor}
+.bat i{display:block;height:100%;border-radius:2px;background:currentColor;margin-right:auto}
+.st.low .bat i{background:#ff453a} .st.chg .bat i{background:#34c759}
+.stt{font-variant-numeric:tabular-nums;letter-spacing:.5px}
+.dock{grid-template-columns:repeat(7,1fr)}
+.dock .tile.all .ti{background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff}
+.dock .tile.all .ti svg{width:60%;height:60%;fill:currentColor}
 </style>
 </head>
 <body>
+<header class="stbar" id="stbar">
+  <div class="stg">
+    <button class="st" id="stWifi" aria-label="الواي فاي"><svg viewBox="0 0 24 24"><path class="ln sw3" d="M2.5 9a14 14 0 0 1 19 0"/><path class="ln sw2" d="M5.8 12.6a9.2 9.2 0 0 1 12.4 0"/><path class="ln sw1" d="M9.1 16.1a4.5 4.5 0 0 1 5.8 0"/><circle cx="12" cy="19.4" r="1.6" fill="currentColor"/><path class="ln x" d="M4 4l16 16"/></svg></button>
+    <button class="st" id="stBt" aria-label="البلوتوث"><svg viewBox="0 0 24 24"><path class="ln" d="M7 7.5l10 9-5 4.5V3l5 4.5-10 9"/><path class="ln x" d="M4 4l16 16"/></svg></button>
+    <button class="st" id="stGps" aria-label="الموقع"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/><path class="ln x" d="M4 4l16 16"/></svg></button>
+    <button class="st" id="stVol" aria-label="الصوت"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M3 9.5v5h4l5 4.2V5.3L7 9.5H3z"/><path class="ln sv1" d="M15.5 9.2a4 4 0 0 1 0 5.6"/><path class="ln sv2" d="M18.3 6.5a8 8 0 0 1 0 11"/><path class="ln x" d="M15 9l6 6M21 9l-6 6"/></svg><span id="stVolN" dir="ltr"></span></button>
+  </div>
+  <div class="stg">
+    <button class="st" id="stTemp" aria-label="الحرارة"><span id="stTempN" dir="ltr">--°</span></button>
+    <button class="st" id="stBat" aria-label="البطارية" hidden><span id="stBatN" dir="ltr"></span><span class="bat"><i id="stBatI"></i></span></button>
+    <span class="st stt" id="stTime" dir="ltr">--:--</span>
+  </div>
+</header>
 <div class="app">
   <section class="player card">
     <div class="phead">
@@ -219,6 +253,8 @@ body.full .app{grid-template-columns:1fr!important}
   <div class="row" id="fmtRow"></div>
   <h4>الأزرار الملونة</h4>
   <p style="margin:0;color:var(--soft);font-size:15px">التطبيق يدوّر لحاله على تطبيق الخرائط والبلوتوث والراديو والاتصال في شاشتك. ولو تبي تغيّر التطبيق اللي يفتحه أي زر: اضغط عليه ضغطة طويلة واختر.</p>
+  <h4>الشريط اللي فوق (واي فاي، بلوتوث، الصوت…)</h4>
+  <div class="row" id="stRow"></div>
   <h4>الشاشة الرئيسية</h4>
   <div class="row"><button class="opt" id="setHome">خلّه الشاشة الرئيسية للسيارة</button></div>
 </div></div>
@@ -347,6 +383,7 @@ function tileEl(a,cls){const b=document.createElement('button');b.className='til
   b.innerHTML='<span class="ti">'+(a.img?'<img src="'+a.img+'" alt="">':(a.e||'📱'))+'</span><span></span>';b.lastChild.textContent=a.n;return b}
 function openApp(a){if(NATIVE){if(Native.open(a.pkg))toast('يفتح '+a.n+'…');else toast('التطبيق مو موجود في الشاشة، شيله واختر غيره');return}toast('يفتح '+a.n+' داخل التطبيق')}
 function drawDock(){const d=$('dock');d.innerHTML='';
+  const al=tileEl({n:'كل التطبيقات',e:'<svg viewBox="0 0 24 24"><path d="M4 4h4v4H4zm6 0h4v4h-4zm6 0h4v4h-4zM4 10h4v4H4zm6 0h4v4h-4zm6 0h4v4h-4zM4 16h4v4H4zm6 0h4v4h-4zm6 0h4v4h-4z"/></svg>'},'all');al.onclick=()=>openAll();d.appendChild(al);
   DOCK.forEach((a,i)=>{const b=tileEl(a);let t;b.onclick=()=>{if(b.classList.contains('shake')){DOCK.splice(i,1);saveDock();toast('انشال '+a.n);return}openApp(a)};
     b.onpointerdown=()=>{t=setTimeout(()=>{d.querySelectorAll('.tile').forEach(x=>x.classList.add('shake'));toast('اضغط على التطبيق اللي تبي تشيله')},700)};
     b.onpointerup=b.onpointerleave=()=>clearTimeout(t);d.appendChild(b)});
@@ -455,6 +492,38 @@ if(HASYT){
 }else{
   ['cPlay','cBack','cFwd','cNext','cPrev','bHome'].forEach(id=>$(id).onclick=()=>toast('يوتيوب يشتغل داخل تطبيق الأندرويد'));
 }
+/* ===== الشريط اللي فوق ===== */
+let ST_ON=store.get('stbar','1');
+document.body.classList.toggle('noSt',ST_ON!=='1');
+opts('stRow',[['1','ظاهر'],['0','مخفي']],ST_ON,v=>{ST_ON=v;store.set('stbar',v);document.body.classList.toggle('noSt',v!=='1');setTimeout(()=>dispatchEvent(new Event('resize')),50)});
+function stSet(id,on,cls){const e=$(id);e.classList.toggle('off',!on);e.classList.toggle('on',cls==='on')}
+function stOpen(act){if(NATIVE&&Native.openAction&&Native.openAction(act))return;if(NATIVE&&Native.openAction&&Native.openAction('android.settings.SETTINGS'))return;toast('هذا الزر يشتغل على شاشة السيارة')}
+$('stWifi').onclick=()=>stOpen('android.settings.WIFI_SETTINGS');
+$('stBt').onclick=()=>quick('bt');
+$('stGps').onclick=()=>stOpen('android.settings.LOCATION_SOURCE_SETTINGS');
+$('stVol').onclick=()=>{if(window.Native&&Native.vol){Native.vol(0);setTimeout(stTick,800)}else toast('الصوت يشتغل على شاشة السيارة')};
+$('stTemp').onclick=()=>wxUpdate();
+$('stBat').onclick=()=>stOpen('android.intent.action.POWER_USAGE_SUMMARY');
+function stTick(){
+  const n=new Date();let hh=n.getHours();const mm=String(n.getMinutes()).padStart(2,'0');
+  if(FMT!=='24')hh=hh%12||12;
+  $('stTime').textContent=hh+':'+mm;
+  const t=$('wxT').textContent;$('stTempN').textContent=t||'--°';
+  let s=null;try{if(window.Native&&Native.status)s=JSON.parse(Native.status())}catch(e){}
+  if(!s)s={wOn:navigator.onLine,wConn:navigator.onLine,wLvl:navigator.onLine?3:-1,bOn:false,gps:true,vol:-1,bat:-1};
+  const lv=s.wConn?Math.max(0,Math.min(3,s.wLvl)):-1;
+  ['sw1','sw2','sw3'].forEach((c,i)=>document.querySelector('#stWifi .'+c).classList.toggle('dim',lv<i+1));
+  stSet('stWifi',s.wOn,s.wConn?'on':'');
+  stSet('stBt',s.bOn,s.bConn?'on':'');
+  stSet('stGps',s.gps,'');
+  const v=s.vol;$('stVolN').textContent=v>=0?v+'%':'';
+  $('stVol').classList.toggle('off',v===0);
+  document.querySelector('#stVol .sv1').classList.toggle('dim',v===0);
+  document.querySelector('#stVol .sv2').classList.toggle('dim',v>=0&&v<50);
+  const b=$('stBat');b.hidden=!(s.bat>=0);
+  if(s.bat>=0){$('stBatN').textContent=s.bat+'%';$('stBatI').style.width=Math.max(6,s.bat)+'%';b.classList.toggle('low',s.bat<=20&&!s.chg);b.classList.toggle('chg',!!s.chg)}
+}
+stTick();setInterval(stTick,4000);
 </script>
 <div style="position:fixed;bottom:4px;left:10px;z-index:5;font-family:Tajawal,system-ui,sans-serif;font-size:11px;font-weight:700;color:#fff;opacity:.5;pointer-events:none;text-shadow:0 1px 2px #000">برمجة أبو نواف</div>
 </body>

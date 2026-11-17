@@ -22,6 +22,17 @@ import android.util.Base64;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.util.List;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothProfile;
+import android.content.Context;
+import android.content.IntentFilter;
+import android.location.LocationManager;
+import android.media.AudioManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
+import android.os.BatteryManager;
 import android.webkit.ValueCallback;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebChromeClient;
@@ -114,6 +125,10 @@ public class MainActivity extends Activity {
                 != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,
                     Manifest.permission.ACCESS_FINE_LOCATION}, 7);
+        } else if (Build.VERSION.SDK_INT >= 31 && checkSelfPermission("android.permission.BLUETOOTH_CONNECT")
+                != PackageManager.PERMISSION_GRANTED) {
+            // عشان نعرف إذا فيه جهاز بلوتوث متصل
+            requestPermissions(new String[]{"android.permission.BLUETOOTH_CONNECT"}, 8);
         }
 
         web.setWebChromeClient(new WebChromeClient() {
@@ -211,6 +226,74 @@ public class MainActivity extends Activity {
             } catch (Exception e) {
                 try { startActivity(launch); return true; } catch (Exception e2) { return false; }
             }
+        }
+
+        /** حالة الشريط اللي فوق: واي فاي، بلوتوث، موقع، صوت، بطارية */
+        @JavascriptInterface
+        public String status() {
+            JSONObject o = new JSONObject();
+            try {
+                WifiManager wm = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+                ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                boolean wOn = wm != null && wm.isWifiEnabled();
+                boolean wConn = false;
+                int lvl = -1;
+                if (cm != null) {
+                    NetworkInfo ni = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+                    wConn = ni != null && ni.isConnected();
+                }
+                if (wConn && wm != null) {
+                    WifiInfo wi = wm.getConnectionInfo();
+                    if (wi != null) lvl = WifiManager.calculateSignalLevel(wi.getRssi(), 4);
+                }
+                o.put("wOn", wOn); o.put("wConn", wConn); o.put("wLvl", lvl);
+            } catch (Exception e) { }
+            try {
+                BluetoothAdapter ba = BluetoothAdapter.getDefaultAdapter();
+                boolean bOn = false, bConn = false;
+                try { bOn = ba != null && ba.isEnabled(); } catch (Exception e) { }
+                if (bOn) {
+                    try {
+                        bConn = ba.getProfileConnectionState(BluetoothProfile.A2DP) == BluetoothProfile.STATE_CONNECTED
+                             || ba.getProfileConnectionState(BluetoothProfile.HEADSET) == BluetoothProfile.STATE_CONNECTED;
+                    } catch (Exception e) { }
+                }
+                o.put("bOn", bOn); o.put("bConn", bConn);
+            } catch (Exception e) { }
+            try {
+                LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                o.put("gps", lm != null && lm.isProviderEnabled(LocationManager.GPS_PROVIDER));
+            } catch (Exception e) { }
+            try {
+                AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+                int max = am.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+                int cur = am.getStreamVolume(AudioManager.STREAM_MUSIC);
+                o.put("vol", max > 0 ? Math.round(cur * 100f / max) : -1);
+            } catch (Exception e) { }
+            try {
+                Intent b = registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+                int pct = -1; boolean chg = false;
+                if (b != null && b.getBooleanExtra(BatteryManager.EXTRA_PRESENT, false)) {
+                    int l = b.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+                    int sc = b.getIntExtra(BatteryManager.EXTRA_SCALE, 100);
+                    if (l >= 0 && sc > 0) pct = Math.round(l * 100f / sc);
+                    chg = b.getIntExtra(BatteryManager.EXTRA_PLUGGED, 0) != 0;
+                }
+                o.put("bat", pct); o.put("chg", chg);
+            } catch (Exception e) { }
+            return o.toString();
+        }
+
+        /** يطلّع شريط الصوت حق الشاشة */
+        @JavascriptInterface
+        public void vol(final int dir) {
+            runOnUiThread(() -> {
+                try {
+                    AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+                    int a = dir > 0 ? AudioManager.ADJUST_RAISE : dir < 0 ? AudioManager.ADJUST_LOWER : AudioManager.ADJUST_SAME;
+                    am.adjustStreamVolume(AudioManager.STREAM_MUSIC, a, AudioManager.FLAG_SHOW_UI);
+                } catch (Exception e) { }
+            });
         }
 
         @JavascriptInterface
