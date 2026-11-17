@@ -714,6 +714,9 @@
   .lgrid .opt{display:flex;flex-direction:column;align-items:center;gap:4px}
   .lgrid .opt b{font-size:22px;font-weight:400}
   @media (orientation:portrait){main{flex-direction:column}}
+  /* ══ الألوان النهارية ══ */
+  body.DAY{--text:#10202a;--card:rgba(255,255,255,.72);--line:rgba(16,32,42,.10)}
+  body.DAY .stars,body.DAY [data-bg] .stars{filter:none}
 </style>
 </head>
 <body data-bg="flow" class="L-classic C-thin K-glass">
@@ -856,6 +859,8 @@
     <div class="spage on" data-p="look">
       <section class="sgroup"><h3><i>🖥️</i>شكل الواجهة</h3><div class="lgrid" id="layoutRow"></div></section>
       <section class="sgroup"><h3><i>🌄</i>الخلفية</h3><div class="grid" id="bgRow"></div><input type="file" id="photoIn" accept="image/*" hidden></section>
+      <section class="sgroup"><h3><i>🌗</i>النهار والليل</h3><div class="row" id="dnRow"></div><p class="note" id="dnInfo">تلقائي: ألوان فاتحة من الشروق إلى المغرب حسب مدينتك، وبالليل يرجع لونك</p></section>
+      <section class="sgroup"><h3><i>🌙</i>الشاشة السودا التلقائية (بالليل)</h3><div class="row" id="abRow"></div><p class="note">إذا ما لمست الشاشة هالمدة بالليل تسوّد لحالها، والصوت يكمل، ولمسة وحدة ترجّعها</p></section>
       <section class="sgroup"><h3><i>🎨</i>لون الثيم</h3><div class="grid" id="themes"></div><p class="note">التصاميم اللي لها ألوان خاصة (مثل العدادات والخرائط) تحتفظ بألوانها.</p></section>
       <section class="sgroup two">
         <div><h3><i>🕐</i>شكل الساعة</h3><div class="row" id="clockRow"></div><div class="row" style="margin-top:10px" id="fmtRow"></div></div>
@@ -1004,6 +1009,7 @@ const THEMES={
   dusk: {name:'غروب ناعم', bg1:'#1c1020',bg2:'#3d1f33',accent:'#ffb38a',soft:'#c9a3a8',g1:'#e0785f',g2:'#9a4f8a'},
   gold: {name:'ذهبي ليلي', bg1:'#0f0e0b',bg2:'#26221a',accent:'#e9c46a',soft:'#b3a98f',g1:'#a8873a',g2:'#5c5240'},
   mint: {name:'نعناعي',    bg1:'#0d1c18',bg2:'#173a30',accent:'#a8f0d0',soft:'#9cc2b4',g1:'#3fbf8f',g2:'#2f8f9f'},
+  day:  {name:'نهاري فاتح', bg1:'#dfeaf3',bg2:'#f6f9fc',accent:'#0b7fa8',soft:'#4d6274',g1:'#3aa0c8',g2:'#7aa8d8',light:1},
   red:  {name:'أحمر رياضي', bg1:'#140a0b',bg2:'#2e1215',accent:'#ff5a5f',soft:'#c49a9c',g1:'#c0303a',g2:'#5a1a20'}
 };
 let S={
@@ -1046,9 +1052,10 @@ function speedOff(){if(SPD.watch!==null){navigator.geolocation.clearWatch(SPD.wa
 function speedSync(){const on=['speedo','hud','twin','retro','bar','luxe','mapfull','mycar'].includes(S.layout);SPD.on=on;if(on){if(!$('sNdl'))sdialBuild();speedOn()}else speedOff()}
 
 function applyAll(){
-  const t=THEMES[S.theme], r=document.documentElement.style;
+  const dnDay=(typeof dnLast==='boolean'&&dnLast);
+  const t=dnDay?THEMES.day:(S.theme==='day'&&store.get('dn','auto')==='auto'?THEMES.sea:THEMES[S.theme]), r=document.documentElement.style;
   ['bg1','bg2','accent','soft','g1','g2'].forEach(k=>r.setProperty('--'+k,t[k]));
-  document.body.className='L-'+S.layout+' C-'+S.clock+' K-'+S.cards+' I-'+S.icons+' MC-gauge';
+  document.body.className='L-'+S.layout+' C-'+S.clock+' K-'+S.cards+' I-'+S.icons+' MC-gauge'+(t.light?' DAY':'');
   try{speedSync()}catch(e){}
   document.body.style.fontFamily=(FONTS[S.font]||FONTS.tajawal)[0]+',sans-serif';
   document.body.dataset.bg=S.bg;
@@ -1071,6 +1078,8 @@ const LAYOUTS=[['classic','🪟','كلاسيكي'],['sport','🏁','رياضي']
   ['mapfull','🗺️','الخريطة الحيّة'],['mapplay','🧭','خريطة ومشغل'],['mycar','🚙','سيارتي']];
 (function(){const r=$('layoutRow');LAYOUTS.forEach(([k,ic,n])=>{const b=document.createElement('button');b.className='opt'+(k===S.layout?' on':'');
   b.innerHTML='<b>'+ic+'</b>'+n;b.onclick=()=>{r.querySelectorAll('.opt').forEach(x=>x.classList.toggle('on',x===b));save('layout',k);applyAll();tick();};r.appendChild(b);});})();
+makeOpts('dnRow',[['auto','🌗 تلقائي'],['day','☀️ نهاري دايم'],['off','🎨 حسب لوني']],store.get('dn','auto'),v=>{store.set('dn',v);dnApply(true)});
+makeOpts('abRow',[['0','مطفية'],['1','دقيقة'],['3','٣ دقايق'],['5','٥ دقايق'],['10','١٠ دقايق']],store.get('ab','3'),v=>{store.set('ab',v);toast(v==='0'?'طفّيت الشاشة السودا التلقائية':'تشتغل بعد '+v+' دقيقة بدون لمس')});
 makeOpts('iconRow',[['round','مربع ناعم'],['circle','دائري'],['glow','مضيء'],['bare','بدون خلفية']],S.icons,v=>{save('icons',v);applyAll();});
 makeOpts('fontRow',Object.entries(FONTS).map(([k,f])=>[k,f[1]]),S.font,v=>{save('font',v);applyAll();});
 document.querySelectorAll('#fontRow .opt').forEach((b,i)=>b.style.fontFamily=Object.values(FONTS)[i][0]);
@@ -1567,6 +1576,31 @@ function blackOn(){
   document.documentElement.appendChild(d);setTimeout(()=>{d.style.color='transparent'},2500);
   const k=e=>{if(document.getElementById('blkScr')){e.preventDefault();d.remove()}document.removeEventListener('keydown',k,true)};document.addEventListener('keydown',k,true);
 }
+
+/* ══════ النهار والليل + الشاشة السودا التلقائية ══════ */
+function sunTimes(date,lat,lng){
+  const D2R=Math.PI/180,R2D=180/Math.PI,sn=d=>Math.sin(d*D2R),cs=d=>Math.cos(d*D2R);
+  const fix=(a,b)=>{a=a-b*Math.floor(a/b);return a<0?a+b:a};
+  let y=date.getFullYear(),m=date.getMonth()+1,d=date.getDate();if(m<=2){y--;m+=12}
+  const A=Math.floor(y/100),B=2-A+Math.floor(A/4);
+  const jd=Math.floor(365.25*(y+4716))+Math.floor(30.6001*(m+1))+d+B-1524.5-lng/(15*24);
+  const sun=t=>{const D=jd+t-2451545,g=fix(357.529+0.98560028*D,360),q=fix(280.459+0.98564736*D,360),L=fix(q+1.915*sn(g)+0.02*sn(2*g),360),e=23.439-0.00000036*D,RA=R2D*Math.atan2(cs(e)*sn(L),cs(L))/15;return{dec:R2D*Math.asin(sn(e)*sn(L)),eqt:q/15-fix(RA,24)}};
+  const mid=t=>fix(12-sun(t).eqt,24);
+  const ang=(a,t,ccw)=>{const dc=sun(t).dec,T=R2D*Math.acos((-sn(a)-sn(dc)*sn(lat))/(cs(dc)*cs(lat)))/15;return mid(t)+(ccw?-T:T)};
+  const tz=-date.getTimezoneOffset()/60,cv=h=>Math.round(fix(h+tz-lng/15,24)*60);
+  return {rise:cv(ang(0.833,6/24,1)),set:cv(ang(0.833,18/24))};
+}
+function dnLoc(){try{const c=JSON.parse(store.get('wxCity','null')||'null');if(c&&isFinite(c.lat))return c}catch(e){}return {lat:24.7136,lon:46.6753}}
+function dnIsDay(){const n=new Date(),c=dnLoc(),t=sunTimes(n,c.lat,c.lon),m=n.getHours()*60+n.getMinutes();return m>=t.rise&&m<t.set}
+var dnLast=null;
+function dnApply(force){const mode=store.get('dn','auto');const d=mode==='day'||(mode==='auto'&&dnIsDay());if(d!==dnLast||force){dnLast=d;applyAll();const di=document.getElementById('dnInfo');const dm=store.get('dn','auto');if(di&&dm!=='auto')di.textContent=dm==='day'?'الألوان فاتحة دايم ☀️':'الألوان حسب اختيارك دايم';if(di&&dm==='auto'){const c=dnLoc(),t=sunTimes(new Date(),c.lat,c.lon),f=x=>String(Math.floor(x/60)).padStart(2,'0')+':'+String(x%60).padStart(2,'0');di.textContent='تلقائي: ألوان فاتحة من الشروق ('+f(t.rise)+') إلى المغرب ('+f(t.set)+')، والحين '+(d?'نهاري ☀️':'ليلي 🌙')}}}
+setInterval(()=>dnApply(false),30000);
+let abLast=Date.now();
+['pointerdown','touchstart','keydown','wheel'].forEach(ev=>document.addEventListener(ev,()=>{abLast=Date.now()},{passive:true,capture:true}));
+setInterval(()=>{const mins=+store.get('ab','3');if(!mins)return;if(dnIsDay())return;if(document.getElementById('blkScr'))return;
+  if(Date.now()-abLast>=mins*60000){abLast=Date.now();blackOn()}},10000);
+
+dnApply(true);
 </script>
 <div style="position:fixed;bottom:4px;left:10px;z-index:5;font-family:Tajawal,system-ui,sans-serif;font-size:11px;font-weight:700;color:#fff;opacity:.5;pointer-events:none;text-shadow:0 1px 2px #000">برمجة أبو نواف</div>
 </body>
