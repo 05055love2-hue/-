@@ -742,6 +742,7 @@
     <button class="st" id="stWifi" aria-label="الواي فاي"><svg viewBox="0 0 24 24"><path class="ln sw3" d="M2.5 9a14 14 0 0 1 19 0"/><path class="ln sw2" d="M5.8 12.6a9.2 9.2 0 0 1 12.4 0"/><path class="ln sw1" d="M9.1 16.1a4.5 4.5 0 0 1 5.8 0"/><circle cx="12" cy="19.4" r="1.6" fill="currentColor"/><path class="ln x" d="M4 4l16 16"/></svg></button>
     <button class="st" id="stBt" aria-label="البلوتوث"><svg viewBox="0 0 24 24"><path class="ln" d="M7 7.5l10 9-5 4.5V3l5 4.5-10 9"/><path class="ln x" d="M4 4l16 16"/></svg></button>
     <button class="st" id="stGps" aria-label="الموقع"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/><path class="ln x" d="M4 4l16 16"/></svg></button>
+    <button class="st" id="stBlk" aria-label="شاشة سودا" onclick="blackOn()"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M20.5 14.6A8.5 8.5 0 0 1 9.4 3.5a8.5 8.5 0 1 0 11.1 11.1z"/></svg></button>
     <button class="st" id="stVol" aria-label="الصوت"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M3 9.5v5h4l5 4.2V5.3L7 9.5H3z"/><path class="ln sv1" d="M15.5 9.2a4 4 0 0 1 0 5.6"/><path class="ln sv2" d="M18.3 6.5a8 8 0 0 1 0 11"/><path class="ln x" d="M15 9l6 6M21 9l-6 6"/></svg><span id="stVolN" dir="ltr"></span></button>
   </div>
   <div class="stg">
@@ -1555,6 +1556,17 @@ $('carModel').oninput=()=>{store.set('carModel',$('carModel').value.trim());hero
 $('mcLogoBtn').onclick=()=>$('logoIn').click();
 $('mcLogoName').onclick=()=>{document.querySelector('#stabs [data-p="speed"]').click();setTimeout(()=>$('brandSearch').focus(),200)};
 myCarSettings();heroDraw();logoDraw();
+
+/* ══ شاشة سودا ══ */
+function blackOn(){
+  if(window.BlackScr&&BlackScr.on){BlackScr.on();return}
+  let d=document.getElementById('blkScr');if(d)return;
+  d=document.createElement('div');d.id='blkScr';
+  d.style.cssText='position:fixed;left:0;top:0;width:100vw;height:100vh;background:#000;z-index:2147483647;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.4);font:16px system-ui,sans-serif;transition:color 1.5s';
+  d.textContent='اضغط على الشاشة للرجوع';d.onclick=()=>d.remove();
+  document.documentElement.appendChild(d);setTimeout(()=>{d.style.color='transparent'},2500);
+  const k=e=>{if(document.getElementById('blkScr')){e.preventDefault();d.remove()}document.removeEventListener('keydown',k,true)};document.addEventListener('keydown',k,true);
+}
 </script>
 <div style="position:fixed;bottom:4px;left:10px;z-index:5;font-family:Tajawal,system-ui,sans-serif;font-size:11px;font-weight:700;color:#fff;opacity:.5;pointer-events:none;text-shadow:0 1px 2px #000">برمجة أبو نواف</div>
 </body>

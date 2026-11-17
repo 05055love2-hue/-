@@ -141,6 +141,7 @@ public class MainActivity extends Activity {
         }
 
         web.addJavascriptInterface(new Bridge(), "Native");
+        web.addJavascriptInterface(new BlackScreen.JS(this), "BlackScr");
         web.addJavascriptInterface(new YtBridge(), "YTN");
         web.addJavascriptInterface(new MapBridge(), "MPN");
         web.loadUrl(BASE + "index.html");
@@ -490,6 +491,7 @@ public class MainActivity extends Activity {
 
     @Override
     public void onBackPressed() {
+        if (BlackScreen.hide(this)) return;
         if (fullView != null) { exitVideoFull(); return; }
         if (yt != null && yt.getVisibility() == View.VISIBLE && yt.canGoBack()) { yt.goBack(); return; }
         if (mp != null && mp.getVisibility() == View.VISIBLE && mp.canGoBack()) { mp.goBack(); return; }

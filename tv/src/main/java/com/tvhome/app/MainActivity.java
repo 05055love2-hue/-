@@ -85,6 +85,7 @@ public class MainActivity extends Activity {
         web.setFocusable(true);
         web.setFocusableInTouchMode(true);
         web.addJavascriptInterface(new Bridge(), "Native");
+        web.addJavascriptInterface(new BlackScreen.JS(this), "BlackScr");
         web.addJavascriptInterface(new YtBridge(), "YT");
         // اختيار صورة من الجهاز للخلفية
         web.setWebChromeClient(new WebChromeClient() {
@@ -375,6 +376,11 @@ public class MainActivity extends Activity {
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent e) {
+        // الشاشة السودا: أي زر في الريموت يرجّعها (إلا الصوت)
+        if (BlackScreen.isOn() && !BlackScreen.isPassKey(e.getKeyCode())) {
+            if (e.getAction() == KeyEvent.ACTION_UP) BlackScreen.hide(this);
+            return true;
+        }
         // زر الرجوع في الريموت يسكّر النوافذ بس، وما يطلع من الشاشة الرئيسية
         if (e.getKeyCode() == KeyEvent.KEYCODE_BACK) {
             if (e.getAction() == KeyEvent.ACTION_UP) {

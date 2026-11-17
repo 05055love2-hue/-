@@ -450,6 +450,7 @@ body.port .tb{padding:0 12px}body.port .credit{display:none}
     <div class="tb-g"><b class="x-time-s" style="color:var(--txt);font-size:15px"></b><span class="x-date-s"></span></div>
     <div class="tb-g">
       <button class="sb bt tap" id="sbBt" onclick="sysOpen('bt')"><i data-ic="bt"></i><span>بلوتوث</span></button>
+      <button class="sb tap" onclick="blackOn()" title="شاشة سودا"><i data-ic="moon"></i><span>شاشة سودا</span></button>
       <button class="sb wf tap" id="sbWf" onclick="sysOpen('wifi')"><i data-ic="wifi"></i><span id="sbWfT">واي فاي</span></button>
       <span class="sb" id="sbNet"><span id="sbNetT">متصل</span></span>
       <span class="sb" id="sbBat"><i data-ic="bat"></i><span id="sbBatT">--</span></span>
@@ -707,7 +708,7 @@ body.port .tb{padding:0 12px}body.port .credit{display:none}
 
 <script>
 /* داخل تطبيق أندرويد: الروابط تفتح في تطبيقاتها */
-const VER='v3.7';
+const VER='v3.8';
 const $=id=>document.getElementById(id);
 const $$=s=>[...document.querySelectorAll(s)];
 const NAT=!!(window.Native&&Native.openUrl);
@@ -763,6 +764,7 @@ const IC={
  brush:'<path d="M18.4 2.6a2 2 0 0 1 3 3L12 15l-3-3z"/><path d="M9 12c-2.5 0-4 1.6-4 4 0 1.5-.8 2.6-2 3 4 1.5 9 .5 9-4"/>',
  bell:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/>',
  chev:'<path d="M15 6l-6 6 6 6"/>',
+ moon:'<path d="M20.5 14.6A8.5 8.5 0 0 1 9.4 3.5a8.5 8.5 0 1 0 11.1 11.1z"/>',
  lock:'<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>'
 };
 function svg(n,cls){return '<svg class="i'+(cls?' '+cls:'')+'" viewBox="0 0 24 24">'+(IC[n]||'')+'</svg>'}
@@ -817,9 +819,9 @@ function setOpt(k,v){
 const CITY={'الرياض':[24.7136,46.6753],'جدة':[21.4858,39.1925],'مكة المكرمة':[21.3891,39.8579],'المدينة المنورة':[24.5247,39.5692],'الدمام':[26.4207,50.0888],'الخبر':[26.2172,50.1971],'الأحساء':[25.383,49.586],'الجبيل':[27.0046,49.646],'الطائف':[21.2703,40.4158],'تبوك':[28.3838,36.555],'أبها':[18.2164,42.5053],'خميس مشيط':[18.3,42.7333],'حائل':[27.5114,41.7208],'بريدة':[26.326,43.975],'جازان':[16.8892,42.5511],'نجران':[17.5656,44.2289],'الباحة':[20.0129,41.4677],'سكاكا':[29.9697,40.2064],'عرعر':[30.9753,41.0381],'ينبع':[24.0895,38.0618],'حفر الباطن':[28.4328,45.9708],'الكويت':[29.3759,47.9774],'الدوحة':[25.2854,51.531],'المنامة':[26.2285,50.586],'دبي':[25.2048,55.2708],'أبوظبي':[24.4539,54.3773],'مسقط':[23.588,58.3829]};
 function setCity(c){S.city=c;save();if(c!=='auto'){setLoc(CITY[c][0],CITY[c][1],c)}getWeather();applyAll();toast(c==='auto'?'المدينة تتحدد من موقعك':'صارت المدينة: '+c)}
 /* ══════ الشريط السفلي القابل للتخصيص ══════ */
-const PGS={home:['home','الرئيسية'],yt:['play','يوتيوب'],music:['music','الموسيقى'],radio:['radio','الراديو'],prayer:['mosque','الصلاة'],nav:['nav','الملاحة'],phone:['phone','الهاتف'],apps:['apps','التطبيقات'],settings:['gear','الإعدادات']};
+const PGS={home:['home','الرئيسية'],yt:['play','يوتيوب'],music:['music','الموسيقى'],radio:['radio','الراديو'],prayer:['mosque','الصلاة'],nav:['nav','الملاحة'],phone:['phone','الهاتف'],apps:['apps','التطبيقات'],black:['moon','شاشة سودا'],settings:['gear','الإعدادات']};
 const FIXED=['home','settings'];
-const dock0=()=>['home','yt','music','radio','prayer','nav','phone','apps','settings'].map(id=>({t:'pg',id:id}));
+const dock0=()=>['home','yt','music','radio','prayer','nav','phone','apps','black','settings'].map(id=>({t:'pg',id:id}));
 const DK=()=>{if(!Array.isArray(S.dock)||!S.dock.length)S.dock=dock0();return S.dock};
 const escH=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function appImg(pkg){const a=APPS&&APPS.find(x=>x.pkg===pkg);return a&&a.img||''}
@@ -839,7 +841,7 @@ function dockEdit(){dkHold=Date.now();S.stSec='dock';save();go('settings');apply
 function dockTap(i){
   if(Date.now()-dkHold<900)return;
   const it=DK()[i];if(!it)return;
-  if(it.t==='pg')go(it.id);
+  if(it.t==='pg'){if(it.id==='black')blackOn();else go(it.id)}
   else if(it.t==='app'){if(!(window.Native&&Native.openApp&&Native.openApp(it.pkg)))toast('ما قدرت أفتح التطبيق')}
   else openUrl(it.u);
 }
@@ -1342,10 +1344,22 @@ window.addEventListener('resize',scaleUI);
 /* ══════ البداية ══════ */
 if(S.layout==='car'||!LAYS.some(l=>l[0]===S.layout)){S.layout='classic';save()}
 if(S.stSec==='car'){S.stSec='look';save()}
+if(!S.blkAdded){S.blkAdded=true;if(Array.isArray(S.dock)&&!S.dock.some(x=>x.id==='black')){const si=S.dock.findIndex(x=>x.id==='settings');S.dock.splice(si<0?S.dock.length:si,0,{t:'pg',id:'black'})}save()}
 buildUI();buildRad();scaleUI();applyAll();if(S.rAuto&&RS.i>=0)setTimeout(()=>radPlay(RS.i),1500);go('home');renderPL();renderCalls();updMeta();updTrip();devStatus();getWeather();
 setInterval(tick,1000);setInterval(updTrip,30000);setInterval(devStatus,5000);setInterval(getWeather,1800000);
 window.addEventListener('online',()=>{devStatus();getWeather()});window.addEventListener('offline',devStatus);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden){devStatus();syncYT()}});
+
+/* ══ شاشة سودا ══ */
+function blackOn(){
+  if(window.BlackScr&&BlackScr.on){BlackScr.on();return}
+  let d=document.getElementById('blkScr');if(d)return;
+  d=document.createElement('div');d.id='blkScr';
+  d.style.cssText='position:fixed;left:0;top:0;width:100vw;height:100vh;background:#000;z-index:2147483647;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.4);font:16px system-ui,sans-serif;transition:color 1.5s';
+  d.textContent='اضغط على الشاشة للرجوع';d.onclick=()=>d.remove();
+  document.documentElement.appendChild(d);setTimeout(()=>{d.style.color='transparent'},2500);
+  const k=e=>{if(document.getElementById('blkScr')){e.preventDefault();d.remove()}document.removeEventListener('keydown',k,true)};document.addEventListener('keydown',k,true);
+}
 </script>
 </body>
 </html>

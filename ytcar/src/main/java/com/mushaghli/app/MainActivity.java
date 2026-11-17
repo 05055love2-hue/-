@@ -157,6 +157,7 @@ public class MainActivity extends Activity {
         });
 
         web.addJavascriptInterface(new Bridge(), "Native");
+        web.addJavascriptInterface(new BlackScreen.JS(this), "BlackScr");
         web.addJavascriptInterface(new YtBridge(), "YT");
         web.addJavascriptInterface(new MapBridge(), "MP");
         web.loadUrl(BASE + "index.html");
@@ -551,6 +552,7 @@ public class MainActivity extends Activity {
 
     @Override
     public void onBackPressed() {
+        if (BlackScreen.hide(this)) return;
         if (fullView != null) { exitVideoFull(); return; }
         if (yt != null && yt.getVisibility() == View.VISIBLE && yt.canGoBack()) { yt.goBack(); return; }
         // التطبيق شاشة رئيسية، فزر الرجوع يسكّر النوافذ بس وما يطلع من التطبيق
