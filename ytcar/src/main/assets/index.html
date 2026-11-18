@@ -750,13 +750,13 @@ let rsT=0;$('bkReset').onclick=()=>{if(Date.now()-rsT>4000){rsT=Date.now();toast
   Object.keys(bkAll()).forEach(k=>localStorage.removeItem(k));toast('رجع مثل أول');setTimeout(()=>location.reload(),900)};
 let ALL=null,PICK=null;
 let SWAPI=-1;
-function openAdd(k){SWAPI=-1;if(typeof k==='string'&&k.startsWith('swap:')){SWAPI=+k.slice(5);k=null}PICK=typeof k==='string'?k:null;if(!ALL){ALL=(NATIVE?apps():DEF).slice();ALL.sort((a,b)=>a.n.localeCompare(b.n,'ar'))}
+function openAdd(k){if(NATIVE){APPS=null;ALL=null}SWAPI=-1;if(typeof k==='string'&&k.startsWith('swap:')){SWAPI=+k.slice(5);k=null}PICK=typeof k==='string'?k:null;if(!ALL){ALL=(NATIVE?apps():DEF).slice();ALL.sort((a,b)=>a.n.localeCompare(b.n,'ar'))}
   $('addOv').querySelector('h3').firstChild.textContent=PICK?'اختر تطبيق '+QN[PICK]+' ':SWAPI>=0?'بدّل '+DOCK[SWAPI].n+' بـ… ':'أضف تطبيق ';
   $('q').value='';drawList();$('addOv').classList.add('show')}
 function drawList(){const q=$('q').value.trim().toLowerCase(),L=$('appList');L.innerHTML='';
   ALL.filter(a=>!q||a.n.toLowerCase().includes(q)).forEach(a=>{const b=tileEl(a);b.onclick=()=>{$('addOv').classList.remove('show');if(SWAPI>=0){const old=DOCK[SWAPI].n;if(DOCK.some((x,k)=>k!==SWAPI&&x.pkg===a.pkg)){toast(a.n+' موجود في الشريط');return}DOCK[SWAPI]=a;SWAPI=-1;saveDock();toast('تبدّل '+old+' بـ '+a.n);return}if(PICK){store.set('q_'+PICK,JSON.stringify({n:a.n,pkg:a.pkg}));toast('زر '+QN[PICK]+' صار يفتح '+a.n);return}if(DOCK.some(x=>x.pkg===a.pkg)){toast(a.n+' موجود');return}if(DOCK.length>=MAXD){toast('الشريط فيه '+MAXD+' تطبيقات بس، شيل واحد أول');return}DOCK.push(a);saveDock();toast('انضاف '+a.n)};L.appendChild(b)})}
 $('q').oninput=drawList;
-function openAll(){if(!ALL){ALL=(NATIVE?apps():DEF).slice();ALL.sort((a,b)=>a.n.localeCompare(b.n,'ar'))}$('aq').value='';drawAll();$('allOv').classList.add('show')}
+function openAll(){if(NATIVE){APPS=null;ALL=null}if(!ALL){ALL=(NATIVE?apps():DEF).slice();ALL.sort((a,b)=>a.n.localeCompare(b.n,'ar'))}$('aq').value='';drawAll();$('allOv').classList.add('show')}
 function drawAll(){const q=$('aq').value.trim().toLowerCase(),L=$('allList');L.innerHTML='';
   const list=ALL.filter(a=>!q||a.n.toLowerCase().includes(q));
   if(!list.length){L.innerHTML='<p class="hint">ما فيه تطبيقات بهذا الاسم</p>';return}

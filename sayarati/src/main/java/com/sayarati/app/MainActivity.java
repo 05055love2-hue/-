@@ -142,6 +142,7 @@ public class MainActivity extends Activity {
 
         web.addJavascriptInterface(new Bridge(), "Native");
         web.addJavascriptInterface(new Updater.JS(this, "sayarati"), "AppUpd");
+        new Thread(() -> { try { listApps(); } catch (Throwable ignored) { } }).start();
         web.addJavascriptInterface(new BlackScreen.JS(this), "BlackScr");
         web.addJavascriptInterface(new IconSwitch(this), "AppIcon");
         web.addJavascriptInterface(new YtBridge(), "YTN");
@@ -159,23 +160,7 @@ public class MainActivity extends Activity {
         /** قائمة التطبيقات المثبتة في الشاشة مع أيقوناتها */
         @JavascriptInterface
         public String getApps() {
-            JSONArray arr = new JSONArray();
-            try {
-                PackageManager pm = getPackageManager();
-                Intent i = new Intent(Intent.ACTION_MAIN);
-                i.addCategory(Intent.CATEGORY_LAUNCHER);
-                List<ResolveInfo> list = pm.queryIntentActivities(i, 0);
-                for (ResolveInfo ri : list) {
-                    String pkg = ri.activityInfo.packageName;
-                    if (pkg.equals(getPackageName())) continue;
-                    JSONObject o = new JSONObject();
-                    o.put("n", String.valueOf(ri.loadLabel(pm)));
-                    o.put("pkg", pkg);
-                    o.put("img", iconData(ri.loadIcon(pm)));
-                    arr.put(o);
-                }
-            } catch (Exception e) { /* نرجع اللي قدرنا عليه */ }
-            return arr.toString();
+            return listApps();
         }
 
         /** يفتح صفحة من إعدادات الجهاز (بلوتوث، واي فاي...) */
@@ -404,9 +389,41 @@ public class MainActivity extends Activity {
         }
     }
 
+    /** قائمة كل تطبيقات الجهاز — الأيقونات تنحفظ عشان المرة الجاية تطلع على طول، وأي تطبيق فيه مشكلة نتخطاه بس */
+    static final java.util.concurrent.ConcurrentHashMap<String, String> ICONS = new java.util.concurrent.ConcurrentHashMap<>();
+    String listApps() {
+        JSONArray arr = new JSONArray();
+        PackageManager pm = getPackageManager();
+        List<ResolveInfo> list;
+        try {
+            Intent i = new Intent(Intent.ACTION_MAIN);
+            i.addCategory(Intent.CATEGORY_LAUNCHER);
+            list = pm.queryIntentActivities(i, 0);
+        } catch (Throwable e) { return "[]"; }
+        java.util.HashSet<String> seen = new java.util.HashSet<>();
+        for (ResolveInfo r : list) {
+            try {
+                String pkg = r.activityInfo.packageName;
+                if (pkg.equals(getPackageName()) || !seen.add(pkg)) continue;
+                String img = ICONS.get(pkg);
+                if (img == null) {
+                    img = iconData(r.loadIcon(pm));
+                    if (!img.isEmpty()) ICONS.put(pkg, img);
+                }
+                JSONObject o = new JSONObject();
+                o.put("n", String.valueOf(r.loadLabel(pm)));
+                o.put("pkg", pkg);
+                o.put("img", img);
+                arr.put(o);
+            } catch (Throwable ignored) { /* نتخطى هذا التطبيق ونكمل الباقي */ }
+        }
+        return arr.toString();
+    }
+
     private String iconData(Drawable d) {
         try {
-            int size = 96;
+            if (d == null) return "";
+            int size = 72;
             Bitmap b = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
             Canvas c = new Canvas(b);
             d.setBounds(0, 0, size, size);
@@ -414,7 +431,7 @@ public class MainActivity extends Activity {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             b.compress(Bitmap.CompressFormat.PNG, 100, out);
             return "data:image/png;base64," + Base64.encodeToString(out.toByteArray(), Base64.NO_WRAP);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             return "";
         }
     }

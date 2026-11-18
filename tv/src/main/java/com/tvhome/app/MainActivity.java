@@ -155,7 +155,7 @@ public class MainActivity extends Activity {
                     Intent i = new Intent(Intent.ACTION_MAIN);
                     i.addCategory(cat);
                     List<ResolveInfo> list = pm.queryIntentActivities(i, 0);
-                    for (ResolveInfo r : list) {
+                    for (ResolveInfo r : list) try {
                         ActivityInfo a = r.activityInfo;
                         String pkg = a.packageName;
                         if (pkg.equals(getPackageName()) || !seen.add(pkg)) continue;
@@ -170,7 +170,7 @@ public class MainActivity extends Activity {
                         if (banner != null) o.put("banner", toData(banner, 320, 180));
                         o.put("img", toData(r.loadIcon(pm), 128, 128));
                         arr.put(o);
-                    }
+                    } catch (Throwable skip) { /* نتخطى هذا التطبيق ونكمل الباقي */ }
                 } catch (Exception ignored) { }
             }
             return arr.toString();

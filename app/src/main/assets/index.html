@@ -1242,6 +1242,7 @@ function drawCatalog(){
 let DEV=null;
 function loadDev(){
   if(!window.Native){$('devBox').hidden=true;return;}
+  DEV=null;
   if(!DEV){ try{DEV=JSON.parse(Native.getApps())||[]}catch(e){DEV=[]}
     DEV.sort((a,b)=>a.n.localeCompare(b.n,'ar')); }
   drawDev();
@@ -1260,6 +1261,7 @@ $('devSearch').oninput=drawDev;
 function openAll(){
   $('allOv').classList.add('show'); $('allSearch').value='';
   if(!window.Native){$('allApps').innerHTML='<p class="note">هذي تشتغل داخل التطبيق على شاشة السيارة.</p>';return;}
+  DEV=null;
   if(!DEV){ try{DEV=JSON.parse(Native.getApps())||[]}catch(e){DEV=[]} DEV.sort((a,b)=>a.n.localeCompare(b.n,'ar')); }
   drawAll();
 }

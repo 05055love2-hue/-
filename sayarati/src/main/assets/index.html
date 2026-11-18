@@ -956,7 +956,7 @@ function addLink(){
 }
 function pickOpen(){
   $('pick').classList.add('show');$('pkQ').value='';
-  if(window.Native&&Native.getApps&&!APPS){$('pkG').innerHTML='<div class="empty" style="grid-column:1/-1">جارٍ تحميل تطبيقات الشاشة...</div>';setTimeout(()=>{try{APPS=JSON.parse(Native.getApps()).sort((a,b)=>a.n.localeCompare(b.n,'ar'))}catch(e){APPS=[]}pickRender()},30)}
+  if(window.Native&&Native.getApps){if(!APPS)$('pkG').innerHTML='<div class="empty" style="grid-column:1/-1">جارٍ تحميل تطبيقات الشاشة...</div>';else pickRender();setTimeout(()=>{try{APPS=JSON.parse(Native.getApps()).sort((a,b)=>a.n.localeCompare(b.n,'ar'))}catch(e){APPS=APPS||[]}pickRender()},30)}
   else pickRender();
 }
 function pickClose(){$('pick').classList.remove('show')}
@@ -1306,10 +1306,9 @@ function navTo(k){
 let APPS=null;
 const WEBAPPS=[['يوتيوب','https://m.youtube.com','c-yt','play'],['خرائط قوقل','https://www.google.com/maps','c-map','map'],['واتساب','https://wa.me/','c-ph','phone'],['سبوتيفاي','https://open.spotify.com','c-mu','music'],['ويز','https://www.waze.com/live-map','c-wf','nav'],['قوقل','https://www.google.com','c-ac','search']];
 function loadApps(){
-  if(APPS) return;
   if(window.Native&&Native.getApps){
-    $('apG').innerHTML='<div class="empty" style="grid-column:1/-1">جارٍ تحميل تطبيقات الشاشة...</div>';
-    setTimeout(()=>{try{APPS=JSON.parse(Native.getApps()).sort((a,b)=>a.n.localeCompare(b.n,'ar'))}catch(e){APPS=[]}renderApps()},30);
+    if(APPS) renderApps(); else $('apG').innerHTML='<div class="empty" style="grid-column:1/-1">جارٍ تحميل تطبيقات الشاشة...</div>';
+    setTimeout(()=>{try{APPS=JSON.parse(Native.getApps()).sort((a,b)=>a.n.localeCompare(b.n,'ar'))}catch(e){APPS=APPS||[]}renderApps()},30);
   }else{APPS=[];renderApps()}
 }
 function renderApps(){
