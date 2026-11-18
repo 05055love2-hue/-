@@ -31,6 +31,13 @@ body.glass .sw i:after{right:21px}
 #full .fh{position:relative}
 #full .sc{transform-origin:top left;left:0;right:auto}
 #close{position:absolute;top:14px;left:14px;width:48px;height:48px;border-radius:24px;border:none;background:rgba(255,255,255,.12);color:#fff;display:flex;align-items:center;justify-content:center;z-index:2;opacity:.75}
+#guide{position:fixed;inset:0;z-index:70;background:rgba(0,0,0,.6);display:none;align-items:flex-end;justify-content:center}
+#guide.show{display:flex}
+.gbox{background:#161a24;border:1px solid #2a3142;border-radius:24px 24px 0 0;padding:22px 20px 28px;width:100%;max-width:560px}
+.gbox h2{margin:0 0 8px;font-size:20px}.gbox p{margin:0 0 10px;color:#c9cfdb;font-size:15px;line-height:1.7}
+.gbox ol{margin:0 0 16px;padding-right:20px;font-size:15px;line-height:1.8;color:#eef1f6}
+.gb{display:block;width:100%;min-height:50px;border:none;border-radius:16px;background:#7c5cff;color:#fff;font-size:16px;margin-top:10px}
+.gx{display:block;width:100%;min-height:44px;border:none;background:none;color:#a9b0bf;font-size:15px;margin-top:6px}
 #hint{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#1f2433;color:#fff;padding:10px 18px;border-radius:20px;font-size:14px;z-index:60;display:none}
 /* widgets */
 .w{position:relative;overflow:hidden;isolation:isolate;background:var(--bg);font-family:'IBM Plex Sans Arabic','Noto Sans Arabic',system-ui,sans-serif}
@@ -69,6 +76,19 @@ body.on .reel{animation:spin 2.4s linear infinite}
 <div id="full" role="dialog" aria-label="عرض كامل">
   <button id="close" aria-label="رجوع"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
   <div class="fh" id="fh"></div>
+</div>
+<div id="guide" role="dialog" aria-label="ربط الموسيقى">
+  <div class="gbox">
+    <h2>ربط الموسيقى</h2>
+    <p>أندرويد يحمي هذا الإذن للتطبيقات اللي تنزل من برا المتجر. خطوتين بس:</p>
+    <ol>
+      <li>اضغط <b>«افتح صفحة التطبيق»</b>، وبعدين اضغط النقاط الثلاث <b>⋮</b> فوق، واختر <b>«السماح بالإعدادات المقيدة»</b>، وأكّد ببصمتك أو رمزك.</li>
+      <li>ارجع هنا واضغط <b>«فعّل الموسيقى»</b>، وشغّل «ويدجتي».</li>
+    </ol>
+    <button class="gb" id="gInfo">١. افتح صفحة التطبيق</button>
+    <button class="gb" id="gAcc">٢. فعّل الموسيقى</button>
+    <button class="gx" id="gClose">بعدين</button>
+  </div>
 </div>
 <div id="hint"></div>
 <script>
@@ -424,13 +444,16 @@ function readMedia(){
 function hint(t){const h=$('hint');h.textContent=t;h.style.display='block';clearTimeout(hint.t);hint.t=setTimeout(()=>h.style.display='none',3500)}
 function act(a){
   if(!hasNative){ if(a==='toggle')M.playing=!M.playing; update(); return; }
-  if(!M.access){ hint('فعّل «ويدجتي» في الصفحة اللي بتفتح، وارجع'); Native.openAccess(); return; }
+  if(!M.access){ $('guide').classList.add('show'); return; }
   if(a==='link')return;
   Native.cmd(a==='toggle'?(M.playing?'pause':'play'):a);
   setTimeout(()=>{readMedia();update()},350);
 }
 document.addEventListener('click',e=>{const b=e.target.closest('[data-act]'); if(!b)return; e.stopPropagation(); act(b.dataset.act);},true);
 
+$('gInfo').onclick=()=>{ if(Native.openAppInfo)Native.openAppInfo(); };
+$('gAcc').onclick=()=>{ Native.openAccess(); };
+$('gClose').onclick=()=>$('guide').classList.remove('show');
 /* ---------- weather ---------- */
 let WX=null; const RIYADH={lat:24.71,lon:46.68,n:'الرياض'};
 try{WX=JSON.parse(store.get('wx','null'))}catch(e){}
@@ -500,7 +523,7 @@ function update(){
 layoutAll(); paintWx(); readMedia(); update();
 setInterval(()=>{readMedia();update()},1000);
 wxUpdate(); setInterval(wxUpdate,20*60*1000);
-document.addEventListener('visibilitychange',()=>{ if(!document.hidden){ if(!WX||Date.now()-WX.at>15*60*1000)wxUpdate(); readMedia(); update(); }});
+document.addEventListener('visibilitychange',()=>{ if(!document.hidden){ readMedia(); if(M.access)$('guide').classList.remove('show'); if(!WX||Date.now()-WX.at>15*60*1000)wxUpdate(); readMedia(); update(); }});
 </script>
 </body>
 </html>

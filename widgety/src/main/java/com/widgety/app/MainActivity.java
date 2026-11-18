@@ -126,6 +126,16 @@ public class MainActivity extends Activity {
             });
         }
 
+        /** صفحة معلومات التطبيق: منها نسمح بالإعدادات المقيدة */
+        @JavascriptInterface
+        public void openAppInfo() {
+            runOnUiThread(() -> {
+                try {
+                    startActivity(new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + getPackageName())));
+                } catch (Exception ignored) { }
+            });
+        }
+
         @JavascriptInterface
         public void keepOn(boolean on) {
             runOnUiThread(() -> {
