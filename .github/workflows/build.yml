@@ -51,6 +51,7 @@ jobs:
           cp cleaner/build/outputs/apk/debug/cleaner-debug.apk monadhif.apk
           cp salati/build/outputs/apk/debug/salati-debug.apk salati.apk
           cp sayarati/build/outputs/apk/debug/sayarati-debug.apk sayarati.apk
+          cp widgety/build/outputs/apk/debug/widgety-debug.apk widgety.apk
           python3 updates/make_versions.py
 
       - name: Hammil engine info
@@ -82,6 +83,7 @@ jobs:
             monadhif.apk
             salati.apk
             sayarati.apk
+            widgety.apk
             versions.json
           make_latest: true
 
