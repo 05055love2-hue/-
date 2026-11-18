@@ -419,6 +419,65 @@ body[data-fam=hadi] .dk-b.act{background:none;box-shadow:none}
 .l-hring .mwx b{color:var(--txt);font-size:calc(30px * var(--fs,1))}
 .opts.c3{grid-template-columns:repeat(3,1fr)}
 .fam .pv{aspect-ratio:16/8}
+
+/* ═════════ العائلات الجديدة: رياضي، كاربلاي، مربعات ═════════ */
+body[data-layout=sgauge] .l-sgauge,body[data-layout=shud] .l-shud,body[data-layout=cgrid] .l-cgrid,body[data-layout=cdash] .l-cdash,body[data-layout=tmetro] .l-tmetro,body[data-layout=tbig] .l-tbig{display:grid}
+/* 🏁 رياضي: زوايا مقصوصة، خط مايل، شريط أحمر */
+body[data-fam=sport] .lay .g{background:linear-gradient(160deg,#1a0b0d,#0a0a0e 70%);border:1px solid #3b1517;border-radius:4px;border-top:3px solid var(--accent);clip-path:polygon(0 0,calc(100% - 18px) 0,100% 18px,100% 100%,18px 100%,0 calc(100% - 18px));box-shadow:none}
+body[data-fam=sport] .clk .t{font-style:italic;transform:skewX(-8deg);background:none;-webkit-text-fill-color:#fff}
+body[data-fam=sport] .dk-wrap{border-radius:4px;background:#0c0c10;border-color:#3b1517}
+body[data-fam=sport] .dk-b.act{box-shadow:inset 0 -3px 0 var(--accent);background:none}
+body[data-fam=sport].day .lay .g{background:#fff;border-color:#f1c9c9}
+.l-sgauge{grid-template-columns:1fr auto 1fr;gap:14px;align-items:stretch}
+.l-sgauge .bigg{display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;padding:0 20px;background:none!important;border:0!important;clip-path:none!important}
+.l-sgauge .bigg svg{width:min(430px,70vh);height:min(430px,70vh);transform:rotate(135deg)}
+.l-sgauge .bigg .gv{position:absolute;top:50%;left:50%;transform:translate(-50%,-55%);text-align:center}
+.l-sgauge .bigg .gv b{display:block;font-size:calc(120px * var(--fs,1));font-weight:800;font-style:italic;line-height:1}
+.l-sgauge .bigg .gv span{color:var(--txt2);font-size:calc(18px * var(--fs,1))}
+.l-shud{grid-template-rows:auto 1fr auto;justify-items:center;gap:6px}
+.l-shud .ht{font-size:calc(34px * var(--fs,1));font-weight:800;font-style:italic;color:var(--txt2)}
+.l-shud .ht sup{font-size:.45em}
+.l-shud .hs{display:flex;flex-direction:column;align-items:center;justify-content:center}
+.l-shud .hs b{font-size:calc(230px * var(--fs,1));font-weight:800;font-style:italic;line-height:.9;color:#fff;text-shadow:0 0 40px var(--glow);transform:skewX(-8deg)}
+.l-shud .hs span{font-size:calc(22px * var(--fs,1));color:var(--accent);font-weight:700;letter-spacing:4px}
+.l-shud .qa{width:680px}
+/* 📱 كاربلاي: أيقونات كبيرة مدوّرة وألواح رمادية */
+body[data-fam=cp] .lay .g{background:rgba(28,28,30,.92);border:0;border-radius:26px;box-shadow:none}
+body[data-fam=cp].day .lay .g{background:rgba(255,255,255,.92)}
+body[data-fam=cp] .dk-wrap{border-radius:26px;background:rgba(28,28,30,.92);border:0}
+body[data-fam=cp] .clk .t{background:none;color:var(--txt);-webkit-text-fill-color:var(--txt)}
+.l-cgrid{grid-template-columns:230px 1fr;gap:14px}
+.l-cgrid .side{display:flex;flex-direction:column;gap:14px;min-height:0}
+.l-cgrid .clk .t{font-size:calc(54px * var(--fs,1))}
+.l-cgrid .wx{flex-direction:column;text-align:center;gap:6px}
+.cgr{display:grid;grid-template-columns:repeat(5,1fr);align-content:center;gap:22px 10px;padding:20px}
+.cgr button{display:flex;flex-direction:column;align-items:center;gap:10px;font-size:calc(15px * var(--fs,1));color:var(--txt)}
+.cgr .ci{width:96px;height:96px;border-radius:24px;display:grid;place-items:center;color:#fff;font-size:calc(44px * var(--fs,1));box-shadow:0 8px 20px rgba(0,0,0,.35)}
+.l-cdash{grid-template-columns:1.5fr 1fr;grid-template-rows:1fr 1fr;gap:14px}
+.l-cdash .mapbox{grid-row:1/3}
+.l-cdash .cal{display:flex;flex-direction:column;justify-content:center;padding:20px 26px}
+.l-cdash .cal .t{font-size:calc(64px * var(--fs,1));font-weight:700;line-height:1}
+.l-cdash .cal .t sup,.l-cdash .cal .t .ap{font-size:.35em;color:var(--txt2)}
+.l-cdash .cal .d{font-size:calc(18px * var(--fs,1));color:#ff453a;font-weight:700;margin-top:8px}
+.l-cdash .cal .h{font-size:calc(15px * var(--fs,1));color:var(--txt2)}
+/* 🟦 مربعات: ألوان صريحة بدون زوايا */
+body[data-fam=metro] .lay .g{border:0;border-radius:0;box-shadow:none;color:#fff}
+body[data-fam=metro] .lay .t1{background:var(--accent)}
+body[data-fam=metro] .lay .t2{background:#1e6fd9}
+body[data-fam=metro] .lay .t3{background:#0f9d58}
+body[data-fam=metro] .lay .t4{background:#8e44ad}
+body[data-fam=metro] .clk .t{background:none;-webkit-text-fill-color:#fff}
+body[data-fam=metro] .clk .h,body[data-fam=metro] .clk .d,body[data-fam=metro] .lay .g small,body[data-fam=metro] .wx .wd,body[data-fam=metro] .wx .wl,body[data-fam=metro] .mu .sub{color:rgba(255,255,255,.85)}
+body[data-fam=metro] .dk-wrap{border-radius:0;background:#111;border:0}
+body[data-fam=metro] .dk-b{border-radius:0}
+.l-tmetro{grid-template-columns:1.1fr 2fr;gap:8px}
+.l-tmetro .left{display:grid;grid-template-rows:1.4fr 1fr;gap:8px;min-height:0}
+.mtl{display:grid;grid-template-columns:repeat(3,1fr);grid-auto-rows:1fr;gap:8px}
+.mtl button{position:relative;display:flex;align-items:center;justify-content:center;color:#fff;font-size:calc(42px * var(--fs,1))}
+.mtl button span{position:absolute;right:12px;bottom:8px;font-size:calc(14px * var(--fs,1));font-weight:700}
+.l-tbig{grid-template-columns:repeat(3,1fr);grid-template-rows:1.3fr 1fr;gap:8px}
+.l-tbig .pr{grid-column:1/-1}
+.l-tbig .clk .t{font-size:calc(72px * var(--fs,1))}
 /* ═════════ الوضع النهاري ═════════ */
 .b-day{background:linear-gradient(180deg,#6cc4ff 0%,#b9e3ff 45%,#eef6fd 100%)}
 .b-day .dsun{position:absolute;top:-80px;right:120px;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,#fffbe6 0 22%,rgba(255,236,170,.55) 35%,rgba(255,236,170,0) 70%)}
@@ -643,6 +702,42 @@ body.port .fonts{grid-template-columns:repeat(3,1fr)}
           <div class="g clk"><div class="t x-time"></div><div class="d x-date"></div><div class="h x-hij"></div></div></div>
         <div class="side"><div class="mwx x-mwx"></div><div class="g mu x-mu"></div></div>
       </div>
+      <!-- ══ رياضي: عداد كبير ══ -->
+      <div class="lay l-sgauge">
+        <div class="col"><div class="g clk grow"><div class="t x-time"></div><div class="d x-date"></div><div class="h x-hij"></div></div><div class="g wx tap x-wx"></div></div>
+        <div class="g bigg"><svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="86" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="16" stroke-dasharray="405 541"/><circle cx="100" cy="100" r="86" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="3" stroke-dasharray="2 18.25" /><circle class="x-garc" cx="100" cy="100" r="86" fill="none" stroke="var(--accent)" stroke-width="16" stroke-dasharray="0 541" style="filter:drop-shadow(0 0 10px var(--glow));transition:stroke-dasharray .6s"/></svg>
+          <div class="gv"><b class="x-spd">--</b><span>كم/س</span></div></div>
+        <div class="col"><div class="g mu grow x-mu"></div><div class="g pr tap x-pr" onclick="go('prayer')"></div></div>
+      </div>
+      <!-- ══ رياضي: شاشة HUD ══ -->
+      <div class="lay l-shud">
+        <div class="ht x-time"></div>
+        <div class="hs"><b class="x-spd">--</b><span>KM/H</span></div>
+        <div class="g qa x-qa"></div>
+      </div>
+      <!-- ══ كاربلاي: أيقونات ══ -->
+      <div class="lay l-cgrid">
+        <div class="side"><div class="g clk"><div class="t x-time"></div><div class="d x-date"></div></div><div class="g wx tap x-wx" style="flex:1"></div></div>
+        <div class="g cgr x-cgrid"></div>
+      </div>
+      <!-- ══ كاربلاي: لوحة ══ -->
+      <div class="lay l-cdash">
+        <div class="g ytbox mapbox mplive x-map"></div>
+        <div class="g mu x-mu"></div>
+        <div class="g cal"><div class="t x-time"></div><div class="d x-date"></div><div class="h x-hij"></div></div>
+      </div>
+      <!-- ══ مربعات: مربعات ══ -->
+      <div class="lay l-tmetro">
+        <div class="left"><div class="g clk t1"><div class="t x-time"></div><div class="d x-date"></div><div class="h x-hij"></div></div><div class="g wx tap t2 x-wx"></div></div>
+        <div class="mtl x-tiles"></div>
+      </div>
+      <!-- ══ مربعات: كبيرة ══ -->
+      <div class="lay l-tbig">
+        <div class="g clk t1"><div class="t x-time"></div><div class="d x-date"></div><div class="h x-hij"></div></div>
+        <div class="g wx tap t2 x-wx"></div>
+        <div class="g mu t4 x-mu"></div>
+        <div class="g pr tap t3 x-pr" onclick="go('prayer')"></div>
+      </div>
       <!-- لوحة القيادة -->
       <div class="lay l-dash">
         <div class="col">
@@ -652,7 +747,7 @@ body.port .fonts{grid-template-columns:repeat(3,1fr)}
         </div>
         <div class="g gauge">
           <svg class="ring" viewBox="0 0 200 200"><circle cx="100" cy="100" r="86" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="14" stroke-dasharray="405 541" stroke-linecap="round"/>
-            <circle id="gArc" cx="100" cy="100" r="86" fill="none" stroke="var(--accent)" stroke-width="14" stroke-dasharray="0 541" stroke-linecap="round" style="filter:drop-shadow(0 0 8px var(--glow));transition:stroke-dasharray .6s"/></svg>
+            <circle id="gArc" class="x-garc" cx="100" cy="100" r="86" fill="none" stroke="var(--accent)" stroke-width="14" stroke-dasharray="0 541" stroke-linecap="round" style="filter:drop-shadow(0 0 8px var(--glow));transition:stroke-dasharray .6s"/></svg>
           <div class="gv"><b class="x-spd">--</b><span>كم/س</span></div>
           <div class="gt">⏱️ مدة المشوار: <b class="x-tripv"></b></div>
         </div>
@@ -775,6 +870,8 @@ body.port .fonts{grid-template-columns:repeat(3,1fr)}
           <!-- الواجهة والمظهر -->
           <div class="sec" data-s="look">
             <div class="sh"><span class="ico c-ac"><i data-ic="brush"></i></span><div><b>الواجهة والمظهر</b><small>شكل الواجهة، الخلفية، الألوان، والبطاقات</small></div></div>
+            <div class="card g"><h3>نوع اللانشر <small style="font-weight:400">— ستة أنواع، كل واحد شكله مختلف — اضغط على أي واحد يتغيّر على طول</small></h3><div class="opts c3 fam" id="optFam"></div></div>
+            <div class="card g"><h3>شكل الواجهة</h3><div class="opts c5" id="optLay"></div></div>
             <div class="card g"><h3>وضع الشاشة</h3>
               <div class="row"><span>نهاري وليلي</span><div class="seg" id="segTh"></div></div>
               <div class="row"><small style="color:var(--txt2)" id="thInfo">تلقائي: نهاري من الشروق إلى المغرب حسب مدينتك، وليلي بعدها</small></div></div>
@@ -785,8 +882,6 @@ body.port .fonts{grid-template-columns:repeat(3,1fr)}
               <div class="row"><small style="color:var(--txt2)">ما تشتغل وأنت فاتح الملاحة أو يوتيوب بالشاشة الكاملة. والصوت يكمل عادي، ولمسة وحدة ترجّعها</small></div></div>
             <div class="card g"><h3>أيقونة التطبيق <small style="font-weight:400">— الشكل اللي يطلع في الشاشة عشان تفتح سيارتي</small></h3><div class="icg" id="icG"></div>
               <div class="row"><small style="color:var(--txt2)">بعد ما تختار، ممكن تاخذ الشاشة كم ثانية لين تتغيّر الأيقونة</small></div></div>
-            <div class="card g"><h3>نوع اللانشر <small style="font-weight:400">— ثلاثة أنواع، كل واحد شكله مختلف</small></h3><div class="opts c3 fam" id="optFam"></div></div>
-            <div class="card g"><h3>شكل الواجهة</h3><div class="opts c5" id="optLay"></div></div>
             <div class="card g"><h3>الخلفية المتحركة</h3><div class="opts c4" id="optBg"></div></div>
             <div class="card g"><h3>لون التمييز</h3><div class="cols" id="optCol"></div></div>
             <div class="card g"><h3>البطاقات</h3>
@@ -951,7 +1046,10 @@ const COLS=['#00b4d8','#00e676','#b388ff','#ff6d00','#ffd600','#ff4f81'];
 const FAMS=[
   ['sayarati','🚗 سيارتي','بطاقات زجاجية مرتبة',[['classic','كلاسيك'],['youtube','يوتيوب أولاً'],['maps','خرائط'],['minimal','بسيط'],['dash','لوحة القيادة']]],
   ['mush','▶️ مشغّلي','الشاشة للمشغّل، ألواح مسطحة',[['mcin','سينما'],['msplit','شاشتين']]],
-  ['hadi','🌙 هادي','بدون صناديق، خط خفيف فوق الخلفية',[['hcalm','هادي'],['hring','دائري']]]];
+  ['hadi','🌙 هادي','بدون صناديق، خط خفيف فوق الخلفية',[['hcalm','هادي'],['hring','دائري']]],
+  ['sport','🏁 رياضي','عداد سرعة كبير وخط مايل',[['sgauge','عداد كبير'],['shud','شاشة HUD']]],
+  ['cp','📱 كاربلاي','أيقونات كبيرة مدوّرة',[['cgrid','أيقونات'],['cdash','لوحة']]],
+  ['metro','🟦 مربعات','مربعات ملونة بدون زوايا',[['tmetro','مربعات'],['tbig','كبيرة']]]];
 const LAYS=FAMS.flatMap(f=>f[3]);
 function famOf(l){const f=FAMS.find(f=>f[3].some(x=>x[0]===l));return f?f[0]:'sayarati'}
 function setFam(id){const f=FAMS.find(x=>x[0]===id);if(!f)return;S.fam=id;if(famOf(S.layout)!==id)S.layout=f[3][0][0];save();drawLays();applyAll();toast('صار اللانشر: '+f[1].replace(/^\S+ /,''))}
@@ -1099,7 +1197,7 @@ let lastAct=Date.now();
 function autoBlackCheck(){
   if(!S.abOn)return;
   if(S.abNight&&isDayNow())return;
-  if(cur==='nav'||cur==='yt'||(cur==='home'&&(S.layout==='maps'||S.layout==='msplit')))return;
+  if(cur==='nav'||cur==='yt'||(cur==='home'&&['maps','msplit','cdash'].includes(S.layout)))return;
   if(document.getElementById('blkScr')||$('pick').classList.contains('show'))return;
   if(Date.now()-lastAct>=S.abMin*60000){lastAct=Date.now();blackOn()}
 }
@@ -1115,6 +1213,10 @@ function buildUI(){
   // أزرار سريعة
   const Q=[['yt','c-yt','play','يوتيوب'],['nav','c-map','map','الخرائط'],['phone','c-ph','phone','الهاتف'],['music','c-mu','music','الموسيقى'],['apps','c-ap','apps','التطبيقات']];
   $$('.x-qa').forEach(e=>e.innerHTML=Q.map(q=>'<button class="tap" onclick="go(\''+q[0]+'\')"><span class="ico '+q[1]+'">'+svg(q[2],q[2]==='play'?'f':'')+'</span>'+q[3]+'</button>').join(''));
+  // شبكة أيقونات كاربلاي ومربعات
+  const GP=[['yt','#ff2d2d'],['nav','#1a73e8'],['music','#ff375f'],['phone','#30d158'],['radio','#ff9f0a'],['prayer','#0f9d58'],['apps','#5e5ce6'],['black','#3a3a3c'],['settings','#636366']];
+  $$('.x-cgrid').forEach(e=>e.innerHTML=GP.filter(g=>PGS[g[0]]).map(([k,c])=>'<button class="tap" onclick="go(\''+k+'\')"><span class="ci" style="background:'+c+'">'+svg(PGS[k][0],k==='yt'?'f':'')+'</span>'+PGS[k][1]+'</button>').join(''));
+  $$('.x-tiles').forEach(e=>e.innerHTML=GP.filter(g=>PGS[g[0]]).map(([k,c])=>'<button class="tap" style="background:'+c+'" onclick="go(\''+k+'\')">'+svg(PGS[k][0],k==='yt'?'f':'')+'<span>'+PGS[k][1]+'</span></button>').join(''));
   // بطاقة الموسيقى
   $$('.x-mu').forEach(e=>e.innerHTML='<div class="top tap" onclick="go(\'music\')"><div class="art x-art">'+svg('music')+'</div><div style="min-width:0"><div class="ti x-mt">لا توجد أغنية</div><div class="sub x-ms">اضغط وأضف أغانيك</div></div></div><div class="bar"><i class="x-mbar"></i></div><div class="ctl"><button class="cb" onclick="musicPrev()">'+svg('prev','f')+'</button><button class="cb pp x-play" onclick="musicToggle()">'+svg('play','f')+'</button><button class="cb" onclick="musicNext()">'+svg('next','f')+'</button></div>');
   $$('.x-trip').forEach(e=>e.innerHTML='<span>🚗 السرعة: <b class="x-spd">--</b> كم/س</span><span>⏱️ المشوار: <b class="x-tripv"></b></span>');
@@ -1127,6 +1229,15 @@ function buildUI(){
     msplit:'<i style="left:4%;top:8%;width:92%;height:14%;border-radius:3px"></i><i style="right:4%;top:28%;width:45%;height:64%;background:rgba(255,0,0,.5);border-radius:3px"></i><i style="left:4%;top:28%;width:45%;height:64%;background:rgba(52,168,83,.6);border-radius:3px"></i>',
     hcalm:'<b style="position:absolute;right:8%;top:14%;font-size:30px;font-weight:300;color:#fff">12:30</b><i style="right:8%;top:62%;width:30%;height:5%;background:rgba(255,255,255,.25)"></i><i style="left:8%;top:70%;width:34%;height:16%;background:rgba(255,255,255,.18)"></i>',
     hring:'<i style="left:35%;top:10%;width:30%;height:80%;border-radius:50%;background:none;box-shadow:inset 0 0 0 3px var(--accent)"></i><b style="position:absolute;left:0;right:0;top:40%;text-align:center;font-size:15px;font-weight:300;color:#fff">12:30</b><i style="right:5%;top:40%;width:24%;height:18%;background:rgba(255,255,255,.18)"></i><i style="left:5%;top:40%;width:24%;height:18%;background:rgba(255,255,255,.18)"></i>',
+    sgauge:'<i style="right:5%;top:10%;width:26%;height:80%;border-radius:2px"></i><i style="left:36%;top:10%;width:28%;height:80%;border-radius:50%;background:none;box-shadow:inset 0 0 0 5px var(--accent)"></i><i style="left:5%;top:10%;width:26%;height:80%;border-radius:2px"></i>',
+    shud:'<b style="position:absolute;left:0;right:0;top:18%;text-align:center;font-size:38px;font-style:italic;color:#fff">88</b><i style="left:20%;top:76%;width:60%;height:12%"></i>',
+    cgrid:'<i style="right:4%;top:8%;width:20%;height:84%;border-radius:8px"></i>'+[0,1,2,3,4,5,6,7].map(i=>'<i style="left:'+(6+(i%4)*17)+'%;top:'+(18+Math.floor(i/4)*38)+'%;width:12%;height:24%;border-radius:6px;background:'+['#ff2d2d','#1a73e8','#ff375f','#30d158','#ff9f0a','#0f9d58','#5e5ce6','#636366'][i]+'"></i>').join(''),
+    cdash:'<i style="left:4%;top:8%;width:56%;height:84%;border-radius:8px;background:rgba(52,168,83,.6)"></i><i style="right:4%;top:8%;width:34%;height:40%;border-radius:8px"></i><i style="right:4%;top:52%;width:34%;height:40%;border-radius:8px"></i>',
+    tmetro:'<i style="right:4%;top:8%;width:30%;height:50%;border-radius:0;background:var(--accent)"></i><i style="right:4%;top:62%;width:30%;height:30%;border-radius:0;background:#1e6fd9"></i>'+[0,1,2,3,4,5].map(i=>'<i style="left:'+(4+(i%3)*20)+'%;top:'+(8+Math.floor(i/3)*43)+'%;width:18%;height:41%;border-radius:0;background:'+['#ff2d2d','#1a73e8','#ff375f','#30d158','#ff9f0a','#5e5ce6'][i]+'"></i>').join(''),
+    tbig:'<i style="right:4%;top:8%;width:29%;height:50%;border-radius:0;background:var(--accent)"></i><i style="right:35.5%;top:8%;width:29%;height:50%;border-radius:0;background:#1e6fd9"></i><i style="left:4%;top:8%;width:29%;height:50%;border-radius:0;background:#8e44ad"></i><i style="left:4%;top:62%;width:92%;height:30%;border-radius:0;background:#0f9d58"></i>',
+    f_sport:'<i style="left:36%;top:8%;width:28%;height:84%;border-radius:50%;background:none;box-shadow:inset 0 0 0 5px var(--accent)"></i><b style="position:absolute;left:0;right:0;top:34%;text-align:center;font-size:22px;font-style:italic;color:#fff">120</b>',
+    f_cp:[0,1,2,3,4,5,6,7].map(i=>'<i style="left:'+(10+(i%4)*21)+'%;top:'+(14+Math.floor(i/4)*40)+'%;width:15%;height:30%;border-radius:8px;background:'+['#ff2d2d','#1a73e8','#ff375f','#30d158','#ff9f0a','#0f9d58','#5e5ce6','#636366'][i]+'"></i>').join(''),
+    f_metro:'<i style="right:4%;top:8%;width:40%;height:84%;border-radius:0;background:var(--accent)"></i><i style="left:4%;top:8%;width:25%;height:40%;border-radius:0;background:#1e6fd9"></i><i style="left:31%;top:8%;width:25%;height:40%;border-radius:0;background:#0f9d58"></i><i style="left:4%;top:52%;width:52%;height:40%;border-radius:0;background:#8e44ad"></i>',
     f_sayarati:'<i style="right:5%;top:10%;width:28%;height:80%;border-radius:8px"></i><i style="right:37%;top:10%;width:28%;height:80%;border-radius:8px"></i><i style="right:69%;top:10%;width:26%;height:80%;border-radius:8px"></i>',
     f_mush:'<i style="left:4%;top:8%;width:68%;height:84%;background:rgba(255,0,0,.5);border-radius:2px"></i><i style="right:4%;top:8%;width:22%;height:84%;border-radius:2px;background:#1c2130"></i>',
     f_hadi:'<b style="position:absolute;left:0;right:0;top:26%;text-align:center;font-size:26px;font-weight:300;color:#fff">12:30</b><i style="left:30%;top:72%;width:40%;height:10%;border-radius:20px;background:rgba(255,255,255,.2)"></i>',
@@ -1269,7 +1380,7 @@ function speedCheck(v){
 function setSpeed(v){
   speedCheck(v);
   $$('.x-spd').forEach(e=>e.textContent=v==null?'--':toAr(v));
-  const f=Math.min((v||0)/200,1);$('gArc').setAttribute('stroke-dasharray',(405*f).toFixed(1)+' 541');
+  const f=Math.min((v||0)/200,1);$$('.x-garc').forEach(a=>a.setAttribute('stroke-dasharray',(405*f).toFixed(1)+' 541'));
 }
 if(navigator.geolocation&&navigator.geolocation.watchPosition){
   navigator.geolocation.watchPosition(p=>{const v=p.coords.speed;setSpeed(v==null||isNaN(v)?null:Math.round(v*3.6))},()=>{},{enableHighAccuracy:true,maximumAge:2000});
