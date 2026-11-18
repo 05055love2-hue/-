@@ -58,8 +58,19 @@ async def make(k, voice, outname, pitch=None, rate=None):
         "-t","15","-movflags","+faststart",f"out/{outname}.mp4"], check=True)
     os.remove(mp3)
 
+def music_only(k):
+    """بدون صوت رجّال: الموسيقى الخفيفة بس، والكلام مكتوب في المقطع نفسه"""
+    print(k, "music only")
+    subprocess.run(["ffmpeg","-y","-loglevel","error","-i",f"src/{k}.mp4","-i","out/music.wav",
+        "-filter_complex","[1:a]volume=0.7,loudnorm=I=-16:TP=-1.5:LRA=11,atrim=0:15[a]",
+        "-map","0:v","-map","[a]","-c:v","copy","-c:a","aac","-b:a","192k","-ar","44100",
+        "-t","15","-movflags","+faststart",f"out/{k}.mp4"], check=True)
+
 async def main():
     music("out/music.wav")
+    if CFG["voice"] == "none":
+        for k in texts: music_only(k)
+        os.remove("out/music.wav"); return
     allv = [v["ShortName"] for v in await edge_tts.list_voices() if v["Locale"].startswith("ar-") and v["Gender"]=="Male"]
     print("الأصوات المتوفرة:", allv)
     if len(sys.argv) > 1 and sys.argv[1] == "samples":
