@@ -25,6 +25,7 @@ public class Widgets {
         update(c, m, WidgetClock.class, R.layout.w_clock);
         update(c, m, WidgetWeather.class, R.layout.w_weather);
         update(c, m, WidgetCw.class, R.layout.w_cw);
+        update(c, m, WidgetAnalog.class, R.layout.w_analog);
     }
 
     private static void update(Context c, AppWidgetManager m, Class<?> cls, int layout) {
@@ -103,13 +104,14 @@ public class Widgets {
         boolean clk = layout == R.layout.w_clock;
         boolean wth = layout == R.layout.w_weather;
         boolean cw = layout == R.layout.w_cw;
-        boolean hasWxViews = !clk;
+        boolean an = layout == R.layout.w_analog;
+        boolean hasWxViews = !clk && !an;
         boolean hasMusic = wide || bar || sq;
         RemoteViews v = new RemoteViews(c.getPackageName(), layout);
 
         // الخلفية: زجاجي أو عادي
         int solid = wide ? R.drawable.bg_wide : bar ? R.drawable.bg_bar : sq ? R.drawable.bg_square
-                : clk ? R.drawable.bg_clock : wth ? R.drawable.bg_weather : R.drawable.bg_cw;
+                : clk ? R.drawable.bg_clock : wth ? R.drawable.bg_weather : an ? R.drawable.bg_analog : R.drawable.bg_cw;
         v.setInt(R.id.root, "setBackgroundResource", glass ? R.drawable.bg_glass : solid);
         if (wide) {
             int pn = glass ? R.drawable.pn_glass : R.drawable.pn_solid;
@@ -119,7 +121,7 @@ public class Widgets {
         }
         if (sq) v.setInt(R.id.p3, "setBackgroundResource", glass ? R.drawable.sq_card_glass : R.drawable.sq_card);
 
-        int base = wide ? 10 : bar ? 20 : sq ? 30 : clk ? 40 : wth ? 50 : 60;
+        int base = wide ? 10 : bar ? 20 : sq ? 30 : clk ? 40 : wth ? 50 : an ? 70 : 60;
         PendingIntent open = PendingIntent.getActivity(c, base, new Intent(c, MainActivity.class),
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         v.setOnClickPendingIntent(R.id.root, open);
