@@ -1,6 +1,6 @@
 # يكتب رقم النسخة جنب «برمجة أبو نواف» في كل تطبيق — يشتغل وقت البناء
 import re, os
-mods = ['app', 'tv', 'router', 'seasons', 'ytcar', 'rawatib', 'obd', 'hammil', 'cleaner', 'salati', 'widgety']
+mods = ['app', 'tv', 'router', 'seasons', 'ytcar', 'rawatib', 'obd', 'hammil', 'cleaner', 'salati', 'widgety', 'tamarini']
 for m in mods:
     f = f'{m}/src/main/assets/index.html'
     if not os.path.exists(f):
