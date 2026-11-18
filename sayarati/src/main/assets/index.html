@@ -506,7 +506,6 @@ body.port .fonts{grid-template-columns:repeat(3,1fr)}
     <div class="tb-g">
       <button class="sb bt tap" id="sbBt" onclick="sysOpen('bt')"><i data-ic="bt"></i><span>بلوتوث</span></button>
       <button class="sb tap" onclick="blackOn()" title="شاشة سودا"><i data-ic="moon"></i><span>شاشة سودا</span></button>
-    <button class="sb tap mt-btn" onclick="mtOpen()" title="صيانتي"><i data-ic="wrench"></i><span>صيانتي</span></button>
       <button class="sb wf tap" id="sbWf" onclick="sysOpen('wifi')"><i data-ic="wifi"></i><span id="sbWfT">واي فاي</span></button>
       <span class="sb" id="sbNet"><span id="sbNetT">متصل</span></span>
       <span class="sb" id="sbBat"><i data-ic="bat"></i><span id="sbBatT">--</span></span>
@@ -680,6 +679,13 @@ body.port .fonts{grid-template-columns:repeat(3,1fr)}
       <div class="stp">
         <div class="g st-nav" id="stNav"></div>
         <div class="g st-body">
+          <!-- صيانتي -->
+          <div class="sec" data-s="maint">
+            <div class="sh"><span class="ico c-ap"><i data-ic="wrench"></i></span><div><b>صيانتي 🔧</b><small>يذكّرك بالزيت والفلاتر والكفرات والبطارية، وانتهاء الاستمارة والتأمين والفحص</small></div></div>
+            <div class="card g"><h3>مواعيد الصيانة</h3>
+              <div class="row"><span id="mtSum">—</span><button class="btn mt-btn" onclick="mtOpen()">افتح صيانتي</button></div>
+              <div class="row"><small style="color:var(--txt2)">تطلع لك رسالة مرة في اليوم إذا موعد شي قرّب أو فات</small></div></div>
+          </div>
           <!-- الواجهة والمظهر -->
           <div class="sec" data-s="look">
             <div class="sh"><span class="ico c-ac"><i data-ic="brush"></i></span><div><b>الواجهة والمظهر</b><small>شكل الواجهة، الخلفية، الألوان، والبطاقات</small></div></div>
@@ -1032,7 +1038,7 @@ function buildUI(){
   $('optCol').innerHTML=COLS.map((c,i)=>'<button style="background:'+c+'" onclick="setOpt(\'col\','+i+')"></button>').join('');
   // اختصارات إعدادات الجهاز
   // قائمة الإعدادات الجانبية
-  const SN=[['look','c-ac','brush','الواجهة والمظهر','الشكل، الخلفية، الألوان، ومقاس الشاشة'],['dock','c-ap','apps','الشريط اللي تحت','أضف تطبيقاتك ورتّبها وغيّر حجمه'],['time','c-wf','clock','الساعة والطقس والصلاة','التوقيت، المدينة، والأذان'],['media','c-mu','music','الصوت والوسائط','الراديو، يوتيوب، والموسيقى'],['drive','c-snd','bell','القيادة والتنبيهات','تنبيه السرعة'],['dev','c-bt','bt','الجهاز والاتصال','بلوتوث، واي فاي، والشاشة'],['about','c-st','info','حول التطبيق','الإصدار والحقوق']];
+  const SN=[['look','c-ac','brush','الواجهة والمظهر','الشكل، الخلفية، الألوان، ومقاس الشاشة'],['maint','c-ap','wrench','صيانتي 🔧','الزيت والكفرات والاستمارة والتأمين'],['dock','c-ap','apps','الشريط اللي تحت','أضف تطبيقاتك ورتّبها وغيّر حجمه'],['time','c-wf','clock','الساعة والطقس والصلاة','التوقيت، المدينة، والأذان'],['media','c-mu','music','الصوت والوسائط','الراديو، يوتيوب، والموسيقى'],['drive','c-snd','bell','القيادة والتنبيهات','تنبيه السرعة'],['dev','c-bt','bt','الجهاز والاتصال','بلوتوث، واي فاي، والشاشة'],['about','c-st','info','حول التطبيق','الإصدار والحقوق']];
   $('stNav').innerHTML=SN.map(s=>'<button data-s="'+s[0]+'" onclick="setOpt(\'stSec\',\''+s[0]+'\')"><span class="ico '+s[1]+'">'+svg(s[2])+'</span><div><b>'+s[3]+'</b><small>'+s[4]+'</small></div>'+svg('chev','chev')+'</button>').join('');
   const seg=(id,k,L)=>{$(id).innerHTML=L.map(o=>'<button data-k="'+k+'" data-v="'+o[0]+'" onclick="setOpt(\''+k+'\','+(typeof o[0]==='number'?o[0]:'\''+o[0]+'\'')+')">'+o[1]+'</button>').join('')};
   seg('segCard','cardA',[[0,'شفاف'],[1,'عادي'],[2,'واضح'],[3,'غامق']]);
@@ -1478,7 +1484,7 @@ function blackOn(){
 </script>
 <!--MT-START صيانتي — برمجة أبو نواف -->
 <style>
-#mtP{position:fixed;inset:0;z-index:9000;background:#0e1117;color:#eef1f6;display:none;flex-direction:column;direction:rtl;font-family:inherit}
+#mtP{position:fixed;inset:0;z-index:2147483000;background:#0e1117;color:#eef1f6;display:none;flex-direction:column;direction:rtl;font-family:inherit}
 #mtP.show{display:flex}
 #mtP *{box-sizing:border-box}
 #mtP .mh{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid #222838}
@@ -1513,7 +1519,7 @@ function blackOn(){
 #mtP .add{grid-column:1/-1}
 .mt-due{position:relative}
 .mt-due:after{content:'';position:absolute;top:4px;left:4px;width:9px;height:9px;border-radius:50%;background:#f97316;box-shadow:0 0 0 2px #000}
-#mtToast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1f2433;color:#fff;padding:12px 20px;border-radius:20px;font-size:15px;z-index:9001;display:none}
+#mtToast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1f2433;color:#fff;padding:12px 20px;border-radius:20px;font-size:15px;z-index:2147483001;display:none}
 </style>
 <div id="mtP" role="dialog" aria-label="صيانتي">
   <div class="mh"><h2>🔧 صيانتي</h2><button aria-label="رجوع" onclick="mtClose()">✕</button></div>
@@ -1593,6 +1599,7 @@ function blackOn(){
     let red=0,org=0,first='';
     M.items.forEach(it=>{const s=status(it);if(s.lvl==='red'){red++;if(!first)first=it.n}else if(s.lvl==='orange'){org++;if(!first)first=it.n}});
     document.querySelectorAll('.mt-btn').forEach(b=>b.classList.toggle('mt-due',red+org>0));
+    const sm=document.getElementById('mtSum'); if(sm)sm.textContent=red?('فيه '+red+' متأخر'+(org?' و'+org+' قرّب موعده':'')+' — أولها «'+first+'»'):org?('فيه '+org+' قرّب موعده — أولها «'+first+'»'):'كل شي تمام ✅';
     return {red,org,first};
   }
   function say(t){const e=document.getElementById('mtToast');e.textContent=t;e.style.display='block';clearTimeout(e._t);e._t=setTimeout(()=>e.style.display='none',4000)}
@@ -1616,7 +1623,7 @@ function blackOn(){
     const b=badge(); if(!b.first)return;
     const k=iso(today()); let last='';try{last=localStorage.getItem(K+'_t')||''}catch(e){}
     if(last===k)return; try{localStorage.setItem(K+'_t',k)}catch(e){}
-    say(b.red?'🔧 «'+b.first+'» موعدها فات، شيّك على صيانتي':'🔧 «'+b.first+'» موعدها قرّب');
+    say(b.red?'🔧 «'+b.first+'» موعدها فات — شيّك عليها في الإعدادات ← صيانتي':'🔧 «'+b.first+'» موعدها قرّب — الإعدادات ← صيانتي');
   }
   setTimeout(check,4000); setInterval(check,60*60*1000);
 })();

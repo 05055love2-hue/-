@@ -746,7 +746,6 @@
     <button class="st" id="stBt" aria-label="البلوتوث"><svg viewBox="0 0 24 24"><path class="ln" d="M7 7.5l10 9-5 4.5V3l5 4.5-10 9"/><path class="ln x" d="M4 4l16 16"/></svg></button>
     <button class="st" id="stGps" aria-label="الموقع"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/><path class="ln x" d="M4 4l16 16"/></svg></button>
     <button class="st" id="stBlk" aria-label="شاشة سودا" onclick="blackOn()"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M20.5 14.6A8.5 8.5 0 0 1 9.4 3.5a8.5 8.5 0 1 0 11.1 11.1z"/></svg></button>
-    <button class="st mt-btn" id="stMt" aria-label="صيانتي" onclick="mtOpen()"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.7C.4 7.1.9 10.1 2.9 12.1c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.4z"/></svg></button>
     <button class="st" id="stVol" aria-label="الصوت"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M3 9.5v5h4l5 4.2V5.3L7 9.5H3z"/><path class="ln sv1" d="M15.5 9.2a4 4 0 0 1 0 5.6"/><path class="ln sv2" d="M18.3 6.5a8 8 0 0 1 0 11"/><path class="ln x" d="M15 9l6 6M21 9l-6 6"/></svg><span id="stVolN" dir="ltr"></span></button>
   </div>
   <div class="stg">
@@ -874,6 +873,10 @@
     </div>
 
     <div class="spage" data-p="mycar">
+      <section class="sgroup"><h3><i>🔧</i>صيانتي</h3>
+        <p style="margin:0 0 10px;opacity:.85;font-size:14px" id="mtSum">—</p>
+        <button class="mt-btn" onclick="mtOpen()" style="min-height:48px;padding:0 22px;border:none;border-radius:14px;background:#3b82f6;color:#fff;font:inherit;font-size:16px">افتح صيانتي</button>
+      </section>
       <section class="sgroup"><h3><i>🏷️</i>علامة الماركة</h3>
         <div class="row"><button class="opt" id="mcLogoBtn">📷 حط صورة علامة ماركتك</button><button class="opt" id="mcLogoName">🔤 اختر اسم الماركة</button></div>
         <p class="note">حط صورة العلامة من جوالك (أحلى شي تكون خلفيتها شفافة أو سادة)، وتطلع كبيرة فوق العداد.</p></section>
@@ -1606,7 +1609,7 @@ dnApply(true);
 <div style="position:fixed;bottom:4px;left:10px;z-index:5;font-family:Tajawal,system-ui,sans-serif;font-size:11px;font-weight:700;color:#fff;opacity:.5;pointer-events:none;text-shadow:0 1px 2px #000">برمجة أبو نواف</div>
 <!--MT-START صيانتي — برمجة أبو نواف -->
 <style>
-#mtP{position:fixed;inset:0;z-index:9000;background:#0e1117;color:#eef1f6;display:none;flex-direction:column;direction:rtl;font-family:inherit}
+#mtP{position:fixed;inset:0;z-index:2147483000;background:#0e1117;color:#eef1f6;display:none;flex-direction:column;direction:rtl;font-family:inherit}
 #mtP.show{display:flex}
 #mtP *{box-sizing:border-box}
 #mtP .mh{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid #222838}
@@ -1641,7 +1644,7 @@ dnApply(true);
 #mtP .add{grid-column:1/-1}
 .mt-due{position:relative}
 .mt-due:after{content:'';position:absolute;top:4px;left:4px;width:9px;height:9px;border-radius:50%;background:#f97316;box-shadow:0 0 0 2px #000}
-#mtToast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1f2433;color:#fff;padding:12px 20px;border-radius:20px;font-size:15px;z-index:9001;display:none}
+#mtToast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1f2433;color:#fff;padding:12px 20px;border-radius:20px;font-size:15px;z-index:2147483001;display:none}
 </style>
 <div id="mtP" role="dialog" aria-label="صيانتي">
   <div class="mh"><h2>🔧 صيانتي</h2><button aria-label="رجوع" onclick="mtClose()">✕</button></div>
@@ -1721,6 +1724,7 @@ dnApply(true);
     let red=0,org=0,first='';
     M.items.forEach(it=>{const s=status(it);if(s.lvl==='red'){red++;if(!first)first=it.n}else if(s.lvl==='orange'){org++;if(!first)first=it.n}});
     document.querySelectorAll('.mt-btn').forEach(b=>b.classList.toggle('mt-due',red+org>0));
+    const sm=document.getElementById('mtSum'); if(sm)sm.textContent=red?('فيه '+red+' متأخر'+(org?' و'+org+' قرّب موعده':'')+' — أولها «'+first+'»'):org?('فيه '+org+' قرّب موعده — أولها «'+first+'»'):'كل شي تمام ✅';
     return {red,org,first};
   }
   function say(t){const e=document.getElementById('mtToast');e.textContent=t;e.style.display='block';clearTimeout(e._t);e._t=setTimeout(()=>e.style.display='none',4000)}
@@ -1744,7 +1748,7 @@ dnApply(true);
     const b=badge(); if(!b.first)return;
     const k=iso(today()); let last='';try{last=localStorage.getItem(K+'_t')||''}catch(e){}
     if(last===k)return; try{localStorage.setItem(K+'_t',k)}catch(e){}
-    say(b.red?'🔧 «'+b.first+'» موعدها فات، شيّك على صيانتي':'🔧 «'+b.first+'» موعدها قرّب');
+    say(b.red?'🔧 «'+b.first+'» موعدها فات — شيّك عليها في الإعدادات ← صيانتي':'🔧 «'+b.first+'» موعدها قرّب — الإعدادات ← صيانتي');
   }
   setTimeout(check,4000); setInterval(check,60*60*1000);
 })();
