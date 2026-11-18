@@ -24,6 +24,7 @@ body.glass .sw i:after{right:21px}
 .card .nm span{color:#8f97a8;font-size:13px}
 .hold{position:relative;width:100%}
 .sc{position:absolute;top:0;right:0;transform-origin:top right}
+.pinb{align-self:flex-start;border:1px solid #3a3360;background:#1d1838;color:#e6e0ff;border-radius:22px;min-height:44px;padding:0 18px;font-size:15px;display:flex;align-items:center;gap:8px}
 .credit{text-align:center;color:#8f97a8;font-size:13px;padding:10px 0 30px}
 #full{position:fixed;inset:0;z-index:50;background:#000;display:none;align-items:center;justify-content:center}
 #full.show{display:flex}
@@ -118,7 +119,7 @@ const BAR=(h,track,fill)=>`<div style="height:${h}px;border-radius:${h}px;backgr
 
 /* ---------- the 10 widgets ---------- */
 const W=[];
-W.push({id:'glass',name:'زجاجي',w:720,h:340,r:40,html:()=>`
+W.push({id:'glass',pin:'wide',name:'زجاجي',w:720,h:340,r:40,html:()=>`
 <div class="w" style="--bg:#101a2c;--pn:#1a2538;--pnG:rgba(255,255,255,.10);width:720px;height:340px;border-radius:40px;color:#fff">
  ${LAY('#a855f7','#3b82f6')}
  <div style="height:100%;padding:24px;display:flex;flex-direction:column;gap:16px">
@@ -228,7 +229,7 @@ W.push({id:'analog',name:'ساعة عقارب',w:720,h:340,r:40,html:()=>{
  </div>
 </div>`}});
 
-W.push({id:'square',name:'مربع كبير',w:440,h:440,r:44,html:()=>`
+W.push({id:'square',pin:'square',name:'مربع كبير',w:440,h:440,r:44,html:()=>`
 <div class="w" style="--bg:#0f3d2e;--pn:#ecfdf5;--pnG:rgba(236,253,245,.80);width:440px;height:440px;border-radius:44px;color:#ecfdf5;padding:26px;display:flex;flex-direction:column;gap:16px">
  ${LAY('#34d399','#60a5fa')}
  <div style="display:flex;align-items:flex-end;justify-content:space-between">
@@ -253,7 +254,7 @@ W.push({id:'square',name:'مربع كبير',w:440,h:440,r:44,html:()=>`
  </div>
 </div>`});
 
-W.push({id:'pill',name:'شريط',w:720,h:160,r:80,html:()=>`
+W.push({id:'pill',pin:'bar',name:'شريط',w:720,h:160,r:80,html:()=>`
 <div class="w" style="--bg:#1e1b4b;width:720px;height:160px;border-radius:80px;color:#eef2ff;padding:20px 28px 20px 20px;display:flex;align-items:center;gap:22px">
  ${LAY('#fbbf24','#ec4899')}
  <div style="display:flex;flex-direction:column;gap:2px;padding-right:8px"><span class="num" style="font-size:50px;font-weight:700;line-height:1;direction:ltr">${K('hh')}:${K('mm')}</span><span style="font-size:14px;color:#c7d2fe">${K('apLong')} · ${K('day')}</span></div>
@@ -385,12 +386,16 @@ const list=$('list');
 W.forEach((wd,i)=>{
   const card=document.createElement('div');
   card.className='card';card.setAttribute('role','button');card.tabIndex=0;
-  card.innerHTML=`<div class="nm">${i+1}. ${wd.name}<span>اضغط للعرض الكامل</span></div><div class="hold"><div class="sc" style="width:${wd.w}px;height:${wd.h}px">${wd.html()}</div></div>`;
-  card.onclick=e=>{ if(e.target.closest('[data-act]'))return; openFull(i); };
+  card.innerHTML=`<div class="nm">${i+1}. ${wd.name}<span>اضغط للعرض الكامل</span></div><div class="hold"><div class="sc" style="width:${wd.w}px;height:${wd.h}px">${wd.html()}</div></div>`+(wd.pin?`<button class="pinb" data-pin="${wd.pin}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>حطه على الشاشة الرئيسية</button>`:'');
+  card.onclick=e=>{ if(e.target.closest('[data-act]'))return; const pb=e.target.closest('[data-pin]'); if(pb){pinIt(pb.dataset.pin);return} openFull(i); };
   list.appendChild(card); wd.hold=card.querySelector('.hold');
 });
 function layoutAll(){ W.forEach(wd=>place(wd.hold,wd,'list')); if(cur>=0)place($('fh'),W[cur],'full'); }
 
+function pinIt(kind){
+  if(window.Native&&Native.pin&&Native.pin(kind)){hint('اضغط «إضافة» في الرسالة اللي طلعت');return}
+  hint('اضغط مطوّل على الشاشة الرئيسية ← الأدوات ← ويدجتي');
+}
 /* ---------- full screen ---------- */
 let cur=-1;
 function openFull(i){
@@ -405,7 +410,7 @@ window.goBack=()=>{ if(cur>=0){closeFull();return true} return false; };
 addEventListener('resize',layoutAll);
 
 /* ---------- glass switch ---------- */
-function setGlass(on){document.body.classList.toggle('glass',on);store.set('glass',on?'1':'0')}
+function setGlass(on){document.body.classList.toggle('glass',on);store.set('glass',on?'1':'0');if(window.Native&&Native.setGlass)Native.setGlass(on)}
 setGlass(store.get('glass','1')==='1');
 $('glassBtn').onclick=()=>setGlass(!document.body.classList.contains('glass'));
 
@@ -436,6 +441,7 @@ async function wxFetch(lat,lon,name){
   d.hourly.time.forEach((t,i)=>{const dt=new Date(t); if(dt.getTime()<now||hours.length>=4)return; if(dt.getHours()%3!==0)return; const h=dt.getHours(); hours.push({t:(h%12||12)+(h<12?'ص':'م'),d:Math.round(d.hourly.temperature_2m[i])+'°'})});
   WX={t:Math.round(d.current.temperature_2m),code:d.current.weather_code,day:!!d.current.is_day,hi:Math.round(d.daily.temperature_2m_max[0]),lo:Math.round(d.daily.temperature_2m_min[0]),city:name,hours,at:now};
   store.set('wx',JSON.stringify(WX)); paintWx(); update();
+  if(window.Native&&Native.saveWx)Native.saveWx(JSON.stringify({lat:String(lat),lon:String(lon),city:name,t:WX.t,code:WX.code,day:WX.day,hi:WX.hi,lo:WX.lo}));
 }
 async function placeName(lat,lon){
   try{const r=await (await fetch('https://api.bigdatacloud.net/data/reverse-geocode-client?latitude='+lat+'&longitude='+lon+'&localityLanguage=ar')).json(); return r.city||r.locality||r.principalSubdivision||'مكانك'}catch(e){return 'مكانك'}

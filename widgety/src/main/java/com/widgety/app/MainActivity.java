@@ -2,21 +2,14 @@ package com.widgety.app;
 
 import android.Manifest;
 import android.app.Activity;
+import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.media.AudioManager;
-import android.media.MediaMetadata;
-import android.media.session.MediaController;
-import android.media.session.MediaSessionManager;
-import android.media.session.PlaybackState;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.provider.Settings;
-import android.view.KeyEvent;
 import android.view.WindowManager;
 import android.webkit.GeolocationPermissions;
 import android.webkit.JavascriptInterface;
@@ -26,7 +19,6 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import java.util.List;
 import org.json.JSONObject;
 
 /** ويدجتي — ساعة وطقس وموسيقى — برمجة أبو نواف */
@@ -104,79 +96,23 @@ public class MainActivity extends Activity {
         });
     }
 
-    private boolean hasAccess() {
-        String list = Settings.Secure.getString(getContentResolver(), "enabled_notification_listeners");
-        return list != null && list.contains(getPackageName());
-    }
-
-    private MediaController controller() {
-        try {
-            MediaSessionManager m = (MediaSessionManager) getSystemService(Context.MEDIA_SESSION_SERVICE);
-            List<MediaController> l = m.getActiveSessions(new ComponentName(this, MediaListener.class));
-            if (l == null || l.isEmpty()) return null;
-            for (MediaController c : l) {
-                PlaybackState st = c.getPlaybackState();
-                if (st != null && st.getState() == PlaybackState.STATE_PLAYING) return c;
-            }
-            return l.get(0);
-        } catch (Exception e) {
-            return null;
-        }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Widgets.schedule(this);
+        Widgets.refreshMusic(this);
+        Widgets.updateAll(this);
     }
 
     class Bridge {
         @JavascriptInterface
         public String media() {
-            JSONObject o = new JSONObject();
-            try {
-                boolean acc = hasAccess();
-                o.put("access", acc);
-                MediaController c = acc ? controller() : null;
-                o.put("has", c != null);
-                if (c != null) {
-                    MediaMetadata md = c.getMetadata();
-                    PlaybackState st = c.getPlaybackState();
-                    String title = md != null ? md.getString(MediaMetadata.METADATA_KEY_TITLE) : null;
-                    String artist = md != null ? md.getString(MediaMetadata.METADATA_KEY_ARTIST) : null;
-                    if (artist == null && md != null) artist = md.getString(MediaMetadata.METADATA_KEY_ALBUM_ARTIST);
-                    long dur = md != null ? md.getLong(MediaMetadata.METADATA_KEY_DURATION) : 0;
-                    boolean playing = st != null && st.getState() == PlaybackState.STATE_PLAYING;
-                    long pos = 0;
-                    if (st != null) {
-                        pos = st.getPosition();
-                        if (playing && st.getLastPositionUpdateTime() > 0) {
-                            pos += (long) ((SystemClock.elapsedRealtime() - st.getLastPositionUpdateTime()) * st.getPlaybackSpeed());
-                        }
-                    }
-                    if (dur > 0 && pos > dur) pos = dur;
-                    o.put("title", title == null ? "" : title);
-                    o.put("artist", artist == null ? "" : artist);
-                    o.put("dur", dur);
-                    o.put("pos", Math.max(0, pos));
-                    o.put("playing", playing);
-                }
-            } catch (Exception ignored) { }
-            return o.toString();
+            return Media.read(MainActivity.this).toString();
         }
 
         @JavascriptInterface
         public void cmd(String a) {
-            MediaController c = controller();
-            if (c != null) {
-                MediaController.TransportControls t = c.getTransportControls();
-                if ("play".equals(a)) t.play();
-                else if ("pause".equals(a)) t.pause();
-                else if ("next".equals(a)) t.skipToNext();
-                else if ("prev".equals(a)) t.skipToPrevious();
-                return;
-            }
-            // ما فيه مشغّل مفتوح: نرسل زر الوسائط عشان آخر تطبيق موسيقى يشتغل
-            int code = "next".equals(a) ? KeyEvent.KEYCODE_MEDIA_NEXT
-                    : "prev".equals(a) ? KeyEvent.KEYCODE_MEDIA_PREVIOUS
-                    : "pause".equals(a) ? KeyEvent.KEYCODE_MEDIA_PAUSE : KeyEvent.KEYCODE_MEDIA_PLAY;
-            AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-            am.dispatchMediaKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, code));
-            am.dispatchMediaKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, code));
+            Media.cmd(MainActivity.this, a);
         }
 
         @JavascriptInterface
@@ -196,6 +132,45 @@ public class MainActivity extends Activity {
                 if (on) getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
                 else getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             });
+        }
+
+        /** الطقس من التطبيق يوصل للويدجت */
+        @JavascriptInterface
+        public void saveWx(String json) {
+            try {
+                JSONObject o = new JSONObject(json);
+                Widgets.prefs(MainActivity.this).edit()
+                    .putString("lat", o.optString("lat", "24.71"))
+                    .putString("lon", o.optString("lon", "46.68"))
+                    .putString("city", o.optString("city", "الرياض"))
+                    .putInt("t", o.optInt("t"))
+                    .putInt("code", o.optInt("code"))
+                    .putBoolean("day", o.optBoolean("day", true))
+                    .putInt("hi", o.optInt("hi"))
+                    .putInt("lo", o.optInt("lo"))
+                    .putBoolean("hasWx", true)
+                    .apply();
+                Widgets.updateAll(MainActivity.this);
+            } catch (Exception ignored) { }
+        }
+
+        @JavascriptInterface
+        public void setGlass(boolean on) {
+            Widgets.prefs(MainActivity.this).edit().putBoolean("glass", on).apply();
+            Widgets.updateAll(MainActivity.this);
+        }
+
+        /** يطلب من الجوال يحط الويدجت على الشاشة الرئيسية */
+        @JavascriptInterface
+        public boolean pin(String kind) {
+            try {
+                AppWidgetManager m = AppWidgetManager.getInstance(MainActivity.this);
+                if (Build.VERSION.SDK_INT < 26 || !m.isRequestPinAppWidgetSupported()) return false;
+                Class<?> cls = "bar".equals(kind) ? WidgetBar.class : "square".equals(kind) ? WidgetSquare.class : WidgetWide.class;
+                return m.requestPinAppWidget(new ComponentName(MainActivity.this, cls), null, null);
+            } catch (Exception e) {
+                return false;
+            }
         }
     }
 }
