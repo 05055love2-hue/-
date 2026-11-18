@@ -313,6 +313,7 @@ body.spOn .spd{display:flex}
 .spd small{font-size:clamp(11px,1.2vw,14px);color:var(--soft);font-weight:800}
 .spd.fast b{color:#ff453a;animation:bl .8s steps(2) infinite}
 body.noSt .spd{top:6px;height:auto;background:rgba(0,0,0,.45);padding:4px 12px;border-radius:12px}
+.ab-upd{display:block;width:100%;max-width:380px;margin:14px auto 0;height:52px;border:none;border-radius:16px;background:#3b82f6;color:#fff;font:inherit;font-size:17px;font-weight:700;cursor:pointer}
 </style>
 </head>
 <body>
@@ -427,7 +428,8 @@ body.noSt .spd{top:6px;height:auto;background:rgba(0,0,0,.45);padding:4px 12px;b
     <h2>عن التطبيق</h2>
     <div class="grp about"><div class="alogo"><i></i></div><b>مشغّلي</b><span id="abVer">برمجة أبو نواف</span>
       <p class="hint2">شاشة رئيسية للسيارة: مشغّل يوتيوب وموسيقى، ساعة وطقس، أزرار سريعة، شريط تطبيقات، وصيانة السيارة</p>
-      <p class="hint2">جميع الحقوق محفوظة © المبرمج أبو نواف</p></div>
+      <p class="hint2">جميع الحقوق محفوظة © المبرمج أبو نواف</p>
+      <button class="ab-upd" onclick="if(window.AppUpd)AppUpd.check();else alert('زر التحقق من التحديث يشتغل داخل التطبيق')">🔄 التحقق من التحديث</button></div>
   </section>
   </div>
 </div></div>

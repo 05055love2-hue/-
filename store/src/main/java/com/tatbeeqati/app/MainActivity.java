@@ -57,7 +57,7 @@ public class MainActivity extends Activity {
                 String ver = "";
                 try { ver = getPackageManager().getPackageInfo(getPackageName(), 0).versionName; } catch (Exception ignored) { }
                 v.evaluateJavascript("(function(){if(document.getElementById('appVer'))return;var d=document.createElement('div');d.id='appVer';"
-                    + "d.textContent='تطبيقاتي • نسخة " + ver + "';d.style.cssText='position:fixed;bottom:6px;left:10px;z-index:99;font:700 11px system-ui,sans-serif;color:#6e6e73;opacity:.7;pointer-events:none';"
+                    + "d.textContent='تطبيقاتي • نسخة " + ver + " • 🔄 تحقق من التحديث';d.onclick=function(){if(window.AppUpd)AppUpd.check()};d.style.cssText='position:fixed;bottom:6px;left:10px;z-index:99;font:700 12px system-ui,sans-serif;color:#6e6e73;opacity:.8;padding:6px 10px;border-radius:14px;background:rgba(0,0,0,.05);cursor:pointer';"
                     + "document.body.appendChild(d)})()", null);
             }
 
@@ -72,6 +72,7 @@ public class MainActivity extends Activity {
         web.setDownloadListener((url, ua, cd, mime, len) -> handle(url));
         String start = SITE;
         if (getIntent() != null && getIntent().getData() != null) start = getIntent().getData().toString();
+        web.addJavascriptInterface(new Updater.JS(this, "tatbeeqati"), "AppUpd");
         web.loadUrl(start);
     }
 

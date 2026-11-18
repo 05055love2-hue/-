@@ -210,5 +210,32 @@ const WT=[['green','أخضر','linear-gradient(135deg,#065f46,#07130f)'],['blue'
 })();
 </script>
 <div style="position:relative;z-index:1;text-align:center;font-family:Tajawal,system-ui,sans-serif;font-size:13px;font-weight:700;opacity:.6;padding:14px 0 18px">برمجة أبو نواف</div>
+<button class="ab-link" onclick="abOpen()">ℹ️ حول التطبيق</button>
+<!--AB-START حول التطبيق والتحقق من التحديث — أبو نواف -->
+<style>
+#abP{position:fixed;inset:0;z-index:9500;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;direction:rtl;font-family:Tajawal,system-ui,sans-serif;padding:16px}
+#abP.show{display:flex}
+#abP .c{background:#161b26;color:#eef1f6;border:1px solid #2a3245;border-radius:26px;padding:26px 22px 20px;width:100%;max-width:360px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+#abP .ic{font-size:46px;line-height:1}
+#abP h3{margin:10px 0 4px;font-size:23px}
+#abP .v{color:#9aa3b5;font-size:15px;margin-bottom:18px}
+#abP button{display:block;width:100%;height:52px;border:none;border-radius:16px;font:inherit;font-size:17px;font-weight:700;margin-top:10px;cursor:pointer}
+#abP .u{background:#3b82f6;color:#fff}
+#abP .x{background:#2a3245;color:#fff}
+#abP .by{margin-top:16px;font-size:13px;color:#9aa3b5}
+.ab-link{display:block;margin:4px auto 14px;padding:9px 18px;border-radius:20px;border:1px solid rgba(150,150,150,.35);background:rgba(150,150,150,.12);color:inherit;font:inherit;font-size:14px;font-weight:700;cursor:pointer;position:relative;z-index:1}
+</style>
+<div id="abP" role="dialog" aria-label="حول التطبيق" onclick="if(event.target===this)abClose()">
+  <div class="c"><div class="ic">💰</div><h3>مواعيد الصرف</h3><div class="v" id="abV"></div>
+    <button class="u" onclick="abCheck()">🔄 التحقق من التحديث</button>
+    <button class="x" onclick="abClose()">إغلاق</button>
+    <div class="by">جميع الحقوق محفوظة © المبرمج أبو نواف</div></div>
+</div>
+<script>
+function abCheck(){if(window.AppUpd)AppUpd.check();else alert('زر التحقق من التحديث يشتغل داخل التطبيق');}
+function abOpen(){var v='';try{v=window.AppUpd?AppUpd.version():''}catch(e){}document.getElementById('abV').textContent=v?('نسخة '+v):'';document.getElementById('abP').classList.add('show');}
+function abClose(){document.getElementById('abP').classList.remove('show');}
+</script>
+<!--AB-END-->
 </body>
 </html>

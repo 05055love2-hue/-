@@ -40,6 +40,7 @@ public class MainActivity extends Activity {
         s.setGeolocationEnabled(true);
         s.setTextZoom(100);
         web.addJavascriptInterface(new Bridge(), "Native");
+        web.addJavascriptInterface(new Updater.JS(this, "widgety"), "AppUpd");
         web.setWebChromeClient(new WebChromeClient() {
             @Override
             public void onGeolocationPermissionsShowPrompt(String origin, GeolocationPermissions.Callback cb) {

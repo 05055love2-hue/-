@@ -854,6 +854,7 @@
       <button data-p="wx">⛅<span>الطقس</span></button>
       <button data-p="apps">📲<span>التطبيقات</span></button>
       <button data-p="car">🚘<span>السيارة</span></button>
+      <button data-p="about">ℹ️<span>حول</span></button>
     </div>
 
     <div class="spage on" data-p="look">
@@ -928,6 +929,14 @@
         <p class="note">جرّب الأزرار واحد واحد، واللي يفتح البلوتوث خلّه، والتطبيق بيحفظه لزر البلوتوث.</p></section>
       <section class="sgroup"><h3><i>📻</i>راديو السيارة</h3><div class="row" id="radioRow"></div>
         <p class="note">نفس الشي: جرّب لين يفتح راديو السيارة.</p></section>
+    </div>
+
+    <div class="spage" data-p="about">
+      <section class="sgroup"><h3><i>ℹ️</i>حول التطبيق</h3>
+        <p class="note" style="font-size:16px"><b>ثيم هادي</b> — <span class="ab-ver"></span></p>
+        <div class="row"><button class="opt on" style="font-weight:700" onclick="if(window.AppUpd)AppUpd.check();else alert('زر التحقق من التحديث يشتغل داخل التطبيق')">🔄 التحقق من التحديث</button></div>
+        <p class="note">يشيّك إذا فيه نسخة أجدد، وإذا فيه تقدر تحدّث من هنا على طول.</p>
+        <p class="note">جميع الحقوق محفوظة © المبرمج أبو نواف</p></section>
     </div>
   </div>
 </div>
@@ -1782,5 +1791,6 @@ dnApply(true);
 })();
 </script>
 <!--MT-END-->
+<script>document.querySelectorAll('.ab-ver').forEach(function(e){try{e.textContent='نسخة '+AppUpd.version()}catch(x){}})</script>
 </body>
 </html>

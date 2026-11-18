@@ -59,6 +59,7 @@ public class MainActivity extends Activity implements SensorEventListener {
             @Override public void onPageFinished(WebView v, String u) { checkAdhan(getIntent()); }
         });
         web.addJavascriptInterface(new Bridge(), "Sl");
+        web.addJavascriptInterface(new Updater.JS(this, "salati"), "AppUpd");
         web.loadUrl("file:///android_asset/index.html");
         if (Build.VERSION.SDK_INT >= 33 && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED)
             requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 5);

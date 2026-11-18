@@ -43,6 +43,7 @@ class MainActivity : Activity() {
         web.settings.javaScriptEnabled = true
         web.settings.domStorageEnabled = true
         web.addJavascriptInterface(Bridge(), "Dl")
+        web.addJavascriptInterface(Updater.JS(this, "hammil"), "AppUpd")
         web.webChromeClient = WebChromeClient()
         web.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(v: WebView, u: String): Boolean {

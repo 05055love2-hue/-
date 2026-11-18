@@ -157,6 +157,7 @@ public class MainActivity extends Activity {
         });
 
         web.addJavascriptInterface(new Bridge(), "Native");
+        web.addJavascriptInterface(new Updater.JS(this, "mushaghli"), "AppUpd");
         web.addJavascriptInterface(new BlackScreen.JS(this), "BlackScr");
         web.addJavascriptInterface(new YtBridge(), "YT");
         web.addJavascriptInterface(new MapBridge(), "MP");

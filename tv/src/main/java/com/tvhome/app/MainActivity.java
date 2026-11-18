@@ -85,6 +85,7 @@ public class MainActivity extends Activity {
         web.setFocusable(true);
         web.setFocusableInTouchMode(true);
         web.addJavascriptInterface(new Bridge(), "Native");
+        web.addJavascriptInterface(new Updater.JS(this, "tv-launcher"), "AppUpd");
         web.addJavascriptInterface(new BlackScreen.JS(this), "BlackScr");
         web.addJavascriptInterface(new YtBridge(), "YT");
         // اختيار صورة من الجهاز للخلفية
