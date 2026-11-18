@@ -5,33 +5,39 @@
   "samples": [
     [
       "ar-SA-HamedNeural",
-      "-10Hz",
-      "-3%",
-      "SA_Hamed_deep"
-    ],
-    [
-      "ar-SA-HamedNeural",
       "+0Hz",
       "+6%",
-      "SA_Hamed_energetic"
+      "1_SA_Hamed_current"
+    ],
+    [
+      "ar-AE-HamdanNeural",
+      "-4Hz",
+      "+0%",
+      "2_AE_Hamdan"
+    ],
+    [
+      "ar-KW-FahedNeural",
+      "-4Hz",
+      "+0%",
+      "3_KW_Fahed"
+    ],
+    [
+      "ar-QA-MoazNeural",
+      "-4Hz",
+      "+0%",
+      "4_QA_Moaz"
+    ],
+    [
+      "ar-BH-AliNeural",
+      "-4Hz",
+      "+0%",
+      "5_BH_Ali"
     ],
     [
       "ar-OM-AbdullahNeural",
       "-4Hz",
       "+0%",
-      "OM_Abdullah"
-    ],
-    [
-      "ar-YE-SalehNeural",
-      "-4Hz",
-      "+0%",
-      "YE_Saleh"
-    ],
-    [
-      "ar-IQ-BasselNeural",
-      "-4Hz",
-      "+0%",
-      "IQ_Bassel"
+      "6_OM_Abdullah"
     ]
   ]
 }

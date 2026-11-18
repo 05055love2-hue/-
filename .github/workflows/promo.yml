@@ -5,6 +5,11 @@ on:
     branches: [main]
     paths: ["promo/**", ".github/workflows/promo.yml"]
   workflow_dispatch:
+    inputs:
+      samples:
+        description: "عينات الأصوات بدل المقاطع"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -24,11 +29,11 @@ jobs:
       - name: Make voiced videos
         working-directory: promo
         run: |
-          python voice.py
+          if [ "${{ inputs.samples }}" = "true" ]; then python voice.py samples; else python voice.py; fi
       - name: Publish videos
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: promo
-          name: مقاطع الدعاية
+          tag_name: ${{ inputs.samples && 'voice-samples' || 'promo' }}
+          name: ${{ inputs.samples && 'عينات الأصوات' || 'مقاطع الدعاية' }}
           make_latest: false
           files: promo/out/*.mp4
