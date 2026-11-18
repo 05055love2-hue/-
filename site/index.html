@@ -292,6 +292,41 @@ header.abar .mark{flex:none;filter:drop-shadow(0 3px 6px rgba(80,70,240,.3))}
 .about .av.av2{background:none!important;display:grid;place-items:center}
 .about .av.av2 .mark{filter:drop-shadow(0 8px 16px rgba(80,70,240,.3))}
 footer .fmark{display:block;margin:0 auto 8px}
+
+/* ===== لمسة احترافية (نسخة التصميم 2) ===== */
+:root{--sh1:0 1px 2px rgba(16,24,40,.04),0 10px 30px rgba(16,24,40,.07);--sh2:0 2px 4px rgba(16,24,40,.06),0 18px 40px rgba(80,70,240,.16);--grad:linear-gradient(135deg,#0071e3,#8e44ff)}
+body{background:radial-gradient(700px 380px at 100% 0%,rgba(142,68,255,.08),transparent 70%),radial-gradient(600px 360px at 0% 18%,rgba(0,113,227,.07),transparent 70%),#fff!important}
+header.abar{box-shadow:0 1px 0 rgba(0,0,0,.04)}
+.mainapp{position:relative;overflow:hidden;box-shadow:var(--sh1);border:1px solid rgba(142,68,255,.12)}
+.mainapp::before{content:"";position:absolute;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(142,68,255,.22),transparent 70%);top:-120px;left:-80px;pointer-events:none}
+.mainapp>*{position:relative}
+.pill{background:var(--grad)!important;box-shadow:0 8px 20px rgba(80,70,240,.28);transition:transform .15s,box-shadow .15s}
+.pill:active{transform:scale(.96)}
+.appbox,.support,.about,.live div{box-shadow:var(--sh1);border:1px solid rgba(0,0,0,.04)!important}
+.appbox{background:#fff!important}
+.appbox .pick.grid a{transition:transform .2s cubic-bezier(.3,1.6,.5,1)}
+.appbox .pick.grid a:hover{transform:translateY(-4px)}
+.appbox .pick.grid a:active{transform:scale(.92)}
+.appbox .pick.grid a img{transition:filter .2s}
+.appbox .pick.grid a:hover img{filter:drop-shadow(0 12px 18px rgba(80,70,240,.28))}
+.eyebrow{display:inline-block;background:rgba(142,68,255,.08);color:#6b3fd6!important;border-radius:999px;padding:4px 14px;font-size:14px!important}
+.live{gap:14px!important}
+.live div{background:#fff!important;border-radius:22px!important}
+.live b{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent!important}
+.support{background:linear-gradient(#fff,#fff) padding-box,linear-gradient(135deg,rgba(0,113,227,.35),rgba(142,68,255,.35)) border-box!important;border:1.5px solid transparent!important}
+.give{background:var(--grad)!important;box-shadow:0 10px 24px rgba(80,70,240,.28)!important}
+.about{background:#fff!important}
+.about .chips{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.about .chips span{background:#f5f5f7!important;border-radius:14px;padding:10px 12px;font-size:13.5px;line-height:1.5}
+.about .stats{grid-template-columns:repeat(3,1fr)!important}
+.about .stats div{background:#f5f5f7!important;border-radius:18px}
+.about .stats b{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent!important;font-size:28px}
+.rv{background:#fff!important;box-shadow:var(--sh1)}
+.feat{background:#fff!important;box-shadow:var(--sh1)}
+.support details{background:none!important;box-shadow:none!important}
+.rise{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease}
+.rise.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.rise{opacity:1;transform:none;transition:none}}
 </style></style></style></style>
 </head>
 <body>
@@ -811,7 +846,7 @@ footer .fmark{display:block;margin:0 auto 8px}
   <footer><svg class="mark fmark" width="40" height="40" viewBox="0 0 200 200" aria-label="شعار أبو نواف"><defs><linearGradient id="mkF" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0a84ff"/><stop offset="1" stop-color="#8e44ff"/></linearGradient></defs><rect x="44" y="44" width="112" height="112" rx="26" transform="rotate(45 100 100)" fill="url(#mkF)"/><path d="M66 100 A34 34 0 0 0 134 100" fill="none" stroke="#fff" stroke-width="16" stroke-linecap="round"/><circle cx="100" cy="74" r="10" fill="#fff"/></svg>تطبيقاتي • ثيم هادي وشاشتي ومشغّلي وفصول السنة ومواعيد الصرف وحمّل • مجانية 💚
     <p style="margin:10px auto 0;max-width:640px;line-height:1.8">كل التطبيقات هنا من تطوير المبرمج أبو نواف، وهي مستقلة وغير تابعة لأي جهة حكومية أو شركة. ما تطلب كلمات مرور ولا بيانات بنكية، وما ترسل بياناتك لأي مكان. أسماء الخدمات المذكورة ملك لأصحابها.</p>
     <a class="ttfoot" href="https://www.tiktok.com/@azoozz1407" target="_blank" rel="noopener"><svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true"><path fill="#25F4EE" d="M33.5 6h-6v24.3a5.4 5.4 0 1 1-5.4-5.4c.6 0 1.1.1 1.6.2v-6.2a11.5 11.5 0 1 0 9.8 11.4V18.1a14 14 0 0 0 8.2 2.6v-6A8.3 8.3 0 0 1 33.5 6z" transform="translate(-1.2 -1.2)"/><path fill="#FE2C55" d="M33.5 6h-6v24.3a5.4 5.4 0 1 1-5.4-5.4c.6 0 1.1.1 1.6.2v-6.2a11.5 11.5 0 1 0 9.8 11.4V18.1a14 14 0 0 0 8.2 2.6v-6A8.3 8.3 0 0 1 33.5 6z" transform="translate(1.2 1.2)"/><path fill="#fff" d="M33.5 6h-6v24.3a5.4 5.4 0 1 1-5.4-5.4c.6 0 1.1.1 1.6.2v-6.2a11.5 11.5 0 1 0 9.8 11.4V18.1a14 14 0 0 0 8.2 2.6v-6A8.3 8.3 0 0 1 33.5 6z"/></svg>@azoozz1407</a>
-    <p style="margin:12px 0 0;font-weight:800;color:var(--text)">© 2026 جميع الحقوق محفوظة — المبرمج أبو نواف</p></footer>
+    <p style="margin:12px 0 0;font-weight:800;color:var(--text)">© 2026 جميع الحقوق محفوظة — المبرمج أبو نواف • نسخة الموقع 2.0</p></footer>
 </div>
 <div class="zoom" id="zoom"><img id="zimg" alt=""></div>
 
@@ -1523,6 +1558,16 @@ loop();
     document.getElementById('sheetBack').onclick=()=>{if(history.length>1&&cur)history.back();else{history.replaceState(null,'',location.pathname);show('')}};
     show(location.hash.slice(1));
   })();
+</script>
+<script>
+// لمسة احترافية: عدد التطبيقات تلقائي + ظهور ناعم مع النزول
+(function(){try{
+var n=document.querySelectorAll('#apps .pick.grid a:not([href="#noortv"])').length,st=document.querySelector('.about .stats b');if(st&&n)st.textContent=n;
+var els=document.querySelectorAll('.mainapp,.appbox,.hero,.live,.support,.about');
+if(!('IntersectionObserver' in window))return;
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.12});
+els.forEach(function(el){el.classList.add('rise');io.observe(el)});
+}catch(e){}})();
 </script>
 </body>
 </html>
