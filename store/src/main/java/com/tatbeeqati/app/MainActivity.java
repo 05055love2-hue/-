@@ -82,7 +82,11 @@ public class MainActivity extends Activity {
 
     /** روابط الموقع تفتح داخل التطبيق، وملفات التطبيقات تتثبت مباشرة، والباقي في المتصفح */
     boolean handle(String url) {
-        if (url.toLowerCase().contains(".apk")) { install(url); return true; }
+        if (url.toLowerCase().contains(".apk")) {
+            // حماية: نثبّت بس تطبيقات أبو نواف من مكانها الرسمي، وأي ملف ثاني يفتح في المتصفح
+            if (trusted(url)) install(url); else browser(url);
+            return true;
+        }
         if (url.startsWith(SITE) || url.startsWith("https://tatbeeqati-sa.pages.dev")) return false;
         try { startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url))); } catch (Exception ignored) {}
         return true;
@@ -147,6 +151,18 @@ public class MainActivity extends Activity {
                 runOnUiThread(() -> { try { dlg.dismiss(); } catch (Exception ignored) {} browser(url); });
             }
         }).start();
+    }
+
+    /** المصادر الموثوقة بس: إصدارات أبو نواف في GitHub، وموقع تطبيقاتي */
+    static boolean trusted(String url) {
+        try {
+            Uri u = Uri.parse(url);
+            if (!"https".equalsIgnoreCase(u.getScheme())) return false;
+            String host = u.getHost() == null ? "" : u.getHost().toLowerCase();
+            String path = u.getPath() == null ? "" : u.getPath();
+            if (host.equals("github.com") && path.startsWith("/05055love2-hue/tatbeeqati/releases/")) return true;
+            return host.equals("tatbeeqati-sa.pages.dev");
+        } catch (Exception e) { return false; }
     }
 
     void browser(String url) {
