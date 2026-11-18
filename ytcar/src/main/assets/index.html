@@ -260,6 +260,28 @@ body.dkEdit #dkBar{display:flex}
 .sty.on{border-color:var(--ac);box-shadow:0 0 0 3px color-mix(in srgb,var(--ac) 40%,transparent)}
 .sty .dm{display:flex;gap:6px;padding:8px;border-radius:12px;width:100%;justify-content:center}
 .sty .dm i{width:30px;height:30px;border-radius:9px;display:block}
+
+/* ===== الأزرار الملونة: تخصيص ===== */
+.quick .qb{background:linear-gradient(135deg,var(--qa),var(--qb));transition:border-radius .25s,background .25s,box-shadow .25s}
+.quick .qb span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+body.qv-col .quick .qb{flex-direction:column;gap:4px}
+.quick .qb.qs-pill{border-radius:999px}.quick .qb.qs-square{border-radius:8px}.quick .qb.qs-round{border-radius:20px}
+body.qs-glass .quick .qb{background:color-mix(in srgb,var(--qa) 20%,rgba(255,255,255,.04));border:1px solid color-mix(in srgb,var(--qa) 60%,transparent);backdrop-filter:blur(12px);box-shadow:inset 0 1px 0 rgba(255,255,255,.18)}
+body.qs-dark .quick .qb{background:rgba(8,10,16,.75);border:1px solid rgba(255,255,255,.07);box-shadow:inset 0 -4px 0 var(--qa)}
+body.qs-neon .quick .qb{background:rgba(0,0,0,.35);border:2px solid var(--qa);box-shadow:0 0 16px color-mix(in srgb,var(--qa) 55%,transparent),inset 0 0 14px color-mix(in srgb,var(--qa) 25%,transparent);color:color-mix(in srgb,var(--qa) 45%,#fff)}
+body.qs-line .quick .qb{background:transparent;border:2px solid var(--qa)}
+body.qs-soft .quick .qb{background:color-mix(in srgb,var(--qa) 85%,#fff);color:#111}
+body.qs-glass .quick .qb.qs-pill,body.qs-dark .quick .qb.qs-pill{border-radius:999px}
+.qpv{width:150px;height:72px;flex:none;color:#fff;font-weight:800;font-size:17px;display:flex;align-items:center;justify-content:center;gap:8px;border-radius:18px;pointer-events:none;border:0;font-family:inherit}
+.qpv i{font-style:normal;font-size:28px}
+
+.qd-glass .qb{background:color-mix(in srgb,var(--qa) 20%,rgba(255,255,255,.04))!important;border:1px solid color-mix(in srgb,var(--qa) 60%,transparent)}
+.qd-dark .qb{background:rgba(8,10,16,.75)!important;box-shadow:inset 0 -3px 0 var(--qa)}
+.qd-neon .qb{background:rgba(0,0,0,.35)!important;border:2px solid var(--qa);box-shadow:0 0 10px color-mix(in srgb,var(--qa) 55%,transparent)}
+.qd-line .qb{background:transparent!important;border:2px solid var(--qa)}
+.qd-soft .qb{background:color-mix(in srgb,var(--qa) 85%,#fff)!important}
+.qd-color .qb{background:linear-gradient(135deg,var(--qa),var(--qb))!important;border:0!important;box-shadow:none!important}
+.chs.gr button{min-width:0;width:54px;height:40px;padding:0;border-radius:12px}
 </style>
 </head>
 <body>
@@ -348,7 +370,8 @@ body.dkEdit #dkBar{display:flex}
   <h4>شكل الساعة</h4>
   <div class="row" id="fmtRow"></div>
   <h4>الأزرار الملونة</h4>
-  <p style="margin:0;color:var(--soft);font-size:15px">التطبيق يدوّر لحاله على تطبيق الخرائط والبلوتوث والراديو والاتصال في شاشتك. ولو تبي تغيّر التطبيق اللي يفتحه أي زر: اضغط عليه ضغطة طويلة واختر.</p>
+  <p style="margin:0;color:var(--soft);font-size:15px">التطبيق يدوّر لحاله على تطبيق الخرائط والبلوتوث والراديو والاتصال في شاشتك. ولو تبي تغيّر شكل أي زر أو لونه أو مكانه أو التطبيق اللي يفتحه: اضغط عليه ضغطة طويلة.</p>
+  <div class="row" style="margin-top:8px"><button class="opt" onclick="closeOvs();openQ('maps')">🎨 عدّل الأزرار الملونة</button></div><p style="display:none"></p>
   <h4>الشريط اللي فوق (واي فاي، بلوتوث، الصوت…)</h4>
   <div class="row" id="stRow"></div>
   <h4>الشاشة الرئيسية</h4>
@@ -393,6 +416,18 @@ body.dkEdit #dkBar{display:flex}
   <h4>مكانها في الشريط</h4>
   <div class="mvr"><button class="mbtn" id="mFirst">⏮ أول وحدة</button><button class="mbtn" id="mRight">➡️ يمين</button><button class="mbtn" id="mLeft">يسار ⬅️</button><button class="mbtn" id="mLast">آخر وحدة ⏭</button></div>
   <div class="acts"><button class="mbtn" id="mOpen">▶️ افتح</button><button class="mbtn" id="mSwap">🔄 بدّل بتطبيق</button><button class="mbtn red" id="mDel">🗑️ شيلها</button></div>
+</div></div>
+
+<div class="ov" id="qOv"><div class="panel cz">
+  <div class="mhead"><button class="qb qpv" id="qPv"></button><input class="search" id="qName" placeholder="اسم الزر"><button class="x" data-close>✕</button></div>
+  <div class="chs" id="qTabs" style="margin-top:10px"></div>
+  <h4>اللون</h4><div class="chs gr" id="qCol"></div>
+  <h4>الرمز</h4><div class="chs emo" id="qEmo"></div>
+  <h4>شكل الزر</h4><div class="chs" id="qShp"></div>
+  <h4>مكانه</h4><div class="mvr"><button class="mbtn" id="qPrev">➡️ قبل</button><button class="mbtn" id="qNext">بعد ⬅️</button></div>
+  <div class="acts"><button class="mbtn" id="qApp">📲 اختر التطبيق اللي يفتحه</button><button class="mbtn" id="qReset">↩️ رجّعه مثل أول</button></div>
+  <h4 style="margin-top:22px">ستايل الأزرار كلها</h4><div class="stys" id="qStys"></div>
+  <h4>ترتيب الرمز والاسم</h4><div class="chs" id="qLay"></div>
 </div></div>
 
 <div class="ov" id="styOv"><div class="panel">
@@ -488,7 +523,7 @@ function quick(k){
     toast('ما لقيت تطبيق '+QN[k]+'، اضغط مطوّل على الزر واختره');return}
   toast('يفتح '+QN[k]+' داخل التطبيق')}
 document.querySelectorAll('[data-q]').forEach(b=>{let t,long=false;
-  b.onpointerdown=()=>{long=false;t=setTimeout(()=>{long=true;openAdd(b.dataset.q)},700)};
+  b.onpointerdown=()=>{long=false;t=setTimeout(()=>{long=true;openQ(b.dataset.q)},700)};
   b.onpointerup=b.onpointerleave=b.onpointercancel=()=>clearTimeout(t);
   b.onclick=()=>{if(!long)quick(b.dataset.q)};
   b.oncontextmenu=e=>e.preventDefault()});
@@ -584,6 +619,49 @@ function openSty(){const L=$('styList');L.innerHTML='';
   chips('gShape',SHP.slice(1),GSH,v=>'<i class="sw" style="'+SHR[v[0]]+'"></i>'+v[1],k=>{GSH=k;store.set('icsh',GSH);applySty();openSty()});
   applySize();$('styOv').classList.add('show')}
 applySty();
+
+/* ===== الأزرار الملونة: ألوان وأشكال وترتيب ===== */
+const QDEF={maps:{n:'الخرائط',e:'🗺️',c:0},bt:{n:'بلوتوث',e:'🎧',c:1},radio:{n:'الراديو',e:'📻',c:2},phone:{n:'اتصال',e:'📞',c:3}};
+const QCOL=[['#22c55e','#15803d'],['#3b82f6','#1d4ed8'],['#f59e0b','#d97706'],['#ec4899','#be185d'],['#8b5cf6','#6d28d9'],['#ef4444','#b91c1c'],['#14b8a6','#0f766e'],['#06b6d4','#0369a1'],['#facc15','#ca8a04'],['#64748b','#1e293b'],['#f43f5e','#7c3aed'],['var(--ac)','var(--ac2)']];
+const QEMO=['🗺️','🧭','📍','🚗','🎧','🔵','📻','🎵','🎶','📞','☎️','💬','📷','🎬','▶️','⛽','🕌','☕','⚙️','🏠','⭐','❤️'];
+const QSHP=[['round','ناعم'],['pill','كبسولة'],['square','مربع']];
+const QSTY=[['color','ملوّن'],['glass','زجاجي'],['dark','داكن'],['neon','نيون'],['line','حدود بس'],['soft','فاتح']];
+let QC;try{QC=JSON.parse(store.get('qcfg','null'))}catch(e){}
+if(!QC||!QC.order)QC={order:['maps','bt','radio','phone'],b:{},st:'color',lay:'row'};
+let QK='maps';
+const qGet=k=>Object.assign({},QDEF[k],QC.b[k]||{});
+function saveQ(){store.set('qcfg',JSON.stringify(QC));renderQuick()}
+function paintQ(el,c){const g=QCOL[c.c]||QCOL[0];el.style.setProperty('--qa',g[0]);el.style.setProperty('--qb',g[1]);
+  el.classList.remove('qs-round','qs-pill','qs-square');if(c.sh)el.classList.add('qs-'+c.sh);
+  el.innerHTML='<i>'+c.e+'</i><span></span>';el.lastChild.textContent=c.n}
+function renderQuick(){const box=document.querySelector('.quick');if(!box)return;
+  QC.order.forEach(k=>{const b=box.querySelector('[data-q="'+k+'"]');if(!b)return;paintQ(b,qGet(k));box.appendChild(b)});
+  const B=document.body;QSTY.forEach(s=>B.classList.remove('qs-'+s[0]));if(QC.st!=='color')B.classList.add('qs-'+QC.st);
+  B.classList.toggle('qv-col',QC.lay==='col')}
+function setQ(p){QC.b[QK]=Object.assign(QC.b[QK]||{},p);saveQ();openQ(QK)}
+function openQ(k){QK=k;const c=qGet(k);
+  paintQ($('qPv'),c);$('qName').value=c.n;
+  chips('qTabs',QC.order,k,v=>{const x=qGet(v);return '<span style="font-size:22px">'+x.e+'</span>'+x.n},v=>openQ(v));
+  chips('qCol',QCOL.map((g,i)=>i),c.c,()=>'',v=>setQ({c:v}));
+  $('qCol').querySelectorAll('button').forEach((b,i)=>b.style.background='linear-gradient(135deg,'+QCOL[i][0]+','+QCOL[i][1]+')');
+  chips('qEmo',QEMO,c.e,v=>v,v=>setQ({e:v}));
+  chips('qShp',QSHP,c.sh||'round',v=>'<i class="sw" style="border-radius:'+(v[0]==='pill'?'999px':v[0]==='square'?'5px':'12px')+';width:50px;height:28px"></i>'+v[1],v=>setQ({sh:v}));
+  const L=$('qStys');L.innerHTML='';
+  QSTY.forEach(s=>{const b=document.createElement('button');b.className='sty'+(s[0]===QC.st?' on':'');
+    b.innerHTML='<div class="quick qdemo" style="display:flex;gap:6px;width:100%;pointer-events:none"></div>'+s[1];
+    const dm=b.firstChild;[0,1].forEach(j=>{const q=document.createElement('span');q.className='qb';q.style.cssText='flex:1;min-height:34px;height:34px;padding:0;border-radius:10px';
+      const g=QCOL[qGet(QC.order[j]).c]||QCOL[0];q.style.setProperty('--qa',g[0]);q.style.setProperty('--qb',g[1]);dm.appendChild(q)});
+    dm.classList.add('qd-'+s[0]);
+    b.onclick=()=>{QC.st=s[0];saveQ();openQ(QK);toast('ستايل الأزرار: '+s[1])};L.appendChild(b)});
+  chips('qLay',[['row','جنب بعض'],['col','فوق بعض']],QC.lay||'row',v=>v[1],v=>{QC.lay=v;saveQ();openQ(QK)});
+  $('qOv').classList.add('show')}
+$('qName').oninput=()=>{const v=$('qName').value.trim();if(v){QC.b[QK]=Object.assign(QC.b[QK]||{},{n:v});saveQ();paintQ($('qPv'),qGet(QK))}};
+function qMove(d){const i=QC.order.indexOf(QK),j=i+d;if(j<0||j>=QC.order.length){toast('هذا آخر مكان');return}
+  QC.order.splice(j,0,QC.order.splice(i,1)[0]);saveQ();openQ(QK);toast('انتقل ✅')}
+$('qPrev').onclick=()=>qMove(-1);$('qNext').onclick=()=>qMove(1);
+$('qApp').onclick=()=>{$('qOv').classList.remove('show');openAdd(QK)};
+$('qReset').onclick=()=>{delete QC.b[QK];saveQ();openQ(QK);toast('رجع مثل أول')};
+renderQuick();
 let ALL=null,PICK=null;
 let SWAPI=-1;
 function openAdd(k){SWAPI=-1;if(typeof k==='string'&&k.startsWith('swap:')){SWAPI=+k.slice(5);k=null}PICK=typeof k==='string'?k:null;if(!ALL){ALL=(NATIVE?apps():DEF).slice();ALL.sort((a,b)=>a.n.localeCompare(b.n,'ar'))}
