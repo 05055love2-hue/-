@@ -519,8 +519,16 @@ public class MainActivity extends Activity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        // طلعت لتطبيق ثاني: نوقف حركة الخلفية عشان الشاشة ما تثقل (الموسيقى تكمل عادي)
+        if (web != null) web.evaluateJavascript("document.documentElement.classList.add('bg-paused')", null);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
+        if (web != null) web.evaluateJavascript("document.documentElement.classList.remove('bg-paused')", null);
         Updater.check(this, "sayarati");
         if (web != null) web.evaluateJavascript("typeof devStatus==='function'&&devStatus()", null);
     }

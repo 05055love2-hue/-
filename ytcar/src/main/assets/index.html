@@ -314,6 +314,8 @@ body.spOn .spd{display:flex}
 .spd.fast b{color:#ff453a;animation:bl .8s steps(2) infinite}
 body.noSt .spd{top:6px;height:auto;background:rgba(0,0,0,.45);padding:4px 12px;border-radius:12px}
 .ab-upd{display:block;width:100%;max-width:380px;margin:14px auto 0;height:52px;border:none;border-radius:16px;background:#3b82f6;color:#fff;font:inherit;font-size:17px;font-weight:700;cursor:pointer}
+/* لما تطلع لتطبيق ثاني: نوقف الحركة عشان ما تثقّل الشاشة */
+.bg-paused *,.bg-paused *::before,.bg-paused *::after{animation-play-state:paused!important}
 </style>
 </head>
 <body>

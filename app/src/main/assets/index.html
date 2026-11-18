@@ -717,6 +717,8 @@
   /* ══ الألوان النهارية ══ */
   body.DAY{--text:#10202a;--card:rgba(255,255,255,.72);--line:rgba(16,32,42,.10)}
   body.DAY .stars,body.DAY [data-bg] .stars{filter:none}
+/* لما تطلع لتطبيق ثاني: نوقف الحركة عشان ما تثقّل الشاشة */
+.bg-paused *,.bg-paused *::before,.bg-paused *::after{animation-play-state:paused!important}
 </style>
 </head>
 <body data-bg="flow" class="L-classic C-thin K-glass">
