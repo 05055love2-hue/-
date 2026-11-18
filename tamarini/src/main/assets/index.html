@@ -72,6 +72,9 @@ details.lib .tip{background:rgba(255,90,31,.1);color:#ffb08a;border-radius:12px;
 .rest .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--acc),var(--acc2));width:100%}
 .rest button{border:0;background:var(--card2);color:var(--text);border-radius:10px;padding:7px 10px;font-size:13px;font-weight:700}
 .clock{font-variant-numeric:tabular-nums;color:var(--acc2);font-weight:800}
+.anim{display:block;width:100%;max-width:340px;margin:0 auto 12px;background:radial-gradient(circle at 50% 40%,#232833,#15181d 75%);border-radius:18px}
+.howbtn{background:none;border:0;color:var(--acc2);font-size:13px;font-weight:700;padding:6px 0 0}
+.howbox{margin-top:8px}
 /* السجل */
 .h .d{color:var(--soft);font-size:13px}
 .h b{font-size:16px}
@@ -260,7 +263,7 @@ let mus='chest';
 function renderLib(){$('muscles').innerHTML=Object.entries(MUS).map(([k,m])=>'<button data-m="'+k+'" class="'+(k===mus?'on':'')+'">'+m[1]+' '+m[0]+'</button>').join('');
  document.querySelectorAll('#muscles button').forEach(b=>b.onclick=()=>{mus=b.dataset.m;renderLib()});
  $('libList').innerHTML=Object.entries(EX).filter(([,e])=>e[1]===mus).map(([id,e])=>{const l=lastOf(id);
-  return '<details class="lib"><summary><div class="ex" style="border:0;padding:0;flex:1"><div class="ic">'+MUS[e[1]][1]+'</div><div><b>'+e[0]+'</b><small>'+(l&&l.w?'أفضل وزن آخر مرة: '+l.w+' كغ':'اضغط وشوف الطريقة')+'</small></div></div><span style="color:var(--soft)">⌄</span></summary><p>'+e[2]+'</p><div class="tip">💡 '+e[3]+'</div></details>'}).join('')}
+  return '<details class="lib"><summary><div class="ex" style="border:0;padding:0;flex:1"><div class="ic">'+MUS[e[1]][1]+'</div><div><b>'+e[0]+'</b><small>'+(l&&l.w?'أفضل وزن آخر مرة: '+l.w+' كغ':'اضغط وشوف الطريقة')+'</small></div></div><span style="color:var(--soft)">⌄</span></summary>'+svgOf(id)+'<p>'+e[2]+'</p><div class="tip">💡 '+e[3]+'</div></details>'}).join('')}
 
 /* ========== السجل ========== */
 function renderHist(){if(!st.hist.length){$('histList').innerHTML='<div class="empty">ما خلّصت أي تمرين للحين 💪<br>ابدأ أول تمرين من الرئيسية</div>';return}
@@ -279,11 +282,12 @@ function renderWork(){const a=st.act;if(!a){go('home');return}
    '<label><input type="number" inputmode="decimal" data-i="'+i+'" data-j="'+j+'" data-f="w" value="'+esc(s.w)+'" placeholder="0"><span>كغ</span></label>'+
    '<label><input type="number" inputmode="numeric" data-i="'+i+'" data-j="'+j+'" data-f="r" value="'+esc(s.r)+'"><span>'+(t?'ث':'عدّة')+'</span></label>'+
    '<button class="ok" data-i="'+i+'" data-j="'+j+'">✓</button></div>').join('')+
-  (l?'<div class="prev">آخر مرة: '+(l.w||0)+' كغ × '+l.r+'</div>':'')+
+  (AN[e.id]?'<button class="howbtn" data-h="'+i+'">▶ شوف الطريقة</button><div class="howbox" id="how'+i+'" hidden>'+svgOf(e.id)+'</div>':'')+(l?'<div class="prev">آخر مرة: '+(l.w||0)+' كغ × '+l.r+'</div>':'')+
   '<button class="addset" data-i="'+i+'">+ جولة زيادة</button></div>'}).join('');
  document.querySelectorAll('#wList input').forEach(inp=>inp.oninput=()=>{a.ex[inp.dataset.i].sets[inp.dataset.j][inp.dataset.f]=inp.value;save()});
  document.querySelectorAll('#wList .ok').forEach(b=>b.onclick=()=>{const s=a.ex[b.dataset.i].sets[b.dataset.j];s.done=!s.done;save();
   if(s.done){startRest(isTime(a.ex[b.dataset.i].id)?60:90);buzz(30)}renderWork()});
+ document.querySelectorAll('#wList .howbtn').forEach(b=>b.onclick=()=>{const h=$('how'+b.dataset.h);h.hidden=!h.hidden;b.textContent=h.hidden?'▶ شوف الطريقة':'✕ سكّر الطريقة'});
  document.querySelectorAll('#wList .addset').forEach(b=>b.onclick=()=>{const e=a.ex[b.dataset.i],p=e.sets[e.sets.length-1];e.sets.push({w:p?p.w:'',r:p?p.r:10,done:false});save();renderWork()});
  clearInterval(clockT);const tick=()=>{const s=Math.floor((Date.now()-a.t)/1000);$('wClock').textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')};tick();clockT=setInterval(tick,1000);
  try{Native.keepOn(true)}catch(e){}
@@ -306,6 +310,41 @@ function rTick(){const left=Math.max(0,Math.ceil((rEnd-Date.now())/1000));$('rTi
  $('rBar').style.width=(left/rTot*100)+'%';if(left<=0){stopRest();buzz(600)}}
 function stopRest(){clearInterval(rT);$('rest').classList.remove('show')}
 $('rPlus').onclick=()=>{rEnd+=30000;rTot+=30;rTick()};$('rSkip').onclick=stopRest;
+
+
+/* ========== رسوم متحركة للتمارين (رسم أبو نواف) ========== */
+// كل تمرين: وضعيتين (A و B) والرسمة تتحرك بينهم بنعومة
+const BENCH='<rect x="36" y="104" width="118" height="9" rx="4" fill="#3a404a"/><rect x="50" y="113" width="6" height="37" fill="#2c313a"/><rect x="134" y="113" width="6" height="37" fill="#2c313a"/>';
+const FLOOR='<rect x="10" y="150" width="180" height="3" rx="1.5" fill="#2c313a"/>';
+const AN={
+ squat:{bg:'<rect x="150" y="30" width="6" height="120" fill="#2c313a"/><rect x="146" y="40" width="14" height="5" fill="#3a404a"/>',behind:1,
+  A:{hd:[103,32],nk:[100,47],hp:[100,87],kn:[102,118],ft:[100,150],el:[90,60],hn:[93,48]},
+  B:{hd:[121,70],nk:[111,82],hp:[88,118],kn:[123,124],ft:[100,150],el:[98,97],hn:[104,85]}},
+ bench:{bg:BENCH,
+  A:{hd:[52,92],nk:[66,97],hp:[124,99],kn:[150,106],ft:[150,150],el:[71,75],hn:[72,52]},
+  B:{hd:[52,92],nk:[66,97],hp:[124,99],kn:[150,106],ft:[150,150],el:[87,104],hn:[75,86]}},
+ pulldown:{bg:'<rect x="152" y="4" width="7" height="146" fill="#2c313a"/><rect x="84" y="108" width="40" height="7" rx="3" fill="#3a404a"/><rect x="100" y="115" width="6" height="35" fill="#2c313a"/><rect x="110" y="0" width="46" height="6" rx="3" fill="#3a404a"/><rect x="118" y="96" width="14" height="10" rx="3" fill="#3a404a"/>',cable:[112,6],
+  A:{hd:[94,54],nk:[96,66],hp:[100,106],kn:[126,104],ft:[128,146],el:[104,41],hn:[110,19]},
+  B:{hd:[92,53],nk:[95,66],hp:[100,106],kn:[126,104],ft:[128,146],el:[88,90],hn:[105,77]}}
+};
+function svgOf(id){if(!AN[id])return '';
+ return '<svg class="anim" viewBox="0 0 200 160" data-an="'+id+'">'+FLOOR+AN[id].bg+'<g class="fig"></g></svg>'}
+function drawFig(svg,t){const a=AN[svg.dataset.an],P={};
+ for(const k in a.A)P[k]=[a.A[k][0]+(a.B[k][0]-a.A[k][0])*t,a.A[k][1]+(a.B[k][1]-a.A[k][1])*t];
+ const L=(p,q,w,c)=>'<line x1="'+p[0]+'" y1="'+p[1]+'" x2="'+q[0]+'" y2="'+q[1]+'" stroke="'+c+'" stroke-width="'+w+'" stroke-linecap="round"/>';
+ const back='#7d8590',fr='#f3f4f6',bp=P.hn;
+ const plate='<circle cx="'+bp[0]+'" cy="'+bp[1]+'" r="13" fill="#ff8a3d"/><circle cx="'+bp[0]+'" cy="'+bp[1]+'" r="4" fill="#15181d"/>';
+ let g=a.behind?plate:'';
+ if(a.cable)g+=L(a.cable,bp,1.5,'#9aa1ab');
+ g+=L(P.hp,[P.kn[0]-4,P.kn[1]],6,back)+L([P.kn[0]-4,P.kn[1]],[P.ft[0]-4,P.ft[1]],6,back);
+ g+=L(P.nk,P.hp,10,fr)+L(P.hp,P.kn,7,fr)+L(P.kn,P.ft,7,fr)+L(P.ft,[P.ft[0]+9,P.ft[1]],5,fr);
+ g+=L(P.nk,P.el,6,fr)+L(P.el,P.hn,6,fr);
+ g+='<circle cx="'+P.hd[0]+'" cy="'+P.hd[1]+'" r="10" fill="'+fr+'"/>';
+ if(!a.behind)g+=plate;
+ svg.querySelector('.fig').innerHTML=g}
+(function loop(){const now=performance.now();
+ document.querySelectorAll('svg.anim').forEach(s=>{if(s.getBoundingClientRect().height)drawFig(s,(1-Math.cos(now/2600*2*Math.PI))/2)});
+ requestAnimationFrame(loop)})();
 
 /* ========== رسم ========== */
 function render(){({home:renderHome,progs:renderProgs,lib:renderLib,hist:renderHist,work:renderWork})[cur]()}
