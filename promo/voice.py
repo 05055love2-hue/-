@@ -66,10 +66,24 @@ def music_only(k):
         "-map","0:v","-map","[a]","-c:v","copy","-c:a","aac","-b:a","192k","-ar","44100",
         "-t","15","-movflags","+faststart",f"out/{k}.mp4"], check=True)
 
+def from_file(k):
+    """صوت جاهز من ElevenLabs (صوت عمر) محفوظ في voices/"""
+    v = f"voices/{k}.mp3"; d = dur(v); tempo = max(1.0, min(1.25, d/14.3))
+    print(k, "voices file", round(d,2), "tempo", round(tempo,3))
+    fc = (f"[1:a]aresample=44100,atempo={tempo},adelay=500|500,apad,asplit=2[v1][v2];"
+          "[2:a]volume=0.4[m];[m][v1]sidechaincompress=threshold=0.02:ratio=8:attack=15:release=350[md];"
+          "[md][v2]amix=inputs=2:normalize=0,loudnorm=I=-14:TP=-1.5:LRA=11,atrim=0:15[a]")
+    subprocess.run(["ffmpeg","-y","-loglevel","error","-i",f"src/{k}.mp4","-i",v,"-i","out/music.wav",
+        "-filter_complex",fc,"-map","0:v","-map","[a]","-c:v","copy","-c:a","aac","-b:a","192k","-ar","44100",
+        "-t","15","-movflags","+faststart",f"out/{k}.mp4"], check=True)
+
 async def main():
     music("out/music.wav")
-    if CFG["voice"] == "none":
-        for k in texts: music_only(k)
+    if not (len(sys.argv) > 1 and sys.argv[1] == "samples"):
+        for k in texts:
+            if os.path.exists(f"voices/{k}.mp3"): from_file(k)
+            elif CFG["voice"] == "none": music_only(k)
+            else: await make(k, CFG["voice"], k)
         os.remove("out/music.wav"); return
     allv = [v["ShortName"] for v in await edge_tts.list_voices() if v["Locale"].startswith("ar-") and v["Gender"]=="Male"]
     print("الأصوات المتوفرة:", allv)
