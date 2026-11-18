@@ -479,6 +479,8 @@ body[data-fam=metro] .dk-b{border-radius:0}
 .l-tbig .pr{grid-column:1/-1}
 .l-tbig .clk .t{font-size:calc(72px * var(--fs,1))}
 
+.ytbox .yth button.ymic{width:auto;height:38px;padding:0 14px;gap:6px;display:flex;align-items:center;background:#ff0000!important;color:#fff!important;font-weight:700;font-size:calc(15px * var(--fs,1));border-radius:999px!important}
+.ytbox .yth .ymic span{font-size:calc(13px * var(--fs,1))}
 /* ═════════ تعديل الشاشة من نفسها (ضغطة مطوّلة) ═════════ */
 .lay [data-ek]>*,.lay [data-ek].leaf{zoom:var(--es,1)}
 .ytc,.lay [data-ek]>.ytc{zoom:var(--ytc,1)}
@@ -1310,6 +1312,7 @@ function buildUI(){
   $('sys').innerHTML=SY.map(s=>'<button class="tap" onclick="sysOpen(\''+s[0]+'\')"><span class="ico '+s[1]+'">'+svg(s[2])+'</span>'+s[3]+'</button>').join('');
   // صندوق يوتيوب مع أزرار التحكم
   $$('.x-yt').forEach(e=>{const full=e.dataset.full;e.innerHTML='<div class="yth"><span class="ylogo">▶</span>يوتيوب<span class="sp"></span>'+
+    '<button class="ymic" onclick="ytVoice()" title="بحث بالصوت">🎤<span>بحث</span></button>'+
     '<button onclick="ytCmd(\'home\')" title="صفحة يوتيوب الرئيسية">'+svg('home')+'</button>'+
     (full?'<button onclick="go(\'home\')" title="سكّر">'+svg('x')+'</button>':'<button onclick="go(\'yt\')" title="تكبير">'+svg('max')+'</button>')+'</div>'+
     '<div class="ytarea"><div class="big">'+svg('play','f')+'</div><b>يوتيوب</b><span class="x-ytmsg">يشتغل هنا داخل التطبيق على شاشة السيارة</span><button class="btn x-ytweb" onclick="openUrl(\'https://m.youtube.com\')">افتح يوتيوب</button></div>'+
@@ -1472,6 +1475,12 @@ const YJS={
   next:"(function(){var b=document.querySelector('.ytp-next-button,.player-control-next-button,button[aria-label*=\"Next\"],button[aria-label*=\"التالي\"]');if(b){b.click();return}var v=document.querySelector('video');if(v&&v.duration)v.currentTime=v.duration-0.3})()"
 };
 const YMSG={rw:'رجّعت ١٠ ثواني',ff:'قدّمت ١٠ ثواني',next:'الفيديو التالي'};
+function ytVoice(){
+  if(window.YTN&&YTN.voice){YTN.voice();return}
+  const q=prompt('وش تبي تدوّر في يوتيوب؟');if(q)openUrl('https://m.youtube.com/results?search_query='+encodeURIComponent(q));
+}
+function ytVoiceDone(q){toast('🔎 '+q);if(cur!=='yt'&&!liveBox('.ytlive'))go('yt')}
+function ytVoiceFail(){toast('ما لقيت خدمة الصوت في الجهاز — نزّل تطبيق Google من المتجر')}
 function ytCmd(c){
   if(!window.YTN){openUrl('https://m.youtube.com');return}
   if(c==='back')YTN.back();else if(c==='home')YTN.home();else{YTN.run(YJS[c]);if(YMSG[c])toast(YMSG[c])}

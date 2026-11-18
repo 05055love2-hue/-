@@ -44,6 +44,7 @@ public class MainActivity extends Activity {
 
     private static final String BASE = "https://sayarati.local/";
     private static final int PICK_FILE = 1001;
+    private static final int VOICE = 1002;
 
     private WebView web;
     private WebView yt;
@@ -317,6 +318,28 @@ public class MainActivity extends Activity {
             runOnUiThread(() -> yt.evaluateJavascript(js, null));
         }
 
+        /** 🎤 بحث يوتيوب بالصوت: نفتح خدمة الصوت في الجهاز، وبعدها نبحث باللي قاله */
+        @JavascriptInterface
+        public void voice() {
+            runOnUiThread(() -> {
+                try {
+                    Intent i = new Intent(android.speech.RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+                    i.putExtra(android.speech.RecognizerIntent.EXTRA_LANGUAGE_MODEL, android.speech.RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+                    i.putExtra(android.speech.RecognizerIntent.EXTRA_LANGUAGE, "ar-SA");
+                    i.putExtra(android.speech.RecognizerIntent.EXTRA_PROMPT, "قل وش تبي تدوّر في يوتيوب");
+                    i.putExtra(android.speech.RecognizerIntent.EXTRA_MAX_RESULTS, 1);
+                    startActivityForResult(i, VOICE);
+                } catch (Throwable e) {
+                    web.evaluateJavascript("typeof ytVoiceFail==='function'&&ytVoiceFail()", null);
+                }
+            });
+        }
+
+        @JavascriptInterface
+        public void search(final String q) {
+            runOnUiThread(() -> ytSearch(q));
+        }
+
         @JavascriptInterface
         public void setDesktop(final boolean desk) {
             runOnUiThread(() -> {
@@ -465,9 +488,28 @@ public class MainActivity extends Activity {
         return true;
     }
 
+    void ytSearch(String q) {
+        if (q == null || q.trim().isEmpty()) return;
+        boolean desk = getSharedPreferences("yt", 0).getBoolean("desk", false);
+        try {
+            yt.loadUrl((desk ? "https://www.youtube.com" : "https://m.youtube.com") + "/results?search_query=" + java.net.URLEncoder.encode(q.trim(), "UTF-8"));
+        } catch (Exception ignored) { }
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == VOICE) {
+            if (resultCode == RESULT_OK && data != null) {
+                java.util.ArrayList<String> r = data.getStringArrayListExtra(android.speech.RecognizerIntent.EXTRA_RESULTS);
+                if (r != null && !r.isEmpty()) {
+                    String q = r.get(0);
+                    ytSearch(q);
+                    web.evaluateJavascript("typeof ytVoiceDone==='function'&&ytVoiceDone(" + JSONObject.quote(q) + ")", null);
+                }
+            }
+            return;
+        }
         if (requestCode != PICK_FILE || fileCallback == null) return;
         Uri[] result = null;
         if (resultCode == RESULT_OK && data != null) {
