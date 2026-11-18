@@ -282,9 +282,41 @@ body.qs-glass .quick .qb.qs-pill,body.qs-dark .quick .qb.qs-pill{border-radius:9
 .qd-soft .qb{background:color-mix(in srgb,var(--qa) 85%,#fff)!important}
 .qd-color .qb{background:linear-gradient(135deg,var(--qa),var(--qb))!important;border:0!important;box-shadow:none!important}
 .chs.gr button{min-width:0;width:54px;height:40px;padding:0;border-radius:12px}
+
+/* ===== الإعدادات الاحترافية ===== */
+.panel.setx{width:min(1100px,100%);height:100%;padding:0;display:grid;grid-template-columns:clamp(200px,22vw,250px) minmax(0,1fr);overflow:hidden}
+.snav{display:flex;flex-direction:column;gap:4px;padding:16px 12px;border-left:1px solid var(--line);background:rgba(0,0,0,.15);overflow:auto}
+.sttl{font-size:22px;font-weight:900;padding:4px 10px 14px}
+.snav button{display:flex;align-items:center;gap:10px;border:0;background:transparent;color:var(--soft);font-family:inherit;font-size:15px;font-weight:800;text-align:right;padding:11px 12px;border-radius:14px;cursor:pointer}
+.snav button i{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;background:var(--btn);flex:none}
+.snav button svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.snav button.on{background:color-mix(in srgb,var(--ac) 18%,transparent);color:var(--txt)}
+.snav button.on i{background:var(--ac);color:#fff}
+.snav .sclose{margin-top:auto;width:auto;height:auto;justify-content:center;background:var(--btn);color:var(--txt);font-size:15px}
+.sbody{overflow:auto;padding:20px 24px 40px}
+.sbody section{display:none;animation:mtIn .25s ease}.sbody section.on{display:block}
+.sbody h2{margin:0 0 14px;font-size:24px}
+.grp{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px 16px;margin-bottom:12px}
+.grp h4{margin:0 0 10px;color:var(--txt);font-size:16px}
+.hint2{margin:0 0 10px;color:var(--soft);font-size:14px;line-height:1.6}
+.grp .row+.hint2{margin:10px 0 0}
+.opt.red{color:#ff6b6b;border-color:rgba(255,107,107,.4)}
+.about{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;padding:26px}
+.about b{font-size:24px}.about span{color:var(--soft);font-weight:700}
+.alogo{width:84px;height:84px;border-radius:24px;background:linear-gradient(135deg,var(--ac),var(--ac2));display:grid;place-items:center;margin-bottom:6px;box-shadow:0 10px 30px color-mix(in srgb,var(--ac) 40%,transparent)}
+.alogo i{border-left:30px solid #fff;border-top:19px solid transparent;border-bottom:19px solid transparent;margin-left:8px}
+@media (max-width:700px){.panel.setx{grid-template-columns:1fr;grid-template-rows:auto 1fr}.snav{flex-direction:row;overflow-x:auto;border-left:0;border-bottom:1px solid var(--line)}.sttl{display:none}.snav button{flex:none}.snav .sclose{margin:0}}
+/* عداد السرعة */
+.spd{position:fixed;top:0;left:50%;transform:translateX(-50%);height:var(--stH);z-index:5;display:none;align-items:center;gap:6px;direction:rtl;font-weight:900;pointer-events:none}
+body.spOn .spd{display:flex}
+.spd b{font-size:clamp(18px,2.6vw,28px);font-variant-numeric:tabular-nums;direction:ltr;min-width:1.6em;text-align:center}
+.spd small{font-size:clamp(11px,1.2vw,14px);color:var(--soft);font-weight:800}
+.spd.fast b{color:#ff453a;animation:bl .8s steps(2) infinite}
+body.noSt .spd{top:6px;height:auto;background:rgba(0,0,0,.45);padding:4px 12px;border-radius:12px}
 </style>
 </head>
 <body>
+<div class="spd" id="spd"><b id="spV">0</b><small>كم/س</small></div>
 <header class="stbar" id="stbar">
   <div class="stg">
     <button class="st" id="stWifi" aria-label="الواي فاي"><svg viewBox="0 0 24 24"><path class="ln sw3" d="M2.5 9a14 14 0 0 1 19 0"/><path class="ln sw2" d="M5.8 12.6a9.2 9.2 0 0 1 12.4 0"/><path class="ln sw1" d="M9.1 16.1a4.5 4.5 0 0 1 5.8 0"/><circle cx="12" cy="19.4" r="1.6" fill="currentColor"/><path class="ln x" d="M4 4l16 16"/></svg></button>
@@ -349,33 +381,55 @@ body.qs-glass .quick .qb.qs-pill,body.qs-dark .quick .qb.qs-pill{border-radius:9
   <nav class="dock card" id="dock"></nav>
 </div>
 
-<div class="ov" id="setOv"><div class="panel">
-  <h3>الإعدادات <button class="x" data-close>✕</button></h3>
-  <h4>🔧 صيانتي</h4>
-  <p class="hint" style="margin:0 0 8px;color:var(--soft);font-size:14px" id="mtSum">—</p>
-  <div class="row"><button class="opt mt-btn" onclick="mtOpen()">افتح صيانتي</button></div>
-  <h4>الألوان</h4>
-  <div class="themes" id="themes"></div>
-  <h4>حجم الأيقونات اللي تحت</h4>
-  <div class="szrow"><button class="opt" id="dkMinus">➖</button><b id="dkTxt"></b><button class="opt" id="dkPlus">➕</button></div>
-  <div class="row" style="margin-top:8px"><button class="opt" onclick="closeOvs();dkEdit(true)">✏️ رتّب وعدّل الأيقونات</button><button class="opt" onclick="closeOvs();openSty()">🎨 ستايل الأيقونات</button></div>
-  <h4>☀️🌙 النهار والليل</h4>
-  <div class="row" id="dnRow"></div>
-  <p class="hint" style="margin:4px 0 0;color:var(--soft);font-size:14px" id="dnInfo">تلقائي: نهاري من الشروق إلى المغرب حسب مدينتك، وبالليل ترجع ألوانك</p>
-  <h4>🌙 الشاشة السودا التلقائية (بالليل)</h4>
-  <div class="row" id="abRow"></div>
-  <p class="hint" style="margin:4px 0 0;color:var(--soft);font-size:14px">إذا ما لمست الشاشة هالمدة بالليل تسوّد لحالها، والصوت يكمل، ولمسة وحدة ترجّعها</p>
-  <h4>عرض الساعة والأزرار الملونة</h4>
-  <div class="row" id="sdRow"></div>
-  <h4>شكل الساعة</h4>
-  <div class="row" id="fmtRow"></div>
-  <h4>الأزرار الملونة</h4>
-  <p style="margin:0;color:var(--soft);font-size:15px">التطبيق يدوّر لحاله على تطبيق الخرائط والبلوتوث والراديو والاتصال في شاشتك. ولو تبي تغيّر شكل أي زر أو لونه أو مكانه أو التطبيق اللي يفتحه: اضغط عليه ضغطة طويلة.</p>
-  <div class="row" style="margin-top:8px"><button class="opt" onclick="closeOvs();openQ('maps')">🎨 عدّل الأزرار الملونة</button></div><p style="display:none"></p>
-  <h4>الشريط اللي فوق (واي فاي، بلوتوث، الصوت…)</h4>
-  <div class="row" id="stRow"></div>
-  <h4>الشاشة الرئيسية</h4>
-  <div class="row"><button class="opt" id="setHome">خلّه الشاشة الرئيسية للسيارة</button></div>
+<div class="ov" id="setOv"><div class="panel setx">
+  <nav class="snav"><div class="sttl">الإعدادات</div><button data-st="look" class="on"><i><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="8.5" cy="10" r="1.3"/><circle cx="12" cy="7.5" r="1.3"/><circle cx="15.5" cy="10" r="1.3"/><path d="M12 21a2.5 2.5 0 0 1 0-5h1.5a2 2 0 0 0 0-4"/></svg></i>الشكل والألوان</button><button data-st="home"><i><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg></i>الشاشة الرئيسية</button><button data-st="icons"><i><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6" rx="1.5"/><rect x="14" y="4" width="6" height="6" rx="1.5"/><rect x="4" y="14" width="6" height="6" rx="1.5"/><rect x="14" y="14" width="6" height="6" rx="1.5"/></svg></i>الأيقونات والأزرار</button><button data-st="night"><i><svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg></i>الليل والشاشة</button><button data-st="car"><i><svg viewBox="0 0 24 24"><path d="M5 16l1.5-5a2 2 0 0 1 2-1.5h7a2 2 0 0 1 2 1.5L19 16"/><rect x="3" y="16" width="18" height="4" rx="1.5"/><circle cx="7" cy="18" r=".6"/><circle cx="17" cy="18" r=".6"/></svg></i>السيارة</button><button data-st="backup"><i><svg viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 17v3h16v-3"/></svg></i>النسخة الاحتياطية</button><button data-st="about"><i><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.1"/></svg></i>عن التطبيق</button><button class="x sclose" data-close>✕ إغلاق</button></nav>
+  <div class="sbody">
+  <section data-sp="look" class="on">
+    <h2>الشكل والألوان</h2>
+    <div class="grp"><h4>ألوان التطبيق</h4><div class="themes" id="themes"></div></div>
+    <div class="grp"><h4>النهار والليل</h4><div class="row" id="dnRow"></div>
+      <p class="hint2" id="dnInfo">تلقائي: نهاري من الشروق إلى المغرب حسب مدينتك، وبالليل ترجع ألوانك</p></div>
+  </section>
+  <section data-sp="home">
+    <h2>الشاشة الرئيسية</h2>
+    <div class="grp"><h4>عرض جهة الساعة والأزرار الملونة</h4><div class="row" id="sdRow"></div></div>
+    <div class="grp"><h4>شكل الساعة</h4><div class="row" id="fmtRow"></div></div>
+    <div class="grp"><h4>الشريط اللي فوق (واي فاي، بلوتوث، الصوت…)</h4><div class="row" id="stRow"></div></div>
+    <div class="grp"><h4>خلّه الشاشة الرئيسية للسيارة</h4><p class="hint2">إذا ضغطت زر البيت في شاشتك يرجع لمشغّلي</p><div class="row"><button class="opt" id="setHome">اختر مشغّلي كشاشة رئيسية</button></div></div>
+  </section>
+  <section data-sp="icons">
+    <h2>الأيقونات والأزرار</h2>
+    <div class="grp"><h4>حجم الأيقونات اللي تحت</h4><div class="szrow"><button class="opt" id="dkMinus">➖</button><b id="dkTxt"></b><button class="opt" id="dkPlus">➕</button></div></div>
+    <div class="grp"><h4>الشريط اللي تحت</h4><p class="hint2">رتّب التطبيقات بالسحب، وغيّر شكل أي أيقونة أو ستايلها كلها</p>
+      <div class="row"><button class="opt" onclick="closeOvs();dkEdit(true)">✏️ رتّب وعدّل الأيقونات</button><button class="opt" onclick="closeOvs();openSty()">🎨 ستايل الأيقونات</button></div></div>
+    <div class="grp"><h4>الأزرار الملونة</h4><p class="hint2">التطبيق يدوّر لحاله على تطبيق الخرائط والبلوتوث والراديو والاتصال. تقدر تغيّر لون أي زر وشكله ومكانه والتطبيق اللي يفتحه</p>
+      <div class="row"><button class="opt" onclick="closeOvs();openQ('maps')">🎨 عدّل الأزرار الملونة</button></div></div>
+  </section>
+  <section data-sp="night">
+    <h2>الليل والشاشة</h2>
+    <div class="grp"><h4>الشاشة السودا التلقائية (بالليل)</h4><div class="row" id="abRow"></div>
+      <p class="hint2">إذا ما لمست الشاشة هالمدة بالليل تسوّد لحالها، والصوت يكمل، ولمسة وحدة ترجّعها</p></div>
+    <div class="grp"><h4>سوّد الشاشة الحين</h4><div class="row"><button class="opt" onclick="closeOvs();blackOn()">🌙 شاشة سودا</button></div></div>
+  </section>
+  <section data-sp="car">
+    <h2>السيارة</h2>
+    <div class="grp"><h4>صيانتي</h4><p class="hint2" id="mtSum">—</p><div class="row"><button class="opt mt-btn" onclick="closeOvs();mtOpen()">🔧 افتح صيانتي</button></div></div>
+    <div class="grp"><h4>عداد السرعة</h4><p class="hint2">يطلع فوق في نص الشاشة، ويقرأ السرعة من الـ GPS</p><div class="row" id="spRow"></div>
+      <h4 style="margin-top:14px">تنبيه إذا زادت السرعة عن</h4><div class="row" id="spLim"></div></div>
+  </section>
+  <section data-sp="backup">
+    <h2>النسخة الاحتياطية</h2>
+    <div class="grp"><h4>احفظ إعداداتك</h4><p class="hint2">يحفظ كل شي: الألوان، الأيقونات وترتيبها، الأزرار، الصيانة… في ملف. لو مسحت التطبيق أو غيّرت الشاشة ترجعها بضغطة</p>
+      <div class="row"><button class="opt on" id="bkSave">⬇️ احفظ نسخة</button><button class="opt" id="bkLoad">⬆️ رجّع نسخة</button><input type="file" id="bkFile" hidden></div></div>
+    <div class="grp"><h4>رجّع كل شي مثل أول</h4><p class="hint2">يمسح كل التعديلات ويرجّع التطبيق مثل يوم ثبّته</p><div class="row"><button class="opt red" id="bkReset">🗑️ رجّع الإعدادات الأصلية</button></div></div>
+  </section>
+  <section data-sp="about">
+    <h2>عن التطبيق</h2>
+    <div class="grp about"><div class="alogo"><i></i></div><b>مشغّلي</b><span id="abVer">برمجة أبو نواف</span>
+      <p class="hint2">شاشة رئيسية للسيارة: مشغّل يوتيوب وموسيقى، ساعة وطقس، أزرار سريعة، شريط تطبيقات، وصيانة السيارة</p>
+      <p class="hint2">جميع الحقوق محفوظة © المبرمج أبو نواف</p></div>
+  </section>
+  </div>
 </div></div>
 
 <div class="ov" id="addOv"><div class="panel">
@@ -662,6 +716,36 @@ $('qPrev').onclick=()=>qMove(-1);$('qNext').onclick=()=>qMove(1);
 $('qApp').onclick=()=>{$('qOv').classList.remove('show');openAdd(QK)};
 $('qReset').onclick=()=>{delete QC.b[QK];saveQ();openQ(QK);toast('رجع مثل أول')};
 renderQuick();
+
+/* ===== الإعدادات: الأقسام ===== */
+document.querySelectorAll('.snav [data-st]').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.snav [data-st]').forEach(x=>x.classList.toggle('on',x===b));
+  document.querySelectorAll('.sbody [data-sp]').forEach(x=>x.classList.toggle('on',x.dataset.sp===b.dataset.st));
+  document.querySelector('.sbody').scrollTop=0});
+(function(){const v=document.querySelector('[style*="pointer-events:none"][style*="bottom:4px"]');if(v)$('abVer').textContent=v.textContent})();
+/* ===== عداد السرعة ===== */
+let SP=store.get('sp','1'),SPL=+store.get('spl','0'),spW=null,spBeep=0;
+function spApply(){document.body.classList.toggle('spOn',SP==='1');
+  if(SP==='1'&&spW===null&&navigator.geolocation){spW=navigator.geolocation.watchPosition(p=>{
+      const v=p.coords.speed==null||p.coords.speed<0?0:Math.round(p.coords.speed*3.6);
+      $('spV').textContent=v;const fast=SPL>0&&v>SPL;$('spd').classList.toggle('fast',fast);
+      if(fast&&Date.now()-spBeep>30000){spBeep=Date.now();toast('⚠️ سرعتك '+v+' — الحد اللي حطيته '+SPL)}
+    },()=>{},{enableHighAccuracy:true,maximumAge:1000,timeout:15000})}
+  if(SP!=='1'&&spW!==null){navigator.geolocation.clearWatch(spW);spW=null}}
+opts('spRow',[['1','يطلع'],['0','مخفي']],SP,v=>{SP=v;store.set('sp',v);spApply()});
+opts('spLim',[[0,'بدون'],[80,'80'],[100,'100'],[120,'120'],[140,'140']],SPL,v=>{SPL=+v;store.set('spl',v)});
+spApply();
+/* ===== النسخة الاحتياطية ===== */
+function bkAll(){const o={};for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k.startsWith('m_')||k.startsWith('maint_'))o[k]=localStorage.getItem(k)}return o}
+$('bkSave').onclick=()=>{const d=JSON.stringify({app:'mushaghli',at:new Date().toISOString(),data:bkAll()});
+  const name='mushaghli-backup-'+new Date().toISOString().slice(0,10)+'.json';
+  if(window.Native&&Native.saveFile){try{if(Native.saveFile(name,d)){toast('انحفظت النسخة في التنزيلات ✅');return}}catch(e){}}
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([d],{type:'application/json'}));a.download=name;document.body.appendChild(a);a.click();a.remove();toast('انحفظت النسخة ✅')};
+$('bkLoad').onclick=()=>$('bkFile').click();
+$('bkFile').onchange=e=>{const fl=e.target.files[0];if(!fl)return;const r=new FileReader();r.onload=()=>{try{const j=JSON.parse(r.result);if(j.app!=='mushaghli'||!j.data)throw 0;
+    Object.keys(j.data).forEach(k=>localStorage.setItem(k,j.data[k]));toast('رجعت إعداداتك ✅');setTimeout(()=>location.reload(),900)}catch(x){toast('هذا الملف مو نسخة من مشغّلي')}};r.readAsText(fl)};
+let rsT=0;$('bkReset').onclick=()=>{if(Date.now()-rsT>4000){rsT=Date.now();toast('متأكد؟ اضغط مرة ثانية عشان يمسح');return}
+  Object.keys(bkAll()).forEach(k=>localStorage.removeItem(k));toast('رجع مثل أول');setTimeout(()=>location.reload(),900)};
 let ALL=null,PICK=null;
 let SWAPI=-1;
 function openAdd(k){SWAPI=-1;if(typeof k==='string'&&k.startsWith('swap:')){SWAPI=+k.slice(5);k=null}PICK=typeof k==='string'?k:null;if(!ALL){ALL=(NATIVE?apps():DEF).slice();ALL.sort((a,b)=>a.n.localeCompare(b.n,'ar'))}

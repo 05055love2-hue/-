@@ -166,6 +166,29 @@ public class MainActivity extends Activity {
     /** جسر بين الصفحة والجهاز: يجيب قائمة التطبيقات المثبتة ويفتحها */
     private class Bridge {
         @JavascriptInterface
+        public boolean saveFile(String name, String text) {
+            // يحفظ النسخة الاحتياطية في مجلد التنزيلات
+            try {
+                byte[] b = text.getBytes("UTF-8");
+                if (Build.VERSION.SDK_INT >= 29) {
+                    android.content.ContentValues v = new android.content.ContentValues();
+                    v.put(android.provider.MediaStore.MediaColumns.DISPLAY_NAME, name);
+                    v.put(android.provider.MediaStore.MediaColumns.MIME_TYPE, "application/json");
+                    v.put(android.provider.MediaStore.MediaColumns.RELATIVE_PATH, "Download");
+                    Uri u = getContentResolver().insert(android.provider.MediaStore.Downloads.EXTERNAL_CONTENT_URI, v);
+                    if (u == null) return false;
+                    java.io.OutputStream o = getContentResolver().openOutputStream(u);
+                    o.write(b); o.close();
+                    return true;
+                }
+                java.io.File d = getExternalFilesDir(null);
+                if (d == null) return false;
+                java.io.FileOutputStream o = new java.io.FileOutputStream(new java.io.File(d, name));
+                o.write(b); o.close();
+                return true;
+            } catch (Exception e) { return false; }
+        }
+        @JavascriptInterface
         public String getApps() {
             JSONArray arr = new JSONArray();
             try {
