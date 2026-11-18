@@ -176,7 +176,9 @@ public class MainActivity extends Activity {
             try {
                 AppWidgetManager m = AppWidgetManager.getInstance(MainActivity.this);
                 if (Build.VERSION.SDK_INT < 26 || !m.isRequestPinAppWidgetSupported()) return false;
-                Class<?> cls = "bar".equals(kind) ? WidgetBar.class : "square".equals(kind) ? WidgetSquare.class : WidgetWide.class;
+                Class<?> cls = "bar".equals(kind) ? WidgetBar.class : "square".equals(kind) ? WidgetSquare.class
+                        : "clock".equals(kind) ? WidgetClock.class : "weather".equals(kind) ? WidgetWeather.class
+                        : "cw".equals(kind) ? WidgetCw.class : WidgetWide.class;
                 return m.requestPinAppWidget(new ComponentName(MainActivity.this, cls), null, null);
             } catch (Exception e) {
                 return false;

@@ -25,6 +25,14 @@ body.glass .sw i:after{right:21px}
 .hold{position:relative;width:100%}
 .sc{position:absolute;top:0;right:0;transform-origin:top right}
 .pinb{align-self:flex-start;border:1px solid #3a3360;background:#1d1838;color:#e6e0ff;border-radius:22px;min-height:44px;padding:0 18px;font-size:15px;display:flex;align-items:center;gap:8px}
+.hs{background:#11141c;border:1px solid #232938;border-radius:24px;padding:16px;display:flex;flex-direction:column;gap:14px}
+.hs h2{margin:0;font-size:18px}.hs>p{margin:-8px 0 0;color:#a9b0bf;font-size:14px}
+.hsg{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.hsi{display:flex;flex-direction:column;gap:8px}
+.mini{position:relative;overflow:hidden;isolation:isolate;border-radius:22px;min-height:110px;padding:12px 14px;color:#fff;display:flex;align-items:center;justify-content:center;gap:12px;background:var(--bg)}
+body.glass .mini{background:rgba(0,0,0,.33);border:1px solid rgba(255,255,255,.25)}
+.hsw{background:linear-gradient(135deg,#3b2a6b,#0f4c5c 60%,#7a3b1d);border-radius:26px;padding:10px}
+.hsi .pinb{align-self:stretch;justify-content:center}
 .credit{text-align:center;color:#8f97a8;font-size:13px;padding:10px 0 30px}
 #full{position:fixed;inset:0;z-index:50;background:#000;display:none;align-items:center;justify-content:center}
 #full.show{display:flex}
@@ -403,6 +411,19 @@ function place(hold,wd,mode){
   const sc=hold.firstElementChild; sc.style.transform='scale('+s+')';
 }
 const list=$('list');
+(function(){
+  const box=document.createElement('div'); box.className='hs';
+  box.innerHTML=`<h2>ويدجت للشاشة الرئيسية</h2><p>اختر اللي تبيه، واضغط الزر تحته</p><div class="hsg">
+   <div class="hsi"><div class="hsw"><div class="mini" style="--bg:#141826;flex-direction:column;gap:2px"><div style="direction:ltr;display:flex;align-items:baseline;gap:4px"><span class="num" style="font-size:40px;line-height:1">${K('hh')}:${K('mm')}</span>${K('ap','font-size:14px;opacity:.85')}</div>${K('dayDate','font-size:13px;opacity:.85')}</div></div>
+    <button class="pinb" data-pin="clock">＋ الساعة لحالها</button></div>
+   <div class="hsi"><div class="hsw"><div class="mini" style="--bg:#0f2a44;flex-direction:column;gap:2px"><div style="display:flex;align-items:center;gap:6px"><span class="num" style="font-size:34px">${K('temp')}</span>${WI(36,'auto')}</div>${K('cond','font-size:13px')}${K('city','font-size:12px;opacity:.85')}</div></div>
+    <button class="pinb" data-pin="weather">＋ الطقس لحاله</button></div>
+   <div class="hsi"><div class="hsw"><div class="mini" style="--bg:#16132e"><div style="display:flex;flex-direction:column;align-items:flex-end"><div style="direction:ltr;display:flex;align-items:baseline;gap:3px"><span class="num" style="font-size:30px;line-height:1">${K('hh')}:${K('mm')}</span>${K('ap','font-size:12px;opacity:.85')}</div>${K('day','font-size:12px;opacity:.85')}</div><div style="width:1px;height:50px;background:rgba(255,255,255,.25)"></div><div style="display:flex;flex-direction:column;align-items:center">${WI(28,'auto')}<span class="num" style="font-size:22px">${K('temp')}</span></div></div></div>
+    <button class="pinb" data-pin="cw">＋ الساعة والطقس مع بعض</button></div>
+  </div>`;
+  box.onclick=e=>{const pb=e.target.closest('[data-pin]'); if(pb)pinIt(pb.dataset.pin)};
+  list.appendChild(box);
+})();
 W.forEach((wd,i)=>{
   const card=document.createElement('div');
   card.className='card';card.setAttribute('role','button');card.tabIndex=0;

@@ -22,6 +22,9 @@ public class Widgets {
         update(c, m, WidgetWide.class, R.layout.w_wide);
         update(c, m, WidgetBar.class, R.layout.w_bar);
         update(c, m, WidgetSquare.class, R.layout.w_square);
+        update(c, m, WidgetClock.class, R.layout.w_clock);
+        update(c, m, WidgetWeather.class, R.layout.w_weather);
+        update(c, m, WidgetCw.class, R.layout.w_cw);
     }
 
     private static void update(Context c, AppWidgetManager m, Class<?> cls, int layout) {
@@ -97,10 +100,16 @@ public class Widgets {
         boolean wide = layout == R.layout.w_wide;
         boolean bar = layout == R.layout.w_bar;
         boolean sq = layout == R.layout.w_square;
+        boolean clk = layout == R.layout.w_clock;
+        boolean wth = layout == R.layout.w_weather;
+        boolean cw = layout == R.layout.w_cw;
+        boolean hasWxViews = !clk;
+        boolean hasMusic = wide || bar || sq;
         RemoteViews v = new RemoteViews(c.getPackageName(), layout);
 
         // الخلفية: زجاجي أو عادي
-        int solid = wide ? R.drawable.bg_wide : bar ? R.drawable.bg_bar : R.drawable.bg_square;
+        int solid = wide ? R.drawable.bg_wide : bar ? R.drawable.bg_bar : sq ? R.drawable.bg_square
+                : clk ? R.drawable.bg_clock : wth ? R.drawable.bg_weather : R.drawable.bg_cw;
         v.setInt(R.id.root, "setBackgroundResource", glass ? R.drawable.bg_glass : solid);
         if (wide) {
             int pn = glass ? R.drawable.pn_glass : R.drawable.pn_solid;
@@ -110,24 +119,33 @@ public class Widgets {
         }
         if (sq) v.setInt(R.id.p3, "setBackgroundResource", glass ? R.drawable.sq_card_glass : R.drawable.sq_card);
 
+        int base = wide ? 10 : bar ? 20 : sq ? 30 : clk ? 40 : wth ? 50 : 60;
+        PendingIntent open = PendingIntent.getActivity(c, base, new Intent(c, MainActivity.class),
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        v.setOnClickPendingIntent(R.id.root, open);
+
         // الطقس
-        String city = p.getString("city", "الرياض");
-        if (p.getBoolean("hasWx", false)) {
-            int code = p.getInt("code", 0);
-            v.setTextViewText(R.id.temp, p.getInt("t", 0) + "°");
-            v.setImageViewResource(R.id.wx, wxIcon(code, p.getBoolean("day", true)));
-            if (wide) {
-                v.setTextViewText(R.id.cond, wxText(code) + " · " + city);
-                v.setTextViewText(R.id.hilo, "العظمى " + p.getInt("hi", 0) + "° · الصغرى " + p.getInt("lo", 0) + "°");
-            } else if (bar) {
-                v.setTextViewText(R.id.cond, city);
+        if (hasWxViews) {
+            String city = p.getString("city", "الرياض");
+            if (p.getBoolean("hasWx", false)) {
+                int code = p.getInt("code", 0);
+                String hilo = "العظمى " + p.getInt("hi", 0) + "° · الصغرى " + p.getInt("lo", 0) + "°";
+                v.setTextViewText(R.id.temp, p.getInt("t", 0) + "°");
+                v.setImageViewResource(R.id.wx, wxIcon(code, p.getBoolean("day", true)));
+                if (wide || wth || cw) {
+                    v.setTextViewText(R.id.cond, wxText(code) + " · " + city);
+                    v.setTextViewText(R.id.hilo, hilo);
+                } else if (bar) {
+                    v.setTextViewText(R.id.cond, city);
+                } else {
+                    v.setTextViewText(R.id.cond, wxText(code) + "\n" + city);
+                }
             } else {
-                v.setTextViewText(R.id.cond, wxText(code) + "\n" + city);
+                v.setTextViewText(R.id.temp, "--");
+                v.setTextViewText(R.id.cond, city);
             }
-        } else {
-            v.setTextViewText(R.id.temp, "--");
-            v.setTextViewText(R.id.cond, city);
         }
+        if (!hasMusic) return v;
 
         // الموسيقى
         boolean access = Media.hasAccess(c);
@@ -148,19 +166,13 @@ public class Widgets {
                 ? (darkIcon ? R.drawable.ic_pause_d : R.drawable.ic_pause_w)
                 : (darkIcon ? R.drawable.ic_play_d : R.drawable.ic_play_w));
 
-        int base = wide ? 10 : bar ? 20 : 30;
-        PendingIntent open = PendingIntent.getActivity(c, base, new Intent(c, MainActivity.class),
-                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-        v.setOnClickPendingIntent(R.id.root, open);
         if (!access) {
-            Intent set = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
-            PendingIntent ps = PendingIntent.getActivity(c, base + 1, set,
-                    PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-            v.setOnClickPendingIntent(R.id.song, ps);
-            v.setOnClickPendingIntent(R.id.play, ps);
+            // نفتح التطبيق، وهو يشرح خطوات ربط الموسيقى
+            v.setOnClickPendingIntent(R.id.song, open);
+            v.setOnClickPendingIntent(R.id.play, open);
             if (!bar) {
-                v.setOnClickPendingIntent(R.id.prev, ps);
-                v.setOnClickPendingIntent(R.id.next, ps);
+                v.setOnClickPendingIntent(R.id.prev, open);
+                v.setOnClickPendingIntent(R.id.next, open);
             }
         } else {
             v.setOnClickPendingIntent(R.id.song, open);
