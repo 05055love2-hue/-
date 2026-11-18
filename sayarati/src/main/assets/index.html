@@ -478,6 +478,25 @@ body[data-fam=metro] .dk-b{border-radius:0}
 .l-tbig{grid-template-columns:repeat(3,1fr);grid-template-rows:1.3fr 1fr;gap:8px}
 .l-tbig .pr{grid-column:1/-1}
 .l-tbig .clk .t{font-size:calc(72px * var(--fs,1))}
+
+/* ═════════ تعديل الشاشة من نفسها (ضغطة مطوّلة) ═════════ */
+.lay [data-ek]>*,.lay [data-ek].leaf{zoom:var(--es,1)}
+body:not(.edit) .lay [data-eh]{display:none!important}
+body.edit .pg[data-pg=home] [data-ek]{outline:2px dashed rgba(255,255,255,.45);outline-offset:-2px;cursor:pointer;animation:edw .9s ease-in-out infinite alternate}
+body.edit .pg[data-pg=home] [data-ek].esel{outline:3px solid var(--accent);box-shadow:0 0 0 6px var(--glow)!important;animation:none}
+body.edit .lay [data-eh]{opacity:.3}
+body.edit .dk-wrap{outline:2px dashed rgba(255,255,255,.45);outline-offset:3px}
+body.edit .dk-wrap.esel{outline:3px solid var(--accent)}
+@keyframes edw{from{outline-color:rgba(255,255,255,.25)}to{outline-color:rgba(255,255,255,.7)}}
+#edBar{position:fixed;top:10px;left:50%;transform:translateX(-50%);z-index:9000;display:none;align-items:center;gap:8px;padding:8px 10px;border-radius:20px;background:rgba(10,14,24,.96);border:1px solid var(--accent);box-shadow:0 12px 40px rgba(0,0,0,.6);direction:rtl;max-width:96vw;flex-wrap:wrap;justify-content:center}
+body.edit #edBar{display:flex}
+#edBar .en{font-weight:800;font-size:calc(16px * var(--fs,1));padding:0 8px;min-width:120px;text-align:center;color:#fff}
+#edBar .en small{display:block;font-weight:400;font-size:calc(12px * var(--fs,1));color:var(--txt2)}
+#edBar button{height:48px;min-width:52px;padding:0 14px;border-radius:14px;background:rgba(255,255,255,.1);color:#fff;font:inherit;font-size:calc(16px * var(--fs,1));font-weight:700}
+#edBar button.big{font-size:calc(24px * var(--fs,1))}
+#edBar button.ok{background:var(--accent);color:#000}
+#edBar button[disabled]{opacity:.3}
+#edBar .sep{width:1px;height:34px;background:rgba(255,255,255,.15)}
 /* ═════════ الوضع النهاري ═════════ */
 .b-day{background:linear-gradient(180deg,#6cc4ff 0%,#b9e3ff 45%,#eef6fd 100%)}
 .b-day .dsun{position:absolute;top:-80px;right:120px;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,#fffbe6 0 22%,rgba(255,236,170,.55) 35%,rgba(255,236,170,0) 70%)}
@@ -610,6 +629,15 @@ body.port .fonts{grid-template-columns:repeat(3,1fr)}
 </div>
 <div id="bri"></div>
 <div class="toast" id="toast"></div>
+<div id="edBar">
+  <div class="en" id="edN">✏️ تعديل الشاشة<small>اضغط على أي جزء</small></div>
+  <button class="big" id="edM" onclick="edSize(-1)">－</button>
+  <button class="big" id="edP" onclick="edSize(1)">＋</button>
+  <button id="edH" onclick="edHide()">👁️ إخفاء</button>
+  <span class="sep"></span>
+  <button onclick="edReset()">↺ رجّع</button>
+  <button class="ok" onclick="edDone()">✓ تم</button>
+</div>
 <div class="spdw" id="spdW"></div>
 <div class="pick" id="pick" onclick="if(event.target===this)pickClose()"><div class="box">
   <div class="hd"><input id="pkQ" placeholder="دوّر على تطبيق..."><button class="btn ghost" onclick="pickClose()">إغلاق</button></div>
@@ -870,7 +898,7 @@ body.port .fonts{grid-template-columns:repeat(3,1fr)}
           <!-- الواجهة والمظهر -->
           <div class="sec" data-s="look">
             <div class="sh"><span class="ico c-ac"><i data-ic="brush"></i></span><div><b>الواجهة والمظهر</b><small>شكل الواجهة، الخلفية، الألوان، والبطاقات</small></div></div>
-            <div class="card g"><h3>نوع اللانشر <small style="font-weight:400">— ستة أنواع، كل واحد شكله مختلف — اضغط على أي واحد يتغيّر على طول</small></h3><div class="opts c3 fam" id="optFam"></div></div>
+            <div class="card g"><h3>نوع اللانشر <small style="font-weight:400">— ستة أنواع، كل واحد شكله مختلف — اضغط على أي واحد يتغيّر على طول</small></h3><div class="row" style="margin-bottom:10px"><small style="color:var(--accent);font-weight:700">💡 تقدر تعدّل الشاشة من نفسها: اضغط مطوّل على أي مكان في الرئيسية، وكبّر أو صغّر أو أخفِ أي جزء</small><button class="btn" onclick="go('home');setTimeout(edOn,300)">✏️ عدّل الحين</button></div><div class="opts c3 fam" id="optFam"></div></div>
             <div class="card g"><h3>شكل الواجهة</h3><div class="opts c5" id="optLay"></div></div>
             <div class="card g"><h3>وضع الشاشة</h3>
               <div class="row"><span>نهاري وليلي</span><div class="seg" id="segTh"></div></div>
@@ -1062,6 +1090,7 @@ function drawLays(){
   $$('#optLay .opt').forEach(o=>o.classList.toggle('sel',o.dataset.v===S.layout));
 }
 function applyAll(){
+  setTimeout(()=>{try{edApply()}catch(e){}},0);
   S.fam=famOf(S.layout);document.body.dataset.layout=S.layout;document.body.dataset.fam=S.fam;
   $$('#optFam .opt').forEach(o=>o.classList.toggle('sel',o.dataset.v===S.fam));
   document.body.dataset.bg=S.bg;
@@ -1416,6 +1445,7 @@ function sysOpen(k){
 
 /* ══════ يوتيوب ══════ */
 function liveBox(cls){
+  if(document.body.classList.contains('edit'))return null;
   const pg=document.querySelector('.pg.act');if(!pg)return null;
   return [...pg.querySelectorAll(cls)].find(b=>b.offsetParent!==null)||null;
 }
@@ -1684,7 +1714,69 @@ function scaleUI(){
 window.addEventListener('orientationchange',()=>setTimeout(scaleUI,250));
 window.addEventListener('resize',scaleUI);
 
+
+/* ═════════ تعديل الشاشة الرئيسية من نفسها ═════════ */
+const EDN={clk:'الساعة','x-time':'الساعة','x-mu':'الموسيقى','x-wx':'الطقس','x-mwx':'الطقس','x-pr':'الصلاة','x-qa':'الأزرار السريعة','x-yt':'يوتيوب','x-map':'الخرائط','x-trip':'المشوار','x-tiles':'المربعات','x-cgrid':'الأيقونات',spd:'السرعة',gauge:'العداد',ring:'الساعة الدائرية',cal:'التاريخ والساعة'};
+const ESZ=[.6,.7,.8,.9,1,1.12,1.25,1.4,1.6,1.8,2];
+let ED=false,ESEL=null;
+if(!S.ed||typeof S.ed!=='object')S.ed={};
+function edCards(){
+  const L=document.querySelector('.pg[data-pg=home] .l-'+S.layout);if(!L)return [];
+  const c=[...L.querySelectorAll('.g,.ht,.hs,.mtl,.mwx,.ring')].filter(e=>!e.parentElement.closest('.g,.ht,.hs,.mtl,.mwx,.ring')||e.parentElement.classList.contains('ring'));
+  const seen={};
+  return c.filter(e=>!(e.closest('.ring')&&e!==e.closest('.ring'))).map(e=>{
+    let k=(e.className.match(/x-[a-z0-9]+/)||[])[0]||(e.classList.contains('ring')?'ring':e.classList.contains('hs')?'spd':e.classList.contains('bigg')||e.classList.contains('gauge')?'gauge':e.classList.contains('cal')?'cal':e.querySelector('.x-time')?'clk':'c');
+    seen[k]=(seen[k]||0)+1;if(seen[k]>1)k+=seen[k];
+    e.dataset.ek=k;e.classList.toggle('leaf',!e.children.length||e.classList.contains('x-time'));return e});
+}
+function edApply(){
+  const cfg=S.ed[S.layout]||{};
+  $$('.pg[data-pg=home] [data-ek]').forEach(e=>{delete e.dataset.ek;delete e.dataset.eh;e.style.removeProperty('--es')});
+  edCards().forEach(e=>{const c=cfg[e.dataset.ek]||{};if(c.s&&c.s!==1)e.style.setProperty('--es',c.s);if(c.h)e.dataset.eh=1});
+}
+function edNative(k){return /^x-(yt|map)/.test(k||'')}
+function edUI(){
+  $$('.esel').forEach(e=>e.classList.remove('esel'));
+  const has=!!ESEL;if(ESEL)ESEL.classList.add('esel');
+  const dock=ESEL&&ESEL.classList.contains('dk-wrap'),k=ESEL&&ESEL.dataset.ek;
+  $('edN').innerHTML=has?(dock?'الشريط اللي تحت':(EDN[k.replace(/\d+$/,'')]||'هذا الجزء'))+'<small>كبّر أو صغّر'+(dock?'':' أو أخفِه')+'</small>':'✏️ تعديل الشاشة<small>اضغط على أي جزء</small>';
+  $('edM').disabled=$('edP').disabled=!has||edNative(k);
+  $('edH').disabled=!has||dock;
+  const hid=has&&!dock&&(S.ed[S.layout]||{})[k]&&S.ed[S.layout][k].h;
+  $('edH').textContent=hid?'👁️ إظهار':'🚫 إخفاء';
+}
+function edOn(){if(ED)return;if(cur!=='home')go('home');ED=true;ESEL=null;document.body.classList.add('edit');edApply();edUI();try{syncYT()}catch(e){};toast('اضغط على أي جزء وكبّره أو صغّره')}
+function edDone(){ED=false;ESEL=null;document.body.classList.remove('edit');$$('.esel').forEach(e=>e.classList.remove('esel'));save();try{syncYT()}catch(e){};toast('تم حفظ شكل الشاشة ✓')}
+function edCfg(){const L=S.ed[S.layout]=S.ed[S.layout]||{};return L[ESEL.dataset.ek]=L[ESEL.dataset.ek]||{}}
+function edSize(d){
+  if(!ESEL)return;
+  if(ESEL.classList.contains('dk-wrap')){dkStep(d);return}
+  const c=edCfg();let i=ESZ.indexOf(c.s||1);if(i<0)i=4;i=Math.max(0,Math.min(ESZ.length-1,i+d));c.s=ESZ[i];
+  save();edApply();ESEL=document.querySelector('[data-ek="'+ESEL.dataset.ek+'"]')||ESEL;edUI();toast(Math.round(c.s*100)+'٪')
+}
+function edHide(){if(!ESEL||ESEL.classList.contains('dk-wrap'))return;const c=edCfg();c.h=!c.h;save();edApply();ESEL=document.querySelector('[data-ek="'+ESEL.dataset.ek+'"]');edUI()}
+function edReset(){delete S.ed[S.layout];setOpt('dkS',1);save();edApply();ESEL=null;edUI();toast('رجع شكل هذي الواجهة مثل أول')}
+(function(){
+  let t=null,sx=0,sy=0;
+  const home=()=>document.querySelector('.pg[data-pg=home]');
+  document.addEventListener('pointerdown',e=>{
+    if(ED||cur!=='home')return;
+    if(!(home().contains(e.target)||e.target.closest('.dk')))return;
+    sx=e.clientX;sy=e.clientY;clearTimeout(t);t=setTimeout(()=>{t=null;edOn()},650);
+  },true);
+  const stop=()=>{clearTimeout(t);t=null};
+  document.addEventListener('pointerup',stop,true);document.addEventListener('pointercancel',stop,true);
+  document.addEventListener('pointermove',e=>{if(t&&(Math.abs(e.clientX-sx)>12||Math.abs(e.clientY-sy)>12))stop()},true);
+  document.addEventListener('contextmenu',e=>{if(cur==='home')e.preventDefault()},true);
+  document.addEventListener('click',e=>{
+    if(!ED||e.target.closest('#edBar')||e.target.closest('.toast'))return;
+    e.preventDefault();e.stopPropagation();
+    const c=e.target.closest('[data-ek]')||e.target.closest('.dk-wrap');
+    ESEL=c||null;edUI();
+  },true);
+})();
 /* ══════ البداية ══════ */
+if(!S.edHint){S.edHint=true;save();setTimeout(()=>toast('💡 جديد: اضغط مطوّل على الشاشة وعدّلها من نفسها'),2500)}
 if(S.layout==='car'||!LAYS.some(l=>l[0]===S.layout)){S.layout='classic';save()}
 if(S.stSec==='car'){S.stSec='look';save()}
 if(!S.blkAdded){S.blkAdded=true;if(Array.isArray(S.dock)&&!S.dock.some(x=>x.id==='black')){const si=S.dock.findIndex(x=>x.id==='settings');S.dock.splice(si<0?S.dock.length:si,0,{t:'pg',id:'black'})}save()}
