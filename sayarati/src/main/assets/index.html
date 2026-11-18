@@ -1519,12 +1519,32 @@ function blackOn(){
 #mtP .add{grid-column:1/-1}
 .mt-due{position:relative}
 .mt-due:after{content:'';position:absolute;top:4px;left:4px;width:9px;height:9px;border-radius:50%;background:#f97316;box-shadow:0 0 0 2px #000}
+#mtAl{position:fixed;inset:0;z-index:2147483002;background:rgba(0,0,0,.65);display:none;align-items:center;justify-content:center;direction:rtl;font-family:inherit}
+#mtAl.show{display:flex}
+#mtAl .bx{background:#161b26;border:2px solid #f97316;border-radius:28px;padding:26px 28px;width:min(520px,92vw);color:#eef1f6;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.6);animation:mtPop .35s ease}
+#mtAl.red .bx{border-color:#ef4444}
+#mtAl .ic{font-size:64px;line-height:1;animation:mtShake 1.2s ease-in-out infinite}
+#mtAl h2{margin:10px 0 6px;font-size:24px}
+#mtAl ul{list-style:none;margin:12px 0 18px;padding:0;display:flex;flex-direction:column;gap:8px;text-align:right}
+#mtAl li{background:#0e1117;border-radius:14px;padding:10px 14px;font-size:16px;display:flex;justify-content:space-between;gap:10px}
+#mtAl li small{color:#fdba74}
+#mtAl li.r small{color:#fca5a5}
+#mtAl .bt{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+#mtAl button{min-height:50px;border:none;border-radius:16px;padding:0 22px;font:inherit;font-size:16px;background:#2a3245;color:#fff}
+#mtAl button.p{background:#3b82f6}
+@keyframes mtPop{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes mtShake{0%,100%{transform:rotate(0)}20%{transform:rotate(-14deg)}40%{transform:rotate(12deg)}60%{transform:rotate(-8deg)}80%{transform:rotate(4deg)}}
 #mtToast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1f2433;color:#fff;padding:12px 20px;border-radius:20px;font-size:15px;z-index:2147483001;display:none}
 </style>
 <div id="mtP" role="dialog" aria-label="صيانتي">
   <div class="mh"><h2>🔧 صيانتي</h2><button aria-label="رجوع" onclick="mtClose()">✕</button></div>
   <div class="mb" id="mtB"></div>
 </div>
+<div id="mtAl" role="alertdialog" aria-label="تنبيه الصيانة"><div class="bx">
+  <div class="ic">🔧</div><h2 id="mtAlT">موعد الصيانة</h2>
+  <ul id="mtAlL"></ul>
+  <div class="bt"><button class="p" onclick="mtAlOpen()">افتح صيانتي</button><button onclick="mtAlLater()">ذكّرني بكرة</button></div>
+</div></div>
 <div id="mtToast"></div>
 <script>
 (function(){
@@ -1619,12 +1639,20 @@ function blackOn(){
   window.mtDel=i=>{M.items.splice(i,1);open='';save();render();badge()};
   window.mtAdd=()=>{const it={id:'c'+Date.now(),n:'شي جديد',ic:'🔧',km:0,mo:6,d:'',k:0};M.items.push(it);open=it.id;save();render();
     setTimeout(()=>{const e=document.getElementById('mtN');if(e){e.focus();e.select()}},50)};
-  function check(){
-    const b=badge(); if(!b.first)return;
+  function check(force){
+    badge();
+    const due=[];M.items.forEach(it=>{const s=status(it);if(s.lvl==='red'||s.lvl==='orange')due.push({n:it.n,ic:it.ic||'🔧',s})});
+    if(!due.length)return;
     const k=iso(today()); let last='';try{last=localStorage.getItem(K+'_t')||''}catch(e){}
-    if(last===k)return; try{localStorage.setItem(K+'_t',k)}catch(e){}
-    say(b.red?'🔧 «'+b.first+'» موعدها فات — شيّك عليها في الإعدادات ← صيانتي':'🔧 «'+b.first+'» موعدها قرّب — الإعدادات ← صيانتي');
+    if(!force&&last===k)return;
+    const red=due.some(d=>d.s.lvl==='red');
+    document.getElementById('mtAlT').textContent=red?'فيه صيانة موعدها فات':'موعد الصيانة قرّب';
+    document.getElementById('mtAlL').innerHTML=due.map(d=>'<li class="'+(d.s.lvl==='red'?'r':'')+'"><span>'+d.ic+' '+esc(d.n)+'</span><small>'+d.s.txt+'</small></li>').join('');
+    const al=document.getElementById('mtAl');al.classList.toggle('red',red);al.classList.add('show');
   }
+  window.mtAlOpen=()=>{document.getElementById('mtAl').classList.remove('show');try{localStorage.setItem(K+'_t',iso(today()))}catch(e){}mtOpen()};
+  window.mtAlLater=()=>{document.getElementById('mtAl').classList.remove('show');try{localStorage.setItem(K+'_t',iso(today()))}catch(e){}};
+  window.mtTest=()=>check(true);
   setTimeout(check,4000); setInterval(check,60*60*1000);
 })();
 </script>
