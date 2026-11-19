@@ -48,6 +48,7 @@ textarea.in{min-height:90px;resize:none;line-height:1.7}
 /* الحالات */
 .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 .tile{position:relative;aspect-ratio:9/14;border-radius:14px;overflow:hidden;background:var(--card2);border:0;padding:0}
+.tile .new{position:absolute;top:6px;right:6px;background:var(--acc);color:#062b16;font-size:11px;font-weight:800;border-radius:8px;padding:2px 7px}
 .tile img{width:100%;height:100%;object-fit:cover;display:block}
 .tile .vd{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;color:#fff;font-size:13px;font-weight:700;background:linear-gradient(#1b2e27,#0f1f19)}
 .tile .vd i{font-style:normal;font-size:34px}
@@ -207,7 +208,9 @@ const titles = {send:'مراسلة سريعة', status:'حفظ الحالات', 
 let cur = 'send';
 
 function go(p){
+  if (cur === 'status' && p !== 'status') markSeen();
   cur = p;
+  try { localStorage.tab = p; } catch(e){}
   $$('.page').forEach(e => e.classList.toggle('on', e.id === 'p-' + p));
   $$('nav button').forEach(b => b.classList.toggle('on', b.dataset.p === p));
   $('#ttl').textContent = titles[p];
@@ -260,7 +263,7 @@ showRecent();
 let stFilter = 'all', stItems = [], stCur = null;
 $('#stPick').onclick = () => N.pickStatus();
 $('#stRe').onclick = () => loadStatus();
-window.onStatusReady = () => loadStatus();
+window.onStatusReady = () => { stSig = null; loadStatus(); };
 $$('[data-st]').forEach(b => b.onclick = () => { stFilter = b.dataset.st; $$('[data-st]').forEach(x => x.classList.toggle('on', x === b)); renderStatus(); });
 function loadStatus(){
   let r = {};
@@ -270,12 +273,20 @@ function loadStatus(){
   $('#stYes').style.display = ok ? '' : 'none';
   $('#stWrong').style.display = (r.ok && !r.dirs) ? '' : 'none';
   if (!ok) return;
-  stItems = r.items || [];
-  stItems.sort((a,b) => b.t - a.t);
+  const items = (r.items || []).sort((a,b) => b.t - a.t);
+  const sig = items.map(i => i.n).join('|');
+  if (sig === stSig) return;
+  stSig = sig; stItems = items;
   renderStatus();
 }
+// الحالة تطلع أول ما تشوفها: يفحص كل ثانيتين وأنت في صفحة الحالات
+let stSig = null;
+setInterval(() => { if (cur === 'status' && !document.hidden && !$('#sheet').classList.contains('show')) loadStatus(); }, 2000);
+function seenSet(){ try { return new Set(JSON.parse(localStorage.seen || '[]')); } catch(e){ return new Set(); } }
+function markSeen(){ try { localStorage.seen = JSON.stringify(stItems.map(i => i.n).slice(0, 300)); } catch(e){} }
 function renderStatus(){
   const g = $('#stGrid'); g.innerHTML = '';
+  const seen = seenSet();
   const list = stItems.filter(s => stFilter === 'all' || (stFilter === 'vid') === s.v);
   $('#stEmpty').style.display = list.length ? 'none' : '';
   list.forEach(s => {
@@ -283,6 +294,7 @@ function renderStatus(){
     b.setAttribute('aria-label', s.v ? 'مقطع' : 'صورة');
     if (s.v) b.innerHTML = '<div class="vd"><i>▶️</i>مقطع</div>';
     else { const im = document.createElement('img'); im.loading = 'lazy'; im.src = '/st?u=' + encodeURIComponent(s.u); b.appendChild(im); }
+    if (!seen.has(s.n)) { const t = document.createElement('span'); t.className = 'new'; t.textContent = 'جديد'; b.appendChild(t); }
     b.onclick = () => openSheet(s);
     g.appendChild(b);
   });
@@ -767,6 +779,8 @@ if (document.fonts) document.fonts.ready.then(() => {
 });
 $('#cWa').onclick = () => N.card($('#cv').toDataURL('image/png'), true);
 $('#cSave').onclick = () => N.card($('#cv').toDataURL('image/png'), false);
+try { if (localStorage.tab && titles[localStorage.tab]) go(localStorage.tab); } catch(e){}
+document.addEventListener('visibilitychange', () => { if (document.hidden && cur === 'status') markSeen(); });
 </script>
 </body>
 </html>
