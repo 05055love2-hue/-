@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>واتسي</title>
+<link rel="stylesheet" href="fonts.css">
 <style>
 :root{--bg:#0b1512;--card:#13211c;--card2:#1b2e27;--line:rgba(255,255,255,.08);--text:#eef5f1;--soft:#9fb5ac;--acc:#25d366;--acc2:#128c5e;--del:#ff9b6a}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -77,6 +78,11 @@ textarea.in{min-height:90px;resize:none;line-height:1.7}
 canvas{width:100%;border-radius:18px;display:block;margin-bottom:12px;background:var(--card2)}
 .btns2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .btns2 .btn{margin-top:0}
+.designs{display:flex;gap:10px;overflow-x:auto;padding:2px 0 6px;scrollbar-width:none}
+.designs::-webkit-scrollbar{display:none}
+.designs button{flex:none;width:92px;border:2px solid transparent;background:none;padding:0;border-radius:14px;color:var(--soft);font-size:12px;font-weight:700}
+.designs button canvas{width:88px;height:110px;border-radius:12px;margin:0 0 4px}
+.designs button.on{border-color:var(--acc);color:var(--acc)}
 /* الشريط */
 nav{position:fixed;bottom:0;left:0;right:0;display:grid;grid-template-columns:repeat(5,1fr);background:rgba(11,21,18,.96);backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:8px 4px 12px;z-index:5}
 nav button{background:none;border:0;color:var(--soft);display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11.5px;font-weight:700;padding:4px 0;min-height:48px}
@@ -124,10 +130,12 @@ nav button.on i{filter:none;opacity:1}
   <div id="stNo" class="card" style="text-align:center">
     <span class="big">📥</span>
     <h3>احفظ حالات أصحابك</h3>
-    <p>أول مرة بس: اضغط الزر، وبيفتح لك مجلد الحالات، اضغط تحت <b>«استخدام هذا المجلد»</b> ثم <b>«سماح»</b>.</p>
+    <div class="note" id="stWrong" style="display:none;text-align:right">المجلد اللي اخترته ما فيه حالات. اضغط الزر واختر المجلد الصحيح 👇</div>
+    <p style="text-align:right">أول مرة بس:<br>١- اضغط الزر تحت.<br>٢- بتفتح لك صفحة الملفات، اضغط تحت <b>«استخدام هذا المجلد»</b> ثم <b>«سماح»</b>.<br>٣- لو فتحت على مكان ثاني: روح <b>Android ← media ← com.whatsapp</b> واضغط «استخدام هذا المجلد».</p>
     <button class="btn" id="stPick">السماح بقراءة الحالات</button>
   </div>
   <div id="stYes" style="display:none">
+    <button class="btn alt" id="stRe" style="margin:0 0 12px;padding:11px;font-size:14px">🔄 تحديث الحالات</button>
     <div class="chips"><button class="chip on" data-st="all">الكل</button><button class="chip" data-st="img">الصور</button><button class="chip" data-st="vid">المقاطع</button></div>
     <div class="grid" id="stGrid"></div>
     <div class="empty" id="stEmpty" style="display:none"><span class="big">👀</span>ما فيه حالات الحين.<br>افتح الواتساب وشوف حالات أصحابك، وارجع هنا.</div>
@@ -161,12 +169,17 @@ nav button.on i{filter:none;opacity:1}
 <section class="page" id="p-card">
   <div class="chips" id="occ"></div>
   <canvas id="cv" width="1080" height="1350"></canvas>
-  <label class="l" for="cName" style="margin-top:0">اسم الشخص (اختياري)</label>
+  <label class="l" style="margin-top:0">اختر التصميم</label>
+  <div class="designs" id="dsg"></div>
+  <label class="l">الألوان</label>
+  <div class="chips" id="pal"></div>
+  <label class="l" for="cName">اسم الشخص (اختياري)</label>
   <input class="in" id="cName" placeholder="مثلاً: أبو فهد">
+  <label class="l" for="cText">نص البطاقة</label>
+  <textarea class="in" id="cText"></textarea>
   <label class="l" for="cFrom">من (اختياري)</label>
   <input class="in" id="cFrom" placeholder="مثلاً: أبو نواف">
-  <div class="chips" id="pal" style="margin-top:12px"></div>
-  <div class="btns2" style="margin-top:4px"><button class="btn" id="cWa">أرسل واتساب</button><button class="btn alt" id="cSave">حفظ بالمعرض</button></div>
+  <div class="btns2" style="margin-top:14px"><button class="btn" id="cWa">أرسل واتساب</button><button class="btn alt" id="cSave">حفظ بالمعرض</button></div>
 </section>
 
 <div class="credit">برمجة أبو نواف</div>
@@ -187,7 +200,7 @@ nav button.on i{filter:none;opacity:1}
 </nav>
 
 <script>
-const N = window.Native || {chat(n,t){open('https://wa.me/'+n)},copy(){},sendText(){},msgAccess(){return true},openMsgAccess(){},messages(){return JSON.stringify(demoMsgs())},clearMessages(){},statusAccess(){return false},pickStatus(){},statuses(){return '[]'},saveStatus(){},shareStatus(){},viewStatus(){},card(){}};
+const N = window.Native || {chat(n,t){open('https://wa.me/'+n)},copy(){},sendText(){},msgAccess(){return true},openMsgAccess(){},messages(){return JSON.stringify(demoMsgs())},clearMessages(){},statusAccess(){return false},pickStatus(){},statuses(){return JSON.stringify({ok:true,dirs:1,items:[]})},saveStatus(){},shareStatus(){},viewStatus(){},card(){}};
 const $ = s => document.querySelector(s);
 const $$ = s => document.querySelectorAll(s);
 const titles = {send:'مراسلة سريعة', status:'حفظ الحالات', fx:'زخرفة الكلام', msg:'الرسائل المحذوفة', card:'بطاقات التهنئة'};
@@ -246,14 +259,18 @@ showRecent();
 /* ───── ٢) الحالات ───── */
 let stFilter = 'all', stItems = [], stCur = null;
 $('#stPick').onclick = () => N.pickStatus();
+$('#stRe').onclick = () => loadStatus();
 window.onStatusReady = () => loadStatus();
 $$('[data-st]').forEach(b => b.onclick = () => { stFilter = b.dataset.st; $$('[data-st]').forEach(x => x.classList.toggle('on', x === b)); renderStatus(); });
 function loadStatus(){
-  const ok = N.statusAccess();
+  let r = {};
+  try { r = JSON.parse(N.statuses()); } catch(e){}
+  const ok = !!r.ok && r.dirs > 0;
   $('#stNo').style.display = ok ? 'none' : '';
   $('#stYes').style.display = ok ? '' : 'none';
+  $('#stWrong').style.display = (r.ok && !r.dirs) ? '' : 'none';
   if (!ok) return;
-  try { stItems = JSON.parse(N.statuses()); } catch(e){ stItems = []; }
+  stItems = r.items || [];
   stItems.sort((a,b) => b.t - a.t);
   renderStatus();
 }
@@ -423,63 +440,331 @@ function openChat(n){
 function demoMsgs(){ const t = Date.now(); return [{c:'أبو فهد',f:'',m:'وصلت الرياض، أكلمك بعد شوي',t:t-600000},{c:'قروب العائلة',f:'أم نواف',m:'لا تنسون عشاء الخميس',t:t-300000}]; }
 
 /* ───── ٥) البطاقات ───── */
+const F = {
+  ruqaa:'"Aref Ruqaa","Amiri","Noto Naskh Arabic",serif', amiri:'"Amiri","Noto Naskh Arabic",serif',
+  kufi:'"Reem Kufi","Cairo","Noto Sans Arabic",sans-serif', lalezar:'"Lalezar","Cairo","Noto Sans Arabic",sans-serif',
+  messiri:'"El Messiri","Cairo","Noto Sans Arabic",sans-serif', cairo:'"Cairo","Noto Sans Arabic",sans-serif',
+  marhey:'"Marhey","Cairo","Noto Sans Arabic",sans-serif', rakkas:'"Rakkas","Amiri",serif'
+};
 const OCC = [
-  {k:'eid', n:'عيد', t:'عيدكم مبارك', s:'كل عام وأنتم بخير\nوعساكم من عوّاده', e:'🌙'},
-  {k:'ramadan', n:'رمضان', t:'رمضان كريم', s:'تقبّل الله منا ومنكم\nصالح الأعمال', e:'🏮'},
-  {k:'wed', n:'زواج', t:'ألف مبروك', s:'بارك الله لكما وبارك عليكما\nوجمع بينكما في خير', e:'💍'},
-  {k:'baby', n:'مولود', t:'مبروك المولود', s:'بورك لك في الموهوب\nوشكرت الواهب', e:'👶'},
-  {k:'grad', n:'تخرّج', t:'مبروك التخرّج', s:'فرحتك فرحتنا\nوعقبال أعلى المراتب', e:'🎓'},
-  {k:'jumua', n:'جمعة', t:'جمعة مباركة', s:'اللهم صلِّ وسلم\nعلى نبينا محمد', e:'🕌'},
-  {k:'heal', n:'شفاء', t:'طهور إن شاء الله', s:'أسأل الله العظيم رب العرش العظيم\nأن يشفيك', e:'🤲'},
-  {k:'new', n:'منزل جديد', t:'مبروك البيت', s:'الله يجعله دار خير وبركة\nوسعادة', e:'🏡'}
+  {n:'عيد', e:'🌙', t:'عيدكم مبارك', s:'كل عام وأنتم بخير\nوعساكم من عوّاده'},
+  {n:'رمضان', e:'🏮', t:'رمضان كريم', s:'تقبّل الله منا ومنكم\nصالح الأعمال'},
+  {n:'زواج', e:'💍', t:'ألف مبروك', s:'بارك الله لكما وبارك عليكما\nوجمع بينكما في خير'},
+  {n:'مولود', e:'👶', t:'مبروك المولود', s:'بورك لك في الموهوب\nوشكرت الواهب'},
+  {n:'تخرّج', e:'🎓', t:'مبروك التخرّج', s:'فرحتك فرحتنا\nوعقبال أعلى المراتب'},
+  {n:'نجاح', e:'🏆', t:'مبروك النجاح', s:'تستاهل كل خير\nوالقادم أجمل بإذن الله'},
+  {n:'عيد ميلاد', e:'🎂', t:'عيد ميلاد سعيد', s:'عساك تكمل عمرك بفرح\nوصحة وسعادة'},
+  {n:'ترقية', e:'⭐', t:'مبروك الترقية', s:'تستاهلها وأكثر\nوعقبال المناصب العالية'},
+  {n:'جمعة', e:'🕌', t:'جمعة مباركة', s:'اللهم صلِّ وسلم\nعلى نبينا محمد'},
+  {n:'شفاء', e:'🤲', t:'طهور إن شاء الله', s:'أسأل الله العظيم\nأن يشفيك ويعافيك'},
+  {n:'بيت جديد', e:'🏡', t:'مبروك البيت', s:'الله يجعله دار خير\nوبركة وسعادة'},
+  {n:'شكر', e:'💐', t:'شكراً من القلب', s:'ما قصّرت\nالله يجزاك خير'},
+  {n:'اليوم الوطني', e:'💚', t:'دام عزّك يا وطن', s:'كل عام ووطننا\nبخير وعزّ وأمان'},
+  {n:'صباح الخير', e:'☀️', t:'صباح الخير', s:'صباح الورد والياسمين\nيومك سعيد'}
 ];
 const PAL = [
-  {n:'زمردي', bg:'#0f3d2e', bg2:'#155c45', ink:'#ffffff', gold:'#e9c46a'},
-  {n:'كحلي', bg:'#13213f', bg2:'#22386b', ink:'#ffffff', gold:'#f2c86b'},
-  {n:'عنابي', bg:'#4a1426', bg2:'#7a2240', ink:'#ffffff', gold:'#f0c27a'},
-  {n:'وردي', bg:'#fde4ec', bg2:'#f7c3d4', ink:'#5a1a33', gold:'#c2457a'},
-  {n:'رملي', bg:'#f6ecd9', bg2:'#ead7b3', ink:'#4a3516', gold:'#a8742a'},
-  {n:'أسود', bg:'#111111', bg2:'#262626', ink:'#ffffff', gold:'#d4af37'}
+  {n:'زمردي', bg:'#0c3326', bg2:'#16604a', ink:'#ffffff', gold:'#e9c46a', dark:1},
+  {n:'كحلي', bg:'#0f1a36', bg2:'#25407a', ink:'#ffffff', gold:'#f2c86b', dark:1},
+  {n:'عنابي', bg:'#3d0f1f', bg2:'#80233f', ink:'#ffffff', gold:'#f0c27a', dark:1},
+  {n:'أسود ذهبي', bg:'#0b0b0b', bg2:'#262318', ink:'#ffffff', gold:'#d9b45a', dark:1},
+  {n:'بنفسجي', bg:'#24123f', bg2:'#4f2a86', ink:'#ffffff', gold:'#f3c6ff', dark:1},
+  {n:'فيروزي', bg:'#06343a', bg2:'#0f7480', ink:'#ffffff', gold:'#ffd98a', dark:1},
+  {n:'أخضر وطني', bg:'#0a4a2a', bg2:'#11743f', ink:'#ffffff', gold:'#ffffff', dark:1},
+  {n:'وردي', bg:'#f9d9e5', bg2:'#fff2f6', ink:'#5a1a33', gold:'#c2457a', dark:0},
+  {n:'رملي', bg:'#ead7b3', bg2:'#fbf4e6', ink:'#47321a', gold:'#a8742a', dark:0},
+  {n:'سماوي', bg:'#cfe6f7', bg2:'#f2f9ff', ink:'#163a5c', gold:'#2f7fc1', dark:0},
+  {n:'أبيض فخم', bg:'#ece8e1', bg2:'#ffffff', ink:'#2a2a2a', gold:'#b08d3c', dark:0}
 ];
-let occ = OCC[0], pal = PAL[0];
-OCC.forEach((o, i) => { const b = document.createElement('button'); b.className = 'chip' + (i ? '' : ' on'); b.textContent = o.e + ' ' + o.n; b.onclick = () => { occ = o; $$('#occ .chip').forEach(x => x.classList.toggle('on', x === b)); drawCard(); }; $('#occ').appendChild(b); });
-PAL.forEach((p, i) => { const b = document.createElement('button'); b.className = 'chip' + (i ? '' : ' on'); b.innerHTML = '<span style="display:inline-block;width:12px;height:12px;border-radius:6px;vertical-align:middle;margin-left:6px;background:' + p.bg2 + ';border:1px solid ' + p.gold + '"></span>' + p.n; b.onclick = () => { pal = p; $$('#pal .chip').forEach(x => x.classList.toggle('on', x === b)); drawCard(); }; $('#pal').appendChild(b); });
-$('#cName').oninput = drawCard; $('#cFrom').oninput = drawCard;
 
-function drawCard(){
-  const c = $('#cv'), x = c.getContext('2d'), W = c.width, H = c.height;
-  x.direction = 'rtl'; x.textAlign = 'center'; x.textBaseline = 'middle';
-  const g = x.createLinearGradient(0, 0, 0, H); g.addColorStop(0, pal.bg2); g.addColorStop(1, pal.bg);
-  x.fillStyle = g; x.fillRect(0, 0, W, H);
-  // نقوش
-  x.save(); x.globalAlpha = .1; x.strokeStyle = pal.gold; x.lineWidth = 2;
-  for (let r = 120; r < 1100; r += 70) { x.beginPath(); x.arc(W/2, -120, r, 0, Math.PI*2); x.stroke(); }
-  x.restore();
-  // إطار
-  x.strokeStyle = pal.gold; x.lineWidth = 6; rr(x, 50, 50, W-100, H-100, 40); x.stroke();
-  x.lineWidth = 2; rr(x, 74, 74, W-148, H-148, 28); x.stroke();
-  // زوايا
-  x.fillStyle = pal.gold; x.font = '60px serif';
-  [[110,110],[W-110,110],[110,H-110],[W-110,H-110]].forEach(([a,b]) => x.fillText('✦', a, b));
-  // الرمز
-  x.font = '170px sans-serif'; x.fillText(occ.e, W/2, 330);
-  // العنوان
-  x.fillStyle = pal.gold; x.font = 'bold 128px "Noto Naskh Arabic", "Noto Sans Arabic", serif';
-  x.fillText(occ.t, W/2, 560);
-  x.fillRect(W/2-120, 650, 240, 5);
-  // الاسم
-  const name = $('#cName').value.trim();
-  x.fillStyle = pal.ink;
-  if (name) { x.font = 'bold 84px "Noto Naskh Arabic", "Noto Sans Arabic", serif'; x.fillText('إلى ' + name, W/2, 770); }
-  // النص
-  x.font = '58px "Noto Naskh Arabic", "Noto Sans Arabic", serif';
-  occ.s.split('\n').forEach((l, i) => x.fillText(l, W/2, (name ? 910 : 820) + i * 92));
-  // من
-  const from = $('#cFrom').value.trim();
-  if (from) { x.globalAlpha = .85; x.font = '54px "Noto Naskh Arabic", "Noto Sans Arabic", serif'; x.fillText('من: ' + from, W/2, H - 240); x.globalAlpha = 1; }
-  x.globalAlpha = .5; x.font = '30px sans-serif'; x.fillText('واتسي', W/2, H - 120); x.globalAlpha = 1;
-}
+function rnd(seed){ return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
 function rr(x, a, b, w, h, r){ x.beginPath(); x.moveTo(a+r,b); x.arcTo(a+w,b,a+w,b+h,r); x.arcTo(a+w,b+h,a,b+h,r); x.arcTo(a,b+h,a,b,r); x.arcTo(a,b,a+w,b,r); x.closePath(); }
+function grad(x, W, H, p, dir){
+  const g = dir === 'r' ? x.createRadialGradient(W/2, H*.42, 50, W/2, H/2, H*.8) : x.createLinearGradient(0, 0, 0, H);
+  g.addColorStop(0, p.bg2); g.addColorStop(1, p.bg); return g;
+}
+function star(x, cx, cy, r, n, inner){
+  x.beginPath();
+  for (let i = 0; i < n*2; i++) { const a = Math.PI * i / n - Math.PI/2, rr2 = i % 2 ? r*inner : r; x.lineTo(cx + Math.cos(a)*rr2, cy + Math.sin(a)*rr2); }
+  x.closePath();
+}
+function sparkle(x, cx, cy, r){ star(x, cx, cy, r, 4, .28); x.fill(); }
+function crescent(x, cx, cy, r, fill){
+  const c = document.createElement('canvas'), m = 4; c.width = c.height = Math.ceil(r*2 + m*2);
+  const t = c.getContext('2d'); t.fillStyle = fill; t.beginPath(); t.arc(r+m, r+m, r, 0, Math.PI*2); t.fill();
+  t.globalCompositeOperation = 'destination-out'; t.beginPath(); t.arc(r+m + r*.38, r+m - r*.18, r*.86, 0, Math.PI*2); t.fill();
+  x.drawImage(c, cx - r - m, cy - r - m);
+}
+function lantern(x, cx, top, len, s, p){
+  x.strokeStyle = p.gold; x.lineWidth = 3; x.beginPath(); x.moveTo(cx, 0); x.lineTo(cx, top + len); x.stroke();
+  const y = top + len;
+  const glow = x.createRadialGradient(cx, y + 70*s, 5, cx, y + 70*s, 130*s);
+  glow.addColorStop(0, 'rgba(255,210,120,.55)'); glow.addColorStop(1, 'rgba(255,210,120,0)');
+  x.fillStyle = glow; x.beginPath(); x.arc(cx, y + 70*s, 130*s, 0, Math.PI*2); x.fill();
+  x.fillStyle = p.gold;
+  x.beginPath(); x.moveTo(cx - 22*s, y); x.lineTo(cx + 22*s, y); x.lineTo(cx + 38*s, y + 24*s); x.lineTo(cx - 38*s, y + 24*s); x.closePath(); x.fill();
+  x.globalAlpha = .9; x.fillStyle = '#ffd78a';
+  x.beginPath(); x.moveTo(cx - 38*s, y + 28*s); x.lineTo(cx + 38*s, y + 28*s); x.lineTo(cx + 30*s, y + 112*s); x.lineTo(cx - 30*s, y + 112*s); x.closePath(); x.fill();
+  x.globalAlpha = 1; x.strokeStyle = p.gold; x.lineWidth = 4*s;
+  for (const dx of [-14, 0, 14]) { x.beginPath(); x.moveTo(cx + dx*s, y + 28*s); x.lineTo(cx + dx*.8*s, y + 112*s); x.stroke(); }
+  x.fillStyle = p.gold;
+  x.beginPath(); x.moveTo(cx - 32*s, y + 112*s); x.lineTo(cx + 32*s, y + 112*s); x.lineTo(cx + 14*s, y + 136*s); x.lineTo(cx - 14*s, y + 136*s); x.closePath(); x.fill();
+  x.beginPath(); x.arc(cx, y + 146*s, 7*s, 0, Math.PI*2); x.fill();
+}
+function flower(x, cx, cy, r, col, center, petals, rot){
+  x.save(); x.translate(cx, cy); x.rotate(rot || 0); x.fillStyle = col;
+  for (let i = 0; i < petals; i++) { x.rotate(Math.PI*2/petals); x.beginPath(); x.ellipse(0, -r*.55, r*.32, r*.55, 0, 0, Math.PI*2); x.fill(); }
+  x.fillStyle = center; x.beginPath(); x.arc(0, 0, r*.22, 0, Math.PI*2); x.fill(); x.restore();
+}
+function leaf(x, cx, cy, len, ang, col){
+  x.save(); x.translate(cx, cy); x.rotate(ang); x.fillStyle = col;
+  x.beginPath(); x.moveTo(0, 0); x.quadraticCurveTo(len*.5, -len*.28, len, 0); x.quadraticCurveTo(len*.5, len*.28, 0, 0); x.fill(); x.restore();
+}
+function palm(x, bx, by, h, col, lean){
+  x.strokeStyle = col; x.lineWidth = 16; x.lineCap = 'round';
+  const tx = bx + lean, ty = by - h;
+  x.beginPath(); x.moveTo(bx, by); x.quadraticCurveTo(bx + lean*.2, by - h*.6, tx, ty); x.stroke();
+  x.fillStyle = col;
+  for (let i = 0; i < 8; i++) {
+    const a = -Math.PI + i * Math.PI/7 + (i > 3 ? .15 : -.15);
+    x.save(); x.translate(tx, ty); x.rotate(a);
+    x.beginPath(); x.moveTo(0, 0); x.quadraticCurveTo(h*.22, -h*.12, h*.42, h*.1); x.quadraticCurveTo(h*.22, -h*.02, 0, 0); x.fill(); x.restore();
+  }
+}
+
+/* كل تصميم يرسم الخلفية والزينة، ويرجع مكان الكلام وخطه */
+const DESIGNS = [
+  {n:'إطار ذهبي', d(x,W,H,p){
+    x.fillStyle = grad(x,W,H,p); x.fillRect(0,0,W,H);
+    x.save(); x.globalAlpha = .1; x.strokeStyle = p.gold; x.lineWidth = 2;
+    for (let r = 120; r < 1100; r += 70) { x.beginPath(); x.arc(W/2, -120, r, 0, Math.PI*2); x.stroke(); }
+    x.restore();
+    x.strokeStyle = p.gold; x.lineWidth = 6; rr(x,50,50,W-100,H-100,40); x.stroke();
+    x.lineWidth = 2; rr(x,74,74,W-148,H-148,28); x.stroke();
+    x.fillStyle = p.gold; [[110,110],[W-110,110],[110,H-110],[W-110,H-110]].forEach(([a,b]) => sparkle(x,a,b,26));
+    return {font:F.ruqaa, emoji:330, ty:560};
+  }},
+  {n:'هلال ونجوم', d(x,W,H,p){
+    const g = x.createLinearGradient(0,0,0,H); g.addColorStop(0, p.dark ? '#050b1f' : p.bg2); g.addColorStop(1, p.dark ? p.bg2 : p.bg);
+    x.fillStyle = g; x.fillRect(0,0,W,H);
+    const r = rnd(7); x.fillStyle = p.dark ? '#ffffff' : p.gold;
+    for (let i = 0; i < 70; i++) { x.globalAlpha = .3 + r()*.7; sparkle(x, r()*W, r()*H*.6, 3 + r()*9); }
+    x.globalAlpha = 1;
+    x.shadowColor = p.gold; x.shadowBlur = 60; crescent(x, W*.72, 250, 140, p.gold); x.shadowBlur = 0;
+    x.fillStyle = p.gold; sparkle(x, W*.52, 200, 22);
+    x.globalAlpha = .25; x.fillStyle = p.dark ? '#000' : p.gold;
+    x.beginPath(); x.moveTo(0,H); x.lineTo(0,H-160); for (let i = 0; i <= 10; i++) { const xx = i*W/10; x.lineTo(xx, H-160 - (i%3===1 ? 120 : i%2 ? 40 : 70)); } x.lineTo(W,H); x.fill();
+    x.globalAlpha = 1;
+    return {font:F.ruqaa, ty:620, emoji:0};
+  }},
+  {n:'فوانيس', d(x,W,H,p){
+    x.fillStyle = grad(x,W,H,p,'r'); x.fillRect(0,0,W,H);
+    lantern(x, 200, 0, 120, 1.1, p); lantern(x, W/2, 0, 40, .8, p); lantern(x, W-200, 0, 200, 1, p);
+    x.strokeStyle = p.gold; x.globalAlpha = .5; x.lineWidth = 2;
+    x.beginPath(); for (let i = 0; i <= 40; i++) { const xx = i*W/40; x.lineTo(xx, 30 + Math.sin(i/40*Math.PI)*60); } x.stroke();
+    x.globalAlpha = 1;
+    return {font:F.amiri, ty:700, emoji:0};
+  }},
+  {n:'نقش إسلامي', d(x,W,H,p){
+    x.fillStyle = p.bg; x.fillRect(0,0,W,H);
+    x.save(); x.strokeStyle = p.gold; x.globalAlpha = .28; x.lineWidth = 2.5;
+    for (let yy = -60; yy < H + 120; yy += 120) for (let xx = (yy/120 % 2) ? 0 : 60; xx < W + 120; xx += 120) {
+      star(x, xx, yy, 50, 8, .72); x.stroke(); x.beginPath(); x.arc(xx, yy, 18, 0, Math.PI*2); x.stroke();
+    }
+    x.restore();
+    x.fillStyle = p.bg2; x.shadowColor = 'rgba(0,0,0,.35)'; x.shadowBlur = 40; rr(x, 130, 230, W-260, H-460, 60); x.fill(); x.shadowBlur = 0;
+    x.strokeStyle = p.gold; x.lineWidth = 5; rr(x, 150, 250, W-300, H-500, 46); x.stroke();
+    x.fillStyle = p.gold; star(x, W/2, 250, 34, 8, .6); x.fill(); star(x, W/2, H-250, 34, 8, .6); x.fill();
+    return {font:F.messiri, emoji:400, ty:590, maxW:680, from:1030};
+  }},
+  {n:'محراب', d(x,W,H,p){
+    x.fillStyle = grad(x,W,H,p); x.fillRect(0,0,W,H);
+    const a = 170, b = W-170, top = 330, bot = H-150, mid = W/2;
+    const arch = (k) => { x.beginPath(); x.moveTo(a-k, bot+k); x.lineTo(a-k, top+80); x.quadraticCurveTo(a-k, top-60-k, mid, top-170-k); x.quadraticCurveTo(b+k, top-60-k, b+k, top+80); x.lineTo(b+k, bot+k); x.closePath(); };
+    x.fillStyle = p.dark ? 'rgba(255,255,255,.06)' : 'rgba(255,255,255,.6)'; arch(0); x.fill();
+    x.strokeStyle = p.gold; x.lineWidth = 6; arch(0); x.stroke(); x.lineWidth = 2; arch(22); x.stroke();
+    x.fillStyle = p.gold; sparkle(x, mid, top-230, 30);
+    x.globalAlpha = .35; for (let i = 0; i < 9; i++) { x.beginPath(); x.arc(a + (b-a)*i/8, bot + 50, 8, 0, Math.PI*2); x.fill(); } x.globalAlpha = 1;
+    return {font:F.amiri, emoji:380, ty:600, maxW:640};
+  }},
+  {n:'ورد', d(x,W,H,p){
+    x.fillStyle = grad(x,W,H,p); x.fillRect(0,0,W,H);
+    const pet = p.dark ? ['#f4a7b9','#ffd6e0','#f7c873'] : ['#e86a92','#f4a7b9','#f2b544'];
+    const lf = p.dark ? '#5fae7f' : '#5a9a6e';
+    const corner = (cx, cy, s) => {
+      for (let i = 0; i < 6; i++) leaf(x, cx, cy, 170, s + i*.32, lf);
+      flower(x, cx, cy, 120, pet[0], p.gold, 8, .2);
+      flower(x, cx + Math.cos(s+.8)*150, cy + Math.sin(s+.8)*150, 80, pet[1], p.gold, 6, .5);
+      flower(x, cx + Math.cos(s+.1)*170, cy + Math.sin(s+.1)*170, 60, pet[2], '#fff', 5, 1);
+    };
+    corner(60, 60, 0); corner(W-60, H-60, Math.PI);
+    x.strokeStyle = p.gold; x.lineWidth = 2; x.globalAlpha = .6; rr(x, 90, 90, W-180, H-180, 30); x.stroke(); x.globalAlpha = 1;
+    return {font:F.ruqaa, emoji:0, ty:540};
+  }},
+  {n:'بسيط فخم', d(x,W,H,p){
+    x.fillStyle = p.bg2; x.fillRect(0,0,W,H);
+    x.fillStyle = p.gold; x.fillRect(0, 0, W, 14); x.fillRect(0, H-14, W, 14);
+    x.fillRect(W/2-2, 230, 4, 120);
+    x.font = '700 34px ' + F.cairo; x.globalAlpha = .7; x.fillText('✦  مناسبة سعيدة  ✦', W/2, 420); x.globalAlpha = 1;
+    return {font:F.messiri, emoji:0, ty:600, ink:p.ink};
+  }},
+  {n:'احتفال', d(x,W,H,p){
+    x.fillStyle = grad(x,W,H,p); x.fillRect(0,0,W,H);
+    const r = rnd(3), cols = ['#ff6b6b','#ffd93d','#6bcB77','#4d96ff','#c77dff', p.gold];
+    for (let i = 0; i < 140; i++) { x.save(); x.translate(r()*W, r()*H); x.rotate(r()*6); x.fillStyle = cols[i % cols.length]; x.globalAlpha = .85;
+      if (i % 3) x.fillRect(-9, -4, 18, 8); else { x.beginPath(); x.arc(0, 0, 6, 0, Math.PI*2); x.fill(); } x.restore(); }
+    const bal = (cx, cy, c) => { x.strokeStyle = p.ink; x.globalAlpha = .5; x.lineWidth = 2; x.beginPath(); x.moveTo(cx, cy+95); x.quadraticCurveTo(cx-30, cy+200, cx+10, cy+320); x.stroke();
+      x.globalAlpha = 1; x.fillStyle = c; x.beginPath(); x.ellipse(cx, cy, 72, 92, 0, 0, Math.PI*2); x.fill();
+      x.fillStyle = 'rgba(255,255,255,.35)'; x.beginPath(); x.ellipse(cx-24, cy-34, 16, 26, -.4, 0, Math.PI*2); x.fill(); };
+    bal(150, 210, '#ff6b6b'); bal(270, 150, '#ffd93d'); bal(W-160, 190, '#4d96ff'); bal(W-280, 260, '#c77dff');
+    return {font:F.marhey, emoji:0, ty:640};
+  }},
+  {n:'موجات', d(x,W,H,p){
+    x.fillStyle = p.bg2; x.fillRect(0,0,W,H);
+    x.fillStyle = p.gold; x.globalAlpha = .9; x.beginPath(); x.arc(W*.78, 260, 110, 0, Math.PI*2); x.fill(); x.globalAlpha = 1;
+    for (let k = 0; k < 5; k++) {
+      x.fillStyle = p.bg; x.globalAlpha = .25 + k*.16;
+      x.beginPath(); x.moveTo(0, H);
+      for (let i = 0; i <= 60; i++) { const xx = i*W/60; x.lineTo(xx, H - 380 + k*70 + Math.sin(i/60*Math.PI*2*1.3 + k) * 40); }
+      x.lineTo(W, H); x.fill();
+    }
+    x.globalAlpha = 1;
+    return {font:F.kufi, emoji:0, ty:520, body:650};
+  }},
+  {n:'أضواء', d(x,W,H,p){
+    x.fillStyle = grad(x,W,H,p,'r'); x.fillRect(0,0,W,H);
+    const r = rnd(11);
+    for (let i = 0; i < 45; i++) { const cx = r()*W, cy = r()*H, rad = 30 + r()*110;
+      const g = x.createRadialGradient(cx, cy, 0, cx, cy, rad); g.addColorStop(0, p.gold); g.addColorStop(1, 'rgba(0,0,0,0)');
+      x.globalAlpha = .12 + r()*.3; x.fillStyle = g; x.beginPath(); x.arc(cx, cy, rad, 0, Math.PI*2); x.fill(); }
+    x.globalAlpha = 1;
+    return {font:F.ruqaa, emoji:330, ty:580, glow:1};
+  }},
+  {n:'شريط', d(x,W,H,p){
+    x.fillStyle = grad(x,W,H,p); x.fillRect(0,0,W,H);
+    x.setLineDash([4, 14]); x.strokeStyle = p.gold; x.lineWidth = 4; rr(x, 60, 60, W-120, H-120, 30); x.stroke(); x.setLineDash([]);
+    const y = 480, h = 170;
+    x.fillStyle = p.dark ? 'rgba(0,0,0,.35)' : 'rgba(0,0,0,.15)';
+    x.beginPath(); x.moveTo(30, y+30); x.lineTo(160, y+30); x.lineTo(160, y+h+30); x.lineTo(30, y+h+30); x.lineTo(90, y+h/2+30); x.closePath(); x.fill();
+    x.beginPath(); x.moveTo(W-30, y+30); x.lineTo(W-160, y+30); x.lineTo(W-160, y+h+30); x.lineTo(W-30, y+h+30); x.lineTo(W-90, y+h/2+30); x.closePath(); x.fill();
+    x.fillStyle = p.gold; x.fillRect(110, y, W-220, h);
+    return {font:F.lalezar, emoji:330, ty:y+h/2+8, tcol:p.dark ? p.bg : '#ffffff', body:800};
+  }},
+  {n:'خط كبير', d(x,W,H,p,o){
+    x.fillStyle = grad(x,W,H,p); x.fillRect(0,0,W,H);
+    x.save(); x.translate(W/2, H/2); x.rotate(-.18); x.globalAlpha = .08; x.fillStyle = p.gold; x.font = '700 420px ' + F.ruqaa; x.fillText(o.t.split(' ')[0], 0, 0); x.restore();
+    x.fillStyle = p.gold; x.fillRect(W/2-180, 430, 360, 3); x.fillRect(W/2-180, 690, 360, 3);
+    return {font:F.ruqaa, emoji:0, ty:560, big:1.15};
+  }},
+  {n:'ألعاب نارية', d(x,W,H,p){
+    x.fillStyle = p.dark ? '#05060f' : p.bg; x.fillRect(0,0,W,H);
+    const r = rnd(5), cols = [p.gold, '#ff7aa2', '#7ad7ff', '#ffe27a', '#b98aff'];
+    const burst = (cx, cy, R, c) => { x.strokeStyle = c; x.fillStyle = c; x.lineWidth = 3;
+      for (let i = 0; i < 36; i++) { const a = i/36*Math.PI*2, r1 = R*(.25 + r()*.15), r2 = R*(.75 + r()*.25);
+        x.globalAlpha = .8; x.beginPath(); x.moveTo(cx + Math.cos(a)*r1, cy + Math.sin(a)*r1); x.lineTo(cx + Math.cos(a)*r2, cy + Math.sin(a)*r2); x.stroke();
+        x.beginPath(); x.arc(cx + Math.cos(a)*(r2+12), cy + Math.sin(a)*(r2+12), 4, 0, Math.PI*2); x.fill(); } x.globalAlpha = 1; };
+    burst(230, 260, 170, cols[0]); burst(W-240, 200, 140, cols[1]); burst(W/2+40, 120, 90, cols[2]); burst(160, H-260, 110, cols[3]); burst(W-180, H-300, 150, cols[4]);
+    return {font:F.lalezar, emoji:0, ty:600, ink:'#ffffff', tcol:p.dark ? p.gold : '#ffffff', glow:1};
+  }},
+  {n:'شعاع ذهبي', d(x,W,H,p){
+    x.fillStyle = p.bg; x.fillRect(0,0,W,H);
+    x.save(); x.translate(W/2, H+60); x.fillStyle = p.gold;
+    for (let i = 0; i < 24; i++) { x.globalAlpha = i % 2 ? .06 : .16; x.beginPath(); x.moveTo(0,0); x.arc(0, 0, H*1.3, -Math.PI + i*Math.PI/24, -Math.PI + (i+1)*Math.PI/24); x.closePath(); x.fill(); }
+    x.globalAlpha = 1; for (let k = 0; k < 4; k++) { x.strokeStyle = p.gold; x.lineWidth = 3; x.beginPath(); x.arc(0, 0, 220 + k*60, Math.PI, 0); x.stroke(); }
+    x.restore();
+    x.strokeStyle = p.gold; x.lineWidth = 3;
+    x.beginPath(); x.moveTo(80, 80); x.lineTo(W-80, 80); x.lineTo(W-80, H-80); x.lineTo(80, H-80); x.closePath(); x.stroke();
+    for (const [cx, cy, sx, sy] of [[80,80,1,1],[W-80,80,-1,1],[80,H-80,1,-1],[W-80,H-80,-1,-1]]) {
+      x.beginPath(); x.moveTo(cx + sx*20, cy + sy*80); x.lineTo(cx + sx*20, cy + sy*20); x.lineTo(cx + sx*80, cy + sy*20); x.stroke(); }
+    return {font:F.messiri, emoji:290, ty:500};
+  }},
+  {n:'رخام', d(x,W,H,p){
+    x.fillStyle = p.dark ? p.bg : '#f7f5f1'; x.fillRect(0,0,W,H);
+    const r = rnd(21); x.strokeStyle = p.dark ? '#ffffff' : '#8a8273';
+    for (let i = 0; i < 26; i++) { x.globalAlpha = .04 + r()*.08; x.lineWidth = .5 + r()*3;
+      x.beginPath(); let yy = r()*H; x.moveTo(-50, yy); for (let k = 0; k < 6; k++) x.bezierCurveTo(k*220+r()*200, yy+r()*300-150, k*220+r()*200, yy+r()*300-150, (k+1)*220, yy += r()*120-60); x.stroke(); }
+    x.globalAlpha = 1;
+    x.strokeStyle = p.gold; x.lineWidth = 3; rr(x, 100, 140, W-200, H-280, 4); x.stroke();
+    x.fillStyle = p.gold; x.fillRect(W/2-60, 135, 120, 10); x.fillRect(W/2-60, H-145, 120, 10);
+    return {font:F.amiri, emoji:0, ty:540, ink:p.dark ? '#fff' : '#2a2a2a'};
+  }},
+  {n:'نخيل وصحراء', d(x,W,H,p){
+    const g = x.createLinearGradient(0,0,0,H);
+    if (p.dark) { g.addColorStop(0, p.bg); g.addColorStop(.7, p.bg2); g.addColorStop(1, '#e08a3c'); }
+    else { g.addColorStop(0, p.bg2); g.addColorStop(1, '#f2c48a'); }
+    x.fillStyle = g; x.fillRect(0,0,W,H);
+    x.fillStyle = p.gold; x.globalAlpha = .95; x.beginPath(); x.arc(W/2, H-370, 120, 0, Math.PI*2); x.fill(); x.globalAlpha = 1;
+    const dune = (y0, amp, col) => { x.fillStyle = col; x.beginPath(); x.moveTo(0, H); x.lineTo(0, y0);
+      x.bezierCurveTo(W*.3, y0-amp, W*.55, y0+amp, W, y0-amp*.5); x.lineTo(W, H); x.fill(); };
+    dune(H-260, 80, p.dark ? 'rgba(0,0,0,.35)' : 'rgba(190,120,60,.45)');
+    dune(H-170, 60, p.dark ? 'rgba(0,0,0,.55)' : 'rgba(150,90,40,.55)');
+    palm(x, 150, H-140, 360, p.dark ? '#081410' : '#5b3a1e', 50);
+    palm(x, W-170, H-110, 280, p.dark ? '#081410' : '#5b3a1e', -40);
+    return {font:F.rakkas, emoji:0, ty:330, body:460, fromAfter:1};
+  }}
+];
+
+let occ = OCC[0], pal = PAL[0], dsg = 0;
+OCC.forEach((o, i) => { const b = document.createElement('button'); b.className = 'chip' + (i ? '' : ' on'); b.textContent = o.e + ' ' + o.n;
+  b.onclick = () => { occ = o; $('#cText').value = o.s; $$('#occ .chip').forEach(x => x.classList.toggle('on', x === b)); drawCard(true); }; $('#occ').appendChild(b); });
+PAL.forEach((p, i) => { const b = document.createElement('button'); b.className = 'chip' + (i ? '' : ' on');
+  b.innerHTML = '<span style="display:inline-block;width:14px;height:14px;border-radius:7px;vertical-align:middle;margin-left:6px;background:' + p.bg2 + ';border:2px solid ' + p.gold + '"></span>' + p.n;
+  b.onclick = () => { pal = p; $$('#pal .chip').forEach(x => x.classList.toggle('on', x === b)); drawCard(true); }; $('#pal').appendChild(b); });
+DESIGNS.forEach((d, i) => { const b = document.createElement('button'); b.className = i ? '' : 'on';
+  b.innerHTML = '<canvas width="216" height="270"></canvas>'; b.appendChild(document.createTextNode(d.n));
+  b.onclick = () => { dsg = i; $$('#dsg button').forEach(x => x.classList.toggle('on', x === b)); drawCard(); }; $('#dsg').appendChild(b); });
+$('#cText').value = occ.s;
+$('#cName').oninput = () => drawCard(); $('#cFrom').oninput = () => drawCard(); $('#cText').oninput = () => drawCard();
+
+function fitFont(x, text, weight, size, fam, maxW){
+  let s = size; do { x.font = weight + ' ' + s + 'px ' + fam; s -= 4; } while (x.measureText(text).width > maxW && s > 30);
+}
+function wrap(x, line, maxW){
+  const words = line.split(' '), out = []; let cur = '';
+  words.forEach(w => { const t = cur ? cur + ' ' + w : w; if (x.measureText(t).width > maxW && cur) { out.push(cur); cur = w; } else cur = t; });
+  if (cur) out.push(cur); return out;
+}
+function paint(x, i){
+  const W = 1080, H = 1350, p = pal, d = DESIGNS[i];
+  x.save(); x.direction = 'rtl'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.lineCap = 'butt'; x.shadowBlur = 0;
+  x.clearRect(0, 0, W, H);
+  x.fillStyle = p.gold;
+  const L = d.d(x, W, H, p, occ) || {};
+  x.shadowBlur = 0; x.globalAlpha = 1;
+  const ink = L.ink || p.ink, fam = L.font || F.amiri;
+  if (L.emoji) { x.font = '150px sans-serif'; x.fillText(occ.e, W/2, L.emoji); }
+  // العنوان
+  x.fillStyle = L.tcol || p.gold;
+  if (L.glow) { x.shadowColor = p.gold; x.shadowBlur = 30; }
+  fitFont(x, occ.t, '700', Math.round(130 * (L.big || 1)), fam, L.maxW || W - 240);
+  x.fillText(occ.t, W/2, L.ty || 560);
+  x.shadowBlur = 0;
+  // الاسم + النص
+  const name = $('#cName').value.trim();
+  let y = L.body || (L.ty || 560) + 170;
+  x.fillStyle = ink;
+  if (name) { fitFont(x, 'إلى ' + name, '700', 78, fam, Math.min(L.maxW || 9999, W - 260)); x.fillText('إلى ' + name, W/2, y); y += 120; }
+  x.font = '400 56px ' + (fam === F.lalezar || fam === F.marhey ? F.cairo : fam === F.ruqaa || fam === F.rakkas ? F.amiri : fam);
+  const lines = []; ($('#cText').value || '').split('\n').forEach(l => lines.push(...wrap(x, l.trim(), W - 280)));
+  const shown = lines.slice(0, 6);
+  shown.forEach((l, k) => x.fillText(l, W/2, y + k * 86));
+  const last = y + (shown.length - 1) * 86;
+  const from = $('#cFrom').value.trim();
+  const fy = L.from || (L.fromAfter ? last + 100 : Math.min(H - 140, Math.max(H - 230, last + 110)));
+  if (from) { x.globalAlpha = .9; x.font = '700 50px ' + F.cairo; x.fillText('من: ' + from, W/2, fy); x.globalAlpha = 1; }
+  x.restore();
+}
+let thumbsFor = '';
+function drawCard(thumbs){
+  paint($('#cv').getContext('2d'), dsg);
+  const key = pal.n + occ.n;
+  if (thumbs || thumbsFor !== key) {
+    thumbsFor = key;
+    $$('#dsg canvas').forEach((c, i) => { const t = c.getContext('2d'); t.setTransform(.2, 0, 0, .2, 0, 0); paint(t, i); t.setTransform(1, 0, 0, 1, 0, 0); });
+  }
+}
+if (document.fonts) document.fonts.ready.then(() => {
+  Promise.all(Object.values(F).map(f => document.fonts.load('700 60px ' + f, 'عيد').catch(() => 0))).then(() => { thumbsFor = ''; if (cur === 'card') drawCard(true); });
+});
 $('#cWa').onclick = () => N.card($('#cv').toDataURL('image/png'), true);
 $('#cSave').onclick = () => N.card($('#cv').toDataURL('image/png'), false);
 </script>

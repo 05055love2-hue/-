@@ -86,7 +86,11 @@ public class MainActivity extends Activity {
                         return new WebResourceResponse(mime, null, getContentResolver().openInputStream(u));
                     }
                     if (path == null || path.equals("/") || path.isEmpty()) path = "/index.html";
-                    return new WebResourceResponse("text/html", "UTF-8", getAssets().open(path.substring(1)));
+                    String mt = path.endsWith(".css") ? "text/css" : path.endsWith(".woff2") ? "font/woff2"
+                        : path.endsWith(".ttf") ? "font/ttf" : "text/html";
+                    WebResourceResponse r = new WebResourceResponse(mt, mt.startsWith("text") ? "UTF-8" : null, getAssets().open(path.substring(1)));
+                    r.setResponseHeaders(java.util.Collections.singletonMap("Access-Control-Allow-Origin", "*"));
+                    return r;
                 } catch (Exception e) {
                     return new WebResourceResponse("text/plain", "UTF-8", 404, "Not Found", null, null);
                 }
@@ -201,6 +205,45 @@ public class MainActivity extends Activity {
         else try { startActivity(Intent.createChooser(i, "مشاركة")); } catch (Exception ignored) { }
     }
 
+    private static final java.util.Set<String> WAY = new java.util.HashSet<>(java.util.Arrays.asList(
+        "Android", "media", "com.whatsapp", "com.whatsapp.w4b", "WhatsApp", "WhatsApp Business", "Media"));
+    private static final String[] COLS = {DocumentsContract.Document.COLUMN_DOCUMENT_ID, DocumentsContract.Document.COLUMN_DISPLAY_NAME,
+        DocumentsContract.Document.COLUMN_MIME_TYPE, DocumentsContract.Document.COLUMN_LAST_MODIFIED};
+
+    private void findDirs(Uri tree, String id, int depth, java.util.List<String> found) {
+        if (depth > 6) return;
+        Uri kids = DocumentsContract.buildChildDocumentsUriUsingTree(tree, id);
+        try (Cursor c = getContentResolver().query(kids, COLS, null, null, null)) {
+            while (c != null && c.moveToNext()) {
+                if (!DocumentsContract.Document.MIME_TYPE_DIR.equals(c.getString(2))) continue;
+                String name = c.getString(1);
+                if (".Statuses".equals(name)) found.add(c.getString(0));
+                else if (WAY.contains(name)) findDirs(tree, c.getString(0), depth + 1, found);
+            }
+        } catch (Exception ignored) { }
+    }
+
+    private void listDir(Uri tree, String id, JSONArray out) {
+        Uri kids = DocumentsContract.buildChildDocumentsUriUsingTree(tree, id);
+        try (Cursor c = getContentResolver().query(kids, COLS, null, null, null)) {
+            while (c != null && c.moveToNext()) {
+                String name = c.getString(1);
+                String mime = c.getString(2);
+                if (name == null || name.startsWith(".")) continue;
+                String ln = name.toLowerCase();
+                boolean vid = (mime != null && mime.startsWith("video")) || ln.endsWith(".mp4");
+                boolean img = (mime != null && mime.startsWith("image")) || ln.endsWith(".jpg") || ln.endsWith(".jpeg") || ln.endsWith(".webp") || ln.endsWith(".png");
+                if (!vid && !img) continue;
+                JSONObject o = new JSONObject();
+                o.put("u", DocumentsContract.buildDocumentUriUsingTree(tree, c.getString(0)).toString());
+                o.put("n", name);
+                o.put("v", vid);
+                o.put("t", c.getLong(3));
+                out.put(o);
+            }
+        } catch (Exception ignored) { }
+    }
+
     class Bridge {
         // ───── مراسلة رقم بدون حفظه
         @JavascriptInterface
@@ -272,31 +315,26 @@ public class MainActivity extends Activity {
             });
         }
 
+        /** يدوّر على مجلد الحالات داخل أي مجلد يختاره المستخدم، ويرجع الصور والمقاطع */
         @JavascriptInterface
         public String statuses() {
+            JSONObject res = new JSONObject();
             JSONArray out = new JSONArray();
-            Uri tree = statusTree();
-            if (tree == null) return out.toString();
-            Uri kids = DocumentsContract.buildChildDocumentsUriUsingTree(tree, DocumentsContract.getTreeDocumentId(tree));
-            String[] cols = {DocumentsContract.Document.COLUMN_DOCUMENT_ID, DocumentsContract.Document.COLUMN_DISPLAY_NAME,
-                DocumentsContract.Document.COLUMN_MIME_TYPE, DocumentsContract.Document.COLUMN_LAST_MODIFIED};
-            try (Cursor c = getContentResolver().query(kids, cols, null, null, null)) {
-                while (c != null && c.moveToNext()) {
-                    String name = c.getString(1);
-                    String mime = c.getString(2);
-                    if (name == null || name.startsWith(".")) continue;
-                    boolean vid = (mime != null && mime.startsWith("video")) || name.endsWith(".mp4");
-                    boolean img = (mime != null && mime.startsWith("image")) || name.endsWith(".jpg") || name.endsWith(".webp");
-                    if (!vid && !img) continue;
-                    JSONObject o = new JSONObject();
-                    o.put("u", DocumentsContract.buildDocumentUriUsingTree(tree, c.getString(0)).toString());
-                    o.put("n", name);
-                    o.put("v", vid);
-                    o.put("t", c.getLong(3));
-                    out.put(o);
-                }
-            } catch (Exception ignored) { }
-            return out.toString();
+            try {
+                Uri tree = statusTree();
+                res.put("ok", tree != null);
+                if (tree == null) { res.put("items", out); res.put("dirs", 0); return res.toString(); }
+                java.util.ArrayList<String> dirs = new java.util.ArrayList<>();
+                String root = DocumentsContract.getTreeDocumentId(tree);
+                if (root.endsWith(".Statuses")) dirs.add(root); else findDirs(tree, root, 0, dirs);
+                res.put("dirs", dirs.size());
+                res.put("picked", root.replace("primary:", ""));
+                for (String d : dirs) listDir(tree, d, out);
+                res.put("items", out);
+            } catch (Exception e) {
+                try { res.put("items", out); res.put("err", String.valueOf(e.getMessage())); } catch (Exception ignored) { }
+            }
+            return res.toString();
         }
 
         @JavascriptInterface

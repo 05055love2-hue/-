@@ -22,6 +22,10 @@ jobs:
           cp app/src/main/assets/earth.jpg app/src/main/assets/lights.png sayarati/src/main/assets/
           ls -la app/src/main/assets
 
+      - name: Arabic fonts for watsy cards
+        continue-on-error: true
+        run: python3 updates/fetch_fonts.py watsy/src/main/assets
+
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
