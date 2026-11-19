@@ -53,6 +53,7 @@ jobs:
           cp sayarati/build/outputs/apk/debug/sayarati-debug.apk sayarati.apk
           cp widgety/build/outputs/apk/debug/widgety-debug.apk widgety.apk
           cp tamarini/build/outputs/apk/debug/tamarini-debug.apk tamarini.apk
+          cp qisas/build/outputs/apk/debug/qisas-debug.apk qisas.apk
           python3 updates/make_versions.py
 
       - name: Hammil engine info
@@ -86,6 +87,7 @@ jobs:
             sayarati.apk
             widgety.apk
             tamarini.apk
+            qisas.apk
             versions.json
           make_latest: true
 
