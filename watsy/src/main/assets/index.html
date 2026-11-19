@@ -158,6 +158,12 @@ nav button.on i{filter:none;opacity:1}
     <button class="btn" id="mAllow">تفعيل حفظ الرسائل</button>
   </div>
   <div id="mYes" style="display:none">
+    <div class="card" id="mHidden" style="display:none;border-color:rgba(255,155,106,.45)">
+      <h3>⚠️ الواتساب مخبّي كلام الرسائل</h3>
+      <p>الواتساب يرسل «رسالة جديدة» بس بدون الكلام، عشان كذا ما يقدر واتسي يحفظه. صلّحها مرة وحدة:</p>
+      <p style="margin-top:8px;color:var(--text)">١- افتح <b>الواتساب</b> ← <b>الإعدادات</b> ← <b>الإشعارات</b> ← فعّل <b>«إظهار المعاينة»</b>.<br>٢- لو قافل الواتساب بالبصمة: <b>الإعدادات</b> ← <b>الخصوصية</b> ← <b>قفل التطبيق</b> ← فعّل <b>«إظهار المحتوى في الإشعارات»</b>.</p>
+      <p style="margin-top:8px">بعدها أي رسالة توصلك بتنحفظ بكلامها هنا.</p>
+    </div>
     <div id="mList"></div>
     <div id="mChat" style="display:none">
       <div class="bar"><button id="mBack">→ رجوع</button><b id="mName"></b></div>
@@ -400,6 +406,7 @@ function loadMsgs(){
   try { all = JSON.parse(N.messages()); } catch(e){}
   groups = {};
   all.forEach(m => (groups[m.c] = groups[m.c] || []).push(m));
+  $('#mHidden').style.display = (N.previewHidden && N.previewHidden()) ? '' : 'none';
   if ($('#mChat').style.display === 'none') showList(); else openChat($('#mName').textContent);
 }
 function showList(){

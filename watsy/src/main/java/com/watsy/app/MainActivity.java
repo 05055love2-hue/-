@@ -293,7 +293,15 @@ public class MainActivity extends Activity {
         }
 
         @JavascriptInterface
-        public String messages() { return MsgService.load(MainActivity.this).toString(); }
+        public String messages() { return MsgService.clean(MainActivity.this).toString(); }
+
+        /** هل وصلت رسائل من الواتساب بدون نص؟ (معناها المعاينة مقفلة في الواتساب) */
+        @JavascriptInterface
+        public boolean previewHidden() {
+            long h = Math.max(MsgService.hidden, prefs.getLong("hidden", 0));
+            if (MsgService.hidden > prefs.getLong("hidden", 0)) prefs.edit().putLong("hidden", MsgService.hidden).apply();
+            return System.currentTimeMillis() - h < 3L * 24 * 3600 * 1000;
+        }
 
         @JavascriptInterface
         public void clearMessages() { MsgService.clear(MainActivity.this); }

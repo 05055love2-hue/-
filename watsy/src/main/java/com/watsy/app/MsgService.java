@@ -52,17 +52,44 @@ public class MsgService extends NotificationListenerService {
     }
 
     static void put(JSONArray a, String chat, String from, String text, long t) throws Exception {
-        if (text.isEmpty() || junk(text)) return;
+        if (text.isEmpty()) return;
+        if (junk(text) || appName(chat)) {
+            String l = norm(text);
+            if (appName(chat) && !l.toLowerCase().contains("check") && !l.contains("التحقق")) hidden = System.currentTimeMillis();
+            return;
+        }
         String c = chat.replaceAll("\\s*\\(\\d+.*\\)$", "").trim();
         JSONObject o = new JSONObject();
         o.put("c", c); o.put("f", from); o.put("m", text); o.put("t", t);
         a.put(o);
     }
 
+    /** آخر مرة وصل إشعار من الواتساب بدون نص الرسالة (المعاينة مقفلة) */
+    static volatile long hidden = 0;
+
+    /** ينظّف النص من العلامات المخفية ويحوّل الأرقام العربية */
+    static String norm(String s) {
+        StringBuilder b = new StringBuilder();
+        for (char ch : s.toCharArray()) {
+            if (ch == '\u200e' || ch == '\u200f' || ch == '\u202a' || ch == '\u202b' || ch == '\u202c' || ch == '\u2066' || ch == '\u2067' || ch == '\u2068' || ch == '\u2069') continue;
+            if (ch >= '\u0660' && ch <= '\u0669') ch = (char) ('0' + ch - '\u0660');
+            if (ch >= '\u06f0' && ch <= '\u06f9') ch = (char) ('0' + ch - '\u06f0');
+            if (ch == '\u00a0' || ch == '\u202f') ch = ' ';
+            b.append(ch);
+        }
+        return b.toString().trim();
+    }
+
+    static boolean appName(String chat) {
+        String c = norm(chat).toLowerCase();
+        return c.equals("whatsapp") || c.equals("واتساب") || c.equals("واتس اب") || c.equals("whatsapp business") || c.equals("واتساب للأعمال") || c.equals("واتساب للاعمال");
+    }
+
     static boolean junk(String s) {
-        String l = s.toLowerCase();
-        return l.matches("^\\d+ (new )?messages?.*") || l.contains("checking for new messages")
-            || s.matches("^\\d+ رسائل.*") || s.matches("^\\d+ رسالة.*") || s.contains("رسائل جديدة");
+        String l = norm(s).toLowerCase();
+        return l.matches("^\\d+ (new )?messages?.*") || l.matches(".*\\d+ chats?.*") || l.contains("checking for new messages")
+            || l.contains("new message") || l.contains("رسالة جديدة") || l.contains("رسائل جديدة") || l.contains("رسالتان جديدتان")
+            || l.contains("جارٍ التحقق") || l.contains("جار التحقق") || l.contains("من المحادثات") || l.matches("^\\d+ رسائل.*") || l.matches("^\\d+ رسالة.*");
     }
 
     static String str(CharSequence c) { return c == null ? "" : c.toString().trim(); }
@@ -104,6 +131,17 @@ public class MsgService extends NotificationListenerService {
             }
             try (FileOutputStream os = new FileOutputStream(file(c))) { os.write(out.toString().getBytes(StandardCharsets.UTF_8)); }
         }
+    }
+
+    /** الرسائل للعرض، بدون الإشعارات اللي ما فيها كلام */
+    static JSONArray clean(android.content.Context c) {
+        JSONArray all = load(c), out = new JSONArray();
+        for (int i = 0; i < all.length(); i++) {
+            JSONObject o = all.optJSONObject(i);
+            if (o == null || junk(o.optString("m")) || appName(o.optString("c"))) continue;
+            out.put(o);
+        }
+        return out;
     }
 
     static void clear(android.content.Context c) {
