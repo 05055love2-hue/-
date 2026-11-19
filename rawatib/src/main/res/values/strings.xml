@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="widget_desc">أقرب صرف وكم يوم باقي على الراتب وحساب المواطن والضمان</string>
-    <string name="widget_small_desc">مربع صغير: كم يوم باقي على أقرب صرف</string>
-    <string name="widget_strip_desc">شريط: الراتب وحساب المواطن والضمان جنب بعض</string>
-</resources>
