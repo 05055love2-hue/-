@@ -81,6 +81,31 @@ togglePlay = () => Y.toggle();
 nextTrack = () => Y.seek(10);
 prevTrack = () => Y.seek(-10);
 let last = '';
+
+/* ── ضبط الواجهة على أي شاشة: نرسمها بارتفاع ثابت ونكبّرها/نصغّرها لين تعبّي الشاشة بالضبط ── */
+const SIZES = {auto: 720, big: 620, mid: 720, small: 820};
+function uiBase(){ try { return SIZES[localStorage.uiSize || 'auto'] || 720; } catch(e){ return 720; } }
+const fitCss = document.createElement('style'); document.head.appendChild(fitCss);
+function fit(){
+  const H0 = uiBase(), s = innerHeight / H0, W = innerWidth / s;
+  fitCss.textContent = `html{overflow:hidden;background:#0a0e1a}
+  body{width:${W}px!important;height:${H0}px!important;transform:scale(${s});transform-origin:0 0;position:absolute!important;left:0;top:0;right:auto}
+  .h-screen{height:${H0}px!important}.w-screen{width:${W}px!important}`;
+  last = '';
+}
+addEventListener('resize', fit);
+fit();
+
+/* حجم الواجهة من إعدادات الشاشة */
+if (typeof pDisp === 'function') {
+  const _pDisp = pDisp;
+  pDisp = function(){
+    const cur = (() => { try { return localStorage.uiSize || 'auto'; } catch(e){ return 'auto'; } })();
+    const b = (v, n) => `<button onclick="setUiSize('${v}')" style="flex:1;height:44px;border-radius:12px;border:1px solid ${cur===v?'#4f8cff':'rgba(255,255,255,.1)'};background:${cur===v?'rgba(79,140,255,.18)':'rgba(255,255,255,.05)'};color:${cur===v?'#4f8cff':'#e8eaf0'};font-weight:700;font-size:14px">${n}</button>`;
+    return `<div class="glass-sm p-4" style="margin-bottom:14px"><div style="font-weight:700;font-size:15px;margin-bottom:4px">📐 حجم الواجهة على الشاشة</div><div class="mu" style="font-size:12px;margin-bottom:10px">لو شي طالع برا الشاشة اختر «صغير»، ولو الكلام صغير اختر «كبير»</div><div style="display:flex;gap:8px">${b('small','صغير')}${b('auto','تلقائي')}${b('big','كبير')}</div></div>` + _pDisp.apply(this, arguments);
+  };
+}
+window.setUiSize = v => { try { localStorage.uiSize = v; } catch(e){} fit(); if (typeof stTab === 'function') { const t = document.querySelector('#st-tabs .tb.active'); if (t) stTab(t, 'display'); } };
 function placeYt(){
   const a = ytArea();
   const blocked = !a || document.hidden || $('#page-overlay.show') || $('#app-modal.show');
@@ -92,7 +117,7 @@ function placeYt(){
   if (key !== last) { Y.show('yt', k[0], k[1], k[2], k[3]); last = key; }
 }
 setInterval(placeYt, 300);
-addEventListener('resize', () => { last = ''; placeYt(); });
+addEventListener('resize', () => { last = ''; setTimeout(placeYt, 60); });
 
 /* ── السرعة من الـGPS ── */
 simSpeed = () => {}; simRPM = () => {};
