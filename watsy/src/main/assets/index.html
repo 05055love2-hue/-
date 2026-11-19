@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>واتسي</title>
+<style>
+:root{--bg:#0b1512;--card:#13211c;--card2:#1b2e27;--line:rgba(255,255,255,.08);--text:#eef5f1;--soft:#9fb5ac;--acc:#25d366;--acc2:#128c5e;--del:#ff9b6a}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,'Segoe UI',Tahoma,sans-serif;-webkit-font-smoothing:antialiased}
+body{padding-bottom:90px;min-height:100vh}
+button,input,textarea,select{font-family:inherit}
+button{cursor:pointer}
+.top{padding:22px 18px 6px}
+.top small{color:var(--soft);font-size:14px}
+.top h1{margin:2px 0 0;font-size:27px;font-weight:800}
+.page{display:none;padding:8px 16px}
+.page.on{display:block;animation:fade .2s ease}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;margin-bottom:12px}
+.card h3{margin:0 0 4px;font-size:17px}
+.card p{margin:0;color:var(--soft);font-size:14px;line-height:1.8}
+label.l{display:block;font-size:14px;color:var(--soft);margin:12px 0 6px;font-weight:700}
+.in{width:100%;background:var(--card2);border:1px solid var(--line);color:var(--text);border-radius:14px;padding:13px 14px;font-size:17px;outline:none}
+.in:focus{border-color:var(--acc2)}
+textarea.in{min-height:90px;resize:none;line-height:1.7}
+.row{display:flex;gap:8px}
+.row select.in{flex:0 0 118px;padding:13px 8px;font-size:15px}
+.row input.in{flex:1;direction:ltr;text-align:left;letter-spacing:1px}
+.btn{width:100%;border:0;border-radius:16px;padding:15px;font-size:17px;font-weight:800;background:var(--acc);color:#062b16;margin-top:14px}
+.btn.alt{background:var(--card2);color:var(--text);border:1px solid var(--line)}
+.btn:active,.chip:active,.mini:active{transform:scale(.97)}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:2px 0 12px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1px solid var(--line);background:var(--card);color:var(--soft);border-radius:20px;padding:9px 15px;font-size:14px;font-weight:700}
+.chip.on{background:var(--acc2);border-color:var(--acc2);color:#fff}
+.recent{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.recent button{background:var(--card2);border:1px solid var(--line);color:var(--text);border-radius:12px;padding:8px 12px;font-size:14px;direction:ltr}
+.empty{text-align:center;color:var(--soft);padding:34px 10px;font-size:15px;line-height:1.9}
+.big{font-size:44px;display:block;margin-bottom:6px}
+/* الزخرفة */
+.fx{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:12px 14px;margin-bottom:10px;display:flex;align-items:center;gap:10px}
+.fx .t{flex:1;font-size:19px;line-height:1.8;word-break:break-word;min-width:0}
+.fx .n{display:block;font-size:12px;color:var(--soft);margin-bottom:2px}
+.mini{flex:none;border:0;border-radius:12px;width:44px;height:44px;background:var(--card2);color:var(--text);font-size:18px}
+.mini.wa{background:var(--acc);color:#062b16}
+/* الحالات */
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.tile{position:relative;aspect-ratio:9/14;border-radius:14px;overflow:hidden;background:var(--card2);border:0;padding:0}
+.tile img{width:100%;height:100%;object-fit:cover;display:block}
+.tile .vd{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;color:#fff;font-size:13px;font-weight:700;background:linear-gradient(#1b2e27,#0f1f19)}
+.tile .vd i{font-style:normal;font-size:34px}
+.sheet{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9;display:none;flex-direction:column}
+.sheet.show{display:flex}
+.sheet .view{flex:1;display:flex;align-items:center;justify-content:center;padding:16px;min-height:0}
+.sheet .view img{max-width:100%;max-height:100%;border-radius:14px}
+.sheet .acts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px 14px 22px}
+.sheet .acts button{border:0;border-radius:14px;padding:14px 6px;font-size:15px;font-weight:800;background:var(--card2);color:var(--text)}
+.sheet .acts .wa{background:var(--acc);color:#062b16}
+.sheet .x{position:absolute;top:14px;left:14px;width:44px;height:44px;border-radius:22px;border:0;background:rgba(255,255,255,.15);color:#fff;font-size:20px}
+/* الرسائل */
+.who{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:12px 14px;margin-bottom:8px;width:100%;color:var(--text);text-align:right}
+.av{width:46px;height:46px;border-radius:15px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:19px;color:#fff;flex:none}
+.who .m{flex:1;min-width:0}
+.who b{display:block;font-size:16px}
+.who span{display:block;color:var(--soft);font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.who em{font-style:normal;color:var(--soft);font-size:12px;flex:none}
+.bub{background:var(--card);border:1px solid var(--line);border-radius:18px 18px 18px 6px;padding:10px 14px;margin-bottom:8px;max-width:88%}
+.bub .f{font-size:12.5px;color:var(--acc);font-weight:800;margin-bottom:2px}
+.bub .x{font-size:16px;line-height:1.7;white-space:pre-wrap;word-break:break-word}
+.bub .tm{font-size:11.5px;color:var(--soft);margin-top:4px}
+.bar{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.bar button{background:var(--card);border:1px solid var(--line);color:var(--text);border-radius:12px;padding:9px 14px;font-size:15px;font-weight:700}
+.bar b{font-size:18px;flex:1}
+.note{background:rgba(255,155,106,.1);border:1px solid rgba(255,155,106,.3);color:#ffc7a8;border-radius:14px;padding:10px 12px;font-size:13.5px;line-height:1.8;margin-bottom:12px}
+/* البطاقات */
+canvas{width:100%;border-radius:18px;display:block;margin-bottom:12px;background:var(--card2)}
+.btns2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.btns2 .btn{margin-top:0}
+/* الشريط */
+nav{position:fixed;bottom:0;left:0;right:0;display:grid;grid-template-columns:repeat(5,1fr);background:rgba(11,21,18,.96);backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:8px 4px 12px;z-index:5}
+nav button{background:none;border:0;color:var(--soft);display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11.5px;font-weight:700;padding:4px 0;min-height:48px}
+nav button i{font-style:normal;font-size:21px;filter:grayscale(1);opacity:.65}
+nav button.on{color:var(--acc)}
+nav button.on i{filter:none;opacity:1}
+.credit{text-align:center;color:#6b8078;font-size:12px;margin:22px 0 4px}
+.upd{display:block;margin:6px auto 0;background:none;border:1px solid var(--line);color:var(--soft);border-radius:12px;padding:7px 14px;font-size:12.5px}
+</style>
+</head>
+<body>
+
+<div class="top"><small id="sub">أدوات الواتساب في مكان واحد</small><h1 id="ttl">مراسلة سريعة</h1></div>
+
+<!-- ١) مراسلة رقم بدون حفظه -->
+<section class="page on" id="p-send">
+  <div class="card">
+    <h3>كلّم أي رقم بدون ما تحفظه</h3>
+    <p>اكتب الرقم واضغط الزر، ويفتح لك الواتساب على المحادثة مباشرة.</p>
+    <label class="l" for="num">رقم الجوال</label>
+    <div class="row">
+      <select class="in" id="cc" aria-label="مفتاح الدولة">
+        <option value="966">🇸🇦 966+</option><option value="971">🇦🇪 971+</option><option value="965">🇰🇼 965+</option>
+        <option value="974">🇶🇦 974+</option><option value="973">🇧🇭 973+</option><option value="968">🇴🇲 968+</option>
+        <option value="967">🇾🇪 967+</option><option value="962">🇯🇴 962+</option><option value="20">🇪🇬 20+</option>
+        <option value="249">🇸🇩 249+</option><option value="963">🇸🇾 963+</option><option value="961">🇱🇧 961+</option>
+        <option value="964">🇮🇶 964+</option><option value="212">🇲🇦 212+</option><option value="216">🇹🇳 216+</option>
+        <option value="213">🇩🇿 213+</option><option value="92">🇵🇰 92+</option><option value="91">🇮🇳 91+</option>
+        <option value="63">🇵🇭 63+</option><option value="880">🇧🇩 880+</option><option value="1">🇺🇸 1+</option><option value="44">🇬🇧 44+</option>
+      </select>
+      <input class="in" id="num" type="tel" inputmode="tel" placeholder="05xxxxxxxx">
+    </div>
+    <label class="l" for="msg">رسالة (اختياري)</label>
+    <textarea class="in" id="msg" placeholder="اكتب رسالتك هنا..."></textarea>
+    <button class="btn" id="go">افتح المحادثة في الواتساب</button>
+  </div>
+  <div class="card" id="recentBox" style="display:none">
+    <h3>آخر الأرقام</h3>
+    <div class="recent" id="recent"></div>
+  </div>
+</section>
+
+<!-- ٢) الحالات -->
+<section class="page" id="p-status">
+  <div id="stNo" class="card" style="text-align:center">
+    <span class="big">📥</span>
+    <h3>احفظ حالات أصحابك</h3>
+    <p>أول مرة بس: اضغط الزر، وبيفتح لك مجلد الحالات، اضغط تحت <b>«استخدام هذا المجلد»</b> ثم <b>«سماح»</b>.</p>
+    <button class="btn" id="stPick">السماح بقراءة الحالات</button>
+  </div>
+  <div id="stYes" style="display:none">
+    <div class="chips"><button class="chip on" data-st="all">الكل</button><button class="chip" data-st="img">الصور</button><button class="chip" data-st="vid">المقاطع</button></div>
+    <div class="grid" id="stGrid"></div>
+    <div class="empty" id="stEmpty" style="display:none"><span class="big">👀</span>ما فيه حالات الحين.<br>افتح الواتساب وشوف حالات أصحابك، وارجع هنا.</div>
+  </div>
+</section>
+
+<!-- ٣) الزخرفة -->
+<section class="page" id="p-fx">
+  <input class="in" id="fxIn" placeholder="اكتب اسمك أو أي كلمة..." style="margin-bottom:12px">
+  <div id="fxList"></div>
+</section>
+
+<!-- ٤) الرسائل المحذوفة -->
+<section class="page" id="p-msg">
+  <div id="mNo" class="card" style="text-align:center">
+    <span class="big">🗑️</span>
+    <h3>شوف الرسائل حتى لو انحذفت</h3>
+    <p>التطبيق يحفظ رسائل الواتساب أول ما توصلك، فلو الشخص حذفها تبقى عندك هنا.<br>فعّل «واتسي» في الصفحة اللي بتفتح وارجع.</p>
+    <button class="btn" id="mAllow">تفعيل حفظ الرسائل</button>
+  </div>
+  <div id="mYes" style="display:none">
+    <div id="mList"></div>
+    <div id="mChat" style="display:none">
+      <div class="bar"><button id="mBack">→ رجوع</button><b id="mName"></b></div>
+      <div id="mBubs"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ٥) البطاقات -->
+<section class="page" id="p-card">
+  <div class="chips" id="occ"></div>
+  <canvas id="cv" width="1080" height="1350"></canvas>
+  <label class="l" for="cName" style="margin-top:0">اسم الشخص (اختياري)</label>
+  <input class="in" id="cName" placeholder="مثلاً: أبو فهد">
+  <label class="l" for="cFrom">من (اختياري)</label>
+  <input class="in" id="cFrom" placeholder="مثلاً: أبو نواف">
+  <div class="chips" id="pal" style="margin-top:12px"></div>
+  <div class="btns2" style="margin-top:4px"><button class="btn" id="cWa">أرسل واتساب</button><button class="btn alt" id="cSave">حفظ بالمعرض</button></div>
+</section>
+
+<div class="credit">برمجة أبو نواف</div>
+<button class="upd" onclick="window.AppUpd&&AppUpd.check()">🔄 التحقق من التحديث</button>
+
+<div class="sheet" id="sheet">
+  <button class="x" id="shX" aria-label="إغلاق">✕</button>
+  <div class="view" id="shView"></div>
+  <div class="acts"><button class="wa" id="shWa">واتساب</button><button id="shSave">حفظ</button><button id="shShare">مشاركة</button></div>
+</div>
+
+<nav>
+  <button class="on" data-p="send"><i>💬</i>مراسلة</button>
+  <button data-p="status"><i>📥</i>الحالات</button>
+  <button data-p="fx"><i>✨</i>زخرفة</button>
+  <button data-p="msg"><i>🗑️</i>المحذوفة</button>
+  <button data-p="card"><i>💌</i>بطاقات</button>
+</nav>
+
+<script>
+const N = window.Native || {chat(n,t){open('https://wa.me/'+n)},copy(){},sendText(){},msgAccess(){return true},openMsgAccess(){},messages(){return JSON.stringify(demoMsgs())},clearMessages(){},statusAccess(){return false},pickStatus(){},statuses(){return '[]'},saveStatus(){},shareStatus(){},viewStatus(){},card(){}};
+const $ = s => document.querySelector(s);
+const $$ = s => document.querySelectorAll(s);
+const titles = {send:'مراسلة سريعة', status:'حفظ الحالات', fx:'زخرفة الكلام', msg:'الرسائل المحذوفة', card:'بطاقات التهنئة'};
+let cur = 'send';
+
+function go(p){
+  cur = p;
+  $$('.page').forEach(e => e.classList.toggle('on', e.id === 'p-' + p));
+  $$('nav button').forEach(b => b.classList.toggle('on', b.dataset.p === p));
+  $('#ttl').textContent = titles[p];
+  scrollTo(0,0);
+  if (p === 'status') loadStatus();
+  if (p === 'msg') loadMsgs();
+  if (p === 'card') drawCard();
+}
+$$('nav button').forEach(b => b.onclick = () => go(b.dataset.p));
+window.goBack = () => {
+  if ($('#sheet').classList.contains('show')) { closeSheet(); return true; }
+  if (cur === 'msg' && $('#mChat').style.display !== 'none') { showList(); return true; }
+  if (cur !== 'send') { go('send'); return true; }
+  return false;
+};
+window.onAppResume = () => { if (cur === 'msg') loadMsgs(); if (cur === 'status') loadStatus(); };
+
+/* ───── ١) مراسلة ───── */
+function cleanNum(){
+  let n = $('#num').value.replace(/[^\d+]/g, '');
+  const cc = $('#cc').value;
+  if (n.startsWith('+')) return n.slice(1);
+  if (n.startsWith('00')) return n.slice(2);
+  if (n.startsWith(cc) && n.length > 10) return n;
+  n = n.replace(/^0+/, '');
+  return cc + n;
+}
+function recent(){ try { return JSON.parse(localStorage.recent || '[]'); } catch(e){ return []; } }
+function showRecent(){
+  const r = recent();
+  $('#recentBox').style.display = r.length ? '' : 'none';
+  $('#recent').innerHTML = '';
+  r.forEach(n => { const b = document.createElement('button'); b.textContent = '+' + n; b.onclick = () => N.chat(n, $('#msg').value.trim()); $('#recent').appendChild(b); });
+}
+$('#go').onclick = () => {
+  const raw = $('#num').value.replace(/\D/g, '');
+  if (raw.length < 6) { $('#num').focus(); $('#num').style.borderColor = '#ff9b6a'; return; }
+  $('#num').style.borderColor = '';
+  const n = cleanNum();
+  const r = recent().filter(x => x !== n); r.unshift(n);
+  try { localStorage.recent = JSON.stringify(r.slice(0, 8)); } catch(e){}
+  showRecent();
+  N.chat(n, $('#msg').value.trim());
+};
+try { if (localStorage.cc) $('#cc').value = localStorage.cc; } catch(e){}
+$('#cc').onchange = () => { try { localStorage.cc = $('#cc').value; } catch(e){} };
+showRecent();
+
+/* ───── ٢) الحالات ───── */
+let stFilter = 'all', stItems = [], stCur = null;
+$('#stPick').onclick = () => N.pickStatus();
+window.onStatusReady = () => loadStatus();
+$$('[data-st]').forEach(b => b.onclick = () => { stFilter = b.dataset.st; $$('[data-st]').forEach(x => x.classList.toggle('on', x === b)); renderStatus(); });
+function loadStatus(){
+  const ok = N.statusAccess();
+  $('#stNo').style.display = ok ? 'none' : '';
+  $('#stYes').style.display = ok ? '' : 'none';
+  if (!ok) return;
+  try { stItems = JSON.parse(N.statuses()); } catch(e){ stItems = []; }
+  stItems.sort((a,b) => b.t - a.t);
+  renderStatus();
+}
+function renderStatus(){
+  const g = $('#stGrid'); g.innerHTML = '';
+  const list = stItems.filter(s => stFilter === 'all' || (stFilter === 'vid') === s.v);
+  $('#stEmpty').style.display = list.length ? 'none' : '';
+  list.forEach(s => {
+    const b = document.createElement('button'); b.className = 'tile';
+    b.setAttribute('aria-label', s.v ? 'مقطع' : 'صورة');
+    if (s.v) b.innerHTML = '<div class="vd"><i>▶️</i>مقطع</div>';
+    else { const im = document.createElement('img'); im.loading = 'lazy'; im.src = '/st?u=' + encodeURIComponent(s.u); b.appendChild(im); }
+    b.onclick = () => openSheet(s);
+    g.appendChild(b);
+  });
+}
+function openSheet(s){
+  stCur = s;
+  const v = $('#shView'); v.innerHTML = '';
+  if (s.v) {
+    v.innerHTML = '<button class="btn alt" style="width:auto;padding:16px 26px">▶️ تشغيل المقطع</button>';
+    v.firstChild.onclick = () => N.viewStatus(s.u, true);
+  } else { const im = document.createElement('img'); im.src = '/st?u=' + encodeURIComponent(s.u); v.appendChild(im); }
+  $('#sheet').classList.add('show');
+}
+function closeSheet(){ $('#sheet').classList.remove('show'); }
+$('#shX').onclick = closeSheet;
+$('#shSave').onclick = () => stCur && N.saveStatus(stCur.u, stCur.v);
+$('#shWa').onclick = () => stCur && N.shareStatus(stCur.u, stCur.v, true);
+$('#shShare').onclick = () => stCur && N.shareStatus(stCur.u, stCur.v, false);
+
+/* ───── ٣) الزخرفة ───── */
+const NOJOIN = 'اأإآدذرزوؤءةى';
+const AR = /[ء-ي]/;
+function stretch(t, k){
+  let o = '';
+  for (let i = 0; i < t.length; i++) {
+    const c = t[i], nx = t[i+1];
+    o += c;
+    if (AR.test(c) && nx && AR.test(nx) && !NOJOIN.includes(c) && c !== 'ء') o += 'ـ'.repeat(k);
+  }
+  return o;
+}
+function harakat(t){
+  const h = ['َ','ُ','ِ','ّ','ً','ْ'];
+  let o = '', i = 0;
+  for (const c of t) { o += c; if (AR.test(c)) o += h[(i++) % h.length]; }
+  return o;
+}
+function mapLat(t, A, a, d){
+  return [...t].map(c => {
+    const u = c.charCodeAt(0);
+    if (u >= 65 && u <= 90 && A) return String.fromCodePoint(A + u - 65);
+    if (u >= 97 && u <= 122 && a) return String.fromCodePoint(a + u - 97);
+    if (u >= 48 && u <= 57 && d) return String.fromCodePoint(d + u - 48);
+    return c;
+  }).join('');
+}
+function bubble(t){ return [...t].map(c => { const u=c.charCodeAt(0); if(u>=65&&u<=90) return String.fromCodePoint(0x24B6+u-65); if(u>=97&&u<=122) return String.fromCodePoint(0x24D0+u-97); return c; }).join(''); }
+const styles = [
+  ['مطوّل', t => stretch(t,1)],
+  ['مطوّل جداً', t => stretch(t,3)],
+  ['مشكّل', t => harakat(t)],
+  ['تاج', t => '꧁ ' + t + ' ꧂'],
+  ['نجوم', t => '★彡 ' + t + ' 彡★'],
+  ['ورد', t => '✿ ' + stretch(t,1) + ' ✿'],
+  ['قلوب', t => '♡ ' + t + ' ♡'],
+  ['ملكي', t => '⚜ ' + stretch(t,2) + ' ⚜'],
+  ['أقواس', t => '『 ' + t + ' 』'],
+  ['زخرفة', t => '༺ ' + stretch(t,1) + ' ༻'],
+  ['لمعة', t => '⋆｡˚ ' + t + ' ˚｡⋆'],
+  ['سهم', t => '➳ ' + t + ' ❥'],
+  ['English عريض', t => mapLat(t, 0x1D400, 0x1D41A, 0x1D7CE)],
+  ['English مزخرف', t => mapLat(t, 0x1D4D0, 0x1D4EA, 0)],
+  ['English مفرّغ', t => mapLat(t, 0x1D538, 0x1D552, 0x1D7D8)],
+  ['English دوائر', t => bubble(t)],
+  ['English مائل', t => mapLat(t, 0x1D468, 0x1D482, 0)]
+];
+function renderFx(){
+  const t = $('#fxIn').value.trim() || 'أبو نواف';
+  const box = $('#fxList'); box.innerHTML = '';
+  styles.forEach(([name, f]) => {
+    let r = f(t);
+    if (name.startsWith('English') && !/[A-Za-z0-9]/.test(t)) return;
+    const d = document.createElement('div'); d.className = 'fx';
+    d.innerHTML = '<div class="t"><span class="n"></span><span class="v"></span></div><button class="mini" aria-label="نسخ">📋</button><button class="mini wa" aria-label="إرسال واتساب">↗</button>';
+    d.querySelector('.n').textContent = name;
+    d.querySelector('.v').textContent = r;
+    const [c, w] = d.querySelectorAll('button');
+    c.onclick = () => N.copy(r);
+    w.onclick = () => N.sendText(r);
+    box.appendChild(d);
+  });
+}
+$('#fxIn').oninput = renderFx;
+renderFx();
+
+/* ───── ٤) الرسائل المحذوفة ───── */
+const COLORS = ['#128c5e','#2f6bd6','#b5367a','#c2541a','#6b3fc4','#0e8a9a','#a07a10'];
+let groups = {};
+$('#mAllow').onclick = () => N.openMsgAccess();
+$('#mBack').onclick = () => showList();
+function when(t){
+  const d = new Date(t), now = new Date();
+  const hm = d.toLocaleTimeString('ar', {hour:'numeric', minute:'2-digit'});
+  if (d.toDateString() === now.toDateString()) return hm;
+  return d.toLocaleDateString('ar', {day:'numeric', month:'short'}) + ' ' + hm;
+}
+function loadMsgs(){
+  const ok = N.msgAccess();
+  $('#mNo').style.display = ok ? 'none' : '';
+  $('#mYes').style.display = ok ? '' : 'none';
+  if (!ok) return;
+  let all = [];
+  try { all = JSON.parse(N.messages()); } catch(e){}
+  groups = {};
+  all.forEach(m => (groups[m.c] = groups[m.c] || []).push(m));
+  if ($('#mChat').style.display === 'none') showList(); else openChat($('#mName').textContent);
+}
+function showList(){
+  $('#mChat').style.display = 'none';
+  const box = $('#mList'); box.style.display = ''; box.innerHTML = '';
+  const names = Object.keys(groups).sort((a,b) => groups[b].at(-1).t - groups[a].at(-1).t);
+  if (!names.length) {
+    box.innerHTML = '<div class="empty"><span class="big">✅</span>شغّال! أول ما توصلك رسالة واتساب بتنحفظ هنا.<br>حتى لو انحذفت بعدين، تبقى عندك.</div>';
+    return;
+  }
+  box.innerHTML = '<div class="note">أي رسالة توصلك تنحفظ هنا. لو شفت «تم حذف هذه الرسالة» في الواتساب، تلقى الرسالة الأصلية هنا 👌</div>';
+  names.forEach((n, i) => {
+    const last = groups[n].at(-1);
+    const b = document.createElement('button'); b.className = 'who';
+    b.innerHTML = '<div class="av"></div><div class="m"><b></b><span></span></div><em></em>';
+    b.querySelector('.av').textContent = [...n.replace(/[^\p{L}]/gu,'')][0] || '؟';
+    b.querySelector('.av').style.background = COLORS[[...n].reduce((s,c)=>s+c.charCodeAt(0),0) % COLORS.length];
+    b.querySelector('b').textContent = n;
+    b.querySelector('span').textContent = (last.f && last.f !== n ? last.f + ': ' : '') + last.m;
+    b.querySelector('em').textContent = when(last.t);
+    b.onclick = () => openChat(n);
+    box.appendChild(b);
+  });
+  const clr = document.createElement('button'); clr.className = 'btn alt'; clr.textContent = 'مسح كل الرسائل المحفوظة';
+  clr.onclick = () => { if (confirmClear()) { N.clearMessages(); loadMsgs(); } };
+  box.appendChild(clr);
+}
+let clearArm = 0;
+function confirmClear(){
+  if (Date.now() - clearArm < 3000) return true;
+  clearArm = Date.now();
+  const b = $('#mList .btn.alt'); if (b) b.textContent = 'اضغط مرة ثانية للتأكيد';
+  return false;
+}
+function openChat(n){
+  $('#mList').style.display = 'none'; $('#mChat').style.display = '';
+  $('#mName').textContent = n;
+  const box = $('#mBubs'); box.innerHTML = '';
+  (groups[n] || []).forEach(m => {
+    const d = document.createElement('div'); d.className = 'bub';
+    d.innerHTML = (m.f && m.f !== n ? '<div class="f"></div>' : '') + '<div class="x"></div><div class="tm"></div>';
+    if (m.f && m.f !== n) d.querySelector('.f').textContent = m.f;
+    d.querySelector('.x').textContent = m.m;
+    d.querySelector('.tm').textContent = when(m.t);
+    d.onclick = () => N.copy(m.m);
+    box.appendChild(d);
+  });
+  scrollTo(0, document.body.scrollHeight);
+}
+function demoMsgs(){ const t = Date.now(); return [{c:'أبو فهد',f:'',m:'وصلت الرياض، أكلمك بعد شوي',t:t-600000},{c:'قروب العائلة',f:'أم نواف',m:'لا تنسون عشاء الخميس',t:t-300000}]; }
+
+/* ───── ٥) البطاقات ───── */
+const OCC = [
+  {k:'eid', n:'عيد', t:'عيدكم مبارك', s:'كل عام وأنتم بخير\nوعساكم من عوّاده', e:'🌙'},
+  {k:'ramadan', n:'رمضان', t:'رمضان كريم', s:'تقبّل الله منا ومنكم\nصالح الأعمال', e:'🏮'},
+  {k:'wed', n:'زواج', t:'ألف مبروك', s:'بارك الله لكما وبارك عليكما\nوجمع بينكما في خير', e:'💍'},
+  {k:'baby', n:'مولود', t:'مبروك المولود', s:'بورك لك في الموهوب\nوشكرت الواهب', e:'👶'},
+  {k:'grad', n:'تخرّج', t:'مبروك التخرّج', s:'فرحتك فرحتنا\nوعقبال أعلى المراتب', e:'🎓'},
+  {k:'jumua', n:'جمعة', t:'جمعة مباركة', s:'اللهم صلِّ وسلم\nعلى نبينا محمد', e:'🕌'},
+  {k:'heal', n:'شفاء', t:'طهور إن شاء الله', s:'أسأل الله العظيم رب العرش العظيم\nأن يشفيك', e:'🤲'},
+  {k:'new', n:'منزل جديد', t:'مبروك البيت', s:'الله يجعله دار خير وبركة\nوسعادة', e:'🏡'}
+];
+const PAL = [
+  {n:'زمردي', bg:'#0f3d2e', bg2:'#155c45', ink:'#ffffff', gold:'#e9c46a'},
+  {n:'كحلي', bg:'#13213f', bg2:'#22386b', ink:'#ffffff', gold:'#f2c86b'},
+  {n:'عنابي', bg:'#4a1426', bg2:'#7a2240', ink:'#ffffff', gold:'#f0c27a'},
+  {n:'وردي', bg:'#fde4ec', bg2:'#f7c3d4', ink:'#5a1a33', gold:'#c2457a'},
+  {n:'رملي', bg:'#f6ecd9', bg2:'#ead7b3', ink:'#4a3516', gold:'#a8742a'},
+  {n:'أسود', bg:'#111111', bg2:'#262626', ink:'#ffffff', gold:'#d4af37'}
+];
+let occ = OCC[0], pal = PAL[0];
+OCC.forEach((o, i) => { const b = document.createElement('button'); b.className = 'chip' + (i ? '' : ' on'); b.textContent = o.e + ' ' + o.n; b.onclick = () => { occ = o; $$('#occ .chip').forEach(x => x.classList.toggle('on', x === b)); drawCard(); }; $('#occ').appendChild(b); });
+PAL.forEach((p, i) => { const b = document.createElement('button'); b.className = 'chip' + (i ? '' : ' on'); b.innerHTML = '<span style="display:inline-block;width:12px;height:12px;border-radius:6px;vertical-align:middle;margin-left:6px;background:' + p.bg2 + ';border:1px solid ' + p.gold + '"></span>' + p.n; b.onclick = () => { pal = p; $$('#pal .chip').forEach(x => x.classList.toggle('on', x === b)); drawCard(); }; $('#pal').appendChild(b); });
+$('#cName').oninput = drawCard; $('#cFrom').oninput = drawCard;
+
+function drawCard(){
+  const c = $('#cv'), x = c.getContext('2d'), W = c.width, H = c.height;
+  x.direction = 'rtl'; x.textAlign = 'center'; x.textBaseline = 'middle';
+  const g = x.createLinearGradient(0, 0, 0, H); g.addColorStop(0, pal.bg2); g.addColorStop(1, pal.bg);
+  x.fillStyle = g; x.fillRect(0, 0, W, H);
+  // نقوش
+  x.save(); x.globalAlpha = .1; x.strokeStyle = pal.gold; x.lineWidth = 2;
+  for (let r = 120; r < 1100; r += 70) { x.beginPath(); x.arc(W/2, -120, r, 0, Math.PI*2); x.stroke(); }
+  x.restore();
+  // إطار
+  x.strokeStyle = pal.gold; x.lineWidth = 6; rr(x, 50, 50, W-100, H-100, 40); x.stroke();
+  x.lineWidth = 2; rr(x, 74, 74, W-148, H-148, 28); x.stroke();
+  // زوايا
+  x.fillStyle = pal.gold; x.font = '60px serif';
+  [[110,110],[W-110,110],[110,H-110],[W-110,H-110]].forEach(([a,b]) => x.fillText('✦', a, b));
+  // الرمز
+  x.font = '170px sans-serif'; x.fillText(occ.e, W/2, 330);
+  // العنوان
+  x.fillStyle = pal.gold; x.font = 'bold 128px "Noto Naskh Arabic", "Noto Sans Arabic", serif';
+  x.fillText(occ.t, W/2, 560);
+  x.fillRect(W/2-120, 650, 240, 5);
+  // الاسم
+  const name = $('#cName').value.trim();
+  x.fillStyle = pal.ink;
+  if (name) { x.font = 'bold 84px "Noto Naskh Arabic", "Noto Sans Arabic", serif'; x.fillText('إلى ' + name, W/2, 770); }
+  // النص
+  x.font = '58px "Noto Naskh Arabic", "Noto Sans Arabic", serif';
+  occ.s.split('\n').forEach((l, i) => x.fillText(l, W/2, (name ? 910 : 820) + i * 92));
+  // من
+  const from = $('#cFrom').value.trim();
+  if (from) { x.globalAlpha = .85; x.font = '54px "Noto Naskh Arabic", "Noto Sans Arabic", serif'; x.fillText('من: ' + from, W/2, H - 240); x.globalAlpha = 1; }
+  x.globalAlpha = .5; x.font = '30px sans-serif'; x.fillText('واتسي', W/2, H - 120); x.globalAlpha = 1;
+}
+function rr(x, a, b, w, h, r){ x.beginPath(); x.moveTo(a+r,b); x.arcTo(a+w,b,a+w,b+h,r); x.arcTo(a+w,b+h,a,b+h,r); x.arcTo(a,b+h,a,b,r); x.arcTo(a,b,a+w,b,r); x.closePath(); }
+$('#cWa').onclick = () => N.card($('#cv').toDataURL('image/png'), true);
+$('#cSave').onclick = () => N.card($('#cv').toDataURL('image/png'), false);
+</script>
+</body>
+</html>
