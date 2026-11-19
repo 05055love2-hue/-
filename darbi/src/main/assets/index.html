@@ -50,14 +50,25 @@ button{font-family:inherit;color:inherit;cursor:pointer}
 .wx{display:flex;align-items:center;gap:8px;margin-top:4px;font-size:17px;font-weight:700}
 .wx .tmp{font-family:Changa,sans-serif;font-size:22px;direction:ltr}
 .wx .city{color:var(--soft);font-size:15px}
-.ytc{display:flex;flex-direction:column}
-.ybar{height:58px;display:flex;align-items:center;gap:8px;padding:0 12px 0 14px;flex:none}
-.ybar b{font-size:19px;display:flex;align-items:center;gap:8px;margin-inline-end:auto}
-.ybar b svg{width:30px;height:30px;color:#ff4d4d}
-.ybar button{width:48px;height:44px;border-radius:14px;border:0;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center}
-.ybar button svg{width:24px;height:24px}
-.ybar button:active{transform:scale(.92)}
-#ytBox{flex:1;background:#000;display:flex;align-items:center;justify-content:center;color:#444;font-size:18px;margin:0 8px 8px;border-radius:0 0 22px 22px}
+.ytc{display:flex;flex-direction:column;padding:8px;gap:8px}
+.seg{display:flex;gap:6px;flex:none}
+.seg button{flex:1;height:44px;border-radius:14px;border:0;background:rgba(255,255,255,.06);color:var(--soft);font-size:16px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:6px}
+.seg button svg{width:20px;height:20px}
+.seg button.on{background:rgba(56,225,255,.16);color:var(--cy)}
+#ytBox{flex:1;background:#000;border-radius:16px;position:relative;overflow:hidden;min-height:0}
+#ytBox.apps{background:rgba(255,255,255,.03)}
+.sgrid{position:absolute;inset:0;display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:minmax(0,1fr);gap:6px;padding:10px;overflow-y:auto}
+.sgrid button{border:0;background:none;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;font-size:13.5px;font-weight:700;position:relative;min-height:96px}
+.sgrid button:active{background:rgba(255,255,255,.06)}
+.sgrid img{width:56px;height:56px}
+.sgrid span{max-width:100px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sgrid .add i{width:56px;height:56px;border-radius:18px;border:2px dashed rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-style:normal;font-size:30px;color:var(--soft)}
+.sgrid .del{position:absolute;top:4px;left:14px;width:26px;height:26px;border-radius:13px;background:#ff5c5c;color:#fff;font-size:15px;display:flex;align-items:center;justify-content:center}
+.ctrl{display:flex;gap:6px;flex:none;direction:ltr}
+.ctrl button{flex:1;height:52px;border-radius:14px;border:0;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;gap:6px;font-size:16px;font-weight:700;direction:rtl}
+.ctrl button svg{width:24px;height:24px}
+.ctrl .main{background:var(--cy);color:#04202a}
+.ctrl button:active,.seg button:active{transform:scale(.93)}
 .rb:active,.tile:active,.dock button:active{transform:scale(.94)}
 /* الاختصارات */
 .tiles{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(3,1fr);gap:14px}
@@ -132,14 +143,30 @@ button{font-family:inherit;color:inherit;cursor:pointer}
         </div>
       </div>
       <div class="card ytc">
-        <div class="ybar">
-          <b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="2.5" y="5.5" width="19" height="13" rx="4"/><path d="M10 9.5v5l4.5-2.5z" fill="currentColor"/></svg>يوتيوب</b>
-          <button id="yBack" aria-label="رجوع"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
-          <button id="yHome" aria-label="الصفحة الرئيسية ليوتيوب"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7M5 9.5V20h14V9.5"/></svg></button>
-          <button id="yPlay" aria-label="تشغيل أو إيقاف"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 5v14l8-7zM14 5h2v14h-2zM18 5h2v14h-2z"/></svg></button>
-          <button id="yFull" aria-label="ملء الشاشة"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+        <div class="seg" id="seg">
+          <button data-m="yt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="2.5" y="5.5" width="19" height="13" rx="4"/><path d="M10 9.5v5l4.5-2.5z" fill="currentColor"/></svg>يوتيوب</button>
+          <button data-m="map"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>الخرائط</button>
+          <button data-m="apps"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/></svg>تطبيقاتي</button>
         </div>
-        <div id="ytBox">يوتيوب</div>
+        <div id="ytBox"><div class="sgrid" id="sgrid" style="display:none"></div></div>
+        <div class="ctrl" id="cYt">
+          <button id="yBack" aria-label="رجوع"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+          <button id="yRew" aria-label="ترجيع 10 ثواني"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M11 6v12L3 12zM20 6v12l-8-6z"/></svg></button>
+          <button id="yPlay" class="main" aria-label="تشغيل أو إيقاف"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 5v14l8-7zM14 5h2v14h-2zM18 5h2v14h-2z"/></svg></button>
+          <button id="yFwd" aria-label="تقديم 10 ثواني"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 6v12l8-6zM4 6v12l8-6z"/></svg></button>
+          <button id="yMute" aria-label="كتم"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9l4 6M21 9l-4 6"/></svg></button>
+          <button id="yFull" aria-label="ملء الشاشة"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+          <button id="yHome" aria-label="رئيسية يوتيوب"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7M5 9.5V20h14V9.5"/></svg></button>
+        </div>
+        <div class="ctrl" id="cMap" style="display:none">
+          <button id="mBack" aria-label="رجوع"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>رجوع</button>
+          <button id="mHome" class="main"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>موقعي</button>
+          <button id="mOpen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6"/></svg>افتح التطبيق</button>
+        </div>
+        <div class="ctrl" id="cApps" style="display:none">
+          <button id="aAdd" class="main"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>أضف تطبيق</button>
+          <button id="aEdit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg><span id="aEditT">تعديل</span></button>
+        </div>
       </div>
     </div>
 
@@ -261,21 +288,65 @@ function status(){
 setInterval(status, 3000); status();
 
 /* الموسيقى والصوت */
-/* يوتيوب داخل المربع */
-const Y = window.YTN || {show(){},hide(){},back(){},home(){},toggle(){},full(){}};
-function placeYt(){
-  if ($('#apps').classList.contains('show')) { Y.hide(); return; }
-  const r = $('#ytBox').getBoundingClientRect(), d = devicePixelRatio || 1;
-  Y.show(Math.round(r.left * d), Math.round(r.top * d), Math.round(r.width * d), Math.round(r.height * d));
+/* الخانة: يوتيوب أو الخرائط أو تطبيقاتي */
+const Y = window.YTN || {show(){},hide(){},back(){},home(){},toggle(){},seek(){},mute(){},full(){}};
+let mode = 'yt', editing = false, picking = false;
+try { mode = localStorage.slot || 'yt'; } catch(e){}
+function setMode(m){
+  mode = m; editing = false;
+  try { localStorage.slot = m; } catch(e){}
+  $$('#seg button').forEach(b => b.classList.toggle('on', b.dataset.m === m));
+  $('#cYt').style.display = m === 'yt' ? '' : 'none';
+  $('#cMap').style.display = m === 'map' ? '' : 'none';
+  $('#cApps').style.display = m === 'apps' ? '' : 'none';
+  $('#ytBox').classList.toggle('apps', m === 'apps');
+  $('#sgrid').style.display = m === 'apps' ? '' : 'none';
+  if (m === 'apps') renderSlot();
+  placeYt();
 }
-$('#yBack').onclick = () => Y.back();
-$('#yHome').onclick = () => Y.home();
+function placeYt(){
+  if ($('#apps').classList.contains('show') || mode === 'apps') { Y.hide(); return; }
+  const r = $('#ytBox').getBoundingClientRect(), d = devicePixelRatio || 1;
+  Y.show(mode, Math.round(r.left * d), Math.round(r.top * d), Math.round(r.width * d), Math.round(r.height * d));
+}
+$$('#seg button').forEach(b => b.onclick = () => setMode(b.dataset.m));
+$('#yBack').onclick = () => Y.back('yt');
+$('#yHome').onclick = () => Y.home('yt');
 $('#yPlay').onclick = () => Y.toggle();
+$('#yRew').onclick = () => Y.seek(-10);
+$('#yFwd').onclick = () => Y.seek(10);
+$('#yMute').onclick = () => Y.mute();
 $('#yFull').onclick = () => Y.full();
+$('#mBack').onclick = () => Y.back('map');
+$('#mHome').onclick = () => Y.home('map');
+$('#mOpen').onclick = () => goTo('maps');
+/* تطبيقاتي */
+function slotApps(){ try { return JSON.parse(localStorage.slotApps || '[]'); } catch(e){ return []; } }
+function saveSlot(a){ try { localStorage.slotApps = JSON.stringify(a); } catch(e){} renderSlot(); }
+function renderSlot(){
+  if (!apps.length) loadApps();
+  const g = $('#sgrid'); g.innerHTML = '';
+  slotApps().forEach(pkg => {
+    const a = apps.find(x => x.pkg === pkg); if (!a) return;
+    const b = document.createElement('button');
+    b.innerHTML = '<img alt=""><span></span>' + (editing ? '<i class="del">✕</i>' : '');
+    b.querySelector('img').src = a.img; b.querySelector('span').textContent = a.n;
+    b.onclick = () => editing ? saveSlot(slotApps().filter(x => x !== pkg)) : N.openApp(pkg);
+    g.appendChild(b);
+  });
+  if (!editing) {
+    const add = document.createElement('button'); add.className = 'add';
+    add.innerHTML = '<i>+</i><span>أضف</span>'; add.onclick = () => openApps(true);
+    g.appendChild(add);
+  }
+  $('#aEditT').textContent = editing ? 'خلصت' : 'تعديل';
+}
+$('#aAdd').onclick = () => openApps(true);
+$('#aEdit').onclick = () => { editing = !editing; renderSlot(); };
 addEventListener('resize', () => setTimeout(placeYt, 50));
 addEventListener('load', () => setTimeout(placeYt, 100));
 if (document.fonts) document.fonts.ready.then(() => setTimeout(placeYt, 50));
-setTimeout(placeYt, 400);
+setTimeout(() => setMode(mode), 400);
 function showVol(v){ $('#vol').textContent = v >= 0 ? v + '%' : ''; }
 $('#vUp').onclick = () => showVol(N.volume(1));
 $('#vDown').onclick = () => showVol(N.volume(-1));
@@ -315,8 +386,13 @@ function renderFavs(){
     const b = document.createElement('button'); b.setAttribute('aria-label', a.n); b.innerHTML = '<img alt="">'; b.querySelector('img').src = a.img;
     b.onclick = () => N.openApp(pkg); box.appendChild(b); });
 }
-function openApps(){ loadApps(); renderApps(); $('#apps').classList.add('show'); Y.hide(); }
-function closeApps(){ $('#apps').classList.remove('show'); $('#aq').value = ''; placeYt(); }
+function openApps(pick){
+  picking = !!pick; loadApps(); renderApps();
+  $('#apps h2').textContent = picking ? 'اختر تطبيق تضيفه لـ«تطبيقاتي»' : 'التطبيقات';
+  $('.ahead .hint').style.display = picking ? 'none' : '';
+  $('#apps').classList.add('show'); Y.hide();
+}
+function closeApps(){ $('#apps').classList.remove('show'); $('#aq').value = ''; picking = false; placeYt(); }
 $('#aClose').onclick = closeApps;
 $('#aq').oninput = renderApps;
 function renderApps(){
@@ -328,7 +404,15 @@ function renderApps(){
     let t, long = false;
     b.onpointerdown = () => { long = false; t = setTimeout(() => { long = true; togglePin(a); }, 600); };
     b.onpointerup = b.onpointerleave = () => clearTimeout(t);
-    b.onclick = () => { if (long) return; closeApps(); N.openApp(a.pkg); };
+    b.onclick = () => {
+      if (long) return;
+      if (picking) {
+        const sa = slotApps();
+        if (sa.includes(a.pkg)) { toast('موجود من قبل'); return; }
+        sa.push(a.pkg); saveSlot(sa); toast('انضاف ✓ ' + a.n); closeApps(); return;
+      }
+      closeApps(); N.openApp(a.pkg);
+    };
     g.appendChild(b);
   });
 }

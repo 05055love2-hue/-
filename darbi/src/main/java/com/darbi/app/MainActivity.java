@@ -124,26 +124,30 @@ public class MainActivity extends Activity implements LocationListener {
         }
     }
 
-    // ───── يوتيوب داخل المربع في الواجهة
-    private void setupYouTube() {
-        yt = new WebView(this);
-        WebSettings s = yt.getSettings();
+    // ───── الخانة اللي في النص: يوتيوب أو الخرائط يشتغلون داخلها
+    private WebView mp;
+    private static final String MAP_HOME = "https://www.google.com/maps";
+
+    private WebView makeBox(final boolean maps) {
+        final WebView w = new WebView(this);
+        WebSettings s = w.getSettings();
         s.setJavaScriptEnabled(true);
         s.setDomStorageEnabled(true);
+        s.setDatabaseEnabled(true);
         s.setMediaPlaybackRequiresUserGesture(false);
+        s.setGeolocationEnabled(true);
         s.setTextZoom(100);
         CookieManager.getInstance().setAcceptCookie(true);
-        CookieManager.getInstance().setAcceptThirdPartyCookies(yt, true);
-        yt.setBackgroundColor(0xFF000000);
-        yt.setWebViewClient(new WebViewClient() {
+        CookieManager.getInstance().setAcceptThirdPartyCookies(w, true);
+        w.setBackgroundColor(maps ? 0xFF1c2733 : 0xFF000000);
+        w.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 String u = request.getUrl().toString();
-                // كل شي يبقى داخل المربع
                 return !(u.startsWith("http://") || u.startsWith("https://"));
             }
         });
-        yt.setWebChromeClient(new WebChromeClient() {
+        w.setWebChromeClient(new WebChromeClient() {
             @Override
             public void onShowCustomView(View view, CustomViewCallback cb) {
                 if (fullView != null) { cb.onCustomViewHidden(); return; }
@@ -153,9 +157,19 @@ public class MainActivity extends Activity implements LocationListener {
             }
             @Override
             public void onHideCustomView() { exitVideoFull(); }
+            @Override
+            public void onGeolocationPermissionsShowPrompt(String origin, android.webkit.GeolocationPermissions.Callback cb) {
+                cb.invoke(origin, true, true);
+            }
         });
-        yt.setVisibility(View.GONE);
-        root.addView(yt, new FrameLayout.LayoutParams(1, 1));
+        w.setVisibility(View.GONE);
+        root.addView(w, new FrameLayout.LayoutParams(1, 1));
+        return w;
+    }
+
+    private void setupYouTube() {
+        yt = makeBox(false);
+        mp = makeBox(true);
     }
 
     private void exitVideoFull() {
@@ -167,33 +181,39 @@ public class MainActivity extends Activity implements LocationListener {
         goFullScreen();
     }
 
+    private WebView box(String which) { return "map".equals(which) ? mp : yt; }
+    private String homeOf(String which) { return "map".equals(which) ? MAP_HOME : YT_HOME; }
+
     private class YtBridge {
-        /** الصفحة تقول وين المربع بالضبط، ونحط يوتيوب فوقه */
+        /** الصفحة تقول وين الخانة بالضبط، ونحط يوتيوب أو الخرائط فوقها */
         @JavascriptInterface
-        public void show(final int x, final int y, final int w, final int h) {
+        public void show(final String which, final int x, final int y, final int w, final int h) {
             runOnUiThread(() -> {
-                if (yt.getUrl() == null) yt.loadUrl(YT_HOME);
+                WebView v = box(which), other = v == yt ? mp : yt;
+                other.setVisibility(View.GONE);
+                if (v.getUrl() == null) v.loadUrl(homeOf(which));
                 FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(w, h);
                 lp.leftMargin = x; lp.topMargin = y;
-                yt.setLayoutParams(lp);
-                yt.setVisibility(View.VISIBLE);
+                v.setLayoutParams(lp);
+                v.setVisibility(View.VISIBLE);
             });
         }
-        @JavascriptInterface public void hide() { runOnUiThread(() -> yt.setVisibility(View.GONE)); }
-        @JavascriptInterface public void back() { runOnUiThread(() -> { if (yt.canGoBack()) yt.goBack(); }); }
-        @JavascriptInterface public void home() { runOnUiThread(() -> yt.loadUrl(YT_HOME)); }
-        @JavascriptInterface
-        public void search(final String q) {
-            runOnUiThread(() -> {
-                try { yt.loadUrl(YT_HOME + "results?search_query=" + java.net.URLEncoder.encode(q.trim(), "UTF-8")); } catch (Exception ignored) { }
-            });
-        }
-        /** تشغيل/إيقاف الفيديو اللي في المربع */
+        @JavascriptInterface public void hide() { runOnUiThread(() -> { yt.setVisibility(View.GONE); mp.setVisibility(View.GONE); }); }
+        @JavascriptInterface public void back(String which) { runOnUiThread(() -> { WebView v = box(which); if (v.canGoBack()) v.goBack(); }); }
+        @JavascriptInterface public void home(String which) { runOnUiThread(() -> box(which).loadUrl(homeOf(which))); }
         @JavascriptInterface
         public void toggle() {
             runOnUiThread(() -> yt.evaluateJavascript("(function(){var v=document.querySelector('video');if(!v)return;if(v.paused)v.play();else v.pause();})()", null));
         }
-        /** يطلع الفيديو ملء الشاشة */
+        /** يقدّم أو يرجّع الفيديو بالثواني */
+        @JavascriptInterface
+        public void seek(final int sec) {
+            runOnUiThread(() -> yt.evaluateJavascript("(function(){var v=document.querySelector('video');if(v)v.currentTime=Math.max(0,v.currentTime+(" + sec + "));})()", null));
+        }
+        @JavascriptInterface
+        public void mute() {
+            runOnUiThread(() -> yt.evaluateJavascript("(function(){var v=document.querySelector('video');if(v)v.muted=!v.muted;})()", null));
+        }
         @JavascriptInterface
         public void full() {
             runOnUiThread(() -> yt.evaluateJavascript("(function(){var v=document.querySelector('video');if(!v)return;var p=document.querySelector('#player-container-id,.html5-video-player')||v;(p.requestFullscreen||p.webkitRequestFullscreen).call(p);})()", null));
