@@ -805,10 +805,9 @@
 
   <section class="card player">
     <div class="tabs">
-      <button class="tab on" data-v="music">🎵 الموسيقى</button>
-      <button class="tab" data-v="yt">▶ يوتيوب</button>
+      <button class="tab on" data-v="yt">▶ يوتيوب</button>
     </div>
-    <div class="view" id="musicView">
+    <div class="view" id="musicView" hidden>
       <div class="disc" id="disc"></div>
       <div style="max-width:100%">
         <div class="song" id="song">ما فيه أغاني بعد</div>
@@ -824,7 +823,7 @@
       <input type="file" id="files" accept="audio/*" multiple hidden>
       <audio id="audio"></audio>
     </div>
-    <div class="view" id="ytView" hidden>
+    <div class="view" id="ytView">
       <div class="ytwrap"><div class="ytbox" id="ytBox"><div class="ytempty"><svg viewBox="0 0 24 24"><path d="M21.6 7.2a2.5 2.5 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4A2.5 2.5 0 0 0 2.4 7.2 26 26 0 0 0 2 12a26 26 0 0 0 .4 4.8 2.5 2.5 0 0 0 1.8 1.8C5.8 19 12 19 12 19s6.2 0 7.8-.4a2.5 2.5 0 0 0 1.8-1.8A26 26 0 0 0 22 12a26 26 0 0 0-.4-4.8zM10 15V9l5.2 3z"/></svg>حط رابط مقطع من يوتيوب تحت واضغط تشغيل</div></div></div>
       <div class="controls">
         <button class="btn" id="ytPrev" aria-label="المقطع السابق"><svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg></button>
