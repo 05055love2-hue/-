@@ -677,7 +677,26 @@ renderDock = function(){
   });
 };
 const _renderMain = renderMain;
-renderMain = function(){ _renderMain(); save(); fixYt(); applyStatus(); };
+renderMain = function(){ _renderMain(); addYt(); save(); fixYt(); applyStatus(); };
+
+/* يوتيوب في كل الواجهات: الرياضي والمينيمال كان فيهم أزرار بس، نحط فيهم خانة يوتيوب حقيقية */
+function ytBox(){ const t = document.createElement('div'); t.innerHTML = ytWidget(true); return t.firstElementChild; }
+function addYt(){
+  if ($('#yt-widget') || $('#visualizer')) return;      // الواجهة فيها يوتيوب من الأصل
+  const pi = $('#play-icon'); if (!pi) return;
+  if (curTheme === 'sport') {
+    const card = pi.closest('.glass'), col = card && card.parentElement; if (!card) return;
+    const w = ytBox(); w.style.flex = '1.7'; card.replaceWith(w);
+    if (col) col.style.width = '440px';
+  } else if (curTheme === 'minimal') {
+    const mini = pi.closest('.glass-sm'); const area = mini && mini.closest('.flex-1'); if (!mini || !area) return;
+    mini.remove();
+    area.style.cssText += ';gap:16px;align-items:stretch';
+    const clock = area.firstElementChild; if (clock) { clock.style.flex = '1'; clock.style.display = 'flex'; clock.style.flexDirection = 'column'; clock.style.justifyContent = 'center'; }
+    const w = ytBox(); w.style.flex = '1.3'; area.appendChild(w);
+  }
+  initVisualizer();
+}
 
 /* ── يوتيوب الحقيقي داخل الخانة ── */
 function ytArea(){ const r = $('#ytReal'); if (r) return r; const v = $('#visualizer'); return v && v.parentElement; }
