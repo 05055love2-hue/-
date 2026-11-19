@@ -28,7 +28,9 @@ import android.util.Base64;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.webkit.CookieManager;
 import android.webkit.JavascriptInterface;
+import android.widget.FrameLayout;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
@@ -49,6 +51,11 @@ public class MainActivity extends Activity implements LocationListener {
 
     private static final String BASE = "https://darbi.local/";
     private WebView web;
+    private WebView yt;
+    private FrameLayout root;
+    private View fullView;
+    private WebChromeClient.CustomViewCallback fullCb;
+    private static final String YT_HOME = "https://m.youtube.com/";
     private LocationManager lm;
     private static final HashMap<String, String> ICONS = new HashMap<>();
 
@@ -59,7 +66,10 @@ public class MainActivity extends Activity implements LocationListener {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         web = new WebView(this);
         web.setBackgroundColor(0xff070b14);
-        setContentView(web);
+        root = new FrameLayout(this);
+        root.addView(web, new FrameLayout.LayoutParams(-1, -1));
+        setContentView(root);
+        setupYouTube();
         goFullScreen();
 
         WebSettings s = web.getSettings();
@@ -70,6 +80,7 @@ public class MainActivity extends Activity implements LocationListener {
         web.addJavascriptInterface(new Bridge(), "Native");
         web.addJavascriptInterface(new Updater.JS(this, "darbi"), "AppUpd");
         web.addJavascriptInterface(new BlackScreen.JS(this), "BlackScr");
+        web.addJavascriptInterface(new YtBridge(), "YTN");
         web.setWebChromeClient(new WebChromeClient());
         web.setWebViewClient(new WebViewClient() {
             @Override
@@ -110,6 +121,82 @@ public class MainActivity extends Activity implements LocationListener {
             startGps();
             if (Build.VERSION.SDK_INT >= 31 && checkSelfPermission("android.permission.BLUETOOTH_CONNECT") != PackageManager.PERMISSION_GRANTED)
                 requestPermissions(new String[]{"android.permission.BLUETOOTH_CONNECT"}, 8);
+        }
+    }
+
+    // ───── يوتيوب داخل المربع في الواجهة
+    private void setupYouTube() {
+        yt = new WebView(this);
+        WebSettings s = yt.getSettings();
+        s.setJavaScriptEnabled(true);
+        s.setDomStorageEnabled(true);
+        s.setMediaPlaybackRequiresUserGesture(false);
+        s.setTextZoom(100);
+        CookieManager.getInstance().setAcceptCookie(true);
+        CookieManager.getInstance().setAcceptThirdPartyCookies(yt, true);
+        yt.setBackgroundColor(0xFF000000);
+        yt.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                String u = request.getUrl().toString();
+                // كل شي يبقى داخل المربع
+                return !(u.startsWith("http://") || u.startsWith("https://"));
+            }
+        });
+        yt.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public void onShowCustomView(View view, CustomViewCallback cb) {
+                if (fullView != null) { cb.onCustomViewHidden(); return; }
+                fullView = view; fullCb = cb;
+                root.addView(view, new FrameLayout.LayoutParams(-1, -1));
+                goFullScreen();
+            }
+            @Override
+            public void onHideCustomView() { exitVideoFull(); }
+        });
+        yt.setVisibility(View.GONE);
+        root.addView(yt, new FrameLayout.LayoutParams(1, 1));
+    }
+
+    private void exitVideoFull() {
+        if (fullView == null) return;
+        root.removeView(fullView);
+        fullView = null;
+        if (fullCb != null) fullCb.onCustomViewHidden();
+        fullCb = null;
+        goFullScreen();
+    }
+
+    private class YtBridge {
+        /** الصفحة تقول وين المربع بالضبط، ونحط يوتيوب فوقه */
+        @JavascriptInterface
+        public void show(final int x, final int y, final int w, final int h) {
+            runOnUiThread(() -> {
+                if (yt.getUrl() == null) yt.loadUrl(YT_HOME);
+                FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(w, h);
+                lp.leftMargin = x; lp.topMargin = y;
+                yt.setLayoutParams(lp);
+                yt.setVisibility(View.VISIBLE);
+            });
+        }
+        @JavascriptInterface public void hide() { runOnUiThread(() -> yt.setVisibility(View.GONE)); }
+        @JavascriptInterface public void back() { runOnUiThread(() -> { if (yt.canGoBack()) yt.goBack(); }); }
+        @JavascriptInterface public void home() { runOnUiThread(() -> yt.loadUrl(YT_HOME)); }
+        @JavascriptInterface
+        public void search(final String q) {
+            runOnUiThread(() -> {
+                try { yt.loadUrl(YT_HOME + "results?search_query=" + java.net.URLEncoder.encode(q.trim(), "UTF-8")); } catch (Exception ignored) { }
+            });
+        }
+        /** تشغيل/إيقاف الفيديو اللي في المربع */
+        @JavascriptInterface
+        public void toggle() {
+            runOnUiThread(() -> yt.evaluateJavascript("(function(){var v=document.querySelector('video');if(!v)return;if(v.paused)v.play();else v.pause();})()", null));
+        }
+        /** يطلع الفيديو ملء الشاشة */
+        @JavascriptInterface
+        public void full() {
+            runOnUiThread(() -> yt.evaluateJavascript("(function(){var v=document.querySelector('video');if(!v)return;var p=document.querySelector('#player-container-id,.html5-video-player')||v;(p.requestFullscreen||p.webkitRequestFullscreen).call(p);})()", null));
         }
     }
 
@@ -341,6 +428,7 @@ public class MainActivity extends Activity implements LocationListener {
     @Override
     public void onBackPressed() {
         if (BlackScreen.hide(this)) return;
+        if (fullView != null) { exitVideoFull(); return; }
         web.evaluateJavascript("window.goHome&&goHome()", null);
     }
 

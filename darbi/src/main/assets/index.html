@@ -40,28 +40,24 @@ button{font-family:inherit;color:inherit;cursor:pointer}
 .gauge .gps b{color:var(--gr)}
 #arc{transition:stroke-dashoffset .8s ease}
 /* الوسط */
-.mid{display:grid;grid-template-rows:1fr 190px;gap:18px;min-height:0}
-.clock{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
-.clock .t{font-family:Changa,sans-serif;font-weight:600;font-size:150px;line-height:1;letter-spacing:2px;direction:ltr}
-.clock .t small{font-size:40px;color:var(--soft);margin-left:6px}
-.clock .d{font-size:24px;font-weight:700}
-.clock .h{font-size:19px;color:var(--soft)}
-.wx{display:flex;align-items:center;gap:12px;margin-top:14px;background:rgba(255,255,255,.06);border-radius:20px;padding:8px 18px;font-size:20px;font-weight:700}
-.wx .tmp{font-family:Changa,sans-serif;font-size:30px;direction:ltr}
-.wx .city{color:var(--soft);font-size:17px}
-.music{display:grid;grid-template-columns:1fr auto;align-items:center;padding:18px 26px;gap:16px}
-.music .lbl{font-size:15px;color:var(--soft);font-weight:700}
-.music .ttl{font-size:24px;font-weight:700;margin-top:4px}
-.music .eq{display:flex;gap:4px;align-items:flex-end;height:26px;margin-top:10px}
-.music .eq i{width:6px;border-radius:3px;background:var(--cy);height:6px}
-.music.play .eq i{animation:eq .9s ease-in-out infinite alternate}
-.music .eq i:nth-child(2){animation-delay:.2s}.music .eq i:nth-child(3){animation-delay:.4s}.music .eq i:nth-child(4){animation-delay:.1s}.music .eq i:nth-child(5){animation-delay:.3s}
-@keyframes eq{to{height:26px}}
-.ctl{display:flex;align-items:center;gap:12px;direction:ltr}
-.rb{width:64px;height:64px;border-radius:50%;border:0;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center}
-.rb svg{width:28px;height:28px}
-.rb.big{width:86px;height:86px;background:var(--cy);color:#04202a;box-shadow:0 0 30px rgba(56,225,255,.45)}
-.rb.big svg{width:38px;height:38px}
+.mid{display:grid;grid-template-rows:150px 1fr;gap:18px;min-height:0}
+.clock{display:flex;align-items:center;justify-content:space-between;padding:0 28px;gap:16px}
+.clock .t{font-family:Changa,sans-serif;font-weight:600;font-size:92px;line-height:1;direction:ltr;order:2}
+.clock .t small{font-size:28px;color:var(--soft);margin-left:4px}
+.clock .info{display:flex;flex-direction:column;gap:4px}
+.clock .d{font-size:20px;font-weight:700}
+.clock .h{font-size:16px;color:var(--soft)}
+.wx{display:flex;align-items:center;gap:8px;margin-top:4px;font-size:17px;font-weight:700}
+.wx .tmp{font-family:Changa,sans-serif;font-size:22px;direction:ltr}
+.wx .city{color:var(--soft);font-size:15px}
+.ytc{display:flex;flex-direction:column}
+.ybar{height:58px;display:flex;align-items:center;gap:8px;padding:0 12px 0 14px;flex:none}
+.ybar b{font-size:19px;display:flex;align-items:center;gap:8px;margin-inline-end:auto}
+.ybar b svg{width:30px;height:30px;color:#ff4d4d}
+.ybar button{width:48px;height:44px;border-radius:14px;border:0;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center}
+.ybar button svg{width:24px;height:24px}
+.ybar button:active{transform:scale(.92)}
+#ytBox{flex:1;background:#000;display:flex;align-items:center;justify-content:center;color:#444;font-size:18px;margin:0 8px 8px;border-radius:0 0 22px 22px}
 .rb:active,.tile:active,.dock button:active{transform:scale(.94)}
 /* الاختصارات */
 .tiles{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(3,1fr);gap:14px}
@@ -129,21 +125,21 @@ button{font-family:inherit;color:inherit;cursor:pointer}
     <div class="mid">
       <div class="card clock">
         <div class="t" id="time">--:--</div>
-        <div class="d" id="date"></div>
-        <div class="h" id="hijri"></div>
-        <div class="wx" id="wx" style="display:none"><span id="wxIc"></span><span class="tmp" id="wxT"></span><span id="wxD"></span><span class="city" id="wxC"></span></div>
+        <div class="info">
+          <div class="d" id="date"></div>
+          <div class="h" id="hijri"></div>
+          <div class="wx" id="wx" style="display:none"><span id="wxIc"></span><span class="tmp" id="wxT"></span><span id="wxD"></span><span class="city" id="wxC"></span></div>
+        </div>
       </div>
-      <div class="card music" id="music">
-        <div>
-          <div class="lbl">الموسيقى</div>
-          <div class="ttl" id="mState">اضغط تشغيل</div>
-          <div class="eq"><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="card ytc">
+        <div class="ybar">
+          <b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="2.5" y="5.5" width="19" height="13" rx="4"/><path d="M10 9.5v5l4.5-2.5z" fill="currentColor"/></svg>يوتيوب</b>
+          <button id="yBack" aria-label="رجوع"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+          <button id="yHome" aria-label="الصفحة الرئيسية ليوتيوب"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7M5 9.5V20h14V9.5"/></svg></button>
+          <button id="yPlay" aria-label="تشغيل أو إيقاف"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 5v14l8-7zM14 5h2v14h-2zM18 5h2v14h-2z"/></svg></button>
+          <button id="yFull" aria-label="ملء الشاشة"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
         </div>
-        <div class="ctl">
-          <button class="rb" id="mPrev" aria-label="السابق"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg></button>
-          <button class="rb big" id="mPlay" aria-label="تشغيل أو إيقاف"><svg viewBox="0 0 24 24" fill="currentColor" id="mIcon"><path d="M8 5v14l11-7z"/></svg></button>
-          <button class="rb" id="mNext" aria-label="التالي"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 5h2v14h-2zM4 5v14l11-7z"/></svg></button>
-        </div>
+        <div id="ytBox">يوتيوب</div>
       </div>
     </div>
 
@@ -183,7 +179,7 @@ button{font-family:inherit;color:inherit;cursor:pointer}
 <div class="toast" id="toast"></div>
 
 <script>
-const N = window.Native || {getApps(){return '[]'},openApp(){},openUrl(u){},installed(){return ''},openAction(){return false},media(){},playing(){return false},volume(){return 60},status(){return JSON.stringify({wOn:true,wConn:true,bOn:true,bConn:true,bat:-1,net:true})}};
+const N = window.Native || {getApps(){return '[]'},openApp(){},openUrl(u){},installed(){return ''},openAction(){return false},media(){},volume(){return 60},status(){return JSON.stringify({wOn:true,wConn:true,bOn:true,bConn:true,bat:-1,net:true})}};
 const $ = s => document.querySelector(s);
 const $$ = s => document.querySelectorAll(s);
 
@@ -201,7 +197,7 @@ function tick(){
   const d = new Date();
   let h = d.getHours(), ap = h < 12 ? 'ص' : 'م'; h = h % 12 || 12;
   $('#time').innerHTML = h + ':' + String(d.getMinutes()).padStart(2, '0') + '<small>' + ap + '</small>';
-  $('#date').textContent = d.toLocaleDateString('ar-SA-u-ca-gregory-nu-latn', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+  $('#date').textContent = d.toLocaleDateString('ar-SA-u-ca-gregory-nu-latn', {weekday:'long', day:'numeric', month:'long'});
   let hj = '';
   try { hj = d.toLocaleDateString('ar-SA-u-ca-islamic-umalqura-nu-latn', {day:'numeric', month:'long', year:'numeric'}); } catch(e){}
   $('#hijri').textContent = hj;
@@ -260,17 +256,26 @@ function status(){
   $('#sWifi').classList.toggle('on', !!s.wConn); $('#sWifi').style.opacity = s.wOn ? 1 : .35;
   $('#sBt').classList.toggle('on', !!s.bConn); $('#sBt').style.opacity = s.bOn ? 1 : .35;
   $('#sBat').style.display = s.bat >= 0 ? '' : 'none'; $('#batTxt').textContent = s.bat + '%' + (s.chg ? ' ⚡' : '');
-  const p = N.playing(); $('#music').classList.toggle('play', p);
-  $('#mState').textContent = p ? 'يشتغل الحين' : 'متوقف';
-  $('#mIcon').innerHTML = p ? '<path d="M7 5h4v14H7zM13 5h4v14h-4z"/>' : '<path d="M8 5v14l11-7z"/>';
   showVol(N.volume(0));
 }
 setInterval(status, 3000); status();
 
 /* الموسيقى والصوت */
-$('#mPlay').onclick = () => { N.media(85); setTimeout(status, 600); };
-$('#mNext').onclick = () => N.media(87);
-$('#mPrev').onclick = () => N.media(88);
+/* يوتيوب داخل المربع */
+const Y = window.YTN || {show(){},hide(){},back(){},home(){},toggle(){},full(){}};
+function placeYt(){
+  if ($('#apps').classList.contains('show')) { Y.hide(); return; }
+  const r = $('#ytBox').getBoundingClientRect(), d = devicePixelRatio || 1;
+  Y.show(Math.round(r.left * d), Math.round(r.top * d), Math.round(r.width * d), Math.round(r.height * d));
+}
+$('#yBack').onclick = () => Y.back();
+$('#yHome').onclick = () => Y.home();
+$('#yPlay').onclick = () => Y.toggle();
+$('#yFull').onclick = () => Y.full();
+addEventListener('resize', () => setTimeout(placeYt, 50));
+addEventListener('load', () => setTimeout(placeYt, 100));
+if (document.fonts) document.fonts.ready.then(() => setTimeout(placeYt, 50));
+setTimeout(placeYt, 400);
 function showVol(v){ $('#vol').textContent = v >= 0 ? v + '%' : ''; }
 $('#vUp').onclick = () => showVol(N.volume(1));
 $('#vDown').onclick = () => showVol(N.volume(-1));
@@ -310,8 +315,8 @@ function renderFavs(){
     const b = document.createElement('button'); b.setAttribute('aria-label', a.n); b.innerHTML = '<img alt="">'; b.querySelector('img').src = a.img;
     b.onclick = () => N.openApp(pkg); box.appendChild(b); });
 }
-function openApps(){ loadApps(); renderApps(); $('#apps').classList.add('show'); }
-function closeApps(){ $('#apps').classList.remove('show'); $('#aq').value = ''; }
+function openApps(){ loadApps(); renderApps(); $('#apps').classList.add('show'); Y.hide(); }
+function closeApps(){ $('#apps').classList.remove('show'); $('#aq').value = ''; placeYt(); }
 $('#aClose').onclick = closeApps;
 $('#aq').oninput = renderApps;
 function renderApps(){
@@ -333,7 +338,7 @@ function togglePin(a){
   else { if (f.length >= 6) { toast('الشريط فيه 6 تطبيقات، شيل واحد أول'); return; } f.push(a.pkg); toast('ثبّته بالشريط ★'); }
   saveFavs(f); renderApps();
 }
-window.onAppResume = () => { status(); };
+window.onAppResume = () => { status(); placeYt(); };
 setTimeout(() => { loadApps(); renderFavs(); }, 300);
 </script>
 </body>
