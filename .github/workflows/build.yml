@@ -54,6 +54,7 @@ jobs:
           cp widgety/build/outputs/apk/debug/widgety-debug.apk widgety.apk
           cp tamarini/build/outputs/apk/debug/tamarini-debug.apk tamarini.apk
           cp qisas/build/outputs/apk/debug/qisas-debug.apk qisas.apk
+          cp shoof/build/outputs/apk/debug/shoof-debug.apk shoof.apk
           python3 updates/make_versions.py
 
       - name: Hammil engine info
@@ -88,6 +89,7 @@ jobs:
             widgety.apk
             tamarini.apk
             qisas.apk
+            shoof.apk
             versions.json
           make_latest: true
 
