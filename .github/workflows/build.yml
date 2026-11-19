@@ -61,6 +61,7 @@ jobs:
           cp shoof/build/outputs/apk/debug/shoof-debug.apk shoof.apk
           cp watsy/build/outputs/apk/debug/watsy-debug.apk watsy.apk
           cp darbi/build/outputs/apk/debug/darbi-debug.apk darbi.apk
+          cp lanshari/build/outputs/apk/debug/lanshari-debug.apk lanshari.apk
           python3 updates/make_versions.py
 
       - name: Hammil engine info
@@ -98,6 +99,7 @@ jobs:
             shoof.apk
             watsy.apk
             darbi.apk
+            lanshari.apk
             versions.json
           make_latest: true
 

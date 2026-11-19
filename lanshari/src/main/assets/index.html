@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="tw.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',Tahoma,sans-serif;background:#0a0e1a;color:#e8eaf0;overflow:hidden;height:100vh;width:100vw}
+.bg-anim{position:fixed;inset:0;z-index:0;transition:background 0.8s;
+  background:radial-gradient(ellipse 80% 60% at 20% 80%,rgba(79,140,255,.08) 0%,transparent 70%),
+  radial-gradient(ellipse 60% 50% at 80% 20%,rgba(168,85,247,.06) 0%,transparent 70%),
+  linear-gradient(135deg,#0a0e1a,#111827 50%,#0a0e1a)}
+.glass{background:rgba(255,255,255,.06);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.08);border-radius:16px}
+.glass-sm{background:rgba(255,255,255,.06);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.08);border-radius:12px}
+.mu{color:#8b92a8}.ac{color:#4f8cff}
+.si{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:8px;cursor:pointer;transition:all .2s}
+.si:hover{background:rgba(255,255,255,.1)}.si.active svg{filter:drop-shadow(0 0 6px currentColor)}
+.da{display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;transition:all .25s;position:relative}
+.da:hover{transform:scale(1.1)}.da:active{transform:scale(.95)}
+.di{width:56px;height:56px;border-radius:14px;display:flex;align-items:center;justify-content:center;transition:all .25s;box-shadow:0 4px 15px rgba(0,0,0,.3)}
+.dl{font-size:11px;color:#8b92a8;font-weight:600;text-align:center;max-width:70px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.yt-va{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:center;gap:3px;padding:20px;opacity:.3}
+.yt-bar{width:4px;background:#4f8cff;border-radius:2px;transition:height .15s}
+.yb{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;border:none;background:transparent;color:#e8eaf0}
+.yb:hover{background:rgba(255,255,255,.1)}
+.ybp{width:48px;height:48px;background:#ff0000!important;box-shadow:0 4px 20px rgba(255,0,0,.3)}.ybp:hover{transform:scale(1.1)}
+.pb{width:100%;height:4px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden;cursor:pointer}
+.pf{height:100%;background:#ff0000;border-radius:2px;width:35%;transition:width .3s}
+.mo{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center}
+.mo.show{display:flex}
+.po{position:fixed;inset:0;z-index:90;display:none}.po.show{display:flex}
+.ao{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:12px;cursor:pointer;transition:all .2s}
+.ao:hover{background:rgba(255,255,255,.08)}
+.sr{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-radius:12px;transition:background .2s}
+.sr:hover{background:rgba(255,255,255,.04)}
+.tg{width:42px;height:24px;border-radius:12px;background:rgba(255,255,255,.15);position:relative;cursor:pointer;transition:background .3s;flex-shrink:0}
+.tg.on{background:#4f8cff}.tg::after{content:'';position:absolute;width:18px;height:18px;border-radius:50%;background:#fff;top:3px;right:3px;transition:transform .3s}.tg.on::after{transform:translateX(-18px)}
+.si-inp{-webkit-appearance:none;width:100%;height:6px;border-radius:3px;background:rgba(255,255,255,.15);outline:none}
+.si-inp::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:#4f8cff;cursor:pointer;box-shadow:0 2px 8px rgba(79,140,255,.4)}
+.cd{width:28px;height:28px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all .2s}
+.cd:hover,.cd.active{border-color:#fff;transform:scale(1.15)}
+.wt{width:80px;height:50px;border-radius:10px;cursor:pointer;border:2px solid transparent;transition:all .2s}
+.wt:hover,.wt.active{border-color:#4f8cff;transform:scale(1.08)}
+.tb{padding:8px 16px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;border:none;color:#8b92a8;background:transparent}
+.tb.active{background:rgba(79,140,255,.15);color:#4f8cff}.tb:hover{background:rgba(255,255,255,.06)}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px}
+@keyframes slideUp{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.asu{animation:slideUp .35s ease-out}.af{animation:fadeIn .3s ease-out}
+
+/* Theme: Sport gauge */
+.gauge-ring{position:relative;width:200px;height:200px}
+.gauge-ring svg{transform:rotate(-90deg)}
+.gauge-val{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+
+/* Theme: Luxury gold accents */
+.lux-gold{color:#d4a853}
+.lux-border{border-color:rgba(212,168,83,.2)!important}
+.lux-bg{background:rgba(212,168,83,.06)!important}
+
+/* Theme card in settings */
+.theme-card{border-radius:14px;overflow:hidden;cursor:pointer;border:3px solid transparent;transition:all .3s;position:relative}
+.theme-card:hover{transform:scale(1.03);border-color:rgba(255,255,255,.15)}
+.theme-card.active{border-color:#4f8cff;box-shadow:0 0 20px rgba(79,140,255,.25)}
+.theme-card .theme-badge{position:absolute;top:8px;left:8px;padding:2px 10px;border-radius:6px;font-size:11px;font-weight:700;background:rgba(79,140,255,.8);color:#fff;display:none}
+.theme-card.active .theme-badge{display:block}
+</style>
+</head>
+<body>
+<div class="bg-anim" id="bg-layer"></div>
+<div class="relative z-10 flex flex-col h-screen p-3 gap-3" id="main-screen" style="direction:ltr;"></div>
+<div class="mo" id="app-modal"><div style="background:#1a1f2e;border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:24px;width:90%;max-width:420px;max-height:80vh;overflow-y:auto;" class="asu"><div class="flex items-center justify-between mb-4"><h3 style="font-size:18px;font-weight:700;">اختر تطبيق</h3><div style="cursor:pointer;padding:4px 12px;border-radius:8px;background:rgba(255,255,255,.06);font-size:13px;" onclick="closeModal()">✕</div></div><div class="mu" style="font-size:13px;margin-bottom:12px;">اختر التطبيق للشاشة الرئيسية</div><div id="app-list" class="flex flex-col gap-1"></div></div></div>
+<div class="po" id="page-overlay"><div class="flex flex-col h-screen w-screen af" style="background:#0a0e1a;" id="page-content"></div></div>
+
+<script>
+// ============ ICONS ============
+const IC={
+maps:`<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>`,
+phone:`<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>`,
+music:`<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>`,
+messages:`<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`,
+settings:`<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`,
+camera:`<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>`,
+weather:`<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>`,
+radio:`<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49"/><path d="M7.76 16.24a6 6 0 0 1 0-8.49"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M4.93 19.07a10 10 0 0 1 0-14.14"/></svg>`,
+waze:`<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="9" cy="10" r="1.5" fill="white"/><circle cx="15" cy="10" r="1.5" fill="white"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/></svg>`,
+spotify:`<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 11.5c2.5-1 5.5-1 8 0"/><path d="M7 8.5c3.5-1.5 7.5-1.5 11 0"/><path d="M9 14.5c2-.7 4-.7 6 0"/></svg>`,
+whatsapp:`<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>`,
+fuel:`<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="12" height="18" rx="2"/><path d="M18 8h1a2 2 0 0 1 2 2v6a2 2 0 0 0 2 2"/><line x1="6" y1="10" x2="12" y2="10"/></svg>`,
+compass:`<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>`,
+parking:`<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 17V7h4a3 3 0 0 1 0 6H9"/></svg>`,
+carplay:`<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M12 6V4"/><circle cx="8" cy="15" r="1"/><circle cx="16" cy="15" r="1"/></svg>`,
+obd:`<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>`,
+clock:`<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
+calculator:`<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="8" y2="10.01"/><line x1="12" y1="10" x2="12" y2="10.01"/><line x1="16" y1="10" x2="16" y2="10.01"/><line x1="8" y1="14" x2="8" y2="14.01"/><line x1="12" y1="14" x2="12" y2="14.01"/><line x1="16" y1="14" x2="16" y2="14.01"/><line x1="8" y1="18" x2="16" y2="18"/></svg>`,
+mirror:`<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>`,
+tire:`<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="8"/><line x1="12" y1="16" x2="12" y2="22"/><line x1="2" y1="12" x2="8" y2="12"/><line x1="16" y1="12" x2="22" y2="12"/></svg>`,
+dashcam:`<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/><circle cx="12" cy="13" r="1.5" fill="white"/></svg>`,
+battery:`<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="6" width="18" height="12" rx="2"/><line x1="23" y1="10" x2="23" y2="14"/><line x1="7" y1="10" x2="7" y2="14"/><line x1="11" y1="10" x2="11" y2="14"/></svg>`,
+};
+
+const allApps=[
+{id:'maps',name:'خرائط قوقل',icon:'maps',color:'#22c55e',gradient:'linear-gradient(135deg,#166534,#22c55e)'},
+{id:'phone',name:'الهاتف',icon:'phone',color:'#3b82f6',gradient:'linear-gradient(135deg,#1e3a5f,#3b82f6)'},
+{id:'music',name:'الموسيقى',icon:'music',color:'#a855f7',gradient:'linear-gradient(135deg,#581c87,#a855f7)'},
+{id:'messages',name:'الرسائل',icon:'messages',color:'#06b6d4',gradient:'linear-gradient(135deg,#164e63,#06b6d4)'},
+{id:'settings',name:'الإعدادات',icon:'settings',color:'#6b7280',gradient:'linear-gradient(135deg,#374151,#6b7280)'},
+{id:'camera',name:'كاميرا الرجوع',icon:'camera',color:'#f59e0b',gradient:'linear-gradient(135deg,#78350f,#f59e0b)'},
+{id:'weather',name:'الطقس',icon:'weather',color:'#0ea5e9',gradient:'linear-gradient(135deg,#0c4a6e,#0ea5e9)'},
+{id:'radio',name:'الراديو FM',icon:'radio',color:'#ef4444',gradient:'linear-gradient(135deg,#7f1d1d,#ef4444)'},
+{id:'waze',name:'ويز',icon:'waze',color:'#10b981',gradient:'linear-gradient(135deg,#064e3b,#10b981)'},
+{id:'spotify',name:'سبوتيفاي',icon:'spotify',color:'#1db954',gradient:'linear-gradient(135deg,#064e3b,#1db954)'},
+{id:'carplay',name:'كاربلاي',icon:'carplay',color:'#6366f1',gradient:'linear-gradient(135deg,#312e81,#6366f1)'},
+{id:'obd',name:'فحص OBD',icon:'obd',color:'#f97316',gradient:'linear-gradient(135deg,#7c2d12,#f97316)'},
+{id:'whatsapp',name:'واتساب',icon:'whatsapp',color:'#25d366',gradient:'linear-gradient(135deg,#064e3b,#25d366)'},
+{id:'fuel',name:'محطات وقود',icon:'fuel',color:'#eab308',gradient:'linear-gradient(135deg,#713f12,#eab308)'},
+{id:'compass',name:'البوصلة',icon:'compass',color:'#dc2626',gradient:'linear-gradient(135deg,#7f1d1d,#dc2626)'},
+{id:'parking',name:'المواقف',icon:'parking',color:'#2563eb',gradient:'linear-gradient(135deg,#1e3a8a,#2563eb)'},
+{id:'clock',name:'المنبه',icon:'clock',color:'#8b5cf6',gradient:'linear-gradient(135deg,#4c1d95,#8b5cf6)'},
+{id:'calculator',name:'الحاسبة',icon:'calculator',color:'#64748b',gradient:'linear-gradient(135deg,#334155,#64748b)'},
+{id:'mirror',name:'شاشة المرآة',icon:'mirror',color:'#0891b2',gradient:'linear-gradient(135deg,#155e75,#0891b2)'},
+{id:'tire',name:'ضغط الإطارات',icon:'tire',color:'#d97706',gradient:'linear-gradient(135deg,#92400e,#d97706)'},
+{id:'dashcam',name:'داش كام',icon:'dashcam',color:'#e11d48',gradient:'linear-gradient(135deg,#881337,#e11d48)'},
+{id:'battery',name:'بطارية السيارة',icon:'battery',color:'#16a34a',gradient:'linear-gradient(135deg,#14532d,#16a34a)'},
+];
+
+// ============ STATE ============
+let dockSlots=allApps.slice(0,5).map(a=>({...a}));
+let editSlot=-1,btOn=true,wifiOn=true,isPlaying=false,progress=35,currentTrack=0,speed=0,curTheme='classic';
+const tracks=[{title:'أنشودة الصباح ☀️',duration:'4:05'},{title:'رحلة على الطريق 🛣️',duration:'3:42'},{title:'أمواج البحر 🌊',duration:'5:18'},{title:'ليالي الشتاء ❄️',duration:'4:33'}];
+const SS={brightness:80,nightMode:false,autoBrightness:true,fontSize:'medium',accentColor:'#4f8cff',wallpaper:0,systemSound:true,navSound:true,touchVibrate:true,drivingMode:false,autoLock:true,parkAssist:true,rearCamera:true,speed_unit:'kmh',autoPlay:false,screenTimeout:3};
+
+// ============ THEMES ============
+const THEMES=[
+  {id:'classic',name:'الكلاسيكي',desc:'يوتيوب + ساعة جانبية',preview:'linear-gradient(135deg,#0a0e1a,#111827)',icon:'🖥️'},
+  {id:'sport',name:'الرياضي',desc:'عداد سرعة دائري كبير',preview:'linear-gradient(135deg,#0a0a0a,#1a0505)',icon:'🏎️'},
+  {id:'minimal',name:'المينيمال',desc:'ساعة كبيرة بتصميم نظيف',preview:'linear-gradient(135deg,#0f1218,#161b26)',icon:'✨'},
+  {id:'modern',name:'العصري',desc:'بطاقات ودجات ذكية',preview:'linear-gradient(135deg,#0a0e1a,#0f1a2e)',icon:'💎'},
+  {id:'luxury',name:'الفخم',desc:'تصميم ذهبي فاخر',preview:'linear-gradient(135deg,#1a1408,#0d0a04)',icon:'👑'},
+];
+
+function getTimeData(){
+  const n=new Date();let h=n.getHours();const m=n.getMinutes(),s=n.getSeconds(),ap=h>=12?'م':'ص';h=h%12||12;
+  const days=['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+  const months=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+  const toAr=n=>n.toString().replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);
+  return {h:h.toString().padStart(2,'0'),m:m.toString().padStart(2,'0'),s:s.toString().padStart(2,'0'),ap,
+    date:`${days[n.getDay()]} ${toAr(n.getDate())} ${months[n.getMonth()]} ${toAr(n.getFullYear())}`,
+    hijri:n.toLocaleDateString('ar-SA-u-ca-islamic',{year:'numeric',month:'long',day:'numeric'})};
+}
+
+// ===== Top Bar (shared) =====
+function topBar(){
+  return `<div class="flex items-center justify-between px-4 py-2 glass" style="border-radius:14px;" id="top-bar">
+  <div class="flex items-center gap-2">
+    <div class="si active" id="bt-toggle" onclick="toggleBT()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4f8cff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6.5 6.5 17.5 17.5"/><polyline points="6.5 17.5 12 12 12 2 17.5 6.5 12 12 12 22 17.5 17.5 12 12"/></svg></div>
+    <span id="bt-label" style="font-size:11px;color:#4f8cff;font-weight:600;">متصل</span>
+    <div style="width:1px;height:16px;background:rgba(255,255,255,.08);margin:0 4px;"></div>
+    <div class="si active" id="wifi-toggle" onclick="toggleWifi()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg></div>
+    <span id="wifi-label" style="font-size:11px;color:#22c55e;font-weight:600;">متصل</span>
+  </div>
+  <div class="mu" style="font-size:13px;font-weight:600;"><span id="hijri-date"></span></div>
+  <div class="flex items-center gap-3">
+    <div class="flex items-center gap-1 mu" style="font-size:12px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg><span>32°C</span></div>
+    <div class="flex items-center gap-1" style="font-size:12px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><rect x="1" y="6" width="18" height="12" rx="2"/><line x1="23" y1="10" x2="23" y2="14"/></svg><span style="color:#22c55e;font-weight:600;">85%</span></div>
+  </div></div>`;
+}
+
+// ===== Bottom Dock (shared) =====
+function dockHTML(){return `<div class="glass flex items-center justify-around px-6 py-3" style="border-radius:18px;" id="app-dock"></div>`;}
+
+// ===== YouTube Widget =====
+function ytWidget(full){
+  const h=full?'flex-1':'';
+  return `<div class="glass ${h} flex flex-col overflow-hidden" style="border-radius:18px;" id="yt-widget">
+  <div class="flex items-center gap-2 px-4 py-2" style="border-bottom:1px solid rgba(255,255,255,.08);"><svg width="22" height="22" viewBox="0 0 24 24" fill="#ff0000"><path d="M23.5 6.2c-.3-1-1-1.8-2-2.1C19.6 3.5 12 3.5 12 3.5s-7.6 0-9.5.6c-1 .3-1.7 1.1-2 2.1C0 8.1 0 12 0 12s0 3.9.5 5.8c.3 1 1 1.8 2 2.1 1.9.6 9.5.6 9.5.6s7.6 0 9.5-.6c1-.3 1.7-1.1 2-2.1.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8z"/><polygon points="9.75,15.02 15.5,12 9.75,8.98" fill="#fff"/></svg>
+  <span style="font-weight:700;font-size:14px;">يوتيوب</span><div class="flex-1"></div><span id="yt-title" class="mu" style="font-size:12px;font-weight:600;">أنشودة الصباح ☀️</span></div>
+  <div style="flex:1;min-height:80px;background:linear-gradient(135deg,#1a1a2e,#16213e);display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;">
+    <div class="yt-va" id="visualizer"></div>
+    <div style="z-index:2;cursor:pointer;" onclick="togglePlay()"><svg width="56" height="56" viewBox="0 0 64 64"><circle cx="32" cy="32" r="28" fill="rgba(255,0,0,.85)"/><polygon points="26,20 26,44 46,32" fill="white"/></svg></div>
+  </div>
+  <div style="padding:0 16px;"><div class="pb" onclick="seekTrack(event)"><div class="pf" id="progress-fill"></div></div>
+  <div class="flex justify-between mu" style="font-size:11px;padding:4px 0;"><span id="yt-current">1:23</span><span id="yt-duration">4:05</span></div></div>
+  <div class="flex items-center justify-center gap-4 py-2" style="border-top:1px solid rgba(255,255,255,.08);">
+    <button class="yb" onclick="prevTrack()"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="19,20 9,12 19,4"/><rect x="5" y="4" width="3" height="16"/></svg></button>
+    <button class="yb ybp" id="play-btn" onclick="togglePlay()"><svg id="play-icon" width="20" height="20" viewBox="0 0 24 24" fill="white"><polygon points="6,3 20,12 6,21"/></svg></button>
+    <button class="yb" onclick="nextTrack()"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,4 15,12 5,20"/><rect x="16" y="4" width="3" height="16"/></svg></button>
+  </div></div>`;
+}
+
+// ===== Clock Widget =====
+function clockWidget(large){
+  const fs=large?'96px':'72px';
+  return `<div class="glass flex-1 flex flex-col items-center justify-center p-4" style="border-radius:18px;">
+  <div id="clock-time" style="font-size:${fs};font-weight:900;letter-spacing:-2px;line-height:1;background:linear-gradient(135deg,#fff,#94a3b8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-variant-numeric:tabular-nums;">12:00</div>
+  <div id="clock-seconds" style="font-size:28px;font-weight:600;color:#4f8cff;font-variant-numeric:tabular-nums;">00</div>
+  <span id="clock-ampm" style="font-size:18px;font-weight:700;color:#4f8cff;margin-top:6px;">م</span>
+  <div class="mu" style="margin-top:10px;font-size:16px;font-weight:600;" id="date-display"></div>
+  <div style="margin-top:14px;width:100%;"><div class="glass-sm p-3" style="text-align:center;">
+    <div class="mu" style="font-size:11px;margin-bottom:4px;">🚗 السرعة</div>
+    <div style="font-size:32px;font-weight:900;line-height:1;"><span id="speed-val">0</span><span class="mu" style="font-size:14px;font-weight:600;"> كم/س</span></div>
+  </div></div></div>`;
+}
+
+// ============ BUILD THEMES ============
+function buildClassic(){
+  return topBar()+`<div class="flex-1 flex gap-3 min-h-0">
+    <div class="flex-1 flex flex-col gap-3">${ytWidget(true)}</div>
+    <div class="flex flex-col gap-3" style="width:280px;">${clockWidget(false)}</div>
+  </div>`+dockHTML();
+}
+
+function buildSport(){
+  return topBar()+`<div class="flex-1 flex gap-3 min-h-0 items-stretch">
+    <!-- Gauges Left -->
+    <div class="flex flex-col gap-3" style="width:200px;">
+      <div class="glass flex-1 flex flex-col items-center justify-center p-3" style="border-radius:18px;">
+        <div class="mu" style="font-size:11px;margin-bottom:4px;">RPM</div>
+        <div style="font-size:36px;font-weight:900;color:#ef4444;" id="rpm-val">2450</div>
+        <div class="mu" style="font-size:10px;">دورة/د</div>
+        <div style="width:100%;height:6px;border-radius:3px;background:rgba(255,255,255,.1);margin-top:8px;overflow:hidden;"><div style="width:40%;height:100%;background:linear-gradient(90deg,#22c55e,#f59e0b,#ef4444);border-radius:3px;" id="rpm-bar"></div></div>
+      </div>
+      <div class="glass flex-1 flex flex-col items-center justify-center p-3" style="border-radius:18px;">
+        <div class="mu" style="font-size:11px;margin-bottom:4px;">حرارة المحرك</div>
+        <div style="font-size:36px;font-weight:900;color:#f59e0b;">92°</div>
+        <div style="width:100%;height:6px;border-radius:3px;background:rgba(255,255,255,.1);margin-top:8px;overflow:hidden;"><div style="width:60%;height:100%;background:linear-gradient(90deg,#3b82f6,#f59e0b);border-radius:3px;"></div></div>
+      </div>
+    </div>
+    <!-- Center: Big Speedometer -->
+    <div class="flex-1 glass flex flex-col items-center justify-center" style="border-radius:18px;background:radial-gradient(circle at center,rgba(239,68,68,.04),transparent 70%);">
+      <div class="gauge-ring" style="width:220px;height:220px;">
+        <svg width="220" height="220" viewBox="0 0 220 220" style="transform:rotate(-90deg);">
+          <circle cx="110" cy="110" r="95" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="12"/>
+          <circle cx="110" cy="110" r="95" fill="none" stroke="url(#sg)" stroke-width="12" stroke-dasharray="597" stroke-linecap="round" id="speed-arc"/>
+          <defs><linearGradient id="sg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#22c55e"/><stop offset="50%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#ef4444"/></linearGradient></defs>
+        </svg>
+        <div class="gauge-val">
+          <div style="font-size:64px;font-weight:900;" id="speed-val">0</div>
+          <div class="mu" style="font-size:14px;font-weight:600;">كم/س</div>
+        </div>
+      </div>
+      <div class="flex gap-6 mt-3 mu" style="font-size:12px;font-weight:600;">
+        <span>⛽ 65%</span><span>🔋 14.2V</span><span>🌡️ 92°C</span>
+      </div>
+    </div>
+    <!-- Right: Time + Mini Player -->
+    <div class="flex flex-col gap-3" style="width:220px;">
+      <div class="glass flex flex-col items-center justify-center p-3" style="border-radius:18px;flex:1;">
+        <div id="clock-time" style="font-size:52px;font-weight:900;letter-spacing:-2px;line-height:1;background:linear-gradient(135deg,#fff,#94a3b8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-variant-numeric:tabular-nums;">12:00</div>
+        <div class="flex items-center gap-2 mt-1"><span id="clock-seconds" style="font-size:22px;font-weight:600;color:#ef4444;">00</span><span id="clock-ampm" style="font-size:16px;font-weight:700;color:#ef4444;">م</span></div>
+        <div class="mu" style="font-size:13px;font-weight:600;margin-top:6px;" id="date-display"></div>
+      </div>
+      <div class="glass p-3 flex flex-col items-center" style="border-radius:18px;flex:0.6;">
+        <div class="flex items-center gap-2 mb-2"><svg width="16" height="16" viewBox="0 0 24 24" fill="#ff0000"><path d="M23.5 6.2c-.3-1-1-1.8-2-2.1C19.6 3.5 12 3.5 12 3.5s-7.6 0-9.5.6c-1 .3-1.7 1.1-2 2.1C0 8.1 0 12 0 12s0 3.9.5 5.8c.3 1 1 1.8 2 2.1 1.9.6 9.5.6 9.5.6s7.6 0 9.5-.6c1-.3 1.7-1.1 2-2.1.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8z"/><polygon points="9.75,15.02 15.5,12 9.75,8.98" fill="#fff"/></svg>
+        <span id="yt-title" style="font-size:11px;font-weight:600;" class="mu">أنشودة الصباح ☀️</span></div>
+        <div style="width:100%;"><div class="pb" onclick="seekTrack(event)"><div class="pf" id="progress-fill"></div></div></div>
+        <div class="flex items-center gap-3 mt-2">
+          <button class="yb" style="width:30px;height:30px;" onclick="prevTrack()"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="19,20 9,12 19,4"/><rect x="5" y="4" width="3" height="16"/></svg></button>
+          <button class="yb ybp" style="width:36px;height:36px;" onclick="togglePlay()"><svg id="play-icon" width="16" height="16" viewBox="0 0 24 24" fill="white"><polygon points="6,3 20,12 6,21"/></svg></button>
+          <button class="yb" style="width:30px;height:30px;" onclick="nextTrack()"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,4 15,12 5,20"/><rect x="16" y="4" width="3" height="16"/></svg></button>
+        </div>
+        <div class="flex justify-between mu w-full" style="font-size:10px;margin-top:4px;"><span id="yt-current">1:23</span><span id="yt-duration">4:05</span></div>
+      </div>
+    </div>
+  </div>`+dockHTML();
+}
+
+function buildMinimal(){
+  return topBar()+`<div class="flex-1 flex items-center justify-center">
+    <div style="text-align:center;">
+      <div id="clock-time" style="font-size:120px;font-weight:900;letter-spacing:-4px;line-height:1;background:linear-gradient(135deg,#fff,#64748b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-variant-numeric:tabular-nums;">12:00</div>
+      <div class="flex items-center justify-center gap-4 mt-2">
+        <span id="clock-seconds" style="font-size:32px;font-weight:600;color:#4f8cff;">00</span>
+        <span id="clock-ampm" style="font-size:24px;font-weight:700;color:#4f8cff;">م</span>
+      </div>
+      <div class="mu" style="font-size:20px;font-weight:600;margin-top:12px;" id="date-display"></div>
+      <div class="flex items-center justify-center gap-8 mt-6">
+        <div class="glass-sm p-3 px-5" style="text-align:center;"><div class="mu" style="font-size:10px;">السرعة</div><div style="font-size:24px;font-weight:900;" id="speed-val">0</div></div>
+        <div class="glass-sm p-3 px-5" style="text-align:center;">
+          <div class="mu" style="font-size:10px;">يوتيوب</div>
+          <div class="flex items-center gap-2 mt-1"><button class="yb" style="width:28px;height:28px;" onclick="prevTrack()"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="19,20 9,12 19,4"/></svg></button>
+          <button class="yb ybp" style="width:32px;height:32px;" onclick="togglePlay()"><svg id="play-icon" width="14" height="14" viewBox="0 0 24 24" fill="white"><polygon points="6,3 20,12 6,21"/></svg></button>
+          <button class="yb" style="width:28px;height:28px;" onclick="nextTrack()"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,4 15,12 5,20"/></svg></button></div>
+          <div style="width:100px;margin-top:4px;"><div class="pb"><div class="pf" id="progress-fill"></div></div></div>
+        </div>
+        <div class="glass-sm p-3 px-5" style="text-align:center;"><div class="mu" style="font-size:10px;">الحرارة</div><div style="font-size:24px;font-weight:900;">32°</div></div>
+      </div>
+    </div>
+  </div>`+dockHTML();
+}
+
+function buildModern(){
+  return topBar()+`<div class="flex-1 flex gap-3 min-h-0">
+    <div class="flex flex-col gap-3 flex-1">
+      <div class="flex gap-3" style="flex:1;">
+        <!-- Clock Card -->
+        <div class="glass flex-1 flex flex-col items-center justify-center p-4" style="border-radius:18px;">
+          <div id="clock-time" style="font-size:56px;font-weight:900;letter-spacing:-2px;line-height:1;background:linear-gradient(135deg,#fff,#94a3b8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-variant-numeric:tabular-nums;">12:00</div>
+          <div class="flex items-center gap-2 mt-1"><span id="clock-seconds" style="font-size:20px;font-weight:600;color:#4f8cff;">00</span><span id="clock-ampm" style="font-size:16px;font-weight:700;color:#4f8cff;">م</span></div>
+          <div class="mu" style="font-size:13px;font-weight:600;margin-top:8px;" id="date-display"></div>
+        </div>
+        <!-- Weather Card -->
+        <div class="glass flex flex-col items-center justify-center p-4" style="border-radius:18px;width:180px;background:linear-gradient(135deg,rgba(14,165,233,.06),transparent);">
+          <div style="font-size:40px;">☀️</div><div style="font-size:28px;font-weight:900;margin-top:4px;">32°</div><div class="mu" style="font-size:12px;font-weight:600;">الرياض — صحو</div>
+        </div>
+        <!-- Speed Card -->
+        <div class="glass flex flex-col items-center justify-center p-4" style="border-radius:18px;width:150px;">
+          <div class="mu" style="font-size:11px;">🚗 السرعة</div><div style="font-size:40px;font-weight:900;" id="speed-val">0</div><div class="mu" style="font-size:12px;">كم/س</div>
+        </div>
+      </div>
+      <div class="flex gap-3" style="flex:1;">
+        ${ytWidget(true)}
+        <!-- Quick Actions -->
+        <div class="flex flex-col gap-3" style="width:150px;">
+          ${['maps','phone','music','camera'].map(id=>{const a=allApps.find(x=>x.id===id);return `<div class="glass flex items-center gap-2 p-3 flex-1" style="border-radius:14px;cursor:pointer;" onclick="openAppPage('${id}')"><div style="width:32px;height:32px;border-radius:8px;background:${a.gradient};display:flex;align-items:center;justify-content:center;">${IC[a.icon].replace(/28/g,'16')}</div><span style="font-size:12px;font-weight:600;">${a.name}</span></div>`;}).join('')}
+        </div>
+      </div>
+    </div>
+  </div>`+dockHTML();
+}
+
+function buildLuxury(){
+  const gc='#d4a853',gc2='rgba(212,168,83,';
+  return `<div class="flex items-center justify-between px-4 py-2" style="border-radius:14px;background:${gc2}.04);border:1px solid ${gc2}.12);backdrop-filter:blur(20px);" id="top-bar">
+  <div class="flex items-center gap-2">
+    <div class="si active" id="bt-toggle" onclick="toggleBT()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${gc}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6.5 6.5 17.5 17.5"/><polyline points="6.5 17.5 12 12 12 2 17.5 6.5 12 12 12 22 17.5 17.5 12 12"/></svg></div>
+    <span id="bt-label" style="font-size:11px;color:${gc};font-weight:600;">متصل</span>
+    <div style="width:1px;height:16px;background:${gc2}.15);margin:0 4px;"></div>
+    <div class="si active" id="wifi-toggle" onclick="toggleWifi()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${gc}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg></div>
+    <span id="wifi-label" style="font-size:11px;color:${gc};font-weight:600;">متصل</span>
+  </div>
+  <div style="font-size:13px;font-weight:600;color:${gc2}.5);"><span id="hijri-date"></span></div>
+  <div class="flex items-center gap-3" style="font-size:12px;color:${gc2}.5);">
+    <span>32°C</span><span style="color:${gc};font-weight:600;">85%</span>
+  </div></div>
+  <div class="flex-1 flex gap-3 min-h-0">
+    <!-- Left: YouTube gold-styled -->
+    <div class="flex-1 flex flex-col gap-3">
+      <div class="flex-1 flex flex-col overflow-hidden" style="border-radius:18px;background:${gc2}.03);border:1px solid ${gc2}.1);backdrop-filter:blur(20px);">
+        <div class="flex items-center gap-2 px-4 py-2" style="border-bottom:1px solid ${gc2}.08);">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="${gc}"><path d="M23.5 6.2c-.3-1-1-1.8-2-2.1C19.6 3.5 12 3.5 12 3.5s-7.6 0-9.5.6c-1 .3-1.7 1.1-2 2.1C0 8.1 0 12 0 12s0 3.9.5 5.8c.3 1 1 1.8 2 2.1 1.9.6 9.5.6 9.5.6s7.6 0 9.5-.6c1-.3 1.7-1.1 2-2.1.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8z"/><polygon points="9.75,15.02 15.5,12 9.75,8.98" fill="#1a1408"/></svg>
+          <span style="font-weight:700;font-size:14px;color:${gc};">مشغل يوتيوب</span><div class="flex-1"></div>
+          <span id="yt-title" style="font-size:12px;font-weight:600;color:${gc2}.4);">أنشودة الصباح ☀️</span>
+        </div>
+        <div style="flex:1;min-height:80px;background:linear-gradient(135deg,#1a1408,#0d0a04);display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;">
+          <div class="yt-va" id="visualizer"></div>
+          <div style="z-index:2;cursor:pointer;" onclick="togglePlay()"><svg width="56" height="56" viewBox="0 0 64 64"><circle cx="32" cy="32" r="28" fill="${gc2}.8)"/><polygon points="26,20 26,44 46,32" fill="#1a1408"/></svg></div>
+        </div>
+        <div style="padding:0 16px;"><div class="pb" style="background:${gc2}.1);" onclick="seekTrack(event)"><div class="pf" id="progress-fill" style="background:${gc};"></div></div>
+        <div class="flex justify-between" style="font-size:11px;padding:4px 0;color:${gc2}.4);"><span id="yt-current">1:23</span><span id="yt-duration">4:05</span></div></div>
+        <div class="flex items-center justify-center gap-4 py-2" style="border-top:1px solid ${gc2}.08);">
+          <button class="yb" style="color:${gc};" onclick="prevTrack()"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="19,20 9,12 19,4"/><rect x="5" y="4" width="3" height="16"/></svg></button>
+          <button class="yb" style="width:48px;height:48px;background:${gc}!important;box-shadow:0 4px 20px ${gc2}.3);" onclick="togglePlay()"><svg id="play-icon" width="20" height="20" viewBox="0 0 24 24" fill="#1a1408"><polygon points="6,3 20,12 6,21"/></svg></button>
+          <button class="yb" style="color:${gc};" onclick="nextTrack()"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,4 15,12 5,20"/><rect x="16" y="4" width="3" height="16"/></svg></button>
+        </div>
+      </div>
+    </div>
+    <!-- Right: Clock gold-styled -->
+    <div class="flex flex-col gap-3" style="width:280px;">
+      <div class="flex-1 flex flex-col items-center justify-center p-4" style="border-radius:18px;background:${gc2}.03);border:1px solid ${gc2}.1);backdrop-filter:blur(20px);">
+        <div id="clock-time" style="font-size:72px;font-weight:900;letter-spacing:-2px;line-height:1;background:linear-gradient(135deg,${gc},#f5e6b8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-variant-numeric:tabular-nums;">12:00</div>
+        <div id="clock-seconds" style="font-size:28px;font-weight:600;color:${gc};">00</div>
+        <span id="clock-ampm" style="font-size:18px;font-weight:700;color:${gc};margin-top:6px;">م</span>
+        <div style="margin-top:10px;font-size:16px;font-weight:600;color:${gc2}.5);" id="date-display"></div>
+        <div style="margin-top:14px;width:100%;"><div style="text-align:center;padding:12px;border-radius:12px;background:${gc2}.04);border:1px solid ${gc2}.1);">
+          <div style="font-size:11px;margin-bottom:4px;color:${gc2}.4);">👑 السرعة</div>
+          <div style="font-size:32px;font-weight:900;line-height:1;color:${gc};"><span id="speed-val">0</span><span style="font-size:14px;font-weight:600;color:${gc2}.4);"> كم/س</span></div>
+        </div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flex items-center justify-around px-6 py-3" style="border-radius:18px;background:${gc2}.03);border:1px solid ${gc2}.1);backdrop-filter:blur(20px);" id="app-dock"></div>`;
+}
+
+// ============ RENDER ============
+function renderMain(){
+  const ms=document.getElementById('main-screen');
+  const builders={classic:buildClassic,sport:buildSport,minimal:buildMinimal,modern:buildModern,luxury:buildLuxury};
+  ms.innerHTML=(builders[curTheme]||buildClassic)();
+  renderDock();initVisualizer();updateClock();
+  if(curTheme==='sport') animSportGauge();
+  // Set BG
+  const bgs={classic:'radial-gradient(ellipse 80% 60% at 20% 80%,rgba(79,140,255,.08) 0%,transparent 70%),radial-gradient(ellipse 60% 50% at 80% 20%,rgba(168,85,247,.06) 0%,transparent 70%),linear-gradient(135deg,#0a0e1a,#111827 50%,#0a0e1a)',
+    sport:'radial-gradient(circle at 50% 50%,rgba(239,68,68,.06) 0%,transparent 60%),linear-gradient(135deg,#0a0a0a,#1a0505,#0a0a0a)',
+    minimal:'linear-gradient(135deg,#0f1218,#161b26,#0f1218)',
+    modern:'radial-gradient(ellipse 80% 60% at 30% 70%,rgba(79,140,255,.06) 0%,transparent 70%),linear-gradient(135deg,#0a0e1a,#0f1a2e,#0a0e1a)',
+    luxury:'radial-gradient(ellipse 60% 50% at 50% 50%,rgba(212,168,83,.04) 0%,transparent 70%),linear-gradient(135deg,#1a1408,#0d0a04,#1a1408)'};
+  document.getElementById('bg-layer').style.background=bgs[curTheme]||bgs.classic;
+}
+
+function animSportGauge(){
+  const arc=document.getElementById('speed-arc');
+  if(!arc)return;
+  const pct=Math.min(speed/200,1);
+  arc.setAttribute('stroke-dashoffset',597-(597*pct*.75));
+}
+
+// ============ DOCK ============
+function renderDock(){
+  const dk=document.getElementById('app-dock');if(!dk)return;
+  dk.innerHTML='';
+  for(let i=0;i<5;i++){
+    const a=dockSlots[i],d=document.createElement('div');d.className='da';
+    if(a){
+      d.innerHTML=`<div class="di" style="background:${a.gradient};">${IC[a.icon]||''}</div><span class="dl">${a.name}</span>`;
+      d.addEventListener('click',()=>openAppPage(a.id));
+      const eb=document.createElement('div');
+      eb.style.cssText='position:absolute;top:-4px;left:-4px;width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:10px;cursor:pointer;opacity:0;transition:opacity .2s;';
+      eb.textContent='✏️';eb.onclick=e=>{e.stopPropagation();openModal(i);};d.appendChild(eb);
+      d.addEventListener('mouseenter',()=>eb.style.opacity='1');d.addEventListener('mouseleave',()=>eb.style.opacity='0');
+    }else{
+      d.innerHTML=`<div class="di" style="background:rgba(255,255,255,.05);border:2px dashed rgba(255,255,255,.15);"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#8b92a8" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div><span class="dl" style="color:#8b92a8;">إضافة</span>`;
+      d.onclick=()=>openModal(i);
+    }
+    dk.appendChild(d);
+  }
+}
+
+// ============ MODAL ============
+function openModal(si){
+  editSlot=si;const list=document.getElementById('app-list');list.innerHTML='';
+  if(dockSlots[si]){const rd=document.createElement('div');rd.className='ao';rd.style.cssText='border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:8px;padding-bottom:14px;';
+    rd.innerHTML=`<div style="width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#7f1d1d,#ef4444);flex-shrink:0;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></div><div><div style="font-weight:700;font-size:14px;color:#ef4444;">إزالة التطبيق</div></div>`;
+    rd.onclick=()=>{dockSlots[si]=null;renderDock();closeModal();};list.appendChild(rd);}
+  const used=dockSlots.filter(Boolean).map(a=>a.id);
+  allApps.forEach(app=>{const u=used.includes(app.id);const d=document.createElement('div');d.className='ao';if(u)d.style.opacity='.4';
+    d.innerHTML=`<div style="width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;background:${app.gradient};flex-shrink:0;">${IC[app.icon]||''}</div><div style="flex:1;"><div style="font-weight:700;font-size:14px;">${app.name}</div></div>${u?'<span class="mu" style="font-size:11px;">مستخدم</span>':''}`;
+    if(!u)d.onclick=()=>{dockSlots[editSlot]={...app};renderDock();closeModal();};list.appendChild(d);});
+  document.getElementById('app-modal').classList.add('show');
+}
+function closeModal(){document.getElementById('app-modal').classList.remove('show');}
+
+// ============ APP PAGES ============
+function openAppPage(id){
+  const pg=document.getElementById('page-content'),ov=document.getElementById('page-overlay'),app=allApps.find(a=>a.id===id);
+  const hdr=`<div class="flex items-center gap-3 px-5 py-3" style="border-bottom:1px solid rgba(255,255,255,.08);background:rgba(0,0,0,.3);backdrop-filter:blur(20px);"><button onclick="closePage()" style="width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.08);border:none;color:#e8eaf0;display:flex;align-items:center;justify-content:center;cursor:pointer;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button><div style="width:36px;height:36px;border-radius:10px;background:${app?app.gradient:'#333'};display:flex;align-items:center;justify-content:center;">${app?IC[app.icon]:''}</div><span style="font-weight:700;font-size:16px;">${app?app.name:''}</span></div>`;
+  const B={settings:bSettings,maps:bMaps,phone:bPhone,weather:bWeather,camera:bCamera,messages:bMessages,music:bMusic,radio:bRadio,compass:bCompass,fuel:bFuel,whatsapp:bWhatsapp,tire:bTire,dashcam:bDashcam,obd:bOBD};
+  pg.innerHTML=hdr+`<div class="flex-1 overflow-y-auto p-4" style="direction:rtl;">${(B[id]||bGeneric)(id)}</div>`;
+  ov.classList.add('show');if(id==='settings')initSettings();
+}
+function closePage(){document.getElementById('page-overlay').classList.remove('show');}
+
+// ===== SETTINGS =====
+function bSettings(){return `<div class="flex gap-2 mb-5 flex-wrap" id="st-tabs">
+  <button class="tb active" onclick="stTab(this,'display')">الشاشة</button>
+  <button class="tb" onclick="stTab(this,'sound')">الصوت</button>
+  <button class="tb" onclick="stTab(this,'driving')">القيادة</button>
+  <button class="tb" onclick="stTab(this,'themes')">الواجهات</button>
+  <button class="tb" onclick="stTab(this,'system')">النظام</button>
+  <button class="tb" onclick="stTab(this,'about')">حول</button>
+</div><div id="st-panel"></div>`;}
+function initSettings(){stTab(document.querySelector('#st-tabs .tb'),'display');}
+function stTab(el,t){document.querySelectorAll('#st-tabs .tb').forEach(b=>b.classList.remove('active'));el.classList.add('active');
+  const p=document.getElementById('st-panel');const P={display:pDisp,sound:pSnd,driving:pDrv,themes:pThemes,system:pSys,about:pAbt};
+  p.innerHTML=`<div class="af">${(P[t]||P.display)()}</div>`;}
+
+function pDisp(){
+  const wps=[{bg:'linear-gradient(135deg,#0a0e1a,#111827)',l:'داكن كلاسيكي'},{bg:'linear-gradient(135deg,#0f172a,#1e293b)',l:'أزرق داكن'},{bg:'linear-gradient(135deg,#1a0a2e,#2d1b69)',l:'بنفسجي'},{bg:'linear-gradient(135deg,#0a1a0e,#1b4332)',l:'أخضر'},{bg:'linear-gradient(135deg,#1a0a0a,#4a1010)',l:'أحمر'},{bg:'linear-gradient(135deg,#0a1520,#1e3a5f)',l:'محيطي'}];
+  const cls=['#4f8cff','#a855f7','#22c55e','#ef4444','#f59e0b','#ec4899','#06b6d4','#f97316'];
+  return `<div class="glass-sm mb-4 overflow-hidden"><div class="px-4 py-3" style="border-bottom:1px solid rgba(255,255,255,.06);font-weight:700;font-size:14px;">💡 السطوع</div>
+  <div class="sr"><div><div style="font-weight:600;">مستوى السطوع</div><div class="mu" style="font-size:12px;">تحكم بسطوع الشاشة</div></div>
+    <div class="flex items-center gap-3" style="min-width:160px;"><input type="range" class="si-inp" min="10" max="100" value="${SS.brightness}" oninput="SS.brightness=this.value;document.getElementById('brv').textContent=this.value+'%'"/><span id="brv" style="font-size:13px;font-weight:600;min-width:36px;text-align:center;">${SS.brightness}%</span></div></div>
+  <div class="sr"><div><div style="font-weight:600;">سطوع تلقائي</div></div><div class="tg ${SS.autoBrightness?'on':''}" onclick="this.classList.toggle('on')"></div></div>
+  <div class="sr"><div><div style="font-weight:600;">الوضع الليلي</div></div><div class="tg ${SS.nightMode?'on':''}" onclick="this.classList.toggle('on')"></div></div>
+  <div class="sr"><div><div style="font-weight:600;">إيقاف الشاشة بعد</div></div>
+    <select style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:6px 12px;color:#e8eaf0;font-size:13px;"><option>دقيقة</option><option selected>3 دقائق</option><option>5 دقائق</option><option>أبداً</option></select></div></div>
+  <div class="glass-sm mb-4 overflow-hidden"><div class="px-4 py-3" style="border-bottom:1px solid rgba(255,255,255,.06);font-weight:700;font-size:14px;">🔤 حجم الخط</div>
+  <div class="sr"><div class="flex gap-2">${['small','medium','large'].map(s=>`<button onclick="document.querySelectorAll('.fsb').forEach(b=>b.style.background='rgba(255,255,255,.06)');this.style.background='rgba(79,140,255,.2)'" class="fsb" style="padding:8px 16px;border-radius:10px;border:1px solid rgba(255,255,255,.1);background:${SS.fontSize===s?'rgba(79,140,255,.2)':'rgba(255,255,255,.06)'};color:#e8eaf0;cursor:pointer;font-size:${s==='small'?'12px':s==='medium'?'14px':'17px'};font-weight:600;">${s==='small'?'صغير':s==='medium'?'متوسط':'كبير'}</button>`).join('')}</div></div></div>
+  <div class="glass-sm mb-4 overflow-hidden"><div class="px-4 py-3" style="border-bottom:1px solid rgba(255,255,255,.06);font-weight:700;font-size:14px;">🎨 لون التمييز</div>
+  <div class="sr"><div class="flex gap-3 flex-wrap">${cls.map(c=>`<div class="cd ${SS.accentColor===c?'active':''}" style="background:${c};" onclick="document.querySelectorAll('.cd').forEach(d=>d.classList.remove('active'));this.classList.add('active')"></div>`).join('')}</div></div></div>
+  <div class="glass-sm mb-4 overflow-hidden"><div class="px-4 py-3" style="border-bottom:1px solid rgba(255,255,255,.06);font-weight:700;font-size:14px;">🖼️ خلفية الشاشة</div>
+  <div class="sr"><div class="flex gap-3 flex-wrap">${wps.map((w,i)=>`<div class="wt ${SS.wallpaper===i?'active':''}" style="background:${w.bg};" onclick="document.querySelectorAll('.wt').forEach(d=>d.classList.remove('active'));this.classList.add('active');document.getElementById('bg-layer').style.background='${w.bg}'" title="${w.l}"></div>`).join('')}</div></div></div>`;
+}
+
+// ===== THEMES SETTINGS TAB =====
+function pThemes(){
+  return `<div style="margin-bottom:16px;"><div style="font-weight:700;font-size:16px;margin-bottom:4px;">🎭 واجهات الشاشة الرئيسية</div><div class="mu" style="font-size:13px;">اختر الواجهة التي تناسب ذوقك</div></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+  ${THEMES.map(t=>{
+    // Build mini-preview for each theme
+    let preview='';
+    if(t.id==='classic') preview=`<div style="display:flex;gap:4px;height:100%;"><div style="flex:1;background:rgba(255,0,0,.12);border-radius:6px;display:flex;align-items:center;justify-content:center;"><svg width="16" height="16" viewBox="0 0 24 24" fill="rgba(255,0,0,.6)"><polygon points="9.75,15.02 15.5,12 9.75,8.98"/></svg></div><div style="width:35%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(255,255,255,.04);border-radius:6px;"><div style="font-size:16px;font-weight:900;color:rgba(255,255,255,.7);">12:00</div><div style="font-size:7px;color:rgba(255,255,255,.3);">كم/س</div></div></div>`;
+    else if(t.id==='sport') preview=`<div style="display:flex;align-items:center;justify-content:center;height:100%;"><div style="width:60px;height:60px;border-radius:50%;border:3px solid rgba(239,68,68,.4);display:flex;align-items:center;justify-content:center;"><div style="font-size:18px;font-weight:900;color:rgba(239,68,68,.7);">120</div></div></div>`;
+    else if(t.id==='minimal') preview=`<div style="display:flex;align-items:center;justify-content:center;height:100%;"><div style="font-size:28px;font-weight:900;color:rgba(255,255,255,.6);letter-spacing:-1px;">12:00</div></div>`;
+    else if(t.id==='modern') preview=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:3px;height:100%;padding:4px;"><div style="background:rgba(255,255,255,.04);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:rgba(255,255,255,.5);">12:00</div><div style="background:rgba(14,165,233,.08);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:14px;">☀️</div><div style="background:rgba(255,0,0,.08);border-radius:4px;display:flex;align-items:center;justify-content:center;grid-column:span 2;"><svg width="12" height="12" viewBox="0 0 24 24" fill="rgba(255,0,0,.5)"><polygon points="9.75,15 15.5,12 9.75,9"/></svg></div></div>`;
+    else if(t.id==='luxury') preview=`<div style="display:flex;gap:4px;height:100%;"><div style="flex:1;background:rgba(212,168,83,.08);border-radius:6px;display:flex;align-items:center;justify-content:center;"><svg width="14" height="14" viewBox="0 0 24 24" fill="rgba(212,168,83,.5)"><polygon points="9.75,15 15.5,12 9.75,9"/></svg></div><div style="width:35%;background:rgba(212,168,83,.05);border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;"><div style="font-size:14px;font-weight:900;color:rgba(212,168,83,.6);">12:00</div></div></div>`;
+    return `<div class="theme-card ${curTheme===t.id?'active':''}" onclick="curTheme='${t.id}';renderMain();closePage();" style="background:${t.preview};">
+      <div class="theme-badge">مفعّل</div>
+      <div style="padding:12px;">
+        <div style="height:80px;margin-bottom:10px;border-radius:8px;overflow:hidden;background:rgba(0,0,0,.2);">${preview}</div>
+        <div class="flex items-center gap-2"><span style="font-size:20px;">${t.icon}</span><div><div style="font-weight:700;font-size:14px;">${t.name}</div><div class="mu" style="font-size:11px;">${t.desc}</div></div></div>
+      </div></div>`;
+  }).join('')}
+  </div>
+  <div class="glass-sm mt-4 p-4" style="text-align:center;">
+    <div class="mu" style="font-size:12px;">💡 اضغط على أي واجهة لتطبيقها مباشرة</div>
+  </div>`;
+}
+
+function pSnd(){return `<div class="glass-sm mb-4 overflow-hidden"><div class="px-4 py-3" style="border-bottom:1px solid rgba(255,255,255,.06);font-weight:700;font-size:14px;">🔊 الأصوات</div>
+  <div class="sr"><div><div style="font-weight:600;">صوت النظام</div><div class="mu" style="font-size:12px;">أصوات اللمس</div></div><div class="tg on" onclick="this.classList.toggle('on')"></div></div>
+  <div class="sr"><div><div style="font-weight:600;">صوت الملاحة</div></div><div class="tg on" onclick="this.classList.toggle('on')"></div></div>
+  <div class="sr"><div><div style="font-weight:600;">اهتزاز عند اللمس</div></div><div class="tg on" onclick="this.classList.toggle('on')"></div></div></div>
+  <div class="glass-sm mb-4 overflow-hidden"><div class="px-4 py-3" style="border-bottom:1px solid rgba(255,255,255,.06);font-weight:700;font-size:14px;">🎵 مستوى الصوت</div>
+  ${['الوسائط|70','الملاحة|85','المكالمات|90','التنبيهات|60'].map(s=>{const[n,v]=s.split('|');return `<div class="sr"><div style="font-weight:600;min-width:80px;">${n}</div><div class="flex items-center gap-3" style="flex:1;max-width:250px;"><input type="range" class="si-inp" min="0" max="100" value="${v}"/><span style="font-size:13px;font-weight:600;">${v}%</span></div></div>`;}).join('')}</div>`;}
+
+function pDrv(){return `<div class="glass-sm mb-4 overflow-hidden"><div class="px-4 py-3" style="border-bottom:1px solid rgba(255,255,255,.06);font-weight:700;font-size:14px;">🚗 وضع القيادة</div>
+  <div class="sr"><div><div style="font-weight:600;">وضع القيادة</div><div class="mu" style="font-size:12px;">تبسيط الواجهة</div></div><div class="tg" onclick="this.classList.toggle('on')"></div></div>
+  <div class="sr"><div><div style="font-weight:600;">قفل تلقائي للشاشة</div><div class="mu" style="font-size:12px;">عند 20 كم/س</div></div><div class="tg on" onclick="this.classList.toggle('on')"></div></div>
+  <div class="sr"><div><div style="font-weight:600;">تشغيل موسيقى تلقائي</div></div><div class="tg" onclick="this.classList.toggle('on')"></div></div></div>
+  <div class="glass-sm mb-4 overflow-hidden"><div class="px-4 py-3" style="border-bottom:1px solid rgba(255,255,255,.06);font-weight:700;font-size:14px;">📸 الكاميرات والمساعدات</div>
+  <div class="sr"><div><div style="font-weight:600;">مساعد الركن</div></div><div class="tg on" onclick="this.classList.toggle('on')"></div></div>
+  <div class="sr"><div><div style="font-weight:600;">كاميرا الرجوع تلقائي</div></div><div class="tg on" onclick="this.classList.toggle('on')"></div></div>
+  <div class="sr"><div><div style="font-weight:600;">تنبيه تجاوز السرعة</div></div><div class="tg on" onclick="this.classList.toggle('on')"></div></div>
+  <div class="sr"><div><div style="font-weight:600;">تنبيه حزام الأمان</div></div><div class="tg on" onclick="this.classList.toggle('on')"></div></div></div>
+  <div class="glass-sm mb-4 overflow-hidden"><div class="px-4 py-3" style="border-bottom:1px solid rgba(255,255,255,.06);font-weight:700;font-size:14px;">📏 وحدة السرعة</div>
+  <div class="sr"><div class="flex gap-2">
+    <button onclick="this.style.background='rgba(79,140,255,.2)';this.nextElementSibling.style.background='rgba(255,255,255,.06)'" style="padding:8px 20px;border-radius:10px;border:1px solid rgba(255,255,255,.1);background:rgba(79,140,255,.2);color:#e8eaf0;cursor:pointer;font-weight:600;">كم/س</button>
+    <button onclick="this.style.background='rgba(79,140,255,.2)';this.previousElementSibling.style.background='rgba(255,255,255,.06)'" style="padding:8px 20px;border-radius:10px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.06);color:#e8eaf0;cursor:pointer;font-weight:600;">ميل/س</button>
+  </div></div></div>`;}
+
+function pSys(){return `<div class="glass-sm mb-4 overflow-hidden"><div class="px-4 py-3" style="border-bottom:1px solid rgba(255,255,255,.06);font-weight:700;font-size:14px;">🌐 اللغة</div>
+  <div class="sr"><select style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:8px 16px;color:#e8eaf0;font-size:14px;width:100%;"><option selected>العربية</option><option>English</option><option>Français</option></select></div></div>
+  <div class="glass-sm mb-4 overflow-hidden"><div class="px-4 py-3" style="border-bottom:1px solid rgba(255,255,255,.06);font-weight:700;font-size:14px;">📱 الاتصال</div>
+  ${['بلوتوث|الأجهزة المتصلة|on','واي فاي|نقطة الاتصال|on','نقطة اتصال متنقلة|مشاركة الإنترنت|','Apple CarPlay|لاسلكي|on','Android Auto|لاسلكي|'].map(s=>{const[n,d,o]=s.split('|');return `<div class="sr"><div><div style="font-weight:600;">${n}</div><div class="mu" style="font-size:12px;">${d}</div></div><div class="tg ${o}" onclick="this.classList.toggle('on')"></div></div>`;}).join('')}</div>
+  <div class="glass-sm mb-4 overflow-hidden"><div class="px-4 py-3" style="border-bottom:1px solid rgba(255,255,255,.06);font-weight:700;font-size:14px;">🔄 التحديث</div>
+  <div class="sr"><div style="flex:1;"><div style="font-weight:600;">تحديث النظام</div><div class="mu" style="font-size:12px;">v3.2.1</div></div><button style="padding:6px 16px;border-radius:8px;background:rgba(79,140,255,.15);border:1px solid rgba(79,140,255,.3);color:#4f8cff;font-weight:600;cursor:pointer;font-size:13px;">التحقق</button></div>
+  <div class="sr"><div style="flex:1;"><div style="font-weight:600;">إعادة ضبط المصنع</div></div><button style="padding:6px 16px;border-radius:8px;background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:#ef4444;font-weight:600;cursor:pointer;font-size:13px;">إعادة ضبط</button></div></div>`;}
+
+function pAbt(){return `<div class="glass-sm overflow-hidden"><div class="px-4 py-3" style="border-bottom:1px solid rgba(255,255,255,.06);font-weight:700;font-size:14px;">ℹ️ حول النظام</div>
+  ${['اسم الجهاز|شاشة السيارة Pro','إصدار النظام|v3.2.1','الموديل|CL-2026X','حجم الشاشة|10.1 بوصة','الدقة|1920 × 1080','المعالج|Snapdragon 680','الذاكرة|4 GB RAM','التخزين|64 GB (38 GB متاح)','نظام التشغيل|Android Auto 12','MAC|A4:CF:12:9B:3E:71'].map(s=>{const[k,v]=s.split('|');return `<div class="sr"><span class="mu" style="font-size:14px;">${k}</span><span style="font-weight:600;">${v}</span></div>`;}).join('')}</div>`;}
+
+// ===== OTHER APP PAGES (compact) =====
+function bMaps(){return `<div class="glass-sm overflow-hidden mb-4" style="height:280px;"><div style="width:100%;height:100%;background:linear-gradient(135deg,#1a2332,#0f1923);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;"><svg width="100%" height="100%" style="position:absolute;inset:0;opacity:.15;"><line x1="0" y1="50%" x2="100%" y2="50%" stroke="#4f8cff" stroke-width="3"/><line x1="30%" y1="0" x2="30%" y2="100%" stroke="#4f8cff" stroke-width="2"/><line x1="70%" y1="0" x2="70%" y2="100%" stroke="#4f8cff" stroke-width="2"/><line x1="50%" y1="0" x2="50%" y2="100%" stroke="#22c55e" stroke-width="3"/><circle cx="50%" cy="50%" r="8" fill="#ef4444"/><circle cx="50%" cy="50%" r="20" fill="none" stroke="rgba(239,68,68,.3)" stroke-width="2"/></svg><div style="z-index:2;text-align:center;"><div style="font-size:48px;">📍</div><div style="font-weight:700;font-size:16px;">موقعك الحالي</div><div class="mu" style="font-size:13px;">الرياض، السعودية</div></div></div></div>
+  <div class="glass-sm p-4 mb-4"><input placeholder="🔍 ابحث عن مكان..." style="width:100%;padding:10px 16px;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#e8eaf0;font-size:14px;"/></div>
+  <div class="glass-sm overflow-hidden"><div class="px-4 py-3" style="border-bottom:1px solid rgba(255,255,255,.06);font-weight:700;">📋 المفضلة</div>${['🏠 المنزل — 5 كم','🏢 العمل — 12 كم','⛽ أقرب محطة — 800 م','🕌 المسجد — 1.2 كم'].map(p=>`<div class="sr" style="cursor:pointer;"><span>${p}</span></div>`).join('')}</div>`;}
+
+function bPhone(){return `<div class="glass-sm p-4 mb-4" style="text-align:center;"><input id="phi" value="" placeholder="أدخل الرقم" style="width:100%;text-align:center;padding:12px;font-size:28px;font-weight:700;background:transparent;border:none;color:#e8eaf0;letter-spacing:2px;" readonly/></div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:300px;margin:0 auto 16px;">${[1,2,3,4,5,6,7,8,9,'*',0,'#'].map(n=>`<button onclick="document.getElementById('phi').value+='${n}'" style="padding:16px;border-radius:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);color:#e8eaf0;font-size:22px;font-weight:700;cursor:pointer;">${n}</button>`).join('')}</div>
+  <div style="display:flex;gap:12px;justify-content:center;margin-bottom:16px;"><button style="width:56px;height:56px;border-radius:50%;background:#22c55e;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;">${IC.phone}</button><button onclick="document.getElementById('phi').value=''" style="width:56px;height:56px;border-radius:50%;background:#ef4444;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+  <div class="glass-sm overflow-hidden"><div class="px-4 py-3" style="border-bottom:1px solid rgba(255,255,255,.06);font-weight:700;">📋 آخر المكالمات</div>${[{n:'أحمد',t:'📞 صادرة — 2:30 م'},{n:'محمد',t:'📞 واردة — 1:15 م'},{n:'خالد',t:'📞 لم يرد — 11:00 ص'}].map(c=>`<div class="sr"><div><div style="font-weight:600;">${c.n}</div><div class="mu" style="font-size:12px;">${c.t}</div></div></div>`).join('')}</div>`;}
+
+function bWeather(){return `<div class="glass-sm p-6 mb-4" style="text-align:center;background:linear-gradient(135deg,rgba(14,165,233,.1),transparent);"><div style="font-size:64px;">☀️</div><div style="font-size:48px;font-weight:900;">32°</div><div class="mu" style="font-size:16px;font-weight:600;">صحو — الرياض</div><div class="flex justify-center gap-6 mt-4" style="font-size:13px;"><span>💧 15%</span><span>💨 12 كم/س</span><span>🌡️ أعلى 38°</span></div></div>
+  <div class="glass-sm overflow-hidden"><div class="px-4 py-3" style="border-bottom:1px solid rgba(255,255,255,.06);font-weight:700;">📅 الأسبوع</div>${[{d:'الجمعة',i:'☀️',h:38,l:24},{d:'السبت',i:'⛅',h:36,l:23},{d:'الأحد',i:'🌤️',h:35,l:22},{d:'الإثنين',i:'☁️',h:33,l:21},{d:'الثلاثاء',i:'🌧️',h:30,l:19}].map(w=>`<div class="sr"><span style="font-weight:600;min-width:70px;">${w.d}</span><span style="font-size:24px;">${w.i}</span><span style="font-weight:600;">${w.h}° / <span class="mu">${w.l}°</span></span></div>`).join('')}</div>`;}
+
+function bMessages(){return `<div class="glass-sm overflow-hidden"><div class="px-4 py-3" style="border-bottom:1px solid rgba(255,255,255,.06);font-weight:700;">💬 الرسائل</div>${[{n:'أحمد',m:'وصلت 👍',t:'2:30 م',u:1},{n:'محمد',m:'بكم طريقك؟',t:'1:15 م',u:1},{n:'خالد',m:'تم الحجز',t:'11:00 ص'},{n:'المجموعة',m:'📸 صورة',t:'10:30 ص'},{n:'عبدالله',m:'السلام عليكم',t:'أمس'}].map(m=>`<div class="sr" style="cursor:pointer;"><div class="flex items-center gap-3"><div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#1e3a5f,#3b82f6);display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;">${m.n[0]}</div><div><div style="font-weight:600;">${m.n}</div><div class="mu" style="font-size:12px;">${m.m}</div></div></div><div style="text-align:left;"><div class="mu" style="font-size:11px;">${m.t}</div>${m.u?'<div style="width:8px;height:8px;border-radius:50%;background:#4f8cff;margin-top:4px;"></div>':''}</div></div>`).join('')}</div>`;}
+
+function bMusic(){return `<div class="glass-sm p-6 mb-4" style="text-align:center;"><div style="width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,#581c87,#a855f7);margin:0 auto 12px;display:flex;align-items:center;justify-content:center;">${IC.music.replace(/28/g,'40')}</div><div style="font-weight:700;font-size:18px;">أنشودة الصباح</div><div class="mu">فنان</div></div>
+  <div class="glass-sm overflow-hidden"><div class="px-4 py-3" style="border-bottom:1px solid rgba(255,255,255,.06);font-weight:700;">🎵 قائمة التشغيل</div>${tracks.map((t,i)=>`<div class="sr" style="cursor:pointer;"><div class="flex items-center gap-3"><div style="width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#581c87,#a855f7);display:flex;align-items:center;justify-content:center;font-weight:700;">${i+1}</div><div><div style="font-weight:600;">${t.title}</div><div class="mu" style="font-size:12px;">${t.duration}</div></div></div></div>`).join('')}</div>`;}
+
+function bRadio(){return `<div class="glass-sm p-6 mb-4" style="text-align:center;"><div style="font-size:48px;">📻</div><div style="font-size:42px;font-weight:900;" class="ac">FM 91.4</div><div class="mu" style="font-size:15px;font-weight:600;">إذاعة القرآن الكريم</div></div>
+  <div class="glass-sm overflow-hidden"><div class="px-4 py-3" style="border-bottom:1px solid rgba(255,255,255,.06);font-weight:700;">⭐ المحطات</div>${[{f:'91.4',n:'القرآن الكريم'},{f:'99.3',n:'MBC FM'},{f:'103.8',n:'روتانا'},{f:'95.5',n:'UFM'}].map(s=>`<div class="sr" style="cursor:pointer;"><span style="font-weight:700;color:#4f8cff;min-width:50px;">${s.f}</span><span style="font-weight:600;">${s.n}</span></div>`).join('')}</div>`;}
+
+function bCamera(){return `<div class="glass-sm overflow-hidden mb-4" style="height:220px;"><div style="width:100%;height:100%;background:linear-gradient(180deg,#111,#1a1a2e);display:flex;flex-direction:column;align-items:center;justify-content:center;"><div style="font-size:48px;">📸</div><div style="font-weight:700;margin-top:8px;">كاميرا الرجوع</div><div class="flex gap-8 mt-4">${[{c:'#22c55e',l:'آمن'},{c:'#f59e0b',l:'قريب'},{c:'#ef4444',l:'خطر'}].map(x=>`<div style="text-align:center;"><div style="width:12px;height:12px;border-radius:50%;background:${x.c};margin:0 auto 4px;"></div><span class="mu" style="font-size:11px;">${x.l}</span></div>`).join('')}</div></div></div>
+  <div class="glass-sm overflow-hidden">${['خطوط المسار|on','الوضع الليلي|on','حساسات صوتية|on'].map(s=>{const[n,o]=s.split('|');return `<div class="sr"><div style="font-weight:600;">${n}</div><div class="tg ${o}" onclick="this.classList.toggle('on')"></div></div>`;}).join('')}</div>`;}
+
+function bCompass(){return `<div class="glass-sm p-6" style="text-align:center;"><div style="font-size:80px;">🧭</div><div style="font-size:48px;font-weight:900;" class="ac">N 25.2°</div><div class="mu" style="font-size:16px;font-weight:600;">شمال</div><div class="flex justify-center gap-6 mt-4 mu" style="font-size:13px;"><span>24.7136°</span><span>46.6753°</span><span>612 م</span></div></div>`;}
+function bFuel(){return `<div class="glass-sm p-5 mb-4" style="text-align:center;"><div style="font-size:48px;">⛽</div><div style="font-weight:700;font-size:18px;">أقرب المحطات</div></div><div class="glass-sm overflow-hidden">${[{n:'أرامكو',d:'800 م',p:'2.18'},{n:'الحمراني',d:'1.2 كم',p:'2.18'},{n:'نفط',d:'2.5 كم',p:'2.33'},{n:'الدريس',d:'3.1 كم',p:'2.18'}].map(s=>`<div class="sr"><div><div style="font-weight:600;">⛽ ${s.n}</div><div class="mu" style="font-size:12px;">📍 ${s.d} — 💰 ${s.p} ر.س</div></div></div>`).join('')}</div>`;}
+function bWhatsapp(){return `<div class="glass-sm p-5 mb-4" style="text-align:center;"><div style="font-size:48px;">💬</div><div style="font-weight:700;font-size:18px;">واتساب</div></div><div class="glass-sm overflow-hidden">${[{n:'أحمد',m:'أرسل الموقع',t:'الآن'},{n:'العائلة',m:'📸 صورة',t:'2:15 م'},{n:'العمل',m:'الاجتماع الساعة 4',t:'1:30 م'}].map(c=>`<div class="sr"><div class="flex items-center gap-3"><div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#064e3b,#25d366);display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;">${c.n[0]}</div><div><div style="font-weight:600;">${c.n}</div><div class="mu" style="font-size:12px;">${c.m}</div></div></div><span class="mu" style="font-size:11px;">${c.t}</span></div>`).join('')}</div>`;}
+function bTire(){return `<div class="glass-sm p-5" style="text-align:center;"><div style="font-weight:700;font-size:18px;margin-bottom:16px;">ضغط الإطارات</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:280px;margin:0 auto;">${[{l:'أمامي يمين',v:35,ok:1},{l:'أمامي يسار',v:34,ok:1},{l:'خلفي يمين',v:32,ok:1},{l:'خلفي يسار',v:28,ok:0}].map(t=>`<div class="glass-sm p-4" style="text-align:center;${!t.ok?'border-color:rgba(239,68,68,.3);':''}"><div style="font-size:28px;font-weight:900;color:${t.ok?'#22c55e':'#ef4444'};">${t.v}</div><div class="mu" style="font-size:11px;">PSI</div><div style="font-size:12px;font-weight:600;margin-top:4px;">${t.l}</div></div>`).join('')}</div><div class="mu" style="font-size:12px;margin-top:12px;">⚠️ الخلفي يسار ضغطه منخفض</div></div>`;}
+function bDashcam(){return `<div class="glass-sm overflow-hidden mb-4" style="height:180px;"><div style="width:100%;height:100%;background:linear-gradient(135deg,#1a1a2e,#111);display:flex;align-items:center;justify-content:center;"><div style="text-align:center;"><div style="font-size:40px;">🔴</div><div style="font-weight:700;margin-top:8px;">REC — جاري التسجيل</div><div class="mu" style="font-size:13px;">00:45:23</div></div></div></div>
+  <div class="glass-sm overflow-hidden">${['جودة 1080p','تسجيل تلقائي|on','حفظ عند الاصطدام|on'].map(s=>{const p=s.split('|');return p.length>1?`<div class="sr"><div style="font-weight:600;">${p[0]}</div><div class="tg ${p[1]}" onclick="this.classList.toggle('on')"></div></div>`:`<div class="sr"><div style="font-weight:600;">${p[0]}</div></div>`;}).join('')}</div>`;}
+function bOBD(){return `<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">${[{l:'RPM',v:'2,450',c:'#4f8cff'},{l:'حرارة المحرك',v:'92°',c:'#f59e0b'},{l:'ضغط الزيت',v:'45 PSI',c:'#22c55e'},{l:'الجهد',v:'14.2V',c:'#a855f7'},{l:'الاستهلاك',v:'8.5',c:'#ef4444'},{l:'السرعة',v:'85',c:'#06b6d4'}].map(g=>`<div class="glass-sm p-4" style="text-align:center;"><div class="mu" style="font-size:11px;">${g.l}</div><div style="font-size:28px;font-weight:900;color:${g.c};">${g.v}</div></div>`).join('')}</div>
+  <div class="glass-sm overflow-hidden"><div class="px-4 py-3" style="border-bottom:1px solid rgba(255,255,255,.06);font-weight:700;">🔍 الأعطال</div><div class="sr"><span style="font-weight:600;color:#22c55e;">✅ لا توجد أعطال</span></div></div>`;}
+function bGeneric(id){const a=allApps.find(x=>x.id===id);return `<div class="glass-sm p-8" style="text-align:center;"><div style="width:80px;height:80px;border-radius:20px;background:${a?a.gradient:'#333'};display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">${a?IC[a.icon]:''}</div><div style="font-weight:700;font-size:20px;">${a?a.name:'تطبيق'}</div><div class="mu" style="margin-top:8px;">جاهز للاستخدام</div></div>`;}
+
+// ============ CLOCK / BT / WIFI / YT / SPEED ============
+function updateClock(){
+  const t=getTimeData();
+  const ce=document.getElementById('clock-time');if(ce)ce.textContent=`${t.h}:${t.m}`;
+  const se=document.getElementById('clock-seconds');if(se)se.textContent=t.s;
+  const ae=document.getElementById('clock-ampm');if(ae)ae.textContent=t.ap;
+  const de=document.getElementById('date-display');if(de)de.textContent=t.date;
+  const he=document.getElementById('hijri-date');if(he)he.textContent=t.hijri;
+}
+setInterval(updateClock,1000);
+
+function toggleBT(){btOn=!btOn;const e=document.getElementById('bt-toggle'),l=document.getElementById('bt-label');if(!e||!l)return;
+  if(btOn){e.classList.add('active');e.querySelector('svg').setAttribute('stroke',curTheme==='luxury'?'#d4a853':'#4f8cff');l.textContent='متصل';l.style.color=curTheme==='luxury'?'#d4a853':'#4f8cff';}
+  else{e.classList.remove('active');e.querySelector('svg').setAttribute('stroke','#8b92a8');l.textContent='مفصول';l.style.color='#8b92a8';}}
+function toggleWifi(){wifiOn=!wifiOn;const e=document.getElementById('wifi-toggle'),l=document.getElementById('wifi-label');if(!e||!l)return;
+  if(wifiOn){e.classList.add('active');e.querySelector('svg').setAttribute('stroke',curTheme==='luxury'?'#d4a853':'#22c55e');l.textContent='متصل';l.style.color=curTheme==='luxury'?'#d4a853':'#22c55e';}
+  else{e.classList.remove('active');e.querySelector('svg').setAttribute('stroke','#8b92a8');l.textContent='مفصول';l.style.color='#8b92a8';}}
+
+let pInt;
+function togglePlay(){isPlaying=!isPlaying;const ic=document.getElementById('play-icon');if(!ic)return;
+  if(isPlaying){ic.innerHTML='<rect x="6" y="4" width="4" height="16" fill="white"/><rect x="14" y="4" width="4" height="16" fill="white"/>';startProg();animVis();}
+  else{ic.innerHTML='<polygon points="6,3 20,12 6,21" fill="white"/>';clearInterval(pInt);}}
+function startProg(){clearInterval(pInt);pInt=setInterval(()=>{progress+=.2;if(progress>=100){progress=0;nextTrack();}const pf=document.getElementById('progress-fill');if(pf)pf.style.width=progress+'%';const ts=pDur(tracks[currentTrack].duration),cs=Math.floor(ts*progress/100);const ce=document.getElementById('yt-current');if(ce)ce.textContent=fT(cs);},200);}
+function seekTrack(e){const r=e.target.getBoundingClientRect();progress=((e.clientX-r.left)/r.width)*100;const pf=document.getElementById('progress-fill');if(pf)pf.style.width=progress+'%';}
+function nextTrack(){currentTrack=(currentTrack+1)%tracks.length;lTrk();}
+function prevTrack(){currentTrack=(currentTrack-1+tracks.length)%tracks.length;lTrk();}
+function lTrk(){progress=0;const te=document.getElementById('yt-title');if(te)te.textContent=tracks[currentTrack].title;const de=document.getElementById('yt-duration');if(de)de.textContent=tracks[currentTrack].duration;const ce=document.getElementById('yt-current');if(ce)ce.textContent='0:00';const pf=document.getElementById('progress-fill');if(pf)pf.style.width='0%';}
+function pDur(s){const[m,sec]=s.split(':').map(Number);return m*60+sec;}
+function fT(s){return `${Math.floor(s/60)}:${(s%60).toString().padStart(2,'0')}`;}
+
+function initVisualizer(){const v=document.getElementById('visualizer');if(!v)return;v.innerHTML='';
+  for(let i=0;i<28;i++){const b=document.createElement('div');b.className='yt-bar';b.style.height='5px';b.style.background=curTheme==='luxury'?`hsl(${40+i*2},60%,50%)`:`hsl(${220+i*4},80%,60%)`;v.appendChild(b);}}
+function animVis(){if(!isPlaying)return;const v=document.getElementById('visualizer');if(!v)return;
+  for(let i=0;i<v.children.length;i++)v.children[i].style.height=(Math.random()*60+5)+'px';requestAnimationFrame(()=>setTimeout(animVis,120));}
+
+function simSpeed(){const t=Math.floor(Math.random()*120);const step=()=>{if(Math.abs(speed-t)<2){speed=t;document.querySelectorAll('#speed-val,[id=speed-val]').forEach(e=>e.textContent=speed);if(curTheme==='sport')animSportGauge();setTimeout(simSpeed,2000+Math.random()*3000);return;}speed+=speed<t?1:-1;document.querySelectorAll('#speed-val,[id=speed-val]').forEach(e=>e.textContent=speed);if(curTheme==='sport')animSportGauge();setTimeout(step,30);};step();}
+let rpmVal=2450;
+function simRPM(){const t=Math.floor(Math.random()*5000+800);const step=()=>{if(Math.abs(rpmVal-t)<50){rpmVal=t;const e=document.getElementById('rpm-val');if(e)e.textContent=rpmVal;const b=document.getElementById('rpm-bar');if(b)b.style.width=Math.min(rpmVal/6000*100,100)+'%';setTimeout(simRPM,1500+Math.random()*2000);return;}rpmVal+=rpmVal<t?50:-50;const e=document.getElementById('rpm-val');if(e)e.textContent=rpmVal;const b=document.getElementById('rpm-bar');if(b)b.style.width=Math.min(rpmVal/6000*100,100)+'%';setTimeout(step,40);};step();}
+
+// ============ INIT ============
+renderMain();
+
+
+</script>
+<script>
+// ════════ الطبقة الحقيقية: تربط تصميم Antigravity بالجهاز • برمجة أبو نواف ════════
+(function(){
+const N = window.Native || {getApps(){return '[]'},openApp(){return false},openUrl(){},installed(){return ''},openAction(){return false},status(){return '{}'},volume(){return -1}};
+const Y = window.YTN || {show(){},hide(){},back(){},home(){},toggle(){},seek(){},mute(){},full(){}};
+const $ = s => document.querySelector(s);
+
+/* ── حفظ الواجهة والشريط ── */
+const save = () => { try { localStorage.dock = JSON.stringify(dockSlots); localStorage.theme = curTheme; } catch(e){} };
+try {
+  const d = JSON.parse(localStorage.dock || 'null'); if (Array.isArray(d)) dockSlots = d;
+  if (localStorage.theme) curTheme = localStorage.theme;
+} catch(e){}
+
+/* ── تطبيقات الجهاز الحقيقية ── */
+let devApps = [];
+function loadDev(){ try { devApps = JSON.parse(N.getApps()).sort((a,b) => a.n.localeCompare(b.n, 'ar')); } catch(e){ devApps = []; } }
+const PKG = {
+  maps:'com.google.android.apps.maps,com.waze', waze:'com.waze', spotify:'com.spotify.music', whatsapp:'com.whatsapp,com.whatsapp.w4b',
+  phone:'com.android.dialer,com.google.android.dialer,com.samsung.android.dialer',
+  messages:'com.google.android.apps.messaging,com.samsung.android.messaging,com.android.mms',
+  music:'com.anghami,com.spotify.music,com.google.android.apps.youtube.music,com.apple.android.music,com.android.music,com.miui.player',
+  camera:'com.android.camera,com.android.camera2,com.google.android.GoogleCamera,com.sec.android.app.camera',
+  clock:'com.google.android.deskclock,com.android.deskclock,com.sec.android.app.clockpackage',
+  calculator:'com.google.android.calculator,com.android.calculator2,com.sec.android.app.popupcalculator',
+  carplay:'com.zjinnova.zlink,com.suding.speedplay,com.autokit.autokit', radio:'com.android.fmradio,com.syu.radio,com.microntek.radio',
+  obd:'org.prowl.torque,com.ovz.carscanner'
+};
+const _openAppPage = openAppPage;
+openAppPage = function(id){
+  if (String(id).startsWith('pkg:')) { if (!N.openApp(id.slice(4))) toast('ما قدرت أفتح التطبيق'); return; }
+  if (id === 'settings') return _openAppPage(id);          // إعدادات اللانشر نفسه
+  const p = PKG[id] && N.installed(PKG[id]);
+  if (p) { N.openApp(p); return; }
+  if (id === 'maps') { N.openUrl('https://www.google.com/maps'); return; }
+  if (id === 'phone') { N.openUrl('tel:'); return; }
+  _openAppPage(id);                                          // ما فيه تطبيق؟ نعرض صفحة التصميم
+};
+
+/* المودال: نضيف تطبيقات جهازك تحت تطبيقات التصميم */
+const _openModal = openModal;
+openModal = function(si){
+  _openModal(si);
+  if (!devApps.length) loadDev();
+  const list = $('#app-list'); if (!list || !devApps.length) return;
+  const h = document.createElement('div'); h.className = 'mu'; h.style.cssText = 'padding:14px 4px 6px;font-weight:700;font-size:13px;border-top:1px solid rgba(255,255,255,.08);margin-top:8px';
+  h.textContent = '📱 تطبيقات جهازك'; list.appendChild(h);
+  const used = dockSlots.filter(Boolean).map(a => a.id);
+  devApps.forEach(a => {
+    const id = 'pkg:' + a.pkg, u = used.includes(id), d = document.createElement('div'); d.className = 'ao'; if (u) d.style.opacity = '.4';
+    d.innerHTML = '<img style="width:44px;height:44px;border-radius:11px;flex-shrink:0" alt=""><div style="flex:1;font-weight:700;font-size:14px"></div>';
+    d.querySelector('img').src = a.img; d.querySelector('div').textContent = a.n;
+    if (!u) d.onclick = () => { dockSlots[editSlot] = {id, name: a.n, icon: '', gradient: `center/82% no-repeat url(${a.img}), rgba(255,255,255,.06)`}; renderDock(); closeModal(); };
+    list.appendChild(d);
+  });
+};
+
+/* الشريط: ضغطة مطوّلة = تغيير التطبيق (الشاشة ما فيها ماوس) + حفظ */
+const _renderDock = renderDock;
+renderDock = function(){
+  _renderDock(); save();
+  document.querySelectorAll('#app-dock .da').forEach((d, i) => {
+    let t; d.addEventListener('touchstart', () => { t = setTimeout(() => { d._long = true; openModal(i); }, 650); }, {passive: true});
+    d.addEventListener('touchend', () => clearTimeout(t)); d.addEventListener('touchmove', () => clearTimeout(t));
+    d.addEventListener('click', e => { if (d._long) { e.stopImmediatePropagation(); d._long = false; } }, true);
+  });
+};
+const _renderMain = renderMain;
+renderMain = function(){ _renderMain(); save(); fixYt(); applyStatus(); };
+
+/* ── يوتيوب الحقيقي داخل الخانة ── */
+function ytArea(){ const r = $('#ytReal'); if (r) return r; const v = $('#visualizer'); return v && v.parentElement; }
+function fixYt(){
+  const a = ytArea(); if (!a) return;
+  if (!a._real) { a._real = true; a.id = 'ytReal'; a.innerHTML = ''; a.style.background = '#000'; }
+  const t = $('#yt-title'); if (t) t.textContent = 'يوتيوب';
+  const pf = $('#progress-fill'); const row = pf && pf.parentElement && pf.parentElement.parentElement;
+  if (row && row.parentElement === a.parentElement) row.style.display = 'none';
+}
+togglePlay = () => Y.toggle();
+nextTrack = () => Y.seek(10);
+prevTrack = () => Y.seek(-10);
+let last = '';
+function placeYt(){
+  const a = ytArea();
+  const blocked = !a || document.hidden || $('#page-overlay.show') || $('#app-modal.show');
+  if (blocked) { if (last !== 'hide') { Y.hide(); last = 'hide'; } return; }
+  const r = a.getBoundingClientRect(), d = devicePixelRatio || 1;
+  if (r.width < 20 || r.height < 20) { if (last !== 'hide') { Y.hide(); last = 'hide'; } return; }
+  const k = [r.left, r.top, r.width, r.height].map(v => Math.round(v * d));
+  const key = k.join(',');
+  if (key !== last) { Y.show('yt', k[0], k[1], k[2], k[3]); last = key; }
+}
+setInterval(placeYt, 300);
+addEventListener('resize', () => { last = ''; placeYt(); });
+
+/* ── السرعة من الـGPS ── */
+simSpeed = () => {}; simRPM = () => {};
+window.onGps = (la, lo, kmh, gps) => {
+  if (!gps) return;
+  speed = Math.max(0, Math.round(kmh < 0 ? 0 : kmh));
+  document.querySelectorAll('[id=speed-val]').forEach(e => e.textContent = speed);
+  if (curTheme === 'sport' && typeof animSportGauge === 'function') animSportGauge();
+};
+function noRpm(){ const e = $('#rpm-val'); if (e) e.textContent = '--'; const b = $('#rpm-bar'); if (b) b.style.width = '0%'; }
+
+/* ── البلوتوث والواي فاي الحقيقية ── */
+const _bt = toggleBT, _wf = toggleWifi;
+function setBT(on){ btOn = !on; _bt(); }
+function setWifi(on){ wifiOn = !on; _wf(); }
+toggleBT = () => N.openAction('android.settings.BLUETOOTH_SETTINGS');
+toggleWifi = () => N.openAction('android.settings.WIFI_SETTINGS');
+function applyStatus(){
+  let s = {}; try { s = JSON.parse(N.status()); } catch(e){}
+  if (s.bOn !== undefined) setBT(!!s.bConn || !!s.bOn);
+  if (s.wOn !== undefined) setWifi(!!s.wConn);
+  noRpm();
+}
+setInterval(applyStatus, 4000);
+
+/* ── زر الرجوع والرئيسية ── */
+window.goBack = () => {
+  if ($('#app-modal.show')) { closeModal(); return; }
+  if ($('#page-overlay.show')) { closePage(); return; }
+};
+window.goHome = () => { if ($('#app-modal.show')) closeModal(); if ($('#page-overlay.show')) closePage(); };
+window.onAppResume = () => { last = ''; applyStatus(); };
+
+/* ── رسالة صغيرة ── */
+function toast(m){ let t = $('#rtoast'); if (!t) { t = document.createElement('div'); t.id = 'rtoast'; t.style.cssText = 'position:fixed;bottom:110px;left:50%;transform:translateX(-50%);background:#fff;color:#111;font-weight:700;border-radius:20px;padding:10px 22px;z-index:99;display:none'; document.body.appendChild(t); }
+  t.textContent = m; t.style.display = 'block'; clearTimeout(t._h); t._h = setTimeout(() => t.style.display = 'none', 2200); }
+
+/* ── الحقوق ورقم النسخة ── */
+const c = document.createElement('div');
+c.style.cssText = 'position:fixed;left:10px;bottom:2px;font-size:10px;color:rgba(255,255,255,.35);z-index:50;pointer-events:none';
+c.innerHTML = '<span>برمجة أبو نواف</span>';
+document.body.appendChild(c);
+
+setTimeout(() => { loadDev(); renderMain(); }, 50);
+})();
+</script>
+</body>
+</html>
